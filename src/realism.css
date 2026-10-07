@@ -58,7 +58,7 @@
   border: 0;
   padding: 9px 11px;
   border-radius: 4px;
-  font-size: 11px;
+  font-size: var(--text-caption);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -92,18 +92,17 @@
   max-width: 80%;
 }
 .scene-location > span {
-  font-size: 8px;
+  font-size: var(--text-caption);
   letter-spacing: 2px;
   color: #557052;
 }
 .scene-location > strong {
   font:
-    400 22px Georgia,
-    serif;
+    400 var(--text-xl) var(--font-display);
   color: #244c37;
 }
 .scene-location > small {
-  font-size: 9px;
+  font-size: var(--text-caption);
   color: #526a4d;
 }
 .scene-bottom {
@@ -118,7 +117,7 @@
   z-index: 4;
 }
 .scene-bottom > span {
-  font-size: 9px;
+  font-size: var(--text-caption);
   color: #f8faf0;
   background: #294737cc;
   border-radius: 4px;
@@ -129,7 +128,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 10px;
+  font-size: var(--text-caption);
   border: 1px solid #edf1e3;
   background: #f8faf0ed;
   color: #3c5d43;
@@ -154,13 +153,13 @@
   background: transparent;
   border: 0;
   border-right: 1px solid #e0e5d4;
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #51654b;
   padding: 17px 8px;
   white-space: nowrap;
 }
 .scene-pond-picker button > span {
-  font-size: 9px;
+  font-size: var(--text-caption);
   color: #526448;
   border: 1px solid #c5d1b8;
   border-radius: 3px;
@@ -171,7 +170,7 @@
   box-shadow: inset 0 -2px #667f50;
 }
 .scene-caption {
-  font-size: 9px;
+  font-size: var(--text-caption);
   line-height: 1.6;
   color: #5c6d52;
   background: #f9faf3;
@@ -187,11 +186,10 @@
   background: #e3e9dc;
   color: #5a704e;
   font:
-    25px Georgia,
-    serif;
+    var(--text-xl) var(--font-display);
 }
 .scene-fallback > p {
-  font-size: 11px;
+  font-size: var(--text-caption);
   line-height: 1.7;
   color: #604b27;
   background: #f5eacb;
@@ -211,7 +209,7 @@
   background: #f9faf0de;
   border: 1px solid #fdfdf699;
   color: #536b4c;
-  font-size: 10px;
+  font-size: var(--text-caption);
   padding: 8px 12px;
   border-radius: 30px;
   backdrop-filter: blur(5px);
@@ -233,19 +231,17 @@
 }
 .fish-observation h3 {
   font:
-    400 27px Georgia,
-    serif;
+    400 var(--text-xl) var(--font-display);
   color: #31533b;
   margin-bottom: 5px;
 }
 .fish-observation em {
   font:
-    italic 11px Georgia,
-    serif;
+    italic var(--text-caption) var(--font-display);
   color: #66775c;
 }
 .fish-observation p {
-  font-size: 11px;
+  font-size: var(--text-caption);
   line-height: 1.7;
   color: #5f7156;
   margin-top: 11px;
@@ -253,7 +249,7 @@
 }
 .fish-observation > .button {
   white-space: nowrap;
-  font-size: 10px;
+  font-size: var(--text-caption);
 }
 .species-photo {
   display: block;
@@ -283,7 +279,7 @@
   width: 100%;
 }
 .photo-observation > span:last-child {
-  font-size: 9px;
+  font-size: var(--text-caption);
   color: #6b705e;
   margin-top: 22px;
   line-height: 1.6;
@@ -327,7 +323,7 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 8px;
+  font-size: var(--text-caption);
   letter-spacing: 1.25px;
   color: #5e7456;
   margin-bottom: 17px;
@@ -351,25 +347,23 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #52694b;
 }
 .water-grid dd {
   margin: 7px 0 4px;
   font:
-    400 24px Georgia,
-    serif;
+    400 var(--text-xl) var(--font-display);
   color: #325339;
   white-space: nowrap;
 }
 .water-grid dd > small {
   font:
-    10px system-ui,
-    sans-serif;
+    var(--text-caption) var(--font-ui);
   color: #657559;
 }
 .water-grid > div > .metric-hint {
-  font-size: 8px;
+  font-size: var(--text-caption);
   color: #617354;
   line-height: 1.5;
   display: block;
@@ -385,11 +379,11 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #607454;
 }
 .density-line strong {
-  font-size: 10px;
+  font-size: var(--text-caption);
   font-weight: 500;
 }
 .technical-track {
@@ -411,7 +405,7 @@
   margin-top: 10px;
 }
 .husbandry-fields label {
-  font-size: 9px;
+  font-size: var(--text-caption);
   line-height: 1.6;
   color: #526a49;
   min-width: 0;
@@ -422,7 +416,7 @@
   padding: 9px 6px;
   margin-top: 6px;
   color: #4c6844;
-  font-size: 10px;
+  font-size: var(--text-caption);
   background: #f7f9ed;
   border: 1px solid #dce4d0;
   border-radius: 4px;
@@ -439,13 +433,13 @@
 }
 .feeder-control strong {
   display: block;
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #526d46;
   font-weight: 500;
 }
 .feeder-control small {
   display: block;
-  font-size: 8px;
+  font-size: var(--text-caption);
   line-height: 1.65;
   color: #657559;
   margin-top: 5px;
@@ -481,7 +475,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 11px;
-  font-size: 8px;
+  font-size: var(--text-caption);
   color: #65765a;
 }
 .husbandry-summary > span {
@@ -490,7 +484,7 @@
   gap: 5px;
 }
 .husbandry-summary b {
-  font-size: 11px;
+  font-size: var(--text-caption);
   font-weight: 500;
   color: #45613c;
 }
@@ -498,7 +492,7 @@
   display: flex;
   align-items: flex-start;
   gap: 7px;
-  font-size: 9px;
+  font-size: var(--text-caption);
   line-height: 1.8;
   background: #edf2e0;
   color: #536d42;
@@ -515,7 +509,7 @@
   color: #8c4c2c;
 }
 .simulation-date {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #587347;
   display: block;
   margin-left: 4px;
@@ -528,7 +522,7 @@
   gap: 7px;
 }
 .stat-card strong {
-  font-size: 24px;
+  font-size: var(--text-xl);
   overflow-wrap: anywhere;
   white-space: normal;
 }
@@ -547,7 +541,7 @@
   line-height: 1.8;
 }
 .pond-panel-heading h2 {
-  font-size: 29px;
+  font-size: var(--text-title);
 }
 .growth-section {
   padding-bottom: 14px;
@@ -561,7 +555,7 @@
 }
 .mode-setting label {
   display: block;
-  font-size: 11px;
+  font-size: var(--text-caption);
   color: #506b43;
   margin-bottom: 9px;
 }
@@ -573,11 +567,10 @@
   border: 1px solid #ccd9bc;
   border-radius: 4px;
   font:
-    11px system-ui,
-    sans-serif;
+    var(--text-caption) var(--font-ui);
 }
 .mode-setting p {
-  font-size: 10px;
+  font-size: var(--text-caption);
   line-height: 1.8;
   color: #607653;
   margin-top: 12px;
@@ -590,11 +583,11 @@
   border-radius: 8px;
 }
 .research-card h2 {
-  font-size: 28px;
+  font-size: var(--text-xl);
   color: #46633c;
 }
 .research-card > p {
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.9;
   color: #5d7450;
   margin: 15px 0;
@@ -613,7 +606,7 @@
   border: 1px solid #d5e0c4;
   padding: 10px 12px;
   border-radius: 5px;
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #4b663e;
 }
 .scene-tabs button:focus-visible,
@@ -635,20 +628,20 @@
     height: 610px;
   }
   .water-grid dd {
-    font-size: 27px;
+    font-size: var(--text-xl);
   }
   .technical-heading {
-    font-size: 9px;
+    font-size: var(--text-caption);
   }
   .water-grid > div > .metric-hint,
   .feeder-control small {
-    font-size: 9px;
+    font-size: var(--text-caption);
   }
   .husbandry-summary {
-    font-size: 9px;
+    font-size: var(--text-caption);
   }
   .fish-observation p {
-    font-size: 12px;
+    font-size: var(--text-caption);
   }
   .scene-toolbar {
     top: 20px;
@@ -666,7 +659,7 @@
     top: 12px;
   }
   .scene-tabs button {
-    font-size: 10px;
+    font-size: var(--text-caption);
     padding: 8px;
   }
   .scene-tabs button svg {
@@ -682,10 +675,10 @@
     max-width: 85%;
   }
   .scene-location strong {
-    font-size: 19px;
+    font-size: var(--text-lg);
   }
   .scene-location > small {
-    font-size: 8px;
+    font-size: var(--text-caption);
   }
   .scene-bottom {
     left: 12px;
@@ -703,7 +696,7 @@
   }
   .scene-pond-picker button {
     padding: 12px 8px;
-    font-size: 9px;
+    font-size: var(--text-caption);
     border-bottom: 1px solid #e0e5d4;
   }
   .scene-bottom {
@@ -716,10 +709,10 @@
     padding: 19px;
   }
   .fish-observation h3 {
-    font-size: 24px;
+    font-size: var(--text-xl);
   }
   .fish-observation p {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .fish-observation > .button {
     align-self: flex-end;
@@ -732,7 +725,7 @@
     flex-wrap: wrap;
   }
   .species-picker > button {
-    font-size: 9px;
+    font-size: var(--text-caption);
     padding: 7px 9px;
   }
   .photo-observation {
@@ -743,25 +736,25 @@
     padding: 12px;
   }
   .photo-observation > span:last-child {
-    font-size: 8px;
+    font-size: var(--text-caption);
   }
   .water-grid dd {
-    font-size: 22px;
+    font-size: var(--text-xl);
   }
   .water-grid dd small {
-    font-size: 8px;
+    font-size: var(--text-caption);
   }
   .water-grid > div > .metric-hint {
-    font-size: 8px;
+    font-size: var(--text-caption);
   }
   .simulation-date {
-    font-size: 8px;
+    font-size: var(--text-caption);
   }
   .pond-panel-heading h2 {
-    font-size: 27px;
+    font-size: var(--text-xl);
   }
   .stat-card strong {
-    font-size: 22px;
+    font-size: var(--text-xl);
   }
 }
 @media (max-width: 900px) {
@@ -781,14 +774,14 @@
     display: block;
   }
   .scene-tabs button {
-    font-size: 11px;
+    font-size: var(--text-caption);
     padding: 9px 12px;
   }
   .scene-pond-picker {
     grid-template-columns: repeat(4, 1fr);
   }
   .scene-pond-picker button {
-    font-size: 9px;
+    font-size: var(--text-caption);
     gap: 5px;
   }
   .scene-bottom {
@@ -801,7 +794,7 @@
     grid-template-columns: repeat(4, 1fr);
   }
   .water-grid dd {
-    font-size: 25px;
+    font-size: var(--text-xl);
   }
   .fish-illustration {
     max-width: 440px;
@@ -813,37 +806,37 @@
     margin: 20px auto 0;
   }
   .water-grid dt {
-    font-size: 11px;
+    font-size: var(--text-caption);
   }
   .water-grid > div > .metric-hint {
-    font-size: 9px;
+    font-size: var(--text-caption);
   }
   .husbandry-summary {
     grid-template-columns: repeat(4, 1fr);
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .feeder-control strong {
-    font-size: 12px;
+    font-size: var(--text-caption);
   }
   .feeder-control small {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .density-line,
   .density-line strong {
-    font-size: 11px;
+    font-size: var(--text-caption);
   }
   .technical-heading {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .husbandry-fields label,
   .husbandry-fields select {
-    font-size: 11px;
+    font-size: var(--text-caption);
   }
   .pond-actions .button {
-    font-size: 12px;
+    font-size: var(--text-caption);
   }
   .technical-notice {
-    font-size: 11px;
+    font-size: var(--text-caption);
   }
   .pond-tabs {
     grid-template-columns: 1fr 1fr;
@@ -853,7 +846,7 @@
     margin-left: auto;
   }
   .simulation-date {
-    font-size: 9px;
+    font-size: var(--text-caption);
   }
   .fish-observation {
     flex-direction: row;
@@ -863,7 +856,7 @@
     gap: 8px;
   }
   .species-picker > button {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
 }
 @media (max-width: 680px) {
@@ -878,7 +871,7 @@
     padding: 3px;
   }
   .scene-tabs button {
-    font-size: 9px;
+    font-size: var(--text-caption);
     padding: 8px 7px;
     gap: 4px;
   }
@@ -904,24 +897,24 @@
     max-width: 88%;
   }
   .scene-location strong {
-    font-size: 20px;
+    font-size: var(--text-lg);
   }
   .scene-location > small {
-    font-size: 8px;
+    font-size: var(--text-caption);
   }
   .scene-location > span {
-    font-size: 8px;
+    font-size: var(--text-caption);
   }
   .scene-pond-picker {
     grid-template-columns: 1fr 1fr;
   }
   .scene-pond-picker button {
-    font-size: 10px;
+    font-size: var(--text-caption);
     padding: 12px 6px;
   }
   .scene-caption {
     padding: 11px 13px;
-    font-size: 9px;
+    font-size: var(--text-caption);
     min-height: 52px;
   }
   .scene-bottom {
@@ -930,7 +923,7 @@
     right: 12px;
   }
   .scene-bottom button {
-    font-size: 9px;
+    font-size: var(--text-caption);
   }
   .species-picker {
     top: 64px;
@@ -939,7 +932,7 @@
     right: 10px;
   }
   .species-picker > button {
-    font-size: 9px;
+    font-size: var(--text-caption);
     padding: 7px 9px;
   }
   .fish-observation {
@@ -947,10 +940,10 @@
     padding: 20px;
   }
   .fish-observation h3 {
-    font-size: 27px;
+    font-size: var(--text-xl);
   }
   .fish-observation p {
-    font-size: 11px;
+    font-size: var(--text-caption);
   }
   .photo-observation {
     top: 125px;
@@ -960,7 +953,7 @@
   }
   .photo-observation > span:last-child {
     text-align: center;
-    font-size: 8px;
+    font-size: var(--text-caption);
   }
   .water-grid {
     grid-template-columns: 1fr 1fr;
@@ -969,27 +962,27 @@
     padding: 14px;
   }
   .water-grid dd {
-    font-size: 29px;
+    font-size: var(--text-title);
   }
   .water-grid dd small {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .water-grid > div > .metric-hint {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .husbandry-summary {
     grid-template-columns: 1fr 1fr;
     gap: 15px;
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .husbandry-summary b {
-    font-size: 12px;
+    font-size: var(--text-caption);
   }
   .technical-notice {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .technical-heading {
-    font-size: 9px;
+    font-size: var(--text-caption);
   }
   .simulation-date {
     display: none;
@@ -1004,16 +997,16 @@
     padding: 22px;
   }
   .research-card h2 {
-    font-size: 25px;
+    font-size: var(--text-xl);
   }
   .research-card > p {
-    font-size: 11px;
+    font-size: var(--text-caption);
   }
   .species-option .species-photo {
     width: 75px;
   }
   .stat-card strong {
-    font-size: 23px;
+    font-size: var(--text-xl);
   }
   .species-art .species-photo {
     width: 100%;
@@ -1041,14 +1034,13 @@
   background: #e3e9dc;
   color: #35533b;
   font:
-    24px Georgia,
-    serif;
+    var(--text-xl) var(--font-display);
 }
 .scene-notice {
   padding: 12px 17px;
   background: #f5eacb;
   color: #604b27;
-  font-size: 11px;
+  font-size: var(--text-caption);
 }
 @media (max-width: 680px) {
   .scene-tabs button svg {
@@ -1056,7 +1048,7 @@
   }
   .scene-tabs button {
     padding: 8px 6px;
-    font-size: 9px;
+    font-size: var(--text-caption);
   }
   .scene-tabs {
     flex: 1;
@@ -1110,18 +1102,17 @@
   position: absolute;
   left: 12px;
   top: 15px;
-  font-size: 10px;
+  font-size: var(--text-caption);
   border: 1px solid #a9b792;
   padding: 4px;
   border-radius: 3px;
 }
 .landscape-hotspots strong {
   font:
-    18px Georgia,
-    serif;
+    var(--text-lg) var(--font-display);
 }
 .landscape-hotspots small {
-  font-size: 9px;
+  font-size: var(--text-caption);
   color: #465e3e;
 }
 .scene-bottom .landscape-toggle {
@@ -1156,7 +1147,7 @@
     display: none;
   }
   .landscape-hotspots strong {
-    font-size: 16px;
+    font-size: var(--text-body);
   }
 }
 @media (max-width: 900px) {
@@ -1178,10 +1169,10 @@
     gap: 6px;
   }
   .landscape-hotspots strong {
-    font-size: 15px;
+    font-size: var(--text-body);
   }
   .landscape-hotspots small {
-    font-size: 8px;
+    font-size: var(--text-caption);
   }
   .scene-bottom .landscape-toggle {
     padding: 10px 13px;
@@ -1192,7 +1183,7 @@
 }
 
 .water-grid .metric-hint {
-  font-family: system-ui, sans-serif;
+  font-family: var(--font-ui);
   font-weight: 400;
   white-space: normal;
   margin: 0;

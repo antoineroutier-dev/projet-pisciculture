@@ -1,0 +1,44 @@
+:root {
+  --surface: #f6f5ee;
+  --surface-raised: #fffef8;
+  --surface-muted: #e9ece3;
+  --surface-glass: #fffef8ed;
+  --ink: #243d33;
+  --ink-muted: #526356;
+  --primary: #234f40;
+  --primary-hover: #183b30;
+  --on-primary: #fffef8;
+  --water: #1d6676;
+  --accent: #b8d576;
+  --warning: #795015;
+  --danger: #963e31;
+  --success: #2b6343;
+  --focus: #005fb8;
+  --border: #cbd3c3;
+  --disabled-ink: #59665a;
+  --font-ui: "Inter", system-ui, sans-serif;
+  --font-display: "Fraunces", Georgia, serif;
+  /* A physical floor also protects captions at the future 80% UI scale. */
+  --text-caption: max(12px, 0.75rem);
+  --text-small: max(12px, 0.875rem);
+  --text-body: max(12px, 1rem);
+  --text-lg: max(18px, 1.25rem);
+  --text-xl: max(18px, 1.5rem);
+  --text-title: max(18px, 2rem);
+  --text-display: max(18px, 2.75rem);
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --radius: 12px;
+  --shadow-panel: 0 8px 32px color-mix(in srgb, var(--ink) 12%, transparent);
+  --duration-fast: 120ms;
+  --duration-normal: 200ms;
+  --duration-slow: 320ms;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --duration-fast: 0ms; --duration-normal: 0ms; --duration-slow: 0ms; }
+}

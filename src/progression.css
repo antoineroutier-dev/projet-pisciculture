@@ -16,7 +16,7 @@
   justify-content: space-between;
   gap: 12px;
   color: #526448;
-  font-size: 11px;
+  font-size: var(--text-caption);
 }
 .journey-heading > span:last-child {
   display: flex;
@@ -33,7 +33,7 @@
   flex: 1;
 }
 .journey-main h2 {
-  font-size: clamp(22px, 2.2vw, 29px);
+  font-size: var(--text-xl);
   margin: 0 0 9px;
   font-weight: 550;
   letter-spacing: -0.6px;
@@ -43,7 +43,7 @@
   margin: 0;
   line-height: 1.65;
   color: #4e5d48;
-  font-size: 13px;
+  font-size: var(--text-small);
   max-width: 760px;
 }
 .journey-main > button {
@@ -66,7 +66,7 @@
   display: flex;
   gap: 6px;
   align-items: center;
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #536448;
 }
 .journey-steps li > span {
@@ -94,7 +94,7 @@
   align-items: center;
   gap: 8px;
   color: #325331;
-  font-size: 12px;
+  font-size: var(--text-caption);
 }
 .project-layout,
 .logistics-layout {
@@ -129,12 +129,12 @@
 .logistics-section h2 {
   margin: 7px 0 8px;
   font-weight: 500;
-  font-size: 25px;
+  font-size: var(--text-xl);
   letter-spacing: -0.55px;
 }
 .water-study-intro p,
 .logistics-section > p {
-  font-size: 13px;
+  font-size: var(--text-small);
   line-height: 1.7;
   color: #5a6352;
   margin: 8px 0;
@@ -152,17 +152,17 @@
   color: #4c6b56;
 }
 .resource-grid h3 {
-  font-size: 15px;
+  font-size: var(--text-body);
   margin: 15px 0 12px;
   color: #314634;
 }
 .resource-grid strong {
   display: block;
-  font-size: 17px;
+  font-size: var(--text-lg);
   font-weight: 550;
 }
 .resource-grid p {
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.8;
   color: #5c6858;
   margin-bottom: 0;
@@ -170,7 +170,7 @@
 .project-footnote {
   color: #626c5e;
   line-height: 1.75;
-  font-size: 11px;
+  font-size: var(--text-caption);
   margin: 19px 0 0;
 }
 .route-grid {
@@ -203,7 +203,7 @@
   position: absolute;
   top: 13px;
   left: 15px;
-  font-size: 10px;
+  font-size: var(--text-caption);
   background: #fffefaec;
   padding: 5px 9px;
   border-radius: 4px;
@@ -214,12 +214,12 @@
 }
 .route-content h3 {
   margin: 9px 0 11px;
-  font-size: 23px;
+  font-size: var(--text-xl);
   font-weight: 550;
   color: #30432f;
 }
 .route-content p {
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.8;
   color: #586350;
 }
@@ -227,7 +227,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
+  font-size: var(--text-caption);
   color: #3e695e;
 }
 .route-content dl {
@@ -239,7 +239,7 @@
   display: grid;
   grid-template-columns: 120px 1fr;
   gap: 14px;
-  font-size: 11px;
+  font-size: var(--text-caption);
   line-height: 1.6;
 }
 .route-content dt {
@@ -259,7 +259,7 @@
   padding: 14px;
   border-radius: 7px;
   color: #405d36;
-  font-size: 12px;
+  font-size: var(--text-caption);
 }
 .migration-note {
   display: flex;
@@ -276,7 +276,7 @@
 }
 .migration-note p {
   margin: 0;
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.8;
 }
 .chain-strip {
@@ -293,7 +293,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 12px;
+  font-size: var(--text-caption);
 }
 .supply-summary {
   display: grid;
@@ -308,17 +308,17 @@
 .supply-summary span {
   display: block;
   color: #617055;
-  font-size: 11px;
+  font-size: var(--text-caption);
   margin-bottom: 9px;
   line-height: 1.4;
 }
 .supply-summary strong {
-  font-size: 25px;
+  font-size: var(--text-xl);
   font-weight: 550;
   color: #354a2e;
 }
 .supply-summary small {
-  font-size: 11px;
+  font-size: var(--text-caption);
   font-weight: 450;
 }
 .feed-order-grid,
@@ -338,26 +338,26 @@
   align-items: stretch;
 }
 .feed-order-grid strong {
-  font-size: 23px;
+  font-size: var(--text-xl);
   color: #41553a;
   font-weight: 500;
 }
 .feed-order-grid span {
   margin: 7px 0 16px;
   color: #667459;
-  font-size: 12px;
+  font-size: var(--text-caption);
 }
 .feed-order-grid small,
 .asset-grid small,
 .buyer-grid small {
   display: block;
-  font-size: 11px;
+  font-size: var(--text-caption);
   line-height: 1.6;
   color: #68583e;
   margin-top: 9px;
 }
 .logistics-section h3 {
-  font-size: 17px;
+  font-size: var(--text-lg);
   font-weight: 550;
   color: #384d33;
 }
@@ -370,12 +370,12 @@
   justify-content: space-between;
 }
 .supply-ponds strong {
-  font-size: 13px;
+  font-size: var(--text-small);
 }
 .supply-ponds small {
   display: block;
   margin-top: 6px;
-  font-size: 11px;
+  font-size: var(--text-caption);
   color: #657158;
   line-height: 1.6;
 }
@@ -383,7 +383,7 @@
   padding: 17px 20px;
   border: 1px dashed #cbd5c2;
   border-radius: 8px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.8;
   color: #68745c;
 }
@@ -397,7 +397,7 @@
   align-items: center;
   gap: 11px;
   padding-top: 12px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: #4b6442;
 }
 .delivery-list > div span {
@@ -425,13 +425,13 @@
 }
 .asset-grid p {
   flex: 1;
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.8;
   color: #636e5a;
   margin: 0 0 19px;
 }
 .asset-grid strong {
-  font-size: 12px;
+  font-size: var(--text-caption);
   margin: 0 0 14px;
   color: #58654c;
 }
@@ -447,7 +447,7 @@
   border-radius: 11px;
 }
 .buyer-grid p {
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.8;
   color: #58694f;
 }
@@ -469,18 +469,18 @@
 }
 .contract-list strong {
   color: #3b5436;
-  font-size: 14px;
+  font-size: var(--text-small);
 }
 .contract-list p,
 .cold-batch p,
 .shipment p {
   color: #596a50;
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.7;
   margin: 9px 0;
 }
 .contract-list small {
-  font-size: 11px;
+  font-size: var(--text-caption);
   color: #5b654f;
   line-height: 1.65;
   display: block;
@@ -494,7 +494,7 @@
   border: 0;
   background: transparent;
   text-decoration: underline;
-  font-size: 11px;
+  font-size: var(--text-caption);
   color: #5b634e;
   cursor: pointer;
   padding: 7px;
@@ -503,7 +503,7 @@
   background: #f0f5f1;
 }
 .cold-batch strong {
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: #386450;
 }
 .shipment {
@@ -519,7 +519,7 @@
 }
 .shipment h3 {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--text-small);
 }
 .water-details {
   padding: 0 21px;
@@ -527,7 +527,7 @@
 }
 .water-details > summary {
   cursor: pointer;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: #4b6643;
   font-weight: 650;
   padding: 13px 0;
@@ -577,7 +577,7 @@
   .asset-grid .button {
     padding-left: 8px;
     padding-right: 8px;
-    font-size: 11px;
+    font-size: var(--text-caption);
   }
   .chain-strip {
     flex-wrap: wrap;
@@ -594,16 +594,16 @@
     flex-wrap: wrap;
   }
   .journey-heading > span:last-child {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .journey-steps {
     gap: 9px;
   }
   .journey-steps li {
-    font-size: 9px;
+    font-size: var(--text-caption);
   }
   .journey-main p {
-    font-size: 12px;
+    font-size: var(--text-caption);
   }
   .route-grid,
   .buyer-grid,
@@ -632,7 +632,7 @@
     gap: 18px;
   }
   .supply-summary strong {
-    font-size: 23px;
+    font-size: var(--text-xl);
   }
   .supply-ponds > div,
   .contract-list article,
@@ -651,14 +651,14 @@
   }
   .water-study h2,
   .logistics-section h2 {
-    font-size: 22px;
+    font-size: var(--text-xl);
   }
   .route-content dl > div {
     grid-template-columns: 100px 1fr;
     gap: 10px;
   }
   .chain-strip span {
-    font-size: 10px;
+    font-size: var(--text-caption);
     gap: 5px;
   }
   .chain-strip {
@@ -707,10 +707,10 @@
 .topbar .time-widget { margin: 0; }
 .hud-resources { display: flex; gap: 24px; }
 .hud-resources > div { display: grid; gap: 4px; }
-.hud-resources span { font-size: 12px; }
-.hud-resources strong { font-size: 18px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hud-resources span { font-size: var(--text-caption); }
+.hud-resources strong { font-size: var(--text-lg); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .money-value { white-space: nowrap; font-variant-numeric: tabular-nums; }
-.stat-card .money-value { font-size: clamp(18px, 2vw, 26px); }
+.stat-card .money-value { font-size: var(--text-xl); }
 .scene-location[hidden] { display: none; }
 .species-photo { transform: none; padding: 0; }
 
@@ -724,7 +724,7 @@
   .topbar .time-widget { grid-column: 1 / -1; grid-row: 2; width: 100%; padding: 0; border: 0; justify-content: space-between; }
   .topbar .save-indicator { grid-column: 2; grid-row: 1; margin: 0; }
   .topbar .mobile-settings { grid-column: 3; grid-row: 1; }
-  .topbar .day-weather > span { font-size: 12px; }
+  .topbar .day-weather > span { font-size: var(--text-caption); }
   .topbar .day-weather > span > svg, .topbar .day-weather > span > b { display: none; }
   .topbar .day-weather small { display: none; }
   .topbar .time-controls { margin: 0; }
@@ -754,6 +754,6 @@
     min-width: 0;
   }
   .sidebar .nav-item > span:not(.nav-count) {
-    font-size: 9px;
+    font-size: var(--text-caption);
   }
 }

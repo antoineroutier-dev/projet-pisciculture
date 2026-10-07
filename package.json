@@ -12,6 +12,7 @@
     "build:portable": "tsc -b && node scripts/build-portable.mjs"
   },
   "dependencies": {
+    "@fontsource/fraunces": "^5.3.0",
     "@fontsource/inter": "^5.3.0",
     "lucide-react": "^0.468.0",
     "react": "^19.0.0",

@@ -48,7 +48,7 @@ try {
     if (!mime) continue;
     html = html.replaceAll(`/${item.fileName}`, `data:${mime};base64,${Buffer.from(item.source).toString('base64')}`);
   }
-  for (const file of ['Inter-OFL.txt', 'Lucide-ISC.txt', 'Three-MIT.txt']) {
+  for (const file of ['Inter-OFL.txt', 'Fraunces-OFL.txt', 'Lucide-ISC.txt', 'Three-MIT.txt']) {
     const license = await readFile(join(root, 'docs', 'licenses', file), 'utf8');
     html += `\n<!-- ${file}\n${license.replaceAll('--', '—')}\n-->`;
   }

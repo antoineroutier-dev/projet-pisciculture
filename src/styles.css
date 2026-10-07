@@ -1,21 +1,15 @@
 :root {
-  font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-  color: #293c33;
-  background: #f5f5ee;
+  font-family: var(--font-ui);
+  color: var(--ink);
+  background: var(--surface);
   font-synthesis: none;
-  font-size: 14px;
+  font-size: 100%;
   font-weight: 400;
-  --forest: #214f3d;
-  --ink: #293c33;
-  --muted: #81867a;
-  --line: #e6e7dc;
-  --paper: #fdfdf8;
-  --green: #749563;
+  --forest: var(--primary);
+  --muted: var(--ink-muted);
+  --line: var(--border);
+  --paper: var(--surface-raised);
+  --green: var(--success);
 }
 * {
   box-sizing: border-box;
@@ -67,12 +61,12 @@ p {
 }
 h1,
 h2 {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--font-display);
   font-weight: 400;
   letter-spacing: -0.6px;
 }
 h3 {
-  font-size: 14px;
+  font-size: var(--text-small);
   font-weight: 600;
 }
 svg {
@@ -110,15 +104,15 @@ input {
   gap: 11px;
   align-items: center;
   padding: 0 9px;
-  font-family: Georgia, serif;
-  font-size: 27px;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
   letter-spacing: -1px;
   white-space: nowrap;
 }
 .brand small {
   display: block;
   font-family: inherit;
-  font-size: 10px;
+  font-size: var(--text-caption);
   letter-spacing: 1.65px;
   color: #5f6c5e;
   margin-top: 7px;
@@ -140,7 +134,7 @@ input {
   margin: 32px 10px 27px;
 }
 .nav-caption {
-  font-size: 10px;
+  font-size: var(--text-caption);
   letter-spacing: 1.7px;
   color: #65685e;
   margin: 0 13px 17px;
@@ -161,7 +155,7 @@ input {
   padding: 13px 15px;
   color: #636a5c;
   text-align: left;
-  font-size: 13px;
+  font-size: var(--text-small);
 }
 .nav-item:hover {
   background: #eeeee4;
@@ -174,7 +168,7 @@ input {
 .nav-count {
   margin-left: auto;
   background: #ffffff1b;
-  font-size: 10px;
+  font-size: var(--text-caption);
   padding: 2px 5px;
   border-radius: 4px;
 }
@@ -200,13 +194,13 @@ input {
   color: #5a6e49;
 }
 .level-card strong {
-  font-size: 10px;
+  font-size: var(--text-caption);
   font-weight: 600;
   display: block;
 }
 .level-card small {
   display: block;
-  font-size: 10px;
+  font-size: var(--text-caption);
   margin-top: 4px;
   color: #646a59;
 }
@@ -224,7 +218,7 @@ input {
   transition: width 0.3s;
 }
 .level-card p {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #646a5a;
 }
 .settings-button {
@@ -233,13 +227,13 @@ input {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #646a5e;
   width: 100%;
   padding: 23px 4px;
 }
 .sidebar-footer {
-  font-size: 10px;
+  font-size: var(--text-caption);
   display: flex;
   align-items: center;
   gap: 5px;
@@ -282,14 +276,14 @@ input {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #686960;
 }
 .breadcrumb span {
   color: #606b5b;
 }
 .save-indicator {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #636b5c;
   display: flex;
   align-items: center;
@@ -312,14 +306,14 @@ main {
 }
 .eyebrow {
   display: block;
-  font-size: 10px;
+  font-size: var(--text-caption);
   letter-spacing: 1.9px;
   color: #636b5b;
   font-weight: 600;
   margin-bottom: 10px;
 }
 h1 {
-  font-size: 42px;
+  font-size: var(--text-display);
   line-height: 1.12;
   color: #294f3c;
 }
@@ -327,7 +321,7 @@ h1 {
   color: #606c51;
 }
 .page-heading p {
-  font-size: 11px;
+  font-size: var(--text-caption);
   color: #666a5d;
   margin-top: 9px;
 }
@@ -347,7 +341,7 @@ h1 {
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 11px;
+  font-size: var(--text-caption);
   color: #666956;
 }
 .day-weather > span svg {
@@ -363,7 +357,7 @@ h1 {
   font-weight: 500;
 }
 .day-weather small {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #676a5e;
   display: flex;
   gap: 5px;
@@ -405,7 +399,7 @@ h1 {
   border: 0;
   background: transparent;
   padding: 4px 7px;
-  font-size: 10px;
+  font-size: var(--text-caption);
   min-width: 29px;
   color: #636a58;
 }
@@ -421,7 +415,7 @@ h1 {
   padding: 6px 7px;
   border: 0;
   background: transparent;
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #5c6b4d;
 }
 .next-day:hover {
@@ -478,14 +472,14 @@ h1 {
   min-width: 0;
 }
 .stat-card > div > span {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #66685c;
   display: block;
   margin: 1px 0 7px;
 }
 .stat-card strong {
-  font-family: Georgia, serif;
-  font-size: 26px;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
   font-weight: 400;
   letter-spacing: -0.6px;
   display: block;
@@ -495,7 +489,7 @@ h1 {
 .stat-card em {
   font-family: inherit;
   font-style: normal;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: #656a5c;
   margin-left: 6px;
   letter-spacing: 0;
@@ -504,7 +498,7 @@ h1 {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #66695c;
   white-space: nowrap;
   margin-top: 10px;
@@ -539,20 +533,20 @@ h1 {
 .section-kicker {
   display: block;
   color: #64695a;
-  font-size: 10px;
+  font-size: var(--text-caption);
   font-weight: 500;
   letter-spacing: 1.4px;
   margin-bottom: 7px;
 }
 .section-heading h2 {
-  font-size: 23px;
+  font-size: var(--text-xl);
   color: #3b513b;
 }
 .live-label {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #656b59;
   white-space: nowrap;
 }
@@ -604,7 +598,7 @@ h1 {
   align-items: center;
   padding: 15px 17px;
   gap: 17px;
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #676a5d;
 }
 .map-footer > span {
@@ -628,7 +622,7 @@ h1 {
 }
 .map-instruction {
   margin-left: auto;
-  font-size: 10px;
+  font-size: var(--text-caption);
 }
 .pond-tabs {
   display: grid;
@@ -667,13 +661,13 @@ h1 {
   min-width: 0;
 }
 .pond-tab strong {
-  font-size: 10px;
+  font-size: var(--text-caption);
   font-weight: 500;
   display: block;
 }
 .pond-tab small {
   display: block;
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #64695a;
   margin-top: 5px;
   overflow: hidden;
@@ -706,25 +700,25 @@ h1 {
   flex-shrink: 0;
 }
 .objective-banner .section-kicker {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #656954;
   letter-spacing: 1.3px;
 }
 .objective-banner h3 {
-  font-family: Georgia, serif;
+  font-family: var(--font-display);
   font-weight: 400;
-  font-size: 20px;
+  font-size: var(--text-lg);
   color: #586745;
   margin-bottom: 6px;
 }
 .objective-banner p {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #656b55;
   line-height: 1.5;
 }
 .objective-banner .button {
   margin-left: auto;
-  font-size: 10px;
+  font-size: var(--text-caption);
   white-space: nowrap;
   padding: 10px 12px;
 }
@@ -734,7 +728,7 @@ h1 {
   gap: 8px;
   margin: 17px 4px;
   color: #656a5b;
-  font-size: 10px;
+  font-size: var(--text-caption);
   line-height: 1.6;
 }
 .nature-note > svg {
@@ -747,7 +741,7 @@ h1 {
   white-space: nowrap;
   border: 0;
   background: transparent;
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #5e6d52;
   margin-left: auto;
 }
@@ -762,25 +756,25 @@ h1 {
   position: relative;
 }
 .pond-panel-heading > .section-kicker {
-  font-size: 10px;
+  font-size: var(--text-caption);
   letter-spacing: 1.6px;
   padding-top: 2px;
   margin-bottom: 13px;
 }
 .pond-panel-heading h2 {
-  font-size: 27px;
+  font-size: var(--text-xl);
   margin-bottom: 7px;
   color: #34533e;
 }
 .pond-panel-heading p {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #66695b;
 }
 .pond-panel-heading p span {
   padding: 0 4px;
 }
 .status-badge {
-  font-size: 10px;
+  font-size: var(--text-caption);
   display: flex;
   align-items: center;
   gap: 4px;
@@ -858,14 +852,14 @@ h1 {
   height: 3px;
 }
 .fish-profile h3 {
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 500;
   color: #566349;
   margin-top: 7px;
 }
 .fish-profile > p {
-  font-family: Georgia, serif;
-  font-size: 10px;
+  font-family: var(--font-display);
+  font-size: var(--text-caption);
   font-style: italic;
   color: #68695d;
   margin-top: 5px;
@@ -883,8 +877,8 @@ h1 {
   border: 0;
 }
 .pond-numbers strong {
-  font-family: Georgia, serif;
-  font-size: 23px;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
   font-weight: 400;
   color: #476043;
   display: block;
@@ -893,12 +887,12 @@ h1 {
 }
 .pond-numbers strong small {
   font-family: inherit;
-  font-size: 10px;
+  font-size: var(--text-caption);
   margin-left: 3px;
   color: #656a5a;
 }
 .pond-numbers span {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #666a5c;
   display: block;
   margin-top: 5px;
@@ -911,7 +905,7 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 10px;
+  font-size: var(--text-caption);
 }
 .growth-section > div:first-child > span {
   display: flex;
@@ -920,7 +914,7 @@ h1 {
   color: #626c55;
 }
 .growth-section strong {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #5f6d4e;
   font-weight: 500;
 }
@@ -938,7 +932,7 @@ h1 {
   transition: width 0.4s;
 }
 .growth-section p {
-  font-size: 10px;
+  font-size: var(--text-caption);
   text-align: right;
   color: #65695b;
 }
@@ -952,7 +946,7 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 10px;
+  font-size: var(--text-caption);
 }
 .meter-label > span {
   display: flex;
@@ -964,7 +958,7 @@ h1 {
   color: #646b5b;
 }
 .meter-label strong {
-  font-size: 10px;
+  font-size: var(--text-caption);
   font-weight: 500;
   color: #636a57;
 }
@@ -1011,7 +1005,7 @@ h1 {
   min-height: 38px;
   border: 1px solid transparent;
   border-radius: 5px;
-  font-size: 11px;
+  font-size: var(--text-caption);
   font-weight: 500;
   line-height: 1.35;
 }
@@ -1029,7 +1023,7 @@ h1 {
   width: 100%;
 }
 .button.full small {
-  font-size: 10px;
+  font-size: var(--text-caption);
   opacity: 0.6;
   margin-left: auto;
   white-space: nowrap;
@@ -1064,7 +1058,7 @@ h1 {
 .pond-actions .button {
   justify-content: flex-start;
   padding: 11px 12px;
-  font-size: 10px;
+  font-size: var(--text-caption);
 }
 .upgrade-link {
   display: flex;
@@ -1078,7 +1072,7 @@ h1 {
   margin-top: 19px;
   background: none;
   color: #646b5b;
-  font-size: 10px;
+  font-size: var(--text-caption);
 }
 .upgrade-link:hover {
   color: #49633b;
@@ -1099,14 +1093,14 @@ h1 {
   margin: 0 auto 25px;
 }
 .empty-pond h3 {
-  font-family: Georgia, serif;
-  font-size: 23px;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
   font-weight: 400;
   color: #566e4e;
   line-height: 1.3;
 }
 .empty-pond p {
-  font-size: 11px;
+  font-size: var(--text-caption);
   color: #636a58;
   line-height: 1.85;
   margin: 16px 0;
@@ -1118,17 +1112,17 @@ h1 {
   padding: 20px 0;
   margin-top: 20px;
   border-top: 1px solid var(--line);
-  font-size: 11px;
+  font-size: var(--text-caption);
   color: #616c57;
 }
 .build-cost strong {
-  font-family: Georgia, serif;
-  font-size: 23px;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
   font-weight: 400;
   color: #526b47;
 }
 .empty-pond > small {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #646a5b;
   display: block;
   margin-top: 16px;
@@ -1140,14 +1134,14 @@ h1 {
   color: #5f6a59;
 }
 .empty-stock h3 {
-  font-family: Georgia, serif;
+  font-family: var(--font-display);
   font-weight: 400;
-  font-size: 22px;
+  font-size: var(--text-xl);
   margin-top: 16px;
   color: #596e4e;
 }
 .empty-stock p {
-  font-size: 10px;
+  font-size: var(--text-caption);
   line-height: 1.6;
   margin: 10px 0 19px;
   color: #646b5c;
@@ -1160,19 +1154,19 @@ h1 {
   border-top: 1px solid var(--line);
   padding: 23px 0;
   margin-top: 27px;
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #676a5d;
 }
 .main-footer > span:first-child {
   display: flex;
   gap: 7px;
   align-items: center;
-  font-family: Georgia, serif;
-  font-size: 12px;
+  font-family: var(--font-display);
+  font-size: var(--text-caption);
   color: #616b58;
 }
 .main-footer > span:last-child {
-  font-size: 10px;
+  font-size: var(--text-caption);
   letter-spacing: 1.2px;
 }
 .market-layout {
@@ -1188,7 +1182,7 @@ h1 {
   min-width: 0;
 }
 .pill {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #626b55;
   border: 1px solid #e4e8d9;
   padding: 6px 9px;
@@ -1239,17 +1233,17 @@ h1 {
   gap: 3px;
   padding: 4px 6px;
   background: #fcfcf8ba;
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #616a5d;
   border-radius: 4px;
 }
 .market-species-card h3 {
-  font-size: 11px;
+  font-size: var(--text-caption);
   color: #4e6746;
   padding: 0 13px;
 }
 .market-species-card > p {
-  font-size: 10px;
+  font-size: var(--text-caption);
   line-height: 1.7;
   color: #656a5a;
   margin: 9px 13px 14px;
@@ -1266,20 +1260,20 @@ h1 {
   flex-wrap: wrap;
 }
 .market-price strong {
-  font-family: Georgia, serif;
+  font-family: var(--font-display);
   font-weight: 400;
-  font-size: 21px;
+  font-size: var(--text-lg);
   color: #4d6744;
   white-space: nowrap;
 }
 .market-price strong small {
   font-family: inherit;
   color: #646a59;
-  font-size: 10px;
+  font-size: var(--text-caption);
   margin-left: 4px;
 }
 .market-price > span {
-  font-size: 10px;
+  font-size: var(--text-caption);
 }
 .positive {
   color: #576f4b !important;
@@ -1297,7 +1291,7 @@ h1 {
   display: flex;
   justify-content: space-between;
   gap: 6px;
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #64695c;
 }
 .species-facts b {
@@ -1312,7 +1306,7 @@ h1 {
   color: #5d6c54;
 }
 .market-callout > p {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #636a5a;
   line-height: 1.6;
 }
@@ -1323,7 +1317,7 @@ h1 {
   align-items: center;
   gap: 4px;
   color: #5f6d52;
-  font-size: 10px;
+  font-size: var(--text-caption);
   white-space: nowrap;
   margin-left: auto;
 }
@@ -1337,7 +1331,7 @@ h1 {
 }
 .food-shop > p {
   margin: 0 23px;
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #636b58;
 }
 .food-shop > p strong {
@@ -1369,18 +1363,18 @@ h1 {
   margin-bottom: 12px;
 }
 .food-pack > strong {
-  font-family: Georgia, serif;
-  font-size: 27px;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
   font-weight: 400;
   color: #596d47;
 }
 .food-pack > span {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #616c51;
   margin-top: 7px;
 }
 .food-pack > small {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #656b57;
   margin-top: 5px;
 }
@@ -1393,7 +1387,7 @@ h1 {
   background: #eaf0d8;
   color: #5e6d4b;
   font-weight: 500;
-  font-size: 10px;
+  font-size: var(--text-caption);
   padding: 11px 0;
   margin-top: 18px;
 }
@@ -1405,7 +1399,7 @@ h1 {
   padding: 24px;
 }
 .finance-card h2 {
-  font-size: 25px;
+  font-size: var(--text-xl);
   color: #586f47;
   line-height: 1.3;
 }
@@ -1413,14 +1407,14 @@ h1 {
   margin-top: 25px;
 }
 .finance-balance > span {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #616a53;
   display: block;
   margin-bottom: 8px;
 }
 .finance-balance strong {
-  font-family: Georgia, serif;
-  font-size: 36px;
+  font-family: var(--font-display);
+  font-size: var(--text-title);
   font-weight: 400;
   color: #4e6e3e;
 }
@@ -1429,7 +1423,7 @@ h1 {
   margin: 17px 0 20px;
 }
 .finance-row {
-  font-size: 10px;
+  font-size: var(--text-caption);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1439,13 +1433,13 @@ h1 {
 }
 .finance-row > strong {
   font-weight: 500;
-  font-size: 11px;
+  font-size: var(--text-caption);
   color: #5d6d4b;
 }
 .finance-card > .hint {
   border-top: 1px solid #dfe6cd;
   padding-top: 15px;
-  font-size: 10px;
+  font-size: var(--text-caption);
 }
 .aid-card {
   border-top: 1px solid #dfe6cd;
@@ -1454,20 +1448,20 @@ h1 {
   color: #616b52;
 }
 .aid-card h3 {
-  font-family: Georgia, serif;
-  font-size: 21px;
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
   font-weight: 400;
   color: #5c6e4a;
   margin-top: 10px;
 }
 .aid-card p {
-  font-size: 10px;
+  font-size: var(--text-caption);
   line-height: 1.85;
   margin: 12px 0;
   color: #626b54;
 }
 .aid-card > small {
-  font-size: 10px;
+  font-size: var(--text-caption);
   display: block;
   margin-top: 10px;
 }
@@ -1481,7 +1475,7 @@ h1 {
 .journal-filters > button {
   border: 1px solid #e4e7d7;
   background: transparent;
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #636b57;
   border-radius: 20px;
   padding: 8px 15px;
@@ -1528,19 +1522,19 @@ h1 {
   color: #596d65;
 }
 .journal-entry small {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #646959;
   letter-spacing: 1px;
 }
 .journal-entry p {
-  font-size: 11px;
+  font-size: var(--text-caption);
   color: #606b53;
   line-height: 1.6;
   margin-top: 6px;
 }
 .journal-limit {
   padding: 15px 23px;
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #636958;
   border-top: 1px solid var(--line);
 }
@@ -1551,13 +1545,13 @@ h1 {
 }
 .empty-journal h3 {
   margin: 19px 0 8px;
-  font-family: Georgia, serif;
-  font-size: 24px;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
   font-weight: 400;
   color: #5d6d51;
 }
 .empty-journal p {
-  font-size: 11px;
+  font-size: var(--text-caption);
   color: #626b58;
 }
 .guide-intro {
@@ -1571,11 +1565,11 @@ h1 {
   color: #606d4d;
 }
 .guide-intro h2 {
-  font-size: 31px;
+  font-size: var(--text-title);
   color: #566f47;
 }
 .guide-intro p {
-  font-size: 11px;
+  font-size: var(--text-caption);
   line-height: 1.7;
   margin-top: 9px;
   color: #616c53;
@@ -1607,13 +1601,13 @@ h1 {
   width: 20px;
 }
 .guide-card h3 {
-  font-family: Georgia, serif;
+  font-family: var(--font-display);
   font-weight: 400;
-  font-size: 24px;
+  font-size: var(--text-xl);
   color: #54704a;
 }
 .guide-card p {
-  font-size: 11px;
+  font-size: var(--text-caption);
   line-height: 1.9;
   color: #616c57;
   margin-top: 12px;
@@ -1623,7 +1617,7 @@ h1 {
   gap: 10px;
   align-items: center;
   color: #63695b;
-  font-size: 10px;
+  font-size: var(--text-caption);
   line-height: 1.7;
   margin: 23px 4px;
 }
@@ -1658,7 +1652,7 @@ h1 {
   margin-bottom: 19px;
 }
 .modal-heading h2 {
-  font-size: 29px;
+  font-size: var(--text-title);
   line-height: 1.2;
   color: #365a42;
 }
@@ -1667,7 +1661,7 @@ h1 {
   flex-shrink: 0;
 }
 .modal-intro {
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.85;
   color: #616c56;
   margin: 15px 0 23px;
@@ -1705,18 +1699,18 @@ h1 {
   color: #5c6c4d;
 }
 .species-option strong {
-  font-size: 11px;
+  font-size: var(--text-caption);
   display: block;
   color: #596e49;
 }
 .species-option small {
-  font-size: 10px;
+  font-size: var(--text-caption);
   display: block;
   margin-top: 6px;
   color: #636b59;
 }
 .field-label {
-  font-size: 11px;
+  font-size: var(--text-caption);
   color: #5f6d52;
   display: flex;
   align-items: center;
@@ -1724,7 +1718,7 @@ h1 {
   margin-bottom: 10px;
 }
 .field-label span {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #646b59;
 }
 .quantity-input {
@@ -1761,7 +1755,7 @@ h1 {
   flex-shrink: 0;
 }
 .hint {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #646a59;
   line-height: 1.8;
   margin: 13px 0 20px;
@@ -1773,18 +1767,18 @@ h1 {
   gap: 15px;
   padding: 17px 0;
   border-top: 1px solid #e1e6d3;
-  font-size: 11px;
+  font-size: var(--text-caption);
   color: #626c56;
 }
 .checkout-line strong {
-  font-family: Georgia, serif;
-  font-size: 23px;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
   font-weight: 400;
   color: #556f42;
   white-space: nowrap;
 }
 .inline-error {
-  font-size: 11px;
+  font-size: var(--text-caption);
   color: #8e5c45;
   line-height: 1.5;
   margin-top: 12px;
@@ -1803,7 +1797,7 @@ h1 {
 .center {
   text-align: center;
   color: #576f4a;
-  font-size: 17px;
+  font-size: var(--text-lg);
 }
 .harvest-hero {
   display: flex;
@@ -1821,13 +1815,13 @@ h1 {
   margin-bottom: 12px;
 }
 .harvest-hero strong {
-  font-family: Georgia, serif;
-  font-size: 43px;
+  font-family: var(--font-display);
+  font-size: var(--text-display);
   font-weight: 400;
   color: #4b723c;
 }
 .harvest-hero > span {
-  font-size: 11px;
+  font-size: var(--text-caption);
   color: #5d6c4f;
   margin-top: 8px;
 }
@@ -1863,25 +1857,25 @@ h1 {
   min-width: 0;
 }
 .objective-item h3 {
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: #5b6d4c;
 }
 .objective-item p {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #646b5a;
   line-height: 1.6;
   margin: 6px 0;
 }
 .objective-item small {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #5e6c4a;
 }
 .objective-item .button {
-  font-size: 10px;
+  font-size: var(--text-caption);
   padding: 9px 11px;
 }
 .objective-count {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #646a59;
   white-space: nowrap;
 }
@@ -1902,7 +1896,7 @@ h1 {
   opacity: 0.7;
 }
 .claimed-label {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #5e6c4e;
 }
 .claimed .objective-check {
@@ -1917,7 +1911,7 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: #5a6e4a;
   margin: 20px 0;
 }
@@ -1944,13 +1938,13 @@ h1 {
   flex: 1;
 }
 .settings-action strong {
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 500;
   display: block;
   color: #5a6e4b;
 }
 .settings-action small {
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #636a58;
   line-height: 1.6;
   display: block;
@@ -1966,7 +1960,7 @@ h1 {
   color: #79644e;
 }
 .settings-danger p {
-  font-size: 11px;
+  font-size: var(--text-caption);
   line-height: 1.8;
   color: #786451;
   margin: 12px 0 18px;
@@ -1985,7 +1979,7 @@ h1 {
   align-items: center;
   justify-content: center;
   gap: 5px;
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: #64695b;
   margin-top: 20px;
 }
@@ -2006,7 +2000,7 @@ h1 {
   gap: 12px;
   max-width: 620px;
   width: max-content;
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.6;
   animation: fade-in 0.2s;
 }
@@ -2027,7 +2021,7 @@ h1 {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 11px;
+  font-size: var(--text-caption);
   line-height: 1.7;
   background: #fbefd7;
   color: #7a653d;
@@ -2042,7 +2036,7 @@ h1 {
   text-decoration: underline;
   color: inherit;
   margin-left: auto;
-  font-size: 11px;
+  font-size: var(--text-caption);
 }
 @keyframes drift {
   0%,
@@ -2100,7 +2094,7 @@ h1 {
     padding: 26px;
   }
   .pond-panel-heading h2 {
-    font-size: 31px;
+    font-size: var(--text-title);
   }
   .fish-illustration {
     height: 100px;
@@ -2109,25 +2103,25 @@ h1 {
     padding: 24px;
   }
   .stat-card > div > span {
-    font-size: 11px;
+    font-size: var(--text-caption);
   }
   .stat-card small {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .section-heading {
     padding: 24px 26px;
   }
   .section-heading h2 {
-    font-size: 27px;
+    font-size: var(--text-xl);
   }
   .map-footer {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .pond-tab strong {
-    font-size: 11px;
+    font-size: var(--text-caption);
   }
   .pond-tab small {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .pond-tabs {
     gap: 13px;
@@ -2137,23 +2131,23 @@ h1 {
     padding: 25px;
   }
   .pond-actions .button {
-    font-size: 11px;
+    font-size: var(--text-caption);
   }
   .meter-label,
   .meter-label strong {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .meter {
     margin-bottom: 16px;
   }
   .growth-section > div:first-child {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .growth-section p {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .pond-numbers span {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .toast {
     left: calc(50% + 122px);
@@ -2165,12 +2159,12 @@ h1 {
     padding: 30px 14px 16px;
   }
   .brand {
-    font-size: 24px;
+    font-size: var(--text-xl);
     gap: 8px;
     padding: 0 5px;
   }
   .brand small {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .workspace {
     margin-left: 192px;
@@ -2202,10 +2196,10 @@ h1 {
     width: 18px;
   }
   .stat-card strong {
-    font-size: 24px;
+    font-size: var(--text-xl);
   }
   .stat-card small {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .stats-grid {
     gap: 11px;
@@ -2226,10 +2220,10 @@ h1 {
     padding: 20px 18px;
   }
   .section-heading h2 {
-    font-size: 21px;
+    font-size: var(--text-lg);
   }
   .live-label {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .pond-tab {
     gap: 7px;
@@ -2239,25 +2233,25 @@ h1 {
     padding: 6px;
   }
   .pond-tab strong {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .pond-tab small {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .level-card {
     padding: 13px 10px;
   }
   .level-card strong {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .level-icon {
     padding: 5px;
   }
   .settings-button {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .sidebar-footer {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .market-layout {
     grid-template-columns: minmax(0, 1fr) 250px;
@@ -2268,30 +2262,30 @@ h1 {
     gap: 10px;
   }
   .market-species-card > p {
-    font-size: 10px;
+    font-size: var(--text-caption);
     min-height: 55px;
   }
   .market-species-card h3 {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .market-price strong {
-    font-size: 18px;
+    font-size: var(--text-lg);
   }
   .species-facts > span {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .food-packs {
     padding: 20px 17px 0;
     gap: 10px;
   }
   .food-pack > b {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .finance-card {
     padding: 20px;
   }
   .finance-card h2 {
-    font-size: 23px;
+    font-size: var(--text-xl);
   }
   .market-callout {
     margin: 17px;
@@ -2311,14 +2305,14 @@ h1 {
     padding-right: 11px;
   }
   .brand {
-    font-size: 22px;
+    font-size: var(--text-xl);
     padding-left: 2px;
   }
   .brand-mark svg {
     width: 23px;
   }
   .brand small {
-    font-size: 10px;
+    font-size: var(--text-caption);
     letter-spacing: 1.3px;
   }
   .workspace {
@@ -2326,24 +2320,24 @@ h1 {
     width: calc(100% - 174px);
   }
   .nav-item {
-    font-size: 11px;
+    font-size: var(--text-caption);
     padding: 13px 12px;
   }
   .nav-caption {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .sidebar-footer {
     white-space: normal;
     line-height: 1.8;
   }
   .level-card strong {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .level-card p {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .settings-button {
-    font-size: 10px;
+    font-size: var(--text-caption);
     gap: 6px;
   }
   main {
@@ -2356,10 +2350,10 @@ h1 {
     padding: 18px;
   }
   .stat-card > div > span {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .stat-card small {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .stat-icon {
     width: 38px;
@@ -2376,17 +2370,17 @@ h1 {
     padding: 17px;
   }
   .pond-panel-heading h2 {
-    font-size: 25px;
+    font-size: var(--text-xl);
   }
   .status-badge {
-    font-size: 10px;
+    font-size: var(--text-caption);
     padding: 5px;
   }
   .section-heading {
     padding: 18px 15px;
   }
   .section-heading h2 {
-    font-size: 19px;
+    font-size: var(--text-lg);
   }
   .live-label {
     display: none;
@@ -2398,10 +2392,10 @@ h1 {
     padding: 11px;
   }
   .pond-tab strong {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .pond-tab small {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .objective-banner .button {
     margin-left: 0;
@@ -2409,7 +2403,7 @@ h1 {
     margin-top: 4px;
   }
   .objective-banner h3 {
-    font-size: 18px;
+    font-size: var(--text-lg);
   }
   .objective-icon {
     width: 35px;
@@ -2422,13 +2416,13 @@ h1 {
     flex: 1;
   }
   .map-footer {
-    font-size: 10px;
+    font-size: var(--text-caption);
     padding: 12px;
     gap: 12px;
   }
   .nature-note {
     flex-wrap: wrap;
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .nature-note > span {
     flex: 1;
@@ -2448,14 +2442,14 @@ h1 {
     gap: 15px;
   }
   .eyebrow {
-    font-size: 10px;
+    font-size: var(--text-caption);
     letter-spacing: 1.2px;
   }
   h1 {
-    font-size: 38px;
+    font-size: var(--text-display);
   }
   .page-heading p {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .market-layout {
     grid-template-columns: 1fr;
@@ -2469,17 +2463,17 @@ h1 {
     display: block;
   }
   .market-species-card h3 {
-    font-size: 12px;
+    font-size: var(--text-caption);
   }
   .market-species-card > p {
-    font-size: 10px;
+    font-size: var(--text-caption);
     min-height: 50px;
   }
   .species-facts > span {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .food-pack > b {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .main-footer > span:last-child {
     display: none;
@@ -2538,13 +2532,13 @@ h1 {
   .save-indicator {
     margin-left: auto;
     margin-right: 14px;
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .mobile-settings {
     display: flex !important;
   }
   .breadcrumb {
-    font-size: 10px;
+    font-size: var(--text-caption);
     gap: 7px;
   }
   main {
@@ -2565,16 +2559,16 @@ h1 {
     padding: 22px;
   }
   .guide-card h3 {
-    font-size: 22px;
+    font-size: var(--text-xl);
   }
   .guide-card p {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .guide-intro {
     padding: 25px;
   }
   .guide-intro h2 {
-    font-size: 26px;
+    font-size: var(--text-xl);
   }
 }
 @media (max-width: 680px) {
@@ -2609,7 +2603,7 @@ h1 {
     gap: 5px;
     width: 25%;
     padding: 9px 0;
-    font-size: 10px;
+    font-size: var(--text-caption);
     border-radius: 0;
     background: transparent !important;
     color: #636b59;
@@ -2620,7 +2614,7 @@ h1 {
   }
   .nav-item > span:not(.nav-count) {
     display: block !important;
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .nav-item.active:before {
     content: "";
@@ -2648,10 +2642,10 @@ h1 {
     background: #fafbf4;
   }
   .breadcrumb {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .save-indicator {
-    font-size: 10px;
+    font-size: var(--text-caption);
     gap: 4px;
     margin-right: 8px;
   }
@@ -2674,15 +2668,15 @@ h1 {
     width: 100%;
   }
   .eyebrow {
-    font-size: 10px;
+    font-size: var(--text-caption);
     letter-spacing: 1.5px;
     margin-bottom: 9px;
   }
   h1 {
-    font-size: 41px;
+    font-size: var(--text-display);
   }
   .page-heading p {
-    font-size: 11px;
+    font-size: var(--text-caption);
     margin-top: 8px;
   }
   .time-widget {
@@ -2699,11 +2693,11 @@ h1 {
     gap: 7px;
   }
   .day-weather > span {
-    font-size: 10px;
+    font-size: var(--text-caption);
     gap: 5px;
   }
   .day-weather small {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .day-weather svg {
     width: 13px;
@@ -2712,13 +2706,13 @@ h1 {
     gap: 3px;
   }
   .next-day {
-    font-size: 10px;
+    font-size: var(--text-caption);
     gap: 6px;
     padding-right: 4px;
     padding-left: 3px;
   }
   .speed-button {
-    font-size: 10px;
+    font-size: var(--text-caption);
     padding: 4px;
     min-width: 24px;
   }
@@ -2744,19 +2738,19 @@ h1 {
     width: 17px;
   }
   .stat-card > div > span {
-    font-size: 10px;
+    font-size: var(--text-caption);
     margin-top: 0;
     margin-bottom: 7px;
   }
   .stat-card strong {
-    font-size: 25px;
+    font-size: var(--text-xl);
   }
   .stat-card em {
-    font-size: 10px;
+    font-size: var(--text-caption);
     margin-left: 4px;
   }
   .stat-card small {
-    font-size: 10px;
+    font-size: var(--text-caption);
     gap: 4px;
     margin-top: 9px;
     white-space: normal;
@@ -2775,18 +2769,18 @@ h1 {
     padding: 19px 18px;
   }
   .section-heading h2 {
-    font-size: 22px;
+    font-size: var(--text-xl);
   }
   .section-kicker {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .live-label {
     display: flex;
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .map-footer {
     padding: 12px 15px;
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .farm-map {
     min-height: 215px;
@@ -2807,10 +2801,10 @@ h1 {
     width: 16px;
   }
   .pond-tab strong {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .pond-tab small {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .pond-tab > svg {
     width: 10px;
@@ -2829,13 +2823,13 @@ h1 {
     min-width: 180px;
   }
   .objective-banner h3 {
-    font-size: 21px;
+    font-size: var(--text-lg);
   }
   .objective-banner p {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .nature-note {
-    font-size: 10px;
+    font-size: var(--text-caption);
     margin: 15px 4px 0;
     gap: 6px;
   }
@@ -2844,23 +2838,23 @@ h1 {
   }
   .nature-note button {
     margin-left: 22px;
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .pond-panel {
     width: 100%;
     padding: 23px;
   }
   .pond-panel-heading h2 {
-    font-size: 32px;
+    font-size: var(--text-title);
   }
   .pond-panel-heading p {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .pond-panel-heading > .section-kicker {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .status-badge {
-    font-size: 10px;
+    font-size: var(--text-caption);
     padding: 6px 8px;
     top: 0;
   }
@@ -2872,27 +2866,27 @@ h1 {
     height: 70px;
   }
   .fish-profile h3 {
-    font-size: 14px;
+    font-size: var(--text-small);
   }
   .fish-profile > p {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .pond-numbers strong {
-    font-size: 28px;
+    font-size: var(--text-xl);
   }
   .pond-numbers span {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .growth-section > div:first-child,
   .growth-section strong {
-    font-size: 11px;
+    font-size: var(--text-caption);
   }
   .growth-section p {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .meter-label,
   .meter-label strong {
-    font-size: 11px;
+    font-size: var(--text-caption);
   }
   .meter {
     margin-bottom: 18px;
@@ -2905,22 +2899,22 @@ h1 {
     gap: 10px;
   }
   .pond-actions .button {
-    font-size: 12px;
+    font-size: var(--text-caption);
     padding: 13px 15px;
   }
   .button.full small {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .upgrade-link {
-    font-size: 11px;
+    font-size: var(--text-caption);
     padding-top: 19px;
     margin-top: 23px;
   }
   .empty-pond p {
-    font-size: 12px;
+    font-size: var(--text-caption);
   }
   .empty-stock p {
-    font-size: 12px;
+    font-size: var(--text-caption);
   }
   .market-species {
     grid-template-columns: 1fr;
@@ -2948,13 +2942,13 @@ h1 {
     grid-column: 2;
     padding: 0;
     margin-top: 3px;
-    font-size: 12px;
+    font-size: var(--text-caption);
   }
   .market-species-card > p {
     grid-column: 2;
     margin: 8px 0;
     min-height: 0;
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .market-price {
     grid-column: 2;
@@ -2962,7 +2956,7 @@ h1 {
     padding: 5px 0 12px;
   }
   .market-price strong {
-    font-size: 23px;
+    font-size: var(--text-xl);
   }
   .species-facts {
     grid-column: 1/3;
@@ -2974,7 +2968,7 @@ h1 {
   .species-facts > span {
     flex-direction: column;
     gap: 7px;
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .market-callout {
     margin: 18px;
@@ -2983,7 +2977,7 @@ h1 {
     margin-top: 22px;
   }
   .food-shop > p {
-    font-size: 10px;
+    font-size: var(--text-caption);
     margin: 0 18px;
     line-height: 1.8;
   }
@@ -2995,17 +2989,17 @@ h1 {
     padding: 16px 8px 0;
   }
   .food-pack > strong {
-    font-size: 25px;
+    font-size: var(--text-xl);
   }
   .food-pack > span {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .food-pack > small {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .food-pack > b {
     width: calc(100% + 16px);
-    font-size: 10px;
+    font-size: var(--text-caption);
     gap: 3px;
     padding: 11px 2px;
     white-space: nowrap;
@@ -3017,26 +3011,26 @@ h1 {
     padding: 25px;
   }
   .finance-card h2 {
-    font-size: 28px;
+    font-size: var(--text-xl);
   }
   .finance-row {
-    font-size: 12px;
+    font-size: var(--text-caption);
   }
   .finance-row > strong {
-    font-size: 12px;
+    font-size: var(--text-caption);
   }
   .finance-card > .hint {
-    font-size: 11px;
+    font-size: var(--text-caption);
   }
   .aid-card p {
-    font-size: 12px;
+    font-size: var(--text-caption);
   }
   .journal-filters {
     padding: 0 18px 18px;
     gap: 7px;
   }
   .journal-filters > button {
-    font-size: 10px;
+    font-size: var(--text-caption);
     padding: 8px 12px;
   }
   .journal-entries {
@@ -3046,10 +3040,10 @@ h1 {
     gap: 13px;
   }
   .journal-entry p {
-    font-size: 11px;
+    font-size: var(--text-caption);
   }
   .journal-limit {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .guide-intro {
     padding: 23px;
@@ -3060,11 +3054,11 @@ h1 {
     width: 24px;
   }
   .guide-intro h2 {
-    font-size: 27px;
+    font-size: var(--text-xl);
     line-height: 1.2;
   }
   .guide-intro p {
-    font-size: 11px;
+    font-size: var(--text-caption);
   }
   .guide-grid {
     grid-template-columns: 1fr;
@@ -3075,21 +3069,21 @@ h1 {
     padding: 24px;
   }
   .guide-card h3 {
-    font-size: 26px;
+    font-size: var(--text-xl);
   }
   .guide-card p {
-    font-size: 12px;
+    font-size: var(--text-caption);
   }
   .simulation-note {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .main-footer {
     margin-top: 24px;
     padding: 20px 0 10px;
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .main-footer > span:first-child {
-    font-size: 12px;
+    font-size: var(--text-caption);
   }
   .modal-backdrop {
     padding: 14px;
@@ -3100,7 +3094,7 @@ h1 {
     border-radius: 11px;
   }
   .modal-heading h2 {
-    font-size: 27px;
+    font-size: var(--text-xl);
   }
   .toast {
     left: 16px;
@@ -3110,7 +3104,7 @@ h1 {
     width: auto;
     transform: none;
     padding: 13px;
-    font-size: 11px;
+    font-size: var(--text-caption);
     gap: 9px;
   }
   .toast > button {
@@ -3121,13 +3115,13 @@ h1 {
   }
   .objective-item .button {
     padding: 8px;
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .objective-item h3 {
-    font-size: 11px;
+    font-size: var(--text-caption);
   }
   .objective-item p {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .objective-check {
     width: 29px;
@@ -3135,20 +3129,20 @@ h1 {
   }
   .objective-count,
   .claimed-label {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .button-row {
     flex-wrap: wrap;
   }
   .storage-banner {
     align-items: flex-start;
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .storage-banner button {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .settings-note {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -3163,7 +3157,7 @@ h1 {
 
 /* Keep supporting text legible at every screen size. */
 .brand small {
-  font-size: 7px;
+  font-size: var(--text-caption);
   letter-spacing: 1.5px;
 }
 .sidebar-footer {
@@ -3177,10 +3171,10 @@ h1 {
 .nav-caption,
 .section-kicker,
 .eyebrow {
-  font-size: 9px;
+  font-size: var(--text-caption);
 }
 .live-label {
-  font-size: 10px;
+  font-size: var(--text-caption);
 }
 .map-footer {
   flex-wrap: wrap;
@@ -3190,13 +3184,13 @@ h1 {
   scroll-margin-top: 18px;
 }
 .pond-panel-heading > .section-kicker {
-  font-size: 9px;
+  font-size: var(--text-caption);
 }
 .map-instruction {
   display: none !important;
 }
 .status-badge {
-  font-size: 9px;
+  font-size: var(--text-caption);
 }
 .brand small {
   color: #67715c;
@@ -3208,10 +3202,10 @@ h1 {
   opacity: 1;
 }
 .stat-card > div > span {
-  font-size: 11px;
+  font-size: var(--text-caption);
 }
 .pond-numbers span {
-  font-size: 10px;
+  font-size: var(--text-caption);
 }
 .growth-section p {
   line-height: 1.6;
@@ -3225,23 +3219,23 @@ h1 {
 }
 @media (max-width: 1050px) {
   .brand small {
-    font-size: 6px;
+    font-size: var(--text-caption);
     letter-spacing: 1px;
   }
   .nav-caption {
-    font-size: 8px;
+    font-size: var(--text-caption);
   }
   .live-label {
     display: none;
   }
   .objective-banner .section-kicker {
-    font-size: 8px;
+    font-size: var(--text-caption);
   }
   .stat-card > div > span {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .stat-card small {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
 }
 @media (max-width: 680px) {
@@ -3249,56 +3243,56 @@ h1 {
     display: none;
   }
   .page-heading .eyebrow {
-    font-size: 8px;
+    font-size: var(--text-caption);
   }
   .pond-tab small {
-    font-size: 9px;
+    font-size: var(--text-caption);
   }
   .pond-tab strong {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .stat-card small {
-    font-size: 9px;
+    font-size: var(--text-caption);
   }
   .stat-card > div > span {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .objective-banner .section-kicker {
-    font-size: 9px;
+    font-size: var(--text-caption);
   }
   .food-pack > b {
-    font-size: 9px;
+    font-size: var(--text-caption);
   }
   .nav-item > span:not(.nav-count) {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .day-weather > span {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .next-day {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .status-badge {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .meter-label,
   .meter-label strong {
-    font-size: 12px;
+    font-size: var(--text-caption);
   }
   .growth-section p {
-    font-size: 11px;
+    font-size: var(--text-caption);
   }
   .pond-panel-heading p {
-    font-size: 11px;
+    font-size: var(--text-caption);
   }
   .pond-numbers span {
-    font-size: 11px;
+    font-size: var(--text-caption);
   }
   .nature-note {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .save-indicator {
-    font-size: 9px;
+    font-size: var(--text-caption);
   }
   .main-footer > span:last-child {
     display: none;
