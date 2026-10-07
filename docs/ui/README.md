@@ -4,7 +4,7 @@ Le [suivi des sous-lots](PROGRESSION.md) fait foi pour choisir la prochaine tâc
 
 ## Captures à partir du lot 1a
 
-Ne pas relancer la matrice historique : **uniquement les écrans modifiés**, en JPEG/WebP, avec fenêtres de 1440×900 et 390×844, **5 Mo maximum par sous-lot**. Pour reproduire la sélection du lot 1a, démarrer Vite, puis lancer `node scripts/ui-capture-lot1a.mjs`. Ce script produit des captures de la fenêtre, sans étirer la hauteur du document, et vérifie le budget. Le manifeste de `apres/lot-1a/` indique tailles, état moteur et position de défilement. Les vues défilantes restent celles de la V3 jusqu’au lot 1b.
+Ne pas relancer la matrice historique : **uniquement les écrans modifiés**, en JPEG/WebP, avec fenêtres de 1440×900 et 390×844, **5 Mo maximum par sous-lot**. Pour reproduire la sélection du lot 1a, démarrer Vite, puis lancer `node scripts/ui-capture-lot1a.mjs`. Ce script produit des captures de la fenêtre, sans étirer la hauteur du document, et vérifie le budget. Le manifeste de `apres/lot-1a/` indique tailles, état moteur et position de défilement. Au lot 1b, `node scripts/capture-lot-1b.mjs` capture le monde aux sept stades et les six panneaux au-dessus du même canvas. Seul le contenu des panneaux défile. Les anciennes matrices testent explicitement le repli sans WebGL pour les contrôles DOM ; `ui-lot1b.spec.ts` exerce le vrai renderer et la persistance aux trois tailles PC.
 
 ## Méthode historique du lot 0 (ne pas relancer)
 

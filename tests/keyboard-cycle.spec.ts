@@ -1,3 +1,4 @@
+import { withoutWebGL } from "./ui-helpers";
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { STORAGE_KEY, type Game } from "../src/game";
 
@@ -34,14 +35,15 @@ test("1a : du terrain vide au paiement, uniquement au clavier en 1280×800", asy
   page.on("pageerror", e => errors.push(e.message));
   const current = (): Promise<Game> => page.evaluate(key => JSON.parse(localStorage.getItem(key)!), STORAGE_KEY);
   const press = async (target: Locator) => { await tabTo(page, target); await page.keyboard.press("Enter"); };
-  const step = () => press(page.getByTestId("next-task").getByRole("button"));
+  const step = () => press(page.getByTestId("task-action"));
   const button = (name: string | RegExp) => page.getByRole("button", { name, exact: typeof name === "string" });
+  await withoutWebGL(page);
   await page.goto("/");
   expect((await current()).ponds.every(p => !p.built && !p.count)).toBe(true);
-  await step(); await step();
+  await step(); await step(); await step();
   await press(button("Choisir : Truite arc-en-ciel · Les Saules"));
   await step(); await step();
-  await expect(page.getByTestId("day")).toHaveText("Jour 17");
+  await expect(page.getByTestId("day")).toHaveAttribute("data-day", "17");
   await step(); await step(); await step();
   await press(button("Commander 100 kg"));
   await step(); await step();

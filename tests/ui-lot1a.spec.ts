@@ -1,12 +1,13 @@
 import { expect, test, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { readFileSync } from "node:fs";
+import { withoutWebGL } from "./ui-helpers";
 import { act, parseSave, STORAGE_KEY } from "../src/game";
 
-const screens = ["Mon projet", "Mes bassins", "Logistique", "Marché", "Journal", "Guide"];
+const screens = ["Construire", "Bassins", "Logistique", "Finances", "Journal", "Guide"];
 const states = ["terrain-vide", "chantier", "elevage", "contrat-client", "lot-au-froid", "expedition", "cycle-paye"];
 async function seed(page: Page, name: string) {
-  await page.goto("/");
+  if (page.url() === "about:blank") await page.goto("/");
   await page.evaluate(({ raw, key }) => { localStorage.clear(); localStorage.setItem(key, raw); }, {
     raw: readFileSync(`docs/ui/fixtures/${name}.json`, "utf8"), key: STORAGE_KEY,
   });
@@ -24,28 +25,34 @@ async function typography(page: Page) {
   });
 }
 async function noOverlap(page: Page, selectors: string[]) {
-  const boxes = await page.locator(selectors.join(",")).evaluateAll(es => es
-    .filter(e => e.getClientRects().length)
-    .map(e => { const r = e.getBoundingClientRect(); return { label: e.className, x: r.x, y: r.y, right: r.right, bottom: r.bottom }; }));
-  for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) {
-    const a = boxes[i], b = boxes[j];
-    expect(a.x < b.right && a.right > b.x && a.y < b.bottom && a.bottom > b.y, `${a.label} / ${b.label}`).toBe(false);
-  }
+  // ResizeObserver positions overlays after a viewport change; assert the settled layout.
+  await expect.poll(async () => {
+    const boxes = await page.locator(selectors.join(",")).evaluateAll(es => es
+      .filter(e => e.getClientRects().length)
+      .map(e => { const r = e.getBoundingClientRect(); return { label: e.className || e.textContent, x: r.x, y: r.y, right: r.right, bottom: r.bottom }; }));
+    const overlaps = [];
+    for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) {
+      const a = boxes[i], b = boxes[j];
+      if (a.x < b.right && a.right > b.x && a.y < b.bottom && a.bottom > b.y) overlaps.push([a.label, b.label]);
+    }
+    return overlaps;
+  }).toEqual([]);
 }
+
 for (const [width, height] of [[1920,1080], [1440,900], [1280,800], [1280,720], [390,844]]) {
   test(`1a : typographie des sept étapes et six vues en ${width}×${height}`, async ({ page }, info) => {
     test.setTimeout(180000);
+    await withoutWebGL(page);
     await page.setViewportSize({ width, height });
     const measures = [];
     for (const state of states) {
       await seed(page, state);
-      await noOverlap(page, [".hud-resources", ".time-widget", ".save-indicator", ".mobile-settings"]);
-      await noOverlap(page, [".sidebar .nav-item"]);
+      await noOverlap(page, [".hud-resources", ".hud-date", ".hud-clock", ".hud-utilities"]);
+      await noOverlap(page, [".game-dock button"]);
       for (const name of screens) {
         await page.getByRole("navigation").getByRole("button", { name, exact: true }).click();
-        if (name === "Mes bassins") {
-          await page.locator(".scene-site-plan .map-name").first().waitFor();
-          await noOverlap(page, [".scene-bottom", ".scene-pond-picker", ".scene-toolbar"]);
+        if (name === "Bassins") {
+          await noOverlap(page, [".game-hud", ".goal-hud", ".management-panel", ".game-dock"]);
           if (state === "elevage" || state === "contrat-client") await page.locator(".water-details summary").click();
           const clipped = await page.locator(".water-grid > div").evaluateAll(cells => cells.filter(cell => cell.getClientRects().length).filter(cell =>
             [...cell.querySelectorAll("dd")].some(dd => {
@@ -68,6 +75,7 @@ for (const [width, height] of [[1920,1080], [1440,900], [1280,800], [1280,720], 
 for (const [width,height] of [[1440,900], [390,844]]) {
   test(`1a : axe, fontes et libellés de carte à ${width}×${height}`, async ({ page }, info) => {
     test.setTimeout(120000);
+    await withoutWebGL(page);
     await page.setViewportSize({ width, height });
     await seed(page, "contrat-client");
     const fonts = await page.evaluate(() => ["Inter", "Fraunces"].map(family => ({ family,
@@ -77,8 +85,8 @@ for (const [width,height] of [[1440,900], [390,844]]) {
     expect(fonts.every(f => f.loaded && f.checked)).toBe(true);
     for (const name of screens) {
       await page.getByRole("navigation").getByRole("button", { name, exact: true }).click();
-      if (name === "Mes bassins") {
-        const labels = page.locator(".scene-site-plan .map-name");
+      if (name === "Bassins") {
+        const labels = page.locator(".world-fallback .map-name");
         await expect(labels).toHaveCount(4);
         const sizes = await labels.evaluateAll(es => es.map(e => parseFloat(getComputedStyle(e).fontSize)));
         expect(Math.min(...sizes)).toBeGreaterThanOrEqual(12);
@@ -102,6 +110,7 @@ for (const [width,height] of [[1440,900], [390,844]]) {
 }
 
 test("1a : focus du dialogue et explication de désactivation au clavier", async ({ page }) => {
+  await withoutWebGL(page);
   await seed(page, "chantier");
   const settings = page.getByRole("button", { name: "Paramètres & sauvegarde", exact: true });
   await settings.focus(); await page.keyboard.press("Enter");
@@ -127,8 +136,9 @@ test("1a : focus du dialogue et explication de désactivation au clavier", async
 test("1a : les fenêtres de gestion respectent le plancher de texte et axe", async ({ page }) => {
   test.setTimeout(120000);
   await page.setViewportSize({ width: 390, height: 844 });
+  await withoutWebGL(page);
   await seed(page, "cycle-paye");
-  await page.getByRole("navigation").getByRole("button", { name: "Mes bassins", exact: true }).click();
+  await page.getByRole("navigation").getByRole("button", { name: "Bassins", exact: true }).click();
   const verify = async () => {
     await expect(page.getByRole("dialog")).toBeVisible();
     expect((await typography(page)).tooSmall).toEqual([]);
@@ -137,18 +147,19 @@ test("1a : les fenêtres de gestion respectent le plancher de texte et axe", asy
   };
   await page.getByRole("button", { name: "Commander des juvéniles", exact: true }).click(); await verify();
   await page.getByRole("button", { name: "Améliorer ce bassin", exact: true }).click(); await verify();
-  await page.locator(".objective-banner button").click(); await verify();
+  await page.getByRole("button", { name: "Voir les objectifs", exact: true }).click(); await verify();
   const planned = act(parseSave(readFileSync("docs/ui/fixtures/chantier.json", "utf8")), { type: "plan", pondId: 3, species: "trout" });
   expect(planned.ok).toBe(true);
   await page.getByRole("button", { name: "Paramètres & sauvegarde", exact: true }).click();
   await page.getByLabel("Fichier de sauvegarde").setInputFiles({ name: "planned.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(planned.game)) });
-  await page.getByRole("button", { name: "Sélectionner Le Pré neuf", exact: true }).click();
+  await page.getByLabel("Bassin sélectionné", {exact:true}).selectOption("3");
   await page.getByRole("button", { name: "Aménager le bassin", exact: true }).click(); await verify();
   await page.getByRole("button", { name: "Paramètres & sauvegarde", exact: true }).click();
   await page.getByRole("button", { name: "Nouvelle partie", exact: false }).click(); await verify();
 });
 
 test("1a : la réduction de mouvement et le plancher typographique résistent à 80 %", async ({ page }) => {
+  await withoutWebGL(page);
   await seed(page, "terrain-vide");
   await page.evaluate(() => { document.documentElement.style.fontSize = "80%"; });
   expect((await typography(page)).tooSmall).toEqual([]);
@@ -160,15 +171,13 @@ test("1a : la réduction de mouvement et le plancher typographique résistent à
 test("1a : textes et superpositions des vues 3D sur PC et mobile", async ({ page }) => {
   test.setTimeout(180000);
   await seed(page, "contrat-client");
-  await page.getByRole("navigation").getByRole("button", { name: "Mes bassins", exact: true }).click();
-  await page.getByRole("button", { name: "Explorer en 3D", exact: true }).click();
   await expect(page.locator('canvas[data-engine="three-webgl"]')).toHaveAttribute("data-frame", "rendered", { timeout: 60000 });
   for (const [width,height] of [[1440,900], [390,844]]) {
     await page.setViewportSize({ width, height });
     for (const name of ["La ferme", "Le bassin", "Bâtiments", "Les poissons"]) {
-      await page.getByRole("button", { name, exact: true }).click();
+      await page.getByLabel("Vue du terrain", {exact:true}).selectOption({label:name});
       expect((await typography(page)).tooSmall).toEqual([]);
-      await noOverlap(page, [".scene-toolbar", ".scene-location", ".scene-bottom", ".scene-pond-picker", ".species-picker", ".photo-observation", ".fish-observation"]);
+      await noOverlap(page, [".game-hud", ".goal-hud", ".game-dock", ".world-controls", ".fish-inspector"]);
     }
     expect((await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze()).violations).toEqual([]);
   }

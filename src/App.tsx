@@ -1,7 +1,14 @@
+import { GameHud, GoalHud, Dock } from "./hud/GameHud";
+import { WorldControls, FishObservation } from "./world/WorldControls";
+import type { SceneMode } from "./world/types";
+import { ManagementPanel } from "./panels/ManagementPanel";
+import { PondPanel, FinancePanel, JournalPanel, MarketPrices } from "./panels/LegacyPanels";
+import { PANELS, usePanelNavigation } from "./state/navigation";
 import { Dialog as Modal } from "./ui/Dialog";
 import { formatMoney as euro, formatUnitPrice, formatEngineText, plural } from "./ui/format";
 import {
   useCallback,
+  useLayoutEffect,
   useEffect,
   useRef,
   useState,
@@ -12,31 +19,13 @@ import {
   ArrowRight,
   ArrowUpRight,
   Award,
-  BookOpen,
   Check,
-  CheckCheck,
   ChevronRight,
-  CircleHelp,
-  CloudSun,
-  Coins,
   Droplets,
-  Fish,
-  Heart,
-  Leaf,
   LockKeyhole,
-  Map,
   Minus,
-  Package,
-  Pause,
-  Play,
   Plus,
-  Settings2,
-  ShoppingBasket,
-  SkipForward,
   Sprout,
-  Sun,
-  TrendingUp,
-  Waves,
   Wind,
   X,
   AlertTriangle,
@@ -46,51 +35,34 @@ import {
 import { FishArt } from "./FishArt";
 import { lazy, Suspense } from "react";
 const FarmScene = lazy(() => import("./FarmScene"));
-import WaterPanel from "./WaterPanel";
-import ProjectPanel, { Journey, LogisticsPanel } from "./ProjectPanel";
+import ProjectPanel, { LogisticsPanel } from "./ProjectPanel";
 import {
   STOCK_FREIGHT,
-  FEED_FREIGHT,
-  feedCapacity,
-  reservedFood,
   type Task,
 } from "./development";
 import Guide from "./RealismGuide";
 import {
   act,
-  biomass,
   CONSTRUCTION_COST,
   CONSTRUCTION_DAYS,
   LEGACY_STORAGE_KEY,
   V2_STORAGE_KEY,
   advanceGuided,
-  cleaningCost,
   compatible,
   facilityName,
-  simDate,
-  costBreakdown,
-  dailyCost,
-  feedNeeded,
-  FOOD_PACKS,
-  harvestReady,
   initialGame,
   level,
-  marketPrice,
   nextDay,
   number,
   OBJECTIVES,
   parseSave,
-  pondStatus,
-  population,
   SPECIES,
   STORAGE_KEY,
   UPGRADE_COST,
-  weather,
   type Action,
   type Game,
   type Pond,
   type SpeciesId,
-  type View,
 } from "./game";
 
 type ModalKind =
@@ -241,7 +213,12 @@ export default function App() {
   const [storageBlocked, setStorageBlocked] = useState(boot.blocked);
   const [storageError, setStorageError] = useState(boot.error);
   const [saved, setSaved] = useState(false);
-  const [view, setView] = useState<View>("project");
+  const {panel, open: navigate, toggle: togglePanel, close: closePanel} = usePanelNavigation();
+  const [worldMode, setWorldMode] = useState<SceneMode>("farm");
+  const [species, setSpecies] = useState<SpeciesId>("trout");
+  const [clearWater, setClearWater] = useState(false);
+  const [cameraReset, setCameraReset] = useState(0);
+  const [waterOpen, setWaterOpen] = useState(false);
   const [selected, setSelected] = useState(1);
   const [running, setRunning] = useState(false);
   const [speed, setSpeed] = useState(1);
@@ -251,16 +228,22 @@ export default function App() {
   const [notice, setNotice] = useState<{ text: string; ok: boolean } | null>(
     null,
   );
-  const [journalFilter, setJournalFilter] = useState("all");
   const fileInput = useRef<HTMLInputElement>(null);
   const pond = game.ponds.find((p) => p.id === selected)!;
-  const today = weather(game.day);
-  const nextObjective = OBJECTIVES.find((o) => !game.claimed.includes(o.id));
-  const activePonds = game.ponds.filter((p) => p.count);
-  const averageHealth = activePonds.length
-    ? activePonds.reduce((s, p) => s + p.health, 0) / activePonds.length
-    : 100;
-  const totalBiomass = game.ponds.reduce((s, p) => s + biomass(p), 0);
+  useLayoutEffect(() => {
+    const shell = document.querySelector<HTMLElement>(".game-shell")!;
+    const hud = shell.querySelector<HTMLElement>(".game-hud")!;
+    const goal = shell.querySelector<HTMLElement>(".goal-hud")!;
+    const measure = () => {
+      shell.style.setProperty("--hud-bottom", `${hud.getBoundingClientRect().bottom + 12}px`);
+      shell.style.setProperty("--goal-bottom", `${goal.getBoundingClientRect().bottom + 8}px`);
+    };
+    const observer = new ResizeObserver(measure);
+    observer.observe(hud); observer.observe(goal);
+    window.addEventListener("resize", measure);
+    measure();
+    return () => {observer.disconnect(); window.removeEventListener("resize", measure);};
+  }, []);
   const close = useCallback(() => {
     setModal(null);
     setResetConfirm(false);
@@ -305,23 +288,25 @@ export default function App() {
     const timer = setTimeout(() => setNotice(null), 5000);
     return () => clearTimeout(timer);
   }, [notice]);
-  function navigate(next: View) {
-    setView(next);
-    window.scrollTo({ top: 0, behavior: "instant" });
-  }
-  function selectPond(id: number) {
+  const selectPond = useCallback((id: number) => {
     setSelected(id);
-    if (window.innerWidth <= 680)
-      requestAnimationFrame(() =>
-        document.querySelector(".pond-panel")?.scrollIntoView({
-          behavior: window.matchMedia("(prefers-reduced-motion: reduce)")
-            .matches
-            ? "instant"
-            : "smooth",
-          block: "start",
-        }),
-      );
-  }
+    navigate("ponds");
+  }, [navigate]);
+  useEffect(() => {
+    const handle = (e: KeyboardEvent) => {
+      if (modal || e.defaultPrevented || e.isComposing) return;
+      if (e.key === "Escape") {
+        e.preventDefault();
+        if (panel) closePanel(); else setModal("settings");
+      }
+      const match = PANELS.find(p => p.key.toLowerCase() === e.key.toLowerCase());
+      if (e.altKey && !e.ctrlKey && !e.metaKey && match) {
+        e.preventDefault(); togglePanel(match.id);
+      }
+    };
+    window.addEventListener("keydown", handle);
+    return () => window.removeEventListener("keydown", handle);
+  }, [modal, panel, closePanel, togglePanel]);
   function perform(action: Action, dismiss = false) {
     const result = act(game, action);
     if (result.ok) {
@@ -347,19 +332,8 @@ export default function App() {
       });
     } else if (task.target) {
       if (task.pondId) setSelected(task.pondId);
-      if (task.urgent && task.target === "ponds")
-        requestAnimationFrame(() => {
-          const detail =
-            document.querySelector<HTMLDetailsElement>(".water-details");
-          if (detail) detail.open = true;
-        });
+      if (task.urgent && task.target === "ponds") setWaterOpen(true);
       navigate(task.target);
-      if (task.target === "project")
-        requestAnimationFrame(() =>
-          document
-            .getElementById("project-plots")
-            ?.scrollIntoView({ block: "start" }),
-        );
     }
   }
   function exportSave() {
@@ -400,923 +374,34 @@ export default function App() {
     }
     if (fileInput.current) fileInput.current.value = "";
   }
-  const viewNames: Record<View, string> = {
-    project: "Mon projet",
-    logistics: "Chaîne logistique",
-    ponds: "Mes bassins",
-    market: "Le marché",
-    journal: "Le journal de bord",
-    guide: "Le guide des Étangs",
-  };
-  const nav = [
-    { id: "project" as View, label: "Mon projet", icon: <Sprout size={19} /> },
-    {
-      id: "logistics" as View,
-      label: "Logistique",
-      icon: <Package size={19} />,
-    },
-    { id: "ponds" as View, label: "Mes bassins", icon: <Map size={19} /> },
-    {
-      id: "market" as View,
-      label: "Marché",
-      icon: <ShoppingBasket size={19} />,
-    },
-    { id: "journal" as View, label: "Journal", icon: <BookOpen size={19} /> },
-    { id: "guide" as View, label: "Guide", icon: <CircleHelp size={19} /> },
-  ];
   return (
     <>
-      <div className="app-shell" inert={modal ? true : undefined}>
-        <aside className="sidebar">
-          <a
-            className="brand"
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              navigate("project");
-            }}
-            aria-label="Les Étangs, accueil"
-          >
-            <span className="brand-mark">
-              <Fish size={25} />
-              <Waves size={25} />
-            </span>
-            <span>
-              Les Étangs<small>LA VIE AU FIL DE L’EAU</small>
-            </span>
-          </a>
-          <div className="sidebar-rule" />
-          <span className="nav-caption">VOTRE EXPLOITATION</span>
-          <nav aria-label="Navigation principale">
-            {nav.map((item) => (
-              <button
-                key={item.id}
-                aria-label={item.label}
-                className={`nav-item ${view === item.id ? "active" : ""}`}
-                aria-current={view === item.id ? "page" : undefined}
-                onClick={() => navigate(item.id)}
-              >
-                {item.icon}
-                <span>{item.label}</span>
-                {item.id === "ponds" && (
-                  <span className="nav-count">
-                    {game.ponds.filter((p) => p.built).length}
-                  </span>
-                )}
-              </button>
-            ))}
-          </nav>
-          <div className="sidebar-bottom">
-            <div className="level-card">
-              <div>
-                <span className="level-icon">
-                  <Sprout size={20} />
-                </span>
-                <span>
-                  <strong>
-                    {
-                      [
-                        "",
-                        "Apprenti pisciculteur",
-                        "Éleveur attentionné",
-                        "Gardien des eaux",
-                        "Artisan pisciculteur",
-                        "Maître des Étangs",
-                      ][level(game)]
-                    }
-                  </strong>
-                  <small>Niveau {level(game)}</small>
-                </span>
-              </div>
-              <div className="level-track">
-                <span
-                  style={{
-                    width: `${level(game) === 5 ? 100 : game.xp % 100}%`,
-                  }}
-                />
-              </div>
-              <p>
-                {level(game) === 5
-                  ? "Vous avez trouvé votre rythme."
-                  : `${100 - (game.xp % 100)} XP avant le prochain niveau`}
-              </p>
-            </div>
-            <button
-              className="settings-button"
-              onClick={() => setModal("settings")}
-            >
-              <Settings2 size={18} />
-              <span>Paramètres & sauvegarde</span>
-            </button>
-            <div className="sidebar-footer">
-              <span className="online-dot" /> Une petite ferme, de grandes
-              idées.
-            </div>
-          </div>
-        </aside>
-        <div className="workspace">
-          <header className="topbar">
-            <div className="hud-resources" aria-label="Ressources">
-              <div><span>Trésorerie</span><strong className="money-value" data-testid="money">{euro(game.money)}</strong></div>
-              <div><span>Aliments</span><strong>{number(game.food, 1)} kg</strong></div>
-            </div>
-              <div className="time-widget">
-                <div className="day-weather">
-                  <span>
-                    <Sun size={16} /> {today.season} <b>·</b>{" "}
-                    <strong data-testid="day">Jour {game.day}</strong>
-                    <span className="simulation-date">{simDate(game.day)}</span>
-                  </span>
-                  <small>
-                    <CloudSun size={15} />
-                    {today.label} · air {today.temperature} °C
-                  </small>
-                </div>
-                <div className="time-controls">
-                  <button
-                    className={`icon-button play-button ${running ? "is-running" : ""}`}
-                    title={running ? "Mettre en pause" : "Lancer la simulation"}
-                    aria-label={
-                      running ? "Mettre en pause" : "Lancer la simulation"
-                    }
-                    onClick={() => setRunning(!running)}
-                  >
-                    {running ? <Pause size={15} /> : <Play size={15} />}
-                  </button>
-                  <button
-                    className="speed-button"
-                    aria-label={`Vitesse ${speed}, passer à ${[1, 3, 12, 60][([1, 3, 12, 60].indexOf(speed) + 1) % 4]}`}
-                    onClick={() =>
-                      setSpeed(
-                        [1, 3, 12, 60][([1, 3, 12, 60].indexOf(speed) + 1) % 4],
-                      )
-                    }
-                  >
-                    ×{speed}
-                  </button>
-                  <span className="control-divider" />
-                  <button
-                    className="next-day"
-                    onClick={() => setGame((g) => nextDay(g))}
-                  >
-                    Jour suivant <SkipForward size={14} />
-                  </button>
-                </div>
-              </div>
-            <div className="save-indicator">
-              {saved && !storageError ? (
-                <CheckCheck size={15} />
-              ) : (
-                <AlertTriangle size={15} />
-              )}
-              <span>
-                {saved && !storageError
-                  ? "Partie sauvegardée"
-                  : "Sauvegarde à vérifier"}
-              </span>
-            </div>
-            <button
-              className="mobile-settings icon-button"
-              aria-label="Paramètres & sauvegarde"
-              onClick={() => setModal("settings")}
-            >
-              <Settings2 size={19} />
-            </button>
-          </header>
-          <main>
-            {storageError && (
-              <div className="storage-banner" role="alert">
-                <AlertTriangle size={18} />
-                <span>{storageError}</span>
-                <button onClick={() => setModal("settings")}>Paramètres</button>
-              </div>
-            )}
-            <section className="page-heading">
-              <div>
-                <span className="eyebrow">
-                  {view === "ponds"
-                    ? "SIMULATION DE TERRAIN · ÉDITION V3"
-                    : "LA VIE DE VOTRE EXPLOITATION"}
-                </span>
-                <h1>
-                  {viewNames[view]}
-                  <span className="title-dot">.</span>
-                </h1>
-                <p>
-                  {view === "project"
-                    ? "De la première analyse à la première livraison. Une décision à la fois."
-                    : view === "logistics"
-                      ? "Des fournisseurs aux clients : chaque livraison compte."
-                      : view === "ponds"
-                        ? "Observer, comprendre, élever. Au rythme du vivant."
-                        : view === "market"
-                          ? "De belles récoltes font les projets de demain."
-                          : view === "journal"
-                            ? "Chaque petit geste écrit l’histoire de votre ferme."
-                            : "Les bons gestes pour une ferme florissante."}
-                </p>
-              </div>
-            </section>
-            {(view === "project" ||
-              view === "ponds" ||
-              view === "logistics") && (
-              <Journey game={game} follow={followTask} />
-            )}
-            <section className="stats-grid" aria-label="État de l’exploitation">
-              <div className="stat-card">
-                <span className="stat-icon money">
-                  <Coins size={21} />
-                </span>
-                <div>
-                  <span>Trésorerie</span>
-                  <strong className="money-value">{euro(game.money)}</strong>
-                  <small>
-                    <span className="small-dot" /> {euro(-dailyCost(game))} de
-                    charges / jour
-                  </small>
-                </div>
-              </div>
-              <div className="stat-card">
-                <span className="stat-icon blue">
-                  <Fish size={21} />
-                </span>
-                <div>
-                  <span>Poissons en élevage</span>
-                  <strong>
-                    {number(population(game))}
-                    <em>poissons</em>
-                  </strong>
-                  <small>{number(totalBiomass, 1)} kg de biomasse totale</small>
-                </div>
-              </div>
-              <button
-                className="stat-card stat-clickable"
-                onClick={() => navigate("logistics")}
-              >
-                <span className="stat-icon sand">
-                  <Package size={21} />
-                </span>
-                <div>
-                  <span>Réserve d’aliments</span>
-                  <strong>
-                    {number(game.food, 1)}
-                    <em>kg</em>
-                  </strong>
-                  <small>
-                    {game.food < 10
-                      ? "Commandes et livraisons"
-                      : "Suivre les approvisionnements"}{" "}
-                    <ArrowUpRight size={11} />
-                  </small>
-                </div>
-              </button>
-              <div className="stat-card">
-                <span
-                  className={`stat-icon ${averageHealth < 45 ? "pink" : "green"}`}
-                >
-                  <Heart size={21} />
-                </span>
-                <div>
-                  <span>Santé des poissons</span>
-                  <strong>
-                    {activePonds.length ? number(averageHealth) : "—"}
-                    <em>{activePonds.length ? "%" : ""}</em>
-                  </strong>
-                  <small>
-                    <span
-                      className={`small-dot ${averageHealth < 45 ? "warning" : "green"}`}
-                    />
-                    {!activePonds.length
-                      ? "Aucun lot en élevage"
-                      : averageHealth >= 80
-                        ? "Tout le monde se porte bien"
-                        : averageHealth >= 45
-                          ? "Quelques soins feront du bien"
-                          : "Vos poissons ont besoin de soins"}
-                  </small>
-                </div>
-              </div>
-            </section>
-            {view === "project" && (
-              <ProjectPanel game={game} perform={perform} stock={openStock} />
-            )}
-            {view === "logistics" && (
-              <LogisticsPanel game={game} perform={perform} stock={openStock} />
-            )}
-            {view === "ponds" && (
-              <div className="dashboard-grid">
-                <div className="farm-column">
-                  <section className="farm-card">
-                    <div className="section-heading">
-                      <div>
-                        <span className="section-kicker">VUE D’ENSEMBLE</span>
-                        <h2>Le domaine prend vie</h2>
-                      </div>
-                      <span className="live-label">
-                        <span className="small-dot green" />
-                        {running ? "Au fil des jours" : "À votre rythme"}
-                      </span>
-                    </div>
-                    <Suspense
-                      fallback={
-                        <div className="scene-placeholder">
-                          Préparation de la visite 3D…
-                        </div>
-                      }
-                    >
-                      <FarmScene
-                        ponds={game.ponds}
-                        selected={selected}
-                        select={selectPond}
-                        day={game.day}
-                      />
-                    </Suspense>
-                  </section>
-                  <div className="pond-tabs" aria-label="Choisir un bassin">
-                    {game.ponds.map((p) => (
-                      <button
-                        key={p.id}
-                        className={`pond-tab ${p.id === selected ? "selected" : ""}`}
-                        onClick={() => selectPond(p.id)}
-                        aria-pressed={p.id === selected}
-                      >
-                        <span
-                          className={`pond-tab-icon ${!p.built ? "unbuilt" : ""}`}
-                        >
-                          {p.built ? <Waves size={20} /> : <Plus size={20} />}
-                        </span>
-                        <span>
-                          <strong>{p.name}</strong>
-                          <small>
-                            {!p.built
-                              ? `Aménager · ${euro(CONSTRUCTION_COST[p.id - 1])}`
-                              : p.species
-                                ? SPECIES[p.species].name
-                                : "Bassin disponible"}
-                          </small>
-                        </span>
-                        <ChevronRight size={15} />
-                      </button>
-                    ))}
-                  </div>
-                  <section className="objective-banner">
-                    <div className="objective-icon">
-                      <Award size={26} />
-                    </div>
-                    <div>
-                      <span className="section-kicker">
-                        {nextObjective
-                          ? "LE PROCHAIN PETIT PAS"
-                          : "BELLE RÉUSSITE !"}
-                      </span>
-                      <h3>
-                        {nextObjective?.title || "La ferme a trouvé son rythme"}
-                      </h3>
-                      <p>
-                        {nextObjective?.description ||
-                          "Tous les objectifs sont accomplis. L’aventure continue."}
-                      </p>
-                    </div>
-                    <button
-                      className="button light"
-                      onClick={() => setModal("objectives")}
-                    >
-                      {nextObjective &&
-                      nextObjective.progress(game) >= nextObjective.target
-                        ? "Réclamer la récompense"
-                        : "Voir les objectifs"}
-                      <ArrowRight size={16} />
-                    </button>
-                  </section>
-                  <div className="nature-note">
-                    <Leaf size={16} />
-                    <span>
-                      Une bonne eau, des poissons heureux. Pensez à surveiller
-                      vos bassins chaque jour.
-                    </span>
-                    <button onClick={() => navigate("guide")}>
-                      Le guide <ArrowUpRight size={13} />
-                    </button>
-                  </div>
-                </div>
-                <aside
-                  className="pond-panel"
-                  aria-label="Gestion du bassin sélectionné"
-                >
-                  <div className="pond-panel-heading">
-                    <span className="section-kicker">
-                      BASSIN {String(pond.id).padStart(2, "0")}
-                    </span>
-                    <span className={`status-badge ${pondStatus(pond).tone}`}>
-                      <span />
-                      {pondStatus(pond).label}
-                    </span>
-                    <h2>{pond.name}</h2>
-                    <p>
-                      {pond.volume} m³ <span>·</span> {facilityName(pond)}
-                      <br />
-                      {pond.upgrade === 0
-                        ? "Sans aération mécanique"
-                        : pond.upgrade === 1
-                          ? "Aération installée"
-                          : "Aération & filtration"}
-                    </p>
-                  </div>
-                  {!pond.built ? (
-                    <div className="empty-pond">
-                      <span className="empty-pond-icon">
-                        <Sprout size={42} />
-                      </span>
-                      <h3>De la place pour vos idées.</h3>
-                      <p>
-                        Aménagez ce terrain pour accueillir jusqu’à{" "}
-                        {pond.capacity} poissons et faire grandir votre
-                        exploitation.
-                      </p>
-                      <div className="build-cost">
-                        <span>Aménagement</span>
-                        <strong>{euro(CONSTRUCTION_COST[pond.id - 1])}</strong>
-                      </div>
-                      <button
-                        className="button primary full"
-                        onClick={() =>
-                          pond.plannedSpecies
-                            ? setModal("build")
-                            : navigate("project")
-                        }
-                        disabled={pond.constructionDays > 0}
-                      >
-                        {pond.constructionDays
-                          ? `Chantier · encore ${pond.constructionDays} jours`
-                          : pond.plannedSpecies
-                            ? "Aménager le bassin"
-                            : "Choisir une filière"}{" "}
-                        <Plus size={17} />
-                      </button>
-                      <small>
-                        Travaux et mise en service :{" "}
-                        {CONSTRUCTION_DAYS[pond.id - 1]} jours
-                      </small>
-                    </div>
-                  ) : (
-                    <>
-                      {pond.species ? (
-                        <>
-                          <div className="fish-profile">
-                            <div className="fish-illustration">
-                              <FishArt color={SPECIES[pond.species].color} />
-                            </div>
-                            <h3>{SPECIES[pond.species].name}</h3>
-                            <p>{SPECIES[pond.species].latin}</p>
-                          </div>
-                          <div className="pond-numbers">
-                            <div>
-                              <strong>{pond.count}</strong>
-                              <span>poissons</span>
-                            </div>
-                            <div>
-                              <strong>
-                                {number(pond.weight * 1000)}
-                                <small>g</small>
-                              </strong>
-                              <span>poids moyen</span>
-                            </div>
-                            <div>
-                              <strong>
-                                {number(biomass(pond), 1)}
-                                <small>kg</small>
-                              </strong>
-                              <span>biomasse</span>
-                            </div>
-                          </div>
-                          <div className="growth-section">
-                            <div>
-                              <span>
-                                <Sprout size={15} /> Calibre commercial
-                              </span>
-                              <strong>
-                                {Math.min(
-                                  100,
-                                  Math.floor(
-                                    (pond.weight /
-                                      SPECIES[pond.species].harvestWeight) *
-                                      100,
-                                  ),
-                                )}{" "}
-                                %
-                              </strong>
-                            </div>
-                            <div className="growth-track">
-                              <span
-                                style={{
-                                  width: `${Math.min(100, (pond.weight / SPECIES[pond.species].harvestWeight) * 100)}%`,
-                                }}
-                              />
-                            </div>
-                            <p>
-                              {harvestReady(pond)
-                                ? "Calibre atteint : préparez le client et le transport."
-                                : `Vente à ${number(SPECIES[pond.species].harvestWeight * 1000)} g · hier +${number(pond.lastGrowth * 1000, 1)} g/poisson`}
-                            </p>
-                          </div>
-                        </>
-                      ) : (
-                        <div className="empty-stock">
-                          <Fish size={36} />
-                          <h3>Un nouveau départ</h3>
-                          <p>Ce bassin attend ses prochains habitants.</p>
-                          <button
-                            className="button primary full"
-                            onClick={() => setModal("stock")}
-                            disabled={
-                              pond.fallowDays > 0 ||
-                              game.development.orders.some(
-                                (o) => o.pondId === pond.id,
-                              )
-                            }
-                          >
-                            <Plus size={17} />{" "}
-                            {pond.fallowDays
-                              ? `Vide sanitaire · ${pond.fallowDays} jours`
-                              : game.development.orders.some(
-                                    (o) => o.pondId === pond.id,
-                                  )
-                                ? "Juvéniles en livraison"
-                                : "Commander des juvéniles"}
-                          </button>
-                        </div>
-                      )}
-                      <details className="water-details">
-                        <summary>Mesures de l’eau & réglages d’élevage</summary>
-                        <WaterPanel pond={pond} perform={perform} />
-                      </details>
-                      <div className="pond-actions">
-                        {pond.count > 0 && (
-                          <button
-                            className="button primary full"
-                            onClick={() =>
-                              perform({ type: "feed", pondId: pond.id })
-                            }
-                            disabled={pond.feedToday > 0}
-                          >
-                            <Package size={16} />
-                            {pond.feedToday > 0
-                              ? "Ration programmée"
-                              : "Programmer la ration"}
-                            <small>{number(feedNeeded(pond), 1)} kg</small>
-                          </button>
-                        )}
-                        <button
-                          className="button outline full"
-                          onClick={() =>
-                            perform({ type: "clean", pondId: pond.id })
-                          }
-                        >
-                          <Droplets size={16} />
-                          Entretenir & renouveler{" "}
-                          <small>{euro(cleaningCost(pond))}</small>
-                        </button>
-                        {pond.count > 0 && (
-                          <button
-                            className={`button full ${harvestReady(pond) ? "harvest-button" : "muted-button"}`}
-                            onClick={() => navigate("logistics")}
-                            disabled={!harvestReady(pond)}
-                          >
-                            <ShoppingBasket size={16} />
-                            {harvestReady(pond)
-                              ? "Préparer la vente"
-                              : "Laissons-les grandir"}
-                            {harvestReady(pond) && (
-                              <small>{number(biomass(pond), 1)} kg</small>
-                            )}
-                          </button>
-                        )}
-                      </div>
-                      <button
-                        className="upgrade-link"
-                        onClick={() => setModal("upgrade")}
-                        disabled={pond.upgrade >= 2}
-                      >
-                        {pond.upgrade >= 2 ? (
-                          <Check size={15} />
-                        ) : (
-                          <Settings2 size={15} />
-                        )}{" "}
-                        {pond.upgrade >= 2
-                          ? "Bassin entièrement équipé"
-                          : "Améliorer ce bassin"}
-                        {pond.upgrade < 2 && <ArrowUpRight size={14} />}
-                      </button>
-                    </>
-                  )}
-                </aside>
-              </div>
-            )}
-            {view === "market" && (
-              <div className="market-layout">
-                <section className="market-main">
-                  <div className="section-heading">
-                    <div>
-                      <span className="section-kicker">
-                        PRIX DU SCÉNARIO · JOUR {game.day}
-                      </span>
-                      <h2>De l’étang à l’étal</h2>
-                    </div>
-                    <span className="pill">
-                      <TrendingUp size={14} /> Prix indicatifs
-                    </span>
-                  </div>
-                  <div className="market-species">
-                    {Object.values(SPECIES).map((s) => (
-                      <article className="market-species-card" key={s.id}>
-                        <div className={`species-art ${s.id}`}>
-                          <FishArt color={s.color} />
-                          {level(game) < s.level && (
-                            <span className="species-level">
-                              <LockKeyhole size={12} /> Niveau {s.level}
-                            </span>
-                          )}
-                        </div>
-                        <h3>{s.name}</h3>
-                        <p>{s.description}</p>
-                        <div className="market-price">
-                          <strong>
-                            {formatUnitPrice(marketPrice(s.id, game.day))}
-                            <small>/ kg</small>
-                          </strong>
-                          <span
-                            className={
-                              marketPrice(s.id, game.day) >= s.price
-                                ? "positive"
-                                : "negative"
-                            }
-                          >
-                            {marketPrice(s.id, game.day) >= s.price ? "+" : ""}
-                            {number(
-                              (marketPrice(s.id, game.day) / s.price - 1) * 100,
-                              1,
-                            )}{" "}
-                            %
-                          </span>
-                        </div>
-                        <div className="species-facts">
-                          <span>
-                            Alevin <b>{formatUnitPrice(s.seedPrice)}</b>
-                          </span>
-                          <span>
-                            Poids de vente <b>{s.harvestWeight * 1000} g</b>
-                          </span>
-                          <span>
-                            Eau préférée <b>{s.temperature.join("–")} °C</b>
-                          </span>
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                  <div className="market-callout">
-                    <Fish size={19} />
-                    <p>
-                      Réservez un client, récoltez au calibre commercial, puis
-                      organisez le transport dans la chaîne logistique.
-                    </p>
-                    <button onClick={() => navigate("logistics")}>
-                      Logistique <ArrowRight size={15} />
-                    </button>
-                  </div>
-                  <section className="food-shop">
-                    <div className="section-heading">
-                      <div>
-                        <span className="section-kicker">LE GARDE-MANGER</span>
-                        <h2>À chaque jour, son festin.</h2>
-                      </div>
-                      <Package size={23} />
-                    </div>
-                    <p>
-                      Aliments adaptés à l’espèce, livraison sous 2 jours. Stock
-                      actuel : <strong>{number(game.food, 1)} kg</strong>.
-                    </p>
-                    <div className="food-packs">
-                      {FOOD_PACKS.map((pack, i) => (
-                        <button
-                          key={pack.kg}
-                          className="food-pack"
-                          onClick={() => perform({ type: "food", pack: i })}
-                          disabled={
-                            !game.development.surveyed ||
-                            game.money < pack.cost + FEED_FREIGHT ||
-                            reservedFood(game) + pack.kg > feedCapacity(game)
-                          }
-                        >
-                          <Package size={27} />
-                          <strong>{pack.kg} kg</strong>
-                          <span>
-                            {i === 0
-                              ? "Le petit sac"
-                              : i === 1
-                                ? "La bonne réserve"
-                                : "Le grand format"}
-                          </span>
-                          <small>{formatUnitPrice(pack.cost / pack.kg)} / kg</small>
-                          <b>
-                            Commander · {euro(pack.cost + FEED_FREIGHT)}{" "}
-                            <Plus size={14} />
-                          </b>
-                        </button>
-                      ))}
-                    </div>
-                  </section>
-                </section>
-                <aside className="finance-card">
-                  <span className="section-kicker">LE CARNET DE COMPTES</span>
-                  <h2>Une ferme qui dure</h2>
-                  <div className="finance-balance">
-                    <span>Votre trésorerie</span>
-                    <strong>{euro(game.money)}</strong>
-                  </div>
-                  <svg
-                    className="finance-chart"
-                    viewBox="0 0 280 95"
-                    role="img"
-                    aria-label={`Évolution de la trésorerie sur ${game.history.length} journées`}
-                  >
-                    <path
-                      d="M0 80H280M0 40H280"
-                      stroke="#dce5d4"
-                      strokeDasharray="3 5"
-                    />
-                    {(() => {
-                      const max = Math.max(
-                        1,
-                        ...game.history.map((h) => h.money),
-                      );
-                      const points = game.history.map(
-                        (h, i) =>
-                          `${(i / Math.max(1, game.history.length - 1)) * 275 + 2},${85 - (h.money / max) * 72}`,
-                      );
-                      if (points.length === 1)
-                        points.push(
-                          `277,${85 - (game.history[0].money / max) * 72}`,
-                        );
-                      return (
-                        <polyline
-                          points={points.join(" ")}
-                          stroke="#427d5c"
-                          strokeWidth="2.5"
-                          fill="none"
-                        />
-                      );
-                    })()}
-                  </svg>
-                  <div className="finance-row">
-                    <span>Revenus des récoltes</span>
-                    <strong className="positive">
-                      +{euro(game.stats.income)}
-                    </strong>
-                  </div>
-                  <div className="finance-row">
-                    <span>Dépenses cumulées</span>
-                    <strong>{euro(-game.stats.expenses)}</strong>
-                  </div>
-                  <div className="finance-row">
-                    <span>Volume vendu</span>
-                    <strong>{number(game.stats.soldKg, 1)} kg</strong>
-                  </div>
-                  <div className="finance-row">
-                    <span>Charges quotidiennes</span>
-                    <strong>{euro(dailyCost(game))}</strong>
-                  </div>
-                  <div className="finance-row">
-                    <span>Travail / jour</span>
-                    <strong>{euro(costBreakdown(game).labour)}</strong>
-                  </div>
-                  <div className="finance-row">
-                    <span>Électricité / jour</span>
-                    <strong>{euro(costBreakdown(game).electricity)}</strong>
-                  </div>
-                  <div className="finance-row">
-                    <span>Eau / jour</span>
-                    <strong>{euro(costBreakdown(game).water)}</strong>
-                  </div>
-                  <p className="hint">
-                    Montants de scénario, hors foncier, financement et
-                    fiscalité. Le chauffage est compris dans l’électricité.
-                  </p>
-                  <p className="hint">
-                    Les primes d’objectifs et aides s’ajoutent à votre
-                    trésorerie, séparément des revenus de récolte.
-                  </p>
-                  <div className="aid-card">
-                    <Heart size={18} />
-                    <h3>Un coup de pouce ?</h3>
-                    <p>
-                      Aide pédagogique fictive : 5 000 € et jusqu’à 100 kg
-                      d’aliments sous 1 000 € de trésorerie, une fois tous les
-                      90 jours. Désactivée en mode expert.
-                    </p>
-                    <button
-                      className="button outline full"
-                      onClick={() => perform({ type: "aid" })}
-                      disabled={
-                        game.mode === "expert" ||
-                        game.money >= 1000 ||
-                        game.day - game.lastAidDay < 90
-                      }
-                    >
-                      Demander l’aide
-                    </button>
-                    {game.day - game.lastAidDay < 90 && (
-                      <small>
-                        Prochaine aide à partir du jour {game.lastAidDay + 90}
-                      </small>
-                    )}
-                  </div>
-                </aside>
-              </div>
-            )}
-            {view === "journal" && (
-              <section className="journal-card">
-                <div className="section-heading">
-                  <div>
-                    <span className="section-kicker">
-                      LES PETITES ET GRANDES ÉTAPES
-                    </span>
-                    <h2>La mémoire des Étangs</h2>
-                  </div>
-                  <span className="pill">{game.logs.length} événements</span>
-                </div>
-                <div
-                  className="journal-filters"
-                  aria-label="Filtrer les événements"
-                >
-                  {[
-                    ["all", "Tout"],
-                    ["sale", "Récoltes & objectifs"],
-                    ["purchase", "Achats"],
-                    ["warning", "À surveiller"],
-                  ].map(([id, label]) => (
-                    <button
-                      key={id}
-                      className={journalFilter === id ? "active" : ""}
-                      aria-pressed={journalFilter === id}
-                      onClick={() => setJournalFilter(id)}
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
-                <div className="journal-entries">
-                  {game.logs
-                    .filter(
-                      (l) =>
-                        journalFilter === "all" || l.kind === journalFilter,
-                    )
-                    .map((l, i) => (
-                      <article
-                        className="journal-entry"
-                        key={`${game.logs.length}-${i}`}
-                      >
-                        <span className={`event-icon ${l.kind}`}>
-                          {l.kind === "sale" ? (
-                            <TrendingUp size={18} />
-                          ) : l.kind === "warning" ? (
-                            <AlertTriangle size={18} />
-                          ) : l.kind === "purchase" ? (
-                            <ShoppingBasket size={18} />
-                          ) : (
-                            <Leaf size={18} />
-                          )}
-                        </span>
-                        <div>
-                          <small>JOUR {l.day}</small>
-                          <p>{formatEngineText(l.text)}</p>
-                        </div>
-                      </article>
-                    ))}
-                  {!game.logs.some(
-                    (l) => journalFilter === "all" || l.kind === journalFilter,
-                  ) && (
-                    <div className="empty-journal">
-                      <BookOpen size={32} />
-                      <h3>Une page encore blanche.</h3>
-                      <p>Les événements de cette catégorie apparaîtront ici.</p>
-                    </div>
-                  )}
-                </div>
-                <p className="journal-limit">
-                  Les 120 événements les plus récents sont conservés.
-                </p>
-              </section>
-            )}
-            {view === "guide" && <Guide />}
-            <footer className="main-footer">
-              <span>
-                <Waves size={15} /> Les Étangs
-              </span>
-              <span>Faites grandir quelque chose de beau.</span>
-              <span>DE LA SOURCE AU CLIENT · V3.0</span>
-            </footer>
-          </main>
-        </div>
+      <div className="game-shell" inert={modal ? true : undefined} data-panel={panel ?? "none"}>
+        <h1 className="sr-only">Les Étangs — votre exploitation</h1>
+        <main className="game-world" aria-label="Le terrain">
+          <Suspense fallback={<div className="world-loading" role="status">Préparation du terrain…</div>}>
+            <FarmScene ponds={game.ponds} selected={selected} select={selectPond} day={game.day}
+              mode={worldMode} species={species} clearWater={clearWater} reset={cameraReset} />
+          </Suspense>
+        </main>
+        <GameHud game={game} saved={saved} storageError={storageError} running={running} speed={speed}
+          toggleRunning={() => setRunning(!running)} changeSpeed={() => setSpeed([1,3,12,60][([1,3,12,60].indexOf(speed)+1)%4])}
+          nextDay={() => setGame(g => nextDay(g))} settings={() => setModal("settings")} alerts={() => navigate("journal")} />
+        <GoalHud game={game} follow={followTask} objectives={() => setModal("objectives")} />
+        <WorldControls mode={worldMode} changeMode={mode => {setWorldMode(mode); if(mode === "fish") {closePanel(); if(pond.species) setSpecies(pond.species);}}} reset={() => setCameraReset(r => r+1)}
+          clearWater={clearWater} underwater={() => {setWorldMode("pond"); setClearWater(v => !v);}}
+          canObserve={pond.count > 0} hiddenOnMobile={!!panel} />
+        {worldMode === "fish" && !panel && <FishObservation species={species} setSpecies={setSpecies} />}
+        {panel && <ManagementPanel id={panel} close={closePanel}>
+          {panel === "project" && <ProjectPanel game={game} perform={perform} stock={openStock} />}
+          {panel === "ponds" && <PondPanel game={game} pond={pond} perform={perform} setModal={setModal}
+            navigate={navigate} select={setSelected} waterOpen={waterOpen} setWaterOpen={setWaterOpen} />}
+          {panel === "logistics" && <><LogisticsPanel game={game} perform={perform} stock={openStock} /><MarketPrices game={game} /></>}
+          {panel === "finance" && <FinancePanel game={game} perform={perform} />}
+          {panel === "journal" && <JournalPanel game={game} />}
+          {panel === "guide" && <Guide />}
+        </ManagementPanel>}
+        <Dock active={panel} open={togglePanel} />
       </div>
       {notice && (
         <div className={`toast ${notice.ok ? "" : "error"}`} role="status">
@@ -1580,7 +665,8 @@ export default function App() {
                           setStorageBlocked(false);
                           setRunning(false);
                           setSelected(1);
-                          setView("project");
+                          closePanel();
+                          setWorldMode("farm");
                           close();
                           setNotice({
                             text: "Une nouvelle aventure commence aux Étangs.",

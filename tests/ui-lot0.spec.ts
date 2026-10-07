@@ -1,11 +1,13 @@
 import { expect, test } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import AxeBuilder from "@axe-core/playwright";
+import { withoutWebGL } from "./ui-helpers";
 import { STORAGE_KEY } from "../src/game";
 
 const seed = readFileSync("docs/ui/fixtures/contrat-client.json", "utf8");
 for (const [width, height] of [[1920,1080], [1440,900], [1280,800], [1280,720], [390,844]]) {
   test(`lot 0 : HUD, portraits, ration et clavier à ${width}×${height}`, async ({ page }, info) => {
+    await withoutWebGL(page);
     await page.setViewportSize({ width, height });
     const external: string[] = [];
     page.on("request", r => { if (/^https?:/.test(r.url()) && new URL(r.url()).hostname !== "127.0.0.1") external.push(r.url()); });
@@ -13,8 +15,9 @@ for (const [width, height] of [[1920,1080], [1440,900], [1280,800], [1280,720], 
     await page.goto("/");
     await page.evaluate(() => document.fonts.ready);
     expect(await page.evaluate(() => document.fonts.check('400 16px "Inter"') && [...document.fonts].some(f => f.family === "Inter" && f.status === "loaded"))).toBe(true);
-    await page.getByRole("navigation").getByRole("button", { name: "Marché", exact: true }).focus();
+    await page.getByRole("navigation").getByRole("button", { name: "Logistique", exact: true }).focus();
     await page.keyboard.press("Enter");
+    await page.getByText("Prix et espèces", {exact:true}).click();
     await expect(page.locator(".market-species-card")).toHaveCount(3);
     for (const portrait of await page.locator(".market-species-card .species-photo").all()) {
       const box = (await portrait.boundingBox())!;
@@ -23,7 +26,7 @@ for (const [width, height] of [[1920,1080], [1440,900], [1280,800], [1280,720], 
       expect(await portrait.evaluate(e => getComputedStyle(e).position)).not.toBe("absolute");
     }
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-    for (const selector of [".hud-resources", ".time-controls", '[data-testid="day"]']) {
+    for (const selector of [".hud-resources", ".hud-clock", '[data-testid="day"]']) {
       const box = (await page.locator(selector).boundingBox())!;
       expect(box.y).toBeGreaterThanOrEqual(0);
       expect(box.y + box.height).toBeLessThan(height);
@@ -34,7 +37,7 @@ for (const [width, height] of [[1920,1080], [1440,900], [1280,800], [1280,720], 
       return r.getClientRects().length;
     })).toBe(1);
     expect(await money.evaluate(e => parseFloat(getComputedStyle(e).fontSize))).toBeGreaterThanOrEqual(18);
-    await page.getByRole("navigation").getByRole("button", { name: "Mes bassins", exact: true }).click();
+    await page.getByRole("navigation").getByRole("button", { name: "Bassins", exact: true }).click();
     await expect(page.locator(".scene-location")).toBeHidden();
     await expect(page.getByText("VOTRE PETIT COIN DE NATURE")).toHaveCount(0);
     await page.locator(".water-details summary").click();
@@ -67,9 +70,10 @@ test("lot 0 : portable autonome, polices et portraits hors ligne, budget 15 Mo",
   await page.evaluate(() => document.fonts.ready);
   expect(await page.evaluate(() => [...document.fonts].some(f => f.family === "Inter" && f.status === "loaded"))).toBe(true);
   expect(await page.evaluate(() => document.fonts.check('400 16px "Fraunces"') && [...document.fonts].some(f => f.family === "Fraunces" && f.status === "loaded"))).toBe(true);
-  await page.getByRole("button", { name: "Marché", exact: true }).click();
+  await page.getByRole("button", { name: "Logistique", exact: true }).click();
+  await page.getByText("Prix et espèces", {exact:true}).click();
   await expect(page.locator(".species-photo image").first()).toHaveAttribute("href", /^data:image\/png;base64,/);
   await page.getByRole("button", { name: "Jour suivant", exact: true }).click();
-  await expect(page.getByTestId("day")).toHaveText("Jour 2");
+  await expect(page.getByTestId("day")).toHaveAttribute("data-day", "2");
   expect(additional).toEqual([]);
 });

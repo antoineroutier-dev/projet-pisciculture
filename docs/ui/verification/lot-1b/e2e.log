@@ -1,0 +1,64 @@
+
+> les-etangs@3.0.0 test:e2e
+> playwright test --reporter=list,json
+
+[WebServer] (node:65732) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:65779) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 
+[WebServer] (!) Some chunks are larger than 500 kB after minification. Consider:
+[WebServer] - Using dynamic import() to code-split the application
+[WebServer] - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+[WebServer] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[WebServer] npm notice
+[WebServer] npm notice New major version of npm available! 11.9.0 -> 12.2.0
+[WebServer] npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+[WebServer] npm notice To update run: npm install -g npm@12.2.0
+[WebServer] npm notice
+[WebServer] (node:65802) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:65815) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 30 tests using 1 worker
+
+(node:65835) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/game.spec.ts:12:1 › 3D : ferme, bassin, bâtiments et identification des trois espèces (52.2s)
+  ✓   2 tests/game.spec.ts:67:1 › import, export, mode expert et protection de sauvegarde corrompue (16.2s)
+  ✓   3 tests/game.spec.ts:121:1 › migration automatique V1 conserve le fichier original (1.4s)
+  ✓   4 tests/game.spec.ts:160:1 › horloge : vitesse ×60, fenêtre de gestion et pause (5.9s)
+  ✓   5 tests/game.spec.ts:190:1 › sans WebGL : la carte et la gestion restent disponibles (5.3s)
+  ✓   6 tests/game.spec.ts:243:1 › mobile et accessibilité des pages principales (21.4s)
+  ✓   7 tests/game.spec.ts:308:1 › nouvelle partie guidée : terrain vide jusqu’au premier règlement, uniquement par les commandes du jeu (25.5s)
+  ✓   8 tests/game.spec.ts:406:1 › migration V2 préserve la partie et propose explicitement le nouveau départ (3.4s)
+  ✓   9 tests/keyboard-cycle.spec.ts:26:1 › 1a : du terrain vide au paiement, uniquement au clavier en 1280×800 (36.6s)
+  ✓  10 tests/ui-lot0.spec.ts:9:3 › lot 0 : HUD, portraits, ration et clavier à 1920×1080 (5.8s)
+  ✓  11 tests/ui-lot0.spec.ts:9:3 › lot 0 : HUD, portraits, ration et clavier à 1440×900 (5.8s)
+  ✓  12 tests/ui-lot0.spec.ts:9:3 › lot 0 : HUD, portraits, ration et clavier à 1280×800 (4.4s)
+  ✓  13 tests/ui-lot0.spec.ts:9:3 › lot 0 : HUD, portraits, ration et clavier à 1280×720 (4.8s)
+  ✓  14 tests/ui-lot0.spec.ts:9:3 › lot 0 : HUD, portraits, ration et clavier à 390×844 (3.2s)
+  ✓  15 tests/ui-lot0.spec.ts:60:1 › lot 0 : portable autonome, polices et portraits hors ligne, budget 15 Mo (17.2s)
+  ✓  16 tests/ui-lot1a.spec.ts:43:3 › 1a : typographie des sept étapes et six vues en 1920×1080 (36.2s)
+  ✓  17 tests/ui-lot1a.spec.ts:43:3 › 1a : typographie des sept étapes et six vues en 1440×900 (31.1s)
+  ✓  18 tests/ui-lot1a.spec.ts:43:3 › 1a : typographie des sept étapes et six vues en 1280×800 (22.5s)
+  ✓  19 tests/ui-lot1a.spec.ts:43:3 › 1a : typographie des sept étapes et six vues en 1280×720 (22.7s)
+  ✓  20 tests/ui-lot1a.spec.ts:43:3 › 1a : typographie des sept étapes et six vues en 390×844 (14.3s)
+  ✓  21 tests/ui-lot1a.spec.ts:76:3 › 1a : axe, fontes et libellés de carte à 1440×900 (13.7s)
+  ✓  22 tests/ui-lot1a.spec.ts:76:3 › 1a : axe, fontes et libellés de carte à 390×844 (9.6s)
+  ✓  23 tests/ui-lot1a.spec.ts:112:1 › 1a : focus du dialogue et explication de désactivation au clavier (4.8s)
+  ✓  24 tests/ui-lot1a.spec.ts:136:1 › 1a : les fenêtres de gestion respectent le plancher de texte et axe (15.4s)
+  ✓  25 tests/ui-lot1a.spec.ts:161:1 › 1a : la réduction de mouvement et le plancher typographique résistent à 80 % (2.3s)
+  ✓  26 tests/ui-lot1a.spec.ts:171:1 › 1a : textes et superpositions des vues 3D sur PC et mobile (22.2s)
+  ✓  27 tests/ui-lot1b.spec.ts:14:3 › 1b : monde persistant, sept états et six panneaux en 1920×1080 (1.4m)
+  ✓  28 tests/ui-lot1b.spec.ts:14:3 › 1b : monde persistant, sept états et six panneaux en 1440×900 (1.2m)
+  ✓  29 tests/ui-lot1b.spec.ts:14:3 › 1b : monde persistant, sept états et six panneaux en 1280×800 (1.0m)
+  ✓  30 tests/ui-lot1b.spec.ts:59:1 › 1b : raccourcis, restauration du focus, urgence et guide du modèle (8.6s)
+
+  30 passed (10.8m)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

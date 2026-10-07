@@ -16,7 +16,7 @@ export default function RealismGuide() {
     {
       icon: <BookOpen />,
       title: "Votre première décision : faire analyser l’eau",
-      text: "Ouvrez Mon projet et suivez la prochaine action. Le laboratoire répond après 2 jours, puis vous choisissez une filière adaptée au site. Lancez le chantier et préparez le magasin d’aliments. L’écloserie livre les juvéniles en 4 jours ; le fabricant livre les aliments en 2 jours. Commandez avant d’en avoir besoin.",
+      text: "Ouvrez Construire et suivez la prochaine action. Le laboratoire répond après 2 jours, puis vous choisissez une filière adaptée au site. Lancez le chantier et préparez le magasin d’aliments. L’écloserie livre les juvéniles en 4 jours ; le fabricant livre les aliments en 2 jours. Commandez avant d’en avoir besoin.",
     },
     {
       icon: <Landmark />,
@@ -61,7 +61,7 @@ export default function RealismGuide() {
     {
       icon: <Eye />,
       title: "Observer les espèces",
-      text: "La truite a une bande rosée, des points noirs et une nageoire adipeuse. La carpe porte de grandes écailles bronze et des barbillons. Le tilapia a une dorsale épineuse et une queue striée. La carte représente les parcelles encore vides. L’illustration d’ambiance montre une ferme achevée ; la visite 3D montre l’état actuel des bassins. La vue Poissons permet de tourner les modèles et de consulter une planche artistique réaliste. Les poissons de la ferme sont un échantillon visuel ; le mode observation accentue la transparence de l’eau.",
+      text: "La truite a une bande rosée, des points noirs et une nageoire adipeuse. La carpe porte de grandes écailles bronze et des barbillons. Le tilapia a une dorsale épineuse et une queue striée. Le terrain montre l’état actuel des bassins. La carte prend le relais lorsque la 3D est indisponible. La vue Poissons permet de tourner les modèles et de consulter une planche artistique réaliste. Les poissons de la ferme sont un échantillon visuel ; le mode observation accentue la transparence de l’eau.",
     },
   ];
   return (
@@ -88,7 +88,9 @@ export default function RealismGuide() {
       </div>
       <section className="research-card">
         <span className="section-kicker">DOCUMENTATION & TRANSPARENCE</span>
-        <h2>Sur quoi repose la simulation ?</h2>
+        <h2>À propos du modèle</h2>
+        <p>Le rendu 3D représente un échantillon des poissons du lot, à une échelle indicative. L’observation sous l’eau accentue sa transparence. Les planches d’identification sont des illustrations artistiques générées ; les modèles anatomiques originaux servent de repères visuels, pas de mesures scientifiques. Certains bâtiments sont encore décoratifs.</p>
+        <p>Les coûts, prix, températures et coefficients sont ceux d’un scénario pédagogique. Le froid, les contrôles et les délais sont simplifiés ; les obligations sanitaires réelles ne sont pas simulées intégralement.</p>
         <p>
           La documentation des logiciels scientifiques respirometry et marelac a
           été consultée pour les unités d’oxygène, le renouvellement d’eau, la

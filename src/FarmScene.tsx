@@ -1,75 +1,26 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as T from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
-import {
-  Focus,
-  Fish,
-  Map,
-  RotateCcw,
-  Maximize2,
-  Eye,
-  Camera,
-  Warehouse,
-} from "lucide-react";
 import FarmMap from "./FarmMap";
 import { stepSchool, swimRotation } from "./swimming";
 import { animateFish, clearFishTextures, createFish } from "./fish3d";
 import { createFarm, disposeObject, POND_POSITIONS } from "./farm3d";
-import { SPECIES, number, type Pond, type SpeciesId } from "./game";
-
-type SceneMode = "farm" | "pond" | "fish" | "buildings";
-import { FishArt } from "./FishArt";
-export default function FarmScene({
-  ponds,
-  selected,
-  select,
-  day,
-}: {
-  ponds: Pond[];
-  selected: number;
-  select: (id: number) => void;
-  day: number;
+import { type Pond, type SpeciesId } from "./game";
+import type { SceneMode } from "./world/types";
+export default function FarmScene({ponds, selected, select, day, mode, species, clearWater, reset}: {
+  ponds:Pond[]; selected:number; select:(id:number)=>void; day:number;
+  mode:SceneMode; species:SpeciesId; clearWater:boolean; reset:number;
 }) {
-  const [started, setStarted] = useState(false);
-  const [landscape, setLandscape] = useState(false);
-  const [notice, setNotice] = useState("");
-  const [mode, setMode] = useState<SceneMode>("farm");
-  const [species, setSpecies] = useState<SpeciesId>("trout");
-  const [clearWater, setClearWater] = useState(false);
   const [error, setError] = useState("");
   const [ready, setReady] = useState(false);
-  const [reset, setReset] = useState(0);
-  const [showPlate, setShowPlate] = useState(false);
   const host = useRef<HTMLDivElement>(null);
-  const shell = useRef<HTMLDivElement>(null);
-  const latest = useRef({
-    ponds,
-    selected,
-    select,
-    day,
-    mode,
-    species,
-    clearWater,
-    reset,
-    landscape,
-    showPlate,
-  });
-  latest.current = {
-    ponds,
-    selected,
-    select,
-    day,
-    mode,
-    species,
-    clearWater,
-    reset,
-    landscape,
-    showPlate,
-  };
-  const selectedPond = ponds[selected - 1];
+  const state = useMemo(() => ({ponds, selected, select, day, mode, species, clearWater, reset}),
+    [ponds, selected, select, day, mode, species, clearWater, reset]);
+  const latest = useRef(state);
+  latest.current = state;
   useEffect(() => {
-    if (!started || !host.current) return;
+    if (!host.current) return;
     const container = host.current;
     let renderer: T.WebGLRenderer;
     try {
@@ -143,6 +94,7 @@ export default function FarmScene({
     specimen.position.y = 1.7;
     specimen.visible = false;
     scene.add(specimen);
+    let pendingFrames = 2;
     let signature = latest.current.ponds
         .map((p) =>
           [
@@ -227,14 +179,10 @@ export default function FarmScene({
       const state = latest.current;
       const changed = state !== previousState;
       previousState = state;
-      if (
-        (reduced ||
-          state.showPlate ||
-          (state.landscape && state.mode === "farm")) &&
-        !needsRender &&
-        !changed
-      )
-        return;
+      // Let freshly uploaded geometry/materials settle before freezing reduced-motion views.
+      if (changed || needsRender) pendingFrames = 2;
+      if (reduced && pendingFrames === 0) return;
+      pendingFrames = Math.max(0, pendingFrames - 1);
       needsRender = false;
       const delta =
         reduced || !lastSwim ? 0 : Math.min(0.1, (ms - lastSwim) * 0.001);
@@ -273,7 +221,7 @@ export default function FarmScene({
         scene.add(farm.root);
         signature = nextSignature;
       }
-      const key = `${state.mode}:${state.mode === "pond" ? state.selected : ""}:${state.reset}`;
+      const key = `${state.mode}:${state.mode === "pond" ? state.selected : ""}:${state.reset}:${state.mode === "fish" ? camera.aspect : ""}`;
       if (key !== cameraKey) {
         controls.maxPolarAngle =
           state.mode === "fish" ? Math.PI - 0.1 : Math.PI / 2 - 0.045;
@@ -293,8 +241,10 @@ export default function FarmScene({
           controls.target.set(x, 0.55, z);
         }
         if (state.mode === "fish") {
-          camera.position.set(-0.1, 2.15, 7.5);
-          controls.target.set(0, 1.7, 0);
+          const distance = Math.max(7.5, 9 / (2 * Math.tan(T.MathUtils.degToRad(camera.fov / 2)) * camera.aspect));
+          camera.position.set(-0.1, 2.15, distance);
+          controls.maxDistance = Math.max(13, distance * 1.8);
+          controls.target.set(0, container.clientWidth < 700 ? 1.2 : 1.7, 0);
         }
         cameraKey = key;
         controls.update();
@@ -361,6 +311,9 @@ export default function FarmScene({
       renderer.domElement.dataset.frame = "rendered";
       renderer.domElement.dataset.view = state.mode;
       renderer.domElement.dataset.species = state.species;
+      renderer.domElement.dataset.day = String(state.day);
+      renderer.domElement.dataset.settled = String(pendingFrames === 0);
+      renderer.domElement.dataset.camera = [...camera.position.toArray(), ...controls.target.toArray()].map(n => n.toFixed(3)).join(",");
     };
     frame = requestAnimationFrame(animate);
     setReady(true);
@@ -380,249 +333,13 @@ export default function FarmScene({
       renderer.forceContextLoss();
       renderer.domElement.remove();
     };
-  }, [started]);
-  function setView(next: SceneMode) {
-    setStarted(true);
-    setMode(next);
-    if (next !== "farm") setLandscape(false);
-    setShowPlate(next === "fish");
-    if (next === "fish" && selectedPond.species)
-      setSpecies(selectedPond.species);
-  }
-  async function fullscreen() {
-    try {
-      if (document.fullscreenElement) await document.exitFullscreen();
-      else await shell.current?.requestFullscreen();
-    } catch {
-      setNotice("Le plein écran est indisponible dans ce navigateur.");
-    }
-  }
-  return (
-    <div
-      className="scene-shell"
-      ref={shell}
-      data-testid="farm-scene"
-      data-ready={ready && !error ? "true" : "false"}
-    >
-      <div className="scene-toolbar">
-        <div className="scene-tabs" aria-label="Vues de l’exploitation">
-          {(
-            [
-              { id: "farm", label: "La ferme", icon: <Map size={14} /> },
-              { id: "pond", label: "Le bassin", icon: <Focus size={14} /> },
-              { id: "fish", label: "Les poissons", icon: <Fish size={14} /> },
-              {
-                id: "buildings",
-                label: "Bâtiments",
-                icon: <Warehouse size={14} />,
-              },
-            ] as const
-          ).map((v) => (
-            <button
-              key={v.id}
-              aria-pressed={mode === v.id}
-              onClick={() => setView(v.id)}
-            >
-              {v.icon}
-              {v.label}
-            </button>
-          ))}
-        </div>
-        <div className="scene-utilities">
-          <button
-            aria-label="Réinitialiser la caméra"
-            onClick={() => setReset((x) => x + 1)}
-          >
-            <RotateCcw size={15} />
-          </button>
-          <button
-            aria-label="Vue plein écran"
-            onClick={() => void fullscreen()}
-          >
-            <Maximize2 size={15} />
-          </button>
-        </div>
-      </div>
-      <div className="scene-viewport">
-        <div
-          className={`scene-canvas ${error ? "has-error" : ""} ${showPlate ? "showing-plate" : ""}`}
-          ref={host}
-        />
-        {!started && !landscape && mode === "farm" && (
-          <div className="scene-site-plan">
-            <FarmMap ponds={ponds} selected={selected} select={select} />
-          </div>
-        )}
-      </div>
-      {error && (
-        <div className="scene-fallback">
-          <p role="status">{error}</p>
-          <FarmMap ponds={ponds} selected={selected} select={select} />
-        </div>
-      )}
-      {started && !ready && !error && (
-        <div className="scene-loading">Préparation de la visite…</div>
-      )}
-      {landscape && mode === "farm" && (
-        <div className="landscape-observation">
-          <img
-            src={`${import.meta.env.BASE_URL}assets/farm-landscape.png`}
-            alt="Vue d’ambiance de la ferme : maison en pierre, grange, bassin de truites et étang bordé de végétation."
-          />
-          <div className="landscape-hotspots">
-            {ponds.slice(0, 2).map((p) => (
-              <button
-                key={p.id}
-                onClick={() => {
-                  select(p.id);
-                  setView("pond");
-                }}
-              >
-                <span>{String(p.id).padStart(2, "0")}</span>
-                <strong>{p.name}</strong>
-                <small>{number(p.count)} poissons · visiter</small>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-      {showPlate && (
-        <div className="photo-observation">
-          <FishArt species={species} />
-          <span>
-            Planche d’identification artistique générée · proportions
-            indicatives
-          </span>
-        </div>
-      )}
-      {mode === "fish" ? (
-        <>
-          <div className="species-picker" aria-label="Espèce à observer">
-            {Object.values(SPECIES).map((s) => (
-              <button
-                key={s.id}
-                aria-pressed={species === s.id}
-                onClick={() => setSpecies(s.id)}
-              >
-                {s.name}
-              </button>
-            ))}
-          </div>
-          <div className="fish-observation">
-            <div>
-              <span className="section-kicker">
-                OBSERVATION NATURALISTE · VUE AGRANDIE
-              </span>
-              <h3>{SPECIES[species].name}</h3>
-              <em>{SPECIES[species].latin}</em>
-              <p>{SPECIES[species].identification}</p>
-            </div>
-            <button
-              className="button light"
-              aria-pressed={showPlate}
-              onClick={() => setShowPlate(!showPlate)}
-            >
-              <Camera size={15} />
-              {showPlate ? "Modèle 3D" : "Planche réaliste"}
-            </button>
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="scene-location" hidden={!started && !landscape}>
-            <span>DOMAINE DES SAULES</span>
-            <strong>
-              {mode === "pond"
-                ? selectedPond.name
-                : mode === "buildings"
-                  ? "La maison d’exploitation"
-                  : "Une ferme au fil de l’eau"}
-            </strong>
-            <small>
-              {mode === "pond"
-                ? `${selectedPond.volume} m³ · ${selectedPond.count ? number(selectedPond.count) + " poissons" : "bassin sans lot"}`
-                : "Bâtiments de pierre · eau de source · étang de terre"}
-            </small>
-          </div>
-          <div className="scene-bottom">
-            {mode === "farm" && (
-              <button
-                className="landscape-toggle"
-                aria-pressed={landscape}
-                onClick={() => {
-                  setStarted(true);
-                  setLandscape(started ? !landscape : false);
-                }}
-              >
-                <Camera size={14} />
-                {!started || landscape
-                  ? "Explorer en 3D"
-                  : "Illustration d’ambiance"}
-              </button>
-            )}
-            <span
-              style={{
-                display: landscape && mode === "farm" ? "none" : undefined,
-              }}
-            >
-              Glissez pour tourner · molette ou pincement pour zoomer
-            </span>
-            <button
-              style={{
-                display: landscape && mode === "farm" ? "none" : undefined,
-              }}
-              aria-pressed={clearWater}
-              disabled={!selectedPond.count}
-              onClick={() => {
-                setStarted(true);
-                setLandscape(false);
-                setMode("pond");
-                setClearWater(!clearWater);
-              }}
-            >
-              <Eye size={14} />
-              {clearWater ? "Vue pédagogique" : "Observer sous l’eau"}
-            </button>
-          </div>
-          <div
-            className="scene-pond-picker"
-            aria-label="Sélection des bassins en 3D"
-          >
-            {ponds.map((p) => (
-              <button
-                key={p.id}
-                aria-label={`Sélectionner ${p.name}`}
-                aria-pressed={selected === p.id}
-                onClick={() => {
-                  select(p.id);
-                  if (mode === "pond") setReset((r) => r + 1);
-                }}
-              >
-                <span>{String(p.id).padStart(2, "0")}</span>
-                {p.name}
-              </button>
-            ))}
-          </div>
-        </>
-      )}
-      {notice && (
-        <p className="scene-notice" role="status">
-          {notice}
-        </p>
-      )}
-      <div className="scene-caption">
-        {error
-          ? "Carte de secours · la gestion et les commandes des bassins restent disponibles."
-          : landscape && mode === "farm"
-          ? "Illustration d’ambiance générée · consultez la 3D pour voir les travaux et l’état actuel de la ferme."
-          : !started
-            ? "Plan du terrain : les emplacements grisés ne sont pas aménagés. Ouvrez la 3D pour visiter."
-            : mode === "fish"
-              ? "Modèle anatomique original et illustration générée : repères visuels, pas une mesure scientifique."
-              : clearWater
-                ? "Observation pédagogique : transparence de l’eau accentuée. Les poissons visibles sont un échantillon du lot."
-                : "Rendu 3D en temps réel · poissons à échelle indicative · échantillon visuel du lot."}
-      </div>
-    </div>
-  );
+  }, []);
+  return <div className="world-scene" data-testid="farm-scene" data-ready={ready && !error ? "true" : "false"}>
+    <div className="world-canvas" ref={host} hidden={!!error} />
+    {error && <div className="world-fallback">
+      <p role="status">Carte de secours · la 3D est indisponible.</p>
+      <FarmMap ponds={ponds} selected={selected} select={select} />
+    </div>}
+    {!ready && !error && <div className="world-loading" role="status">Préparation du terrain…</div>}
+  </div>;
 }

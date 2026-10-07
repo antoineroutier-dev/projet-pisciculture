@@ -1,5 +1,5 @@
 import { Button } from "./ui/Button";
-import { formatMoney as euro, formatUnitPrice, formatEngineText, plural } from "./ui/format";
+import { formatMoney as euro, formatUnitPrice, plural } from "./ui/format";
 import {
   ArrowRight,
   Check,
@@ -35,15 +35,12 @@ import {
   dailyFeed,
   FEED_FREIGHT,
   feedCapacity,
-  nextTask,
   reservedFood,
   SOURCE_FLOW,
-  STAGES,
   transportCost,
   waterUsed,
   type Asset,
   type Buyer,
-  type Task,
 } from "./development";
 
 type Props = {
@@ -51,66 +48,6 @@ type Props = {
   perform: (a: Action) => void;
   stock: (pondId: number) => void;
 };
-export function Journey({
-  game,
-  follow,
-}: {
-  game: Game;
-  follow: (task: Task) => void;
-}) {
-  const task = nextTask(game);
-  return (
-    <section
-      className={`journey-card ${task.urgent ? "attention" : ""}`}
-      aria-label="Votre prochaine action"
-      data-testid="next-task"
-    >
-      <div className="journey-heading">
-        <span className="section-kicker">
-          {task.urgent
-            ? "À TRAITER MAINTENANT"
-            : game.development.paid
-              ? "VOTRE EXPLOITATION CONTINUE"
-              : `VOTRE PREMIER CYCLE · ÉTAPE ${task.stage + 1} / 9`}
-        </span>
-        <span>
-          <Clock3 size={14} /> Le temps est sous votre contrôle
-        </span>
-      </div>
-      <div className="journey-main">
-        <div>
-          <h2>{task.title}</h2>
-          <p>{formatEngineText(task.text)}</p>
-        </div>
-        <button className="button primary" onClick={() => follow(task)}>
-          {formatEngineText(task.label)}
-          <ArrowRight size={17} />
-        </button>
-      </div>
-      <ol className="journey-steps" aria-label="Parcours du premier cycle">
-        {STAGES.map((s, i) => (
-          <li
-            key={s}
-            className={
-              i === task.stage ? "current" : i < task.stage ? "past" : ""
-            }
-            aria-current={i === task.stage ? "step" : undefined}
-          >
-            <span>{i < task.stage ? <Check size={11} /> : i + 1}</span>
-            {s}
-          </li>
-        ))}
-      </ol>
-      {game.development.paid > 0 && (
-        <p className="cycle-success">
-          <Check size={15} /> {game.development.paid} {plural(game.development.paid, "cycle")} {plural(game.development.paid, "réglé")} ·{" "}
-          {number(game.stats.soldKg, 1)} kg commercialisés. Réinvestissez ou
-          relancez un lot.
-        </p>
-      )}
-    </section>
-  );
-}
 const ROUTES: Record<
   SpeciesId,
   { water: string; advice: string; duration: string; lot: number }
@@ -774,9 +711,7 @@ export function LogisticsPanel({ game, perform, stock }: Props) {
           </article>
         ))}
         <p className="project-footnote">
-          Pertes pour péremption : {number(d.wasteKg, 1)} kg. Le froid, les
-          contrôles, les délais et les prix sont simplifiés pour le jeu ; les
-          obligations sanitaires réelles ne sont pas simulées intégralement.
+          Pertes pour péremption : {number(d.wasteKg, 1)} kg.
         </p>
       </section>
     </div>

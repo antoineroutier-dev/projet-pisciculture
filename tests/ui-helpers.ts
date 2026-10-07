@@ -1,0 +1,12 @@
+import type { Page } from "@playwright/test";
+
+/** Explicit fallback in DOM/a11y matrices; real WebGL is covered separately. */
+export async function withoutWebGL(page: Page) {
+  await page.addInitScript(() => {
+    const original = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, type:string, ...args:unknown[]) {
+      if (["webgl", "webgl2", "experimental-webgl"].includes(type)) return null;
+      return Reflect.apply(original,this,[type,...args]);
+    } as typeof original;
+  });
+}
