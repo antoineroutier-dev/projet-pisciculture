@@ -8,17 +8,14 @@ import "@fontsource/inter/latin-700.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
-import "./styles.css";
+import "./ui/foundation.css";
+import "./ui/game-shell.css";
+import "./ui/dialog.css";
+import "./panels/panels.css";
+import "./world/map.css";
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
 );
-
-import "./realism.css";
-
-import "./progression.css";
-
-import "./ui/foundation.css";
-
-import "./ui/game-shell.css";

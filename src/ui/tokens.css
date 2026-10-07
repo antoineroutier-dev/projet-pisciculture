@@ -1,4 +1,5 @@
 :root {
+  --scrim: #172b3680;
   --surface: #f6f5ee;
   --surface-raised: #fffef8;
   --surface-muted: #e9ece3;
@@ -40,5 +41,9 @@
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 @media (prefers-reduced-motion: reduce) {
-  :root { --duration-fast: 0ms; --duration-normal: 0ms; --duration-slow: 0ms; }
+  :root {
+    --duration-fast: 0ms;
+    --duration-normal: 0ms;
+    --duration-slow: 0ms;
+  }
 }

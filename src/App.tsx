@@ -1,11 +1,24 @@
+import { Toast, Slider, SegmentedControl, Tabs } from "./ui/Primitives";
+import { usePreferences } from "./state/preferences";
+import { Button } from "./ui/Button";
 import { GameHud, GoalHud, Dock } from "./hud/GameHud";
 import { WorldControls, FishObservation } from "./world/WorldControls";
 import type { SceneMode } from "./world/types";
 import { ManagementPanel } from "./panels/ManagementPanel";
-import { PondPanel, FinancePanel, JournalPanel, MarketPrices } from "./panels/LegacyPanels";
+import {
+  PondPanel,
+  FinancePanel,
+  JournalPanel,
+  MarketPrices,
+} from "./panels/LegacyPanels";
 import { PANELS, usePanelNavigation } from "./state/navigation";
 import { Dialog as Modal } from "./ui/Dialog";
-import { formatMoney as euro, formatUnitPrice, formatEngineText, plural } from "./ui/format";
+import {
+  formatMoney as euro,
+  formatUnitPrice,
+  formatEngineText,
+  plural,
+} from "./ui/format";
 import {
   useCallback,
   useLayoutEffect,
@@ -27,8 +40,6 @@ import {
   Plus,
   Sprout,
   Wind,
-  X,
-  AlertTriangle,
   Upload,
   RotateCcw,
 } from "lucide-react";
@@ -36,10 +47,7 @@ import { FishArt } from "./FishArt";
 import { lazy, Suspense } from "react";
 const FarmScene = lazy(() => import("./FarmScene"));
 import ProjectPanel, { LogisticsPanel } from "./ProjectPanel";
-import {
-  STOCK_FREIGHT,
-  type Task,
-} from "./development";
+import { STOCK_FREIGHT, type Task } from "./development";
 import Guide from "./RealismGuide";
 import {
   act,
@@ -127,7 +135,11 @@ function StockForm({
       </p>
       <div className="species-options">
         {Object.values(SPECIES).map((s) => (
-          <button
+          <Button
+            tone="secondary"
+            disabledReason={
+              "Cette espèce demande une autre installation. Consultez Construire pour choisir une filière compatible."
+            }
             key={s.id}
             type="button"
             className={`species-option ${s.id === species ? "active" : ""}`}
@@ -149,7 +161,7 @@ function StockForm({
             ) : species === s.id ? (
               <Check size={17} />
             ) : null}
-          </button>
+          </Button>
         ))}
       </div>
       <label className="field-label" htmlFor="fish-count">
@@ -190,7 +202,16 @@ function StockForm({
         <span>Coût du lot + transport vivant ({euro(STOCK_FREIGHT)})</span>
         <strong>{euro(cost)}</strong>
       </div>
-      <button
+      <Button
+        tone="primary"
+        disabledReason={
+          pond.fallowDays > 0
+            ? "Attendez la fin du vide sanitaire."
+            : count < 1 || count > pond.capacity
+              ? "Choisissez un effectif compris entre 1 et la capacité du bassin."
+              : "Trésorerie insuffisante pour les juvéniles et leur transport."
+        }
+        type="submit"
         className="button primary full"
         disabled={
           cost > game.money ||
@@ -200,7 +221,7 @@ function StockForm({
         }
       >
         Commander {number(count)} juvéniles <ArrowRight size={17} />
-      </button>
+      </Button>
       {cost > game.money && (
         <p className="inline-error">Trésorerie insuffisante.</p>
       )}
@@ -208,12 +229,19 @@ function StockForm({
   );
 }
 export default function App() {
+  const { preferences, setPreferences } = usePreferences();
+  const [settingsTab, setSettingsTab] = useState<"display" | "save">("save");
   const [boot] = useState(load);
   const [game, setGame] = useState<Game>(boot.game);
   const [storageBlocked, setStorageBlocked] = useState(boot.blocked);
   const [storageError, setStorageError] = useState(boot.error);
   const [saved, setSaved] = useState(false);
-  const {panel, open: navigate, toggle: togglePanel, close: closePanel} = usePanelNavigation();
+  const {
+    panel,
+    open: navigate,
+    toggle: togglePanel,
+    close: closePanel,
+  } = usePanelNavigation();
   const [worldMode, setWorldMode] = useState<SceneMode>("farm");
   const [species, setSpecies] = useState<SpeciesId>("trout");
   const [clearWater, setClearWater] = useState(false);
@@ -234,15 +262,31 @@ export default function App() {
     const shell = document.querySelector<HTMLElement>(".game-shell")!;
     const hud = shell.querySelector<HTMLElement>(".game-hud")!;
     const goal = shell.querySelector<HTMLElement>(".goal-hud")!;
+    const dock = shell.querySelector<HTMLElement>(".game-dock")!;
     const measure = () => {
-      shell.style.setProperty("--hud-bottom", `${hud.getBoundingClientRect().bottom + 12}px`);
-      shell.style.setProperty("--goal-bottom", `${goal.getBoundingClientRect().bottom + 8}px`);
+      shell.style.setProperty(
+        "--dock-top",
+        `${innerHeight - dock.getBoundingClientRect().top + 12}px`,
+      );
+      shell.style.setProperty(
+        "--hud-bottom",
+        `${hud.getBoundingClientRect().bottom + 12}px`,
+      );
+      shell.style.setProperty(
+        "--goal-bottom",
+        `${goal.getBoundingClientRect().bottom + 8}px`,
+      );
     };
     const observer = new ResizeObserver(measure);
-    observer.observe(hud); observer.observe(goal);
+    observer.observe(hud);
+    observer.observe(goal);
+    observer.observe(dock);
     window.addEventListener("resize", measure);
     measure();
-    return () => {observer.disconnect(); window.removeEventListener("resize", measure);};
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
   }, []);
   const close = useCallback(() => {
     setModal(null);
@@ -288,20 +332,27 @@ export default function App() {
     const timer = setTimeout(() => setNotice(null), 5000);
     return () => clearTimeout(timer);
   }, [notice]);
-  const selectPond = useCallback((id: number) => {
-    setSelected(id);
-    navigate("ponds");
-  }, [navigate]);
+  const selectPond = useCallback(
+    (id: number) => {
+      setSelected(id);
+      navigate("ponds");
+    },
+    [navigate],
+  );
   useEffect(() => {
     const handle = (e: KeyboardEvent) => {
       if (modal || e.defaultPrevented || e.isComposing) return;
       if (e.key === "Escape") {
         e.preventDefault();
-        if (panel) closePanel(); else setModal("settings");
+        if (panel) closePanel();
+        else setModal("settings");
       }
-      const match = PANELS.find(p => p.key.toLowerCase() === e.key.toLowerCase());
+      const match = PANELS.find(
+        (p) => p.key.toLowerCase() === e.key.toLowerCase(),
+      );
       if (e.altKey && !e.ctrlKey && !e.metaKey && match) {
-        e.preventDefault(); togglePanel(match.id);
+        e.preventDefault();
+        togglePanel(match.id);
       }
     };
     window.addEventListener("keydown", handle);
@@ -376,44 +427,114 @@ export default function App() {
   }
   return (
     <>
-      <div className="game-shell" inert={modal ? true : undefined} data-panel={panel ?? "none"}>
+      <div
+        className="game-shell"
+        inert={modal ? true : undefined}
+        data-panel={panel ?? "none"}
+      >
         <h1 className="sr-only">Les Étangs — votre exploitation</h1>
         <main className="game-world" aria-label="Le terrain">
-          <Suspense fallback={<div className="world-loading" role="status">Préparation du terrain…</div>}>
-            <FarmScene ponds={game.ponds} selected={selected} select={selectPond} day={game.day}
-              mode={worldMode} species={species} clearWater={clearWater} reset={cameraReset} />
+          <Suspense
+            fallback={
+              <div className="world-loading" role="status">
+                Préparation du terrain…
+              </div>
+            }
+          >
+            <FarmScene
+              ponds={game.ponds}
+              selected={selected}
+              select={selectPond}
+              day={game.day}
+              mode={worldMode}
+              species={species}
+              clearWater={clearWater}
+              reset={cameraReset}
+            />
           </Suspense>
         </main>
-        <GameHud game={game} saved={saved} storageError={storageError} running={running} speed={speed}
-          toggleRunning={() => setRunning(!running)} changeSpeed={() => setSpeed([1,3,12,60][([1,3,12,60].indexOf(speed)+1)%4])}
-          nextDay={() => setGame(g => nextDay(g))} settings={() => setModal("settings")} alerts={() => navigate("journal")} />
-        <GoalHud game={game} follow={followTask} objectives={() => setModal("objectives")} />
-        <WorldControls mode={worldMode} changeMode={mode => {setWorldMode(mode); if(mode === "fish") {closePanel(); if(pond.species) setSpecies(pond.species);}}} reset={() => setCameraReset(r => r+1)}
-          clearWater={clearWater} underwater={() => {setWorldMode("pond"); setClearWater(v => !v);}}
-          canObserve={pond.count > 0} hiddenOnMobile={!!panel} />
-        {worldMode === "fish" && !panel && <FishObservation species={species} setSpecies={setSpecies} />}
-        {panel && <ManagementPanel id={panel} close={closePanel}>
-          {panel === "project" && <ProjectPanel game={game} perform={perform} stock={openStock} />}
-          {panel === "ponds" && <PondPanel game={game} pond={pond} perform={perform} setModal={setModal}
-            navigate={navigate} select={setSelected} waterOpen={waterOpen} setWaterOpen={setWaterOpen} />}
-          {panel === "logistics" && <><LogisticsPanel game={game} perform={perform} stock={openStock} /><MarketPrices game={game} /></>}
-          {panel === "finance" && <FinancePanel game={game} perform={perform} />}
-          {panel === "journal" && <JournalPanel game={game} />}
-          {panel === "guide" && <Guide />}
-        </ManagementPanel>}
+        <GameHud
+          game={game}
+          saved={saved}
+          storageError={storageError}
+          running={running}
+          speed={speed}
+          toggleRunning={() => setRunning(!running)}
+          changeSpeed={() =>
+            setSpeed([1, 3, 12, 60][([1, 3, 12, 60].indexOf(speed) + 1) % 4])
+          }
+          nextDay={() => setGame((g) => nextDay(g))}
+          settings={() => setModal("settings")}
+          alerts={() => navigate("journal")}
+        />
+        <GoalHud
+          game={game}
+          follow={followTask}
+          objectives={() => setModal("objectives")}
+        />
+        <WorldControls
+          mode={worldMode}
+          changeMode={(mode) => {
+            setWorldMode(mode);
+            if (mode === "fish") {
+              closePanel();
+              if (pond.species) setSpecies(pond.species);
+            }
+          }}
+          reset={() => setCameraReset((r) => r + 1)}
+          clearWater={clearWater}
+          underwater={() => {
+            setWorldMode("pond");
+            setClearWater((v) => !v);
+          }}
+          canObserve={pond.count > 0}
+          hiddenOnMobile={!!panel}
+        />
+        {worldMode === "fish" && !panel && (
+          <FishObservation species={species} setSpecies={setSpecies} />
+        )}
+        {panel && (
+          <ManagementPanel id={panel} close={closePanel}>
+            {panel === "project" && (
+              <ProjectPanel game={game} perform={perform} stock={openStock} />
+            )}
+            {panel === "ponds" && (
+              <PondPanel
+                game={game}
+                pond={pond}
+                perform={perform}
+                setModal={setModal}
+                navigate={navigate}
+                select={setSelected}
+                waterOpen={waterOpen}
+                setWaterOpen={setWaterOpen}
+              />
+            )}
+            {panel === "logistics" && (
+              <>
+                <LogisticsPanel
+                  game={game}
+                  perform={perform}
+                  stock={openStock}
+                />
+                <MarketPrices game={game} />
+              </>
+            )}
+            {panel === "finance" && (
+              <FinancePanel game={game} perform={perform} />
+            )}
+            {panel === "journal" && <JournalPanel game={game} />}
+            {panel === "guide" && <Guide />}
+          </ManagementPanel>
+        )}
         <Dock active={panel} open={togglePanel} />
       </div>
       {notice && (
-        <div className={`toast ${notice.ok ? "" : "error"}`} role="status">
-          {notice.ok ? <Check size={18} /> : <AlertTriangle size={18} />}
-          <span>{formatEngineText(notice.text)}</span>
-          <button
-            aria-label="Fermer la notification"
-            onClick={() => setNotice(null)}
-          >
-            <X size={16} />
-          </button>
-        </div>
+        <Toast
+          text={formatEngineText(notice.text)}
+          ok={notice.ok}
+          close={() => setNotice(null)}
+        />
       )}
       {modal && (
         <Modal
@@ -457,7 +578,15 @@ export default function App() {
                 Prévoyez les juvéniles, les aliments, l’eau et l’énergie. Le
                 chauffage et la filtration de la serre augmentent les charges.
               </p>
-              <button
+              <Button
+                tone="primary"
+                disabledReason={
+                  !game.development.surveyed
+                    ? "Faites analyser l’eau."
+                    : !pond.plannedSpecies
+                      ? "Choisissez une filière pour cette parcelle."
+                      : "Trésorerie insuffisante pour ce chantier."
+                }
                 className="button primary full"
                 disabled={
                   game.money < CONSTRUCTION_COST[pond.id - 1] ||
@@ -470,7 +599,7 @@ export default function App() {
               >
                 Aménager pour {euro(CONSTRUCTION_COST[pond.id - 1])}
                 <ArrowRight size={17} />
-              </button>
+              </Button>
               {game.money < CONSTRUCTION_COST[pond.id - 1] && (
                 <p className="inline-error">Trésorerie insuffisante.</p>
               )}
@@ -503,7 +632,13 @@ export default function App() {
                 Ce niveau d’équipement consomme 3,6 kWh/jour supplémentaires,
                 soit 0,79 €/jour au tarif du scénario.
               </p>
-              <button
+              <Button
+                tone="primary"
+                disabledReason={
+                  pond.upgrade >= 2
+                    ? "Le bassin possède déjà tous les équipements."
+                    : "Trésorerie insuffisante pour cet équipement."
+                }
                 className="button primary full"
                 disabled={
                   pond.upgrade >= 2 || game.money < UPGRADE_COST[pond.upgrade]
@@ -513,7 +648,7 @@ export default function App() {
                 }
               >
                 Installer l’équipement <ArrowRight size={17} />
-              </button>
+              </Button>
               {game.money < UPGRADE_COST[pond.upgrade] && (
                 <p className="inline-error">Trésorerie insuffisante.</p>
               )}
@@ -578,125 +713,168 @@ export default function App() {
             </>
           )}
           {modal === "settings" && (
-            <>
-              <p className="modal-intro">
-                Votre partie est enregistrée dans ce navigateur. Gardez une
-                copie pour la retrouver sur un autre appareil.
-              </p>
-              <div className="mode-setting">
-                <label htmlFor="simulation-mode">Mode de gestion</label>
-                <select
-                  id="simulation-mode"
-                  value={game.mode}
-                  onChange={(e) =>
-                    perform({
-                      type: "mode",
-                      mode: e.target.value as Game["mode"],
-                    })
-                  }
-                >
-                  <option value="guided">
-                    Réaliste avec aides pédagogiques
-                  </option>
-                  <option value="expert">
-                    Expert · sans aides économiques
-                  </option>
-                </select>
-                <p>
-                  Les deux modes utilisent les mêmes lois biologiques. Les aides
-                  monétaires sont désactivées en mode expert.
-                </p>
-              </div>
-              <div className="settings-summary">
-                <span>
-                  <Sprout size={18} /> Jour {game.day} · Niveau {level(game)}
-                </span>
-                <strong>{euro(game.money)}</strong>
-              </div>
-              <button className="settings-action" onClick={exportSave}>
-                <ArrowDownToLine size={20} />
-                <span>
-                  <strong>Exporter ma partie</strong>
-                  <small>Télécharger une copie au format JSON</small>
-                </span>
-                <ArrowUpRight size={17} />
-              </button>
-              <button
-                className="settings-action"
-                onClick={() => fileInput.current?.click()}
-              >
-                <Upload size={20} />
-                <span>
-                  <strong>Importer une sauvegarde</strong>
-                  <small>
-                    Remplace la partie actuelle après validation du fichier
-                  </small>
-                </span>
-                <ArrowUpRight size={17} />
-              </button>
-              <input
-                ref={fileInput}
-                type="file"
-                accept=".json,application/json"
-                hidden
-                aria-label="Fichier de sauvegarde"
-                onChange={(e) => void importSave(e.target.files?.[0])}
-              />
-              <div className="settings-danger">
-                {resetConfirm ? (
-                  <>
+            <Tabs
+              label="Paramètres"
+              items={[
+                { id: "save", label: "Partie" },
+                { id: "display", label: "Affichage" },
+              ]}
+              value={settingsTab}
+              onChange={setSettingsTab}
+            >
+              {settingsTab === "display" ? (
+                <div className="display-settings">
+                  <Slider
+                    label="Échelle de l’interface"
+                    value={preferences.scale}
+                    min={80}
+                    max={150}
+                    step={5}
+                    unit=" %"
+                    onChange={(scale) =>
+                      setPreferences((p) => ({ ...p, scale }))
+                    }
+                  />
+                  <SegmentedControl
+                    label="Mouvement"
+                    value={preferences.motion}
+                    options={[
+                      { value: "system", label: "Selon le système" },
+                      { value: "reduce", label: "Réduit" },
+                    ]}
+                    onChange={(motion) =>
+                      setPreferences((p) => ({ ...p, motion }))
+                    }
+                  />
+                  <p>
+                    Les légendes restent à 12 px minimum. Le mouvement réduit
+                    fige les animations décoratives ; la simulation continue au
+                    rythme choisi.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <p className="modal-intro">
+                    Votre partie est enregistrée dans ce navigateur. Gardez une
+                    copie pour la retrouver sur un autre appareil.
+                  </p>
+                  <div className="mode-setting">
+                    <label htmlFor="simulation-mode">Mode de gestion</label>
+                    <select
+                      id="simulation-mode"
+                      value={game.mode}
+                      onChange={(e) =>
+                        perform({
+                          type: "mode",
+                          mode: e.target.value as Game["mode"],
+                        })
+                      }
+                    >
+                      <option value="guided">
+                        Réaliste avec aides pédagogiques
+                      </option>
+                      <option value="expert">
+                        Expert · sans aides économiques
+                      </option>
+                    </select>
                     <p>
-                      Recommencer effacera la partie enregistrée dans ce
-                      navigateur. Exportez-la d’abord si vous souhaitez la
-                      garder.
+                      Les deux modes utilisent les mêmes lois biologiques. Les
+                      aides monétaires sont désactivées en mode expert.
                     </p>
-                    <div className="button-row">
-                      <button
-                        className="button outline"
-                        onClick={() => setResetConfirm(false)}
-                      >
-                        <ArrowLeft size={15} />
-                        Annuler
-                      </button>
-                      <button
-                        className="button danger"
-                        onClick={() => {
-                          setGame(initialGame(game.mode));
-                          setStorageBlocked(false);
-                          setRunning(false);
-                          setSelected(1);
-                          closePanel();
-                          setWorldMode("farm");
-                          close();
-                          setNotice({
-                            text: "Une nouvelle aventure commence aux Étangs.",
-                            ok: true,
-                          });
-                        }}
-                      >
-                        Recommencer maintenant
-                      </button>
-                    </div>
-                  </>
-                ) : (
+                  </div>
+                  <div className="settings-summary">
+                    <span>
+                      <Sprout size={18} /> Jour {game.day} · Niveau{" "}
+                      {level(game)}
+                    </span>
+                    <strong>{euro(game.money)}</strong>
+                  </div>
+                  <button className="settings-action" onClick={exportSave}>
+                    <ArrowDownToLine size={20} />
+                    <span>
+                      <strong>Exporter ma partie</strong>
+                      <small>Télécharger une copie au format JSON</small>
+                    </span>
+                    <ArrowUpRight size={17} />
+                  </button>
                   <button
                     className="settings-action"
-                    onClick={() => setResetConfirm(true)}
+                    onClick={() => fileInput.current?.click()}
                   >
-                    <RotateCcw size={20} />
+                    <Upload size={20} />
                     <span>
-                      <strong>Nouvelle partie</strong>
-                      <small>Repartir du terrain vide avec 60 000 €</small>
+                      <strong>Importer une sauvegarde</strong>
+                      <small>
+                        Remplace la partie actuelle après validation du fichier
+                      </small>
                     </span>
-                    <ChevronRight size={17} />
+                    <ArrowUpRight size={17} />
                   </button>
-                )}
-              </div>
-              <p className="settings-note">
-                <LockKeyhole size={13} /> Solo, sans compte. Vos données restent
-                sur votre appareil.
-              </p>
-            </>
+                  <input
+                    ref={fileInput}
+                    type="file"
+                    accept=".json,application/json"
+                    hidden
+                    aria-label="Fichier de sauvegarde"
+                    onChange={(e) => void importSave(e.target.files?.[0])}
+                  />
+                  <div className="settings-danger">
+                    {resetConfirm ? (
+                      <>
+                        <p>
+                          Recommencer effacera la partie enregistrée dans ce
+                          navigateur. Exportez-la d’abord si vous souhaitez la
+                          garder.
+                        </p>
+                        <div className="button-row">
+                          <button
+                            className="button outline"
+                            onClick={() => setResetConfirm(false)}
+                          >
+                            <ArrowLeft size={15} />
+                            Annuler
+                          </button>
+                          <button
+                            className="button danger"
+                            onClick={() => {
+                              setGame(initialGame(game.mode));
+                              setStorageBlocked(false);
+                              setRunning(false);
+                              setSelected(1);
+                              closePanel();
+                              setWorldMode("farm");
+                              close();
+                              setNotice({
+                                text: "Une nouvelle aventure commence aux Étangs.",
+                                ok: true,
+                              });
+                            }}
+                          >
+                            Recommencer maintenant
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <button
+                        className="settings-action"
+                        onClick={() => setResetConfirm(true)}
+                      >
+                        <RotateCcw size={20} />
+                        <span>
+                          <strong>Nouvelle partie</strong>
+                          <small>Repartir du terrain vide avec 60 000 €</small>
+                        </span>
+                        <ChevronRight size={17} />
+                      </button>
+                    )}
+                  </div>
+                  <p className="settings-note">
+                    <LockKeyhole size={13} /> Solo, sans compte. Vos données
+                    restent sur votre appareil.
+                  </p>
+                </>
+              )}
+            </Tabs>
           )}
         </Modal>
       )}

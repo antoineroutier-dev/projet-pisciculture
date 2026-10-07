@@ -80,7 +80,7 @@ for (const [width,height] of [[1440,900], [390,844]]) {
     await seed(page, "contrat-client");
     const fonts = await page.evaluate(() => ["Inter", "Fraunces"].map(family => ({ family,
       loaded: [...document.fonts].some(f => f.family === family && f.status === "loaded"),
-      checked: document.fonts.check(`400 16px "${family}"`),
+      checked: document.fonts.check(`${family === "Fraunces" ? 600 : 400} 16px "${family}"`),
     })));
     expect(fonts.every(f => f.loaded && f.checked)).toBe(true);
     for (const name of screens) {
@@ -165,7 +165,7 @@ test("1a : la réduction de mouvement et le plancher typographique résistent à
   expect((await typography(page)).tooSmall).toEqual([]);
   await page.getByRole("navigation").getByRole("button", { name: "Logistique", exact: true }).click();
   expect((await typography(page)).tooSmall).toEqual([]);
-  expect(await page.locator(".ui-button").first().evaluate(e => getComputedStyle(e).transitionDuration)).toBe("0s");
+  expect(await page.locator(".ui-button").first().evaluate(e => getComputedStyle(e).transitionDuration.split(",").every(duration => parseFloat(duration) === 0))).toBe(true);
 });
 
 test("1a : textes et superpositions des vues 3D sur PC et mobile", async ({ page }) => {

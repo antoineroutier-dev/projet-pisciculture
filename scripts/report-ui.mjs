@@ -20,10 +20,11 @@ report.suites.forEach(walk);
 if(records.some(r=>r.status!=="passed")) throw new Error("La suite doit être entièrement verte avant de publier les mesures finales.");
 const captures=JSON.parse(fs.readFileSync(`docs/ui/apres/${lot}/manifest.json`,'utf8'));
 const typography=records.flatMap(r=>r.attachments.filter(a=>a.name==='font-measures').flatMap(a=>a.value));
+const scales=records.flatMap(r=>r.attachments.filter(a=>a.name==='scale-measures').flatMap(a=>a.value));
 const worlds=records.flatMap(r=>r.attachments.filter(a=>a.name==='world-measures').flatMap(a=>a.value));
 const result={stats:report.stats,portableBytes:fs.statSync('portable/Les-Etangs.html').size,
  captureBytes:captures.totalBytes,captureCount:captures.captures.length,
- minimumFontPx:Math.min(...typography.map(v=>v.min)),typographyCombinations:typography.length,
+ minimumFontPx:Math.min(...typography.map(v=>v.min),...scales.map(v=>v.min)),typographyCombinations:typography.length,scaleCombinations:scales.length,
  minimumCanvasRatio:Math.min(...worlds.map(v=>v.ratio)),minimumUnobscuredWorldRatioPanelsClosed:Math.min(...worlds.map(v=>v.unobscuredWithPanelsClosed)),records};
 fs.writeFileSync(`docs/ui/verification/${lot}/measures.json`,JSON.stringify(result,null,2)+'\n');
 console.log(JSON.stringify({...result,records:undefined}));

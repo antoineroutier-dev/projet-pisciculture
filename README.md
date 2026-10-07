@@ -6,13 +6,13 @@ Jeu de pisciculture solo en français pour navigateur. La V3 commence sur un ter
 
 Le [prompt complet exécuté pour cette refonte](docs/PROMPT-PROGRESSION.md) détaille le parcours, la logistique, la nage et les validations.
 
-L’[audit de l’interface](docs/AUDIT-UI-STEAM.md) recense ce qui sépare la V3 d’un jeu de gestion de qualité Steam ; le [prompt de refonte UI](docs/PROMPT-UI-STEAM.md) définit les lots à exécuter. Le [lot 0](docs/ui/LOT-0.md) corrige les huit bugs préalables. Le **lot 1a** apporte les polices locales Inter/Fraunces, un plancher typographique de 12 px, les premiers composants partagés et des contrôles au clavier. Le **lot 1b** installe le monde 3D plein écran, le HUD fixe, le dock à six entrées et des panneaux de gestion provisoires. Le [suivi des sous-lots](docs/ui/PROGRESSION.md) détaille les validations et la suite. Les [captures et commandes de vérification](docs/ui/README.md) et les [crédits et licences](docs/CREDITS.md) documentent chaque livraison.
+L’[audit de l’interface](docs/AUDIT-UI-STEAM.md) recense ce qui sépare la V3 d’un jeu de gestion de qualité Steam ; le [prompt de refonte UI](docs/PROMPT-UI-STEAM.md) définit les lots à exécuter. Le [lot 0](docs/ui/LOT-0.md) corrige les huit bugs préalables. Le **lot 1a** apporte les polices locales Inter/Fraunces, un plancher typographique de 12 px, les premiers composants partagés et des contrôles au clavier. Le **lot 1b** installe le monde 3D plein écran, le HUD fixe, le dock à six entrées et des panneaux de gestion provisoires. Le **lot 1c** consolide les styles et les composants partagés, avec une échelle de 80 à 150 % et un réglage de mouvement réduit dans Paramètres → Affichage. Le [suivi des sous-lots](docs/ui/PROGRESSION.md) détaille les validations et la suite. Les [captures et commandes de vérification](docs/ui/README.md) et les [crédits et licences](docs/CREDITS.md) documentent chaque livraison.
 
 ## Édition autonome, sans installation pour le joueur
 
 L’édition `Les-Etangs.html` contient le jeu et ses images dans un seul fichier. Télécharger ce fichier (ou décompresser l’archive de livraison), puis l’ouvrir avec un navigateur moderne. Aucun serveur ni accès Internet n’est nécessaire pour jouer ; les liens vers les sources documentaires demandent Internet. La 3D requiert WebGL 2, avec carte de secours si indisponible.
 
-Pour produire cette édition depuis les sources : `npm ci`, puis `npm run build:portable`. Le résultat est `portable/Les-Etangs.html` (4 810 233 octets, soit 4,81 Mo au lot 1b), distinct du build web `dist/`. Le script vérifie la limite de 15 Mo et intègre les polices locales et leurs licences.
+Pour produire cette édition depuis les sources : `npm ci`, puis `npm run build:portable`. Le résultat est `portable/Les-Etangs.html` (4 755 521 octets, soit 4,76 Mo au lot 1c), distinct du build web `dist/`. Le script vérifie la limite de 15 Mo et intègre les polices locales et leurs licences.
 
 Commencer avec **Analyser l’eau** sur la carte d’objectif, puis suivre la carte **Votre prochaine action**. La partie démarre en pause. Les sauvegardes locales peuvent être attachées au chemin du fichier selon le navigateur : utiliser **Paramètres & sauvegarde → Exporter ma partie** avant de déplacer ou remplacer le fichier.
 
@@ -88,7 +88,7 @@ Import/export JSON (maximum 300 Ko), validation des nombres, espèces, lots, uni
 | `src/farm3d.ts`, `src/fish3d.ts` | Géométries, matériaux, textures et animations originales |
 | `src/FishArt.tsx`, `public/assets/species-atlas.png` | Illustration d’identification des espèces |
 | `src/FarmMap.tsx` | Carte accessible de secours |
-| `src/styles.css`, `src/realism.css` | Thème et adaptation mobile |
+| `src/ui/{tokens,foundation,dialog,game-shell}.css`, `src/panels/panels.css`, `src/world/map.css` | Jetons, composants et adaptation mobile ; anciennes feuilles supprimées |
 | `src/ui/tokens.css`, `src/ui/foundation.css` | Jetons sémantiques, échelle typographique et adaptations transitoires ; consolidation des anciennes feuilles prévue en 1c |
 | `src/ui/Button.tsx`, `src/ui/Tooltip.tsx`, `src/ui/Dialog.tsx` | Premiers composants partagés accessibles |
 | `tests/game.spec.ts` | Parcours Chromium, 3D et contrôles axe |

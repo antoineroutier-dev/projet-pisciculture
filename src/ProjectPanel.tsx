@@ -1,3 +1,4 @@
+import { CountdownChip } from "./ui/Primitives";
 import { Button } from "./ui/Button";
 import { formatMoney as euro, formatUnitPrice, plural } from "./ui/format";
 import {
@@ -337,7 +338,15 @@ export function LogisticsPanel({ game, perform, stock }: Props) {
               <article key={pack.kg}>
                 <strong>{pack.kg} kg</strong>
                 <span>{euro(pack.cost + FEED_FREIGHT)} livré</span>
-                <button
+                <Button
+                  tone="secondary"
+                  disabledReason={
+                    !d.surveyed
+                      ? "Faites analyser l’eau."
+                      : full
+                        ? "Capacité insuffisante : aménagez le magasin ou consommez les aliments en stock."
+                        : "Trésorerie insuffisante, transport compris."
+                  }
                   className="button outline full"
                   disabled={
                     !d.surveyed || full || game.money < pack.cost + FEED_FREIGHT
@@ -345,7 +354,7 @@ export function LogisticsPanel({ game, perform, stock }: Props) {
                   onClick={() => perform({ type: "food", pack: i })}
                 >
                   Commander {pack.kg} kg
-                </button>
+                </Button>
                 {full && (
                   <small>
                     Capacité insuffisante : aménagez le magasin ou attendez de
@@ -377,13 +386,21 @@ export function LogisticsPanel({ game, perform, stock }: Props) {
                             : "Bassin disponible · préparer les aliments avant la commande"}
                     </small>
                   </span>
-                  <button
+                  <Button
+                    tone="secondary"
+                    disabledReason={
+                      p.count
+                        ? "Le bassin contient déjà un lot."
+                        : incoming
+                          ? "Une commande de juvéniles est déjà en livraison."
+                          : "Attendez la fin du vide sanitaire."
+                    }
                     className="button outline"
                     disabled={!!p.count || !!incoming || !!p.fallowDays}
                     onClick={() => stock(p.id)}
                   >
                     Commander des juvéniles
-                  </button>
+                  </Button>
                 </div>
               );
             })}
@@ -406,7 +423,7 @@ export function LogisticsPanel({ game, perform, stock }: Props) {
                     ? `${o.amount} kg d’aliments`
                     : `${o.amount} ${SPECIES[o.species!].name} · ${game.ponds[o.pondId! - 1].name}`}
                 </span>
-                <strong>Dans {o.due - game.day} j</strong>
+                <CountdownChip label="Livraison" days={o.due - game.day} />
               </div>
             ))}
           </div>
@@ -443,7 +460,8 @@ export function LogisticsPanel({ game, perform, stock }: Props) {
                     {euro(a.cost)} · {a.days} jours
                   </strong>
                   <Button
-                    className="full" tone="secondary"
+                    className="full"
+                    tone="secondary"
                     disabled={
                       d.assets[key] ||
                       !!work ||
@@ -451,11 +469,17 @@ export function LogisticsPanel({ game, perform, stock }: Props) {
                       (key === "workshop" && !d.assets.coldstore) ||
                       game.money < a.cost
                     }
-                    disabledReason={d.assets[key] ? "Ce bâtiment est déjà en service."
-                      : work ? `Le chantier se termine dans ${work.due - game.day} ${plural(work.due - game.day, "jour")}.`
-                      : !d.surveyed ? "Faites analyser l’eau avant d’aménager les bâtiments."
-                      : key === "workshop" && !d.assets.coldstore ? "Aménagez d’abord la chambre froide."
-                      : `Il faut ${euro(a.cost)} de trésorerie pour ces travaux.`}
+                    disabledReason={
+                      d.assets[key]
+                        ? "Ce bâtiment est déjà en service."
+                        : work
+                          ? `Le chantier se termine dans ${work.due - game.day} ${plural(work.due - game.day, "jour")}.`
+                          : !d.surveyed
+                            ? "Faites analyser l’eau avant d’aménager les bâtiments."
+                            : key === "workshop" && !d.assets.coldstore
+                              ? "Aménagez d’abord la chambre froide."
+                              : `Il faut ${euro(a.cost)} de trésorerie pour ces travaux.`
+                    }
                     onClick={() => perform({ type: "asset", asset: key })}
                   >
                     {d.assets[key]
@@ -499,8 +523,9 @@ export function LogisticsPanel({ game, perform, stock }: Props) {
                   {b.factor === 1 ? "" : "× 1,5"}.
                 </p>
                 <p>
-                  Transport : {euro(b.freight)} + {formatUnitPrice(b.perKg)}/kg. Livraison
-                  en 1 jour ; paiement {b.payment} jours après réception.
+                  Transport : {euro(b.freight)} + {formatUnitPrice(b.perKg)}/kg.
+                  Livraison en 1 jour ; paiement {b.payment} jours après
+                  réception.
                 </p>
                 {b.processed && (
                   <p>
@@ -517,7 +542,17 @@ export function LogisticsPanel({ game, perform, stock }: Props) {
                         p.weight < SPECIES[p.species!].harvestWeight * 0.8;
                       return (
                         <div key={p.id}>
-                          <button
+                          <Button
+                            tone="secondary"
+                            disabledReason={
+                              c
+                                ? "Ce bassin possède déjà une réservation client."
+                                : tooSmall
+                                  ? "Le lot doit atteindre 80 % du calibre commercial."
+                                  : !d.assets.coldstore
+                                    ? "Aménagez d’abord la chambre froide."
+                                    : "Ce client demande un atelier de préparation."
+                            }
                             className="button outline full"
                             disabled={
                               !!c ||
@@ -534,7 +569,7 @@ export function LogisticsPanel({ game, perform, stock }: Props) {
                             }
                           >
                             Réserver {p.name} · {b.name}
-                          </button>
+                          </Button>
                           {tooSmall && (
                             <small>
                               {p.name} : prospection à{" "}
@@ -580,8 +615,8 @@ export function LogisticsPanel({ game, perform, stock }: Props) {
                       {p.name} → {BUYERS[c.buyer].name}
                     </strong>
                     <p>
-                      {formatUnitPrice(c.price)}/kg · livraison au plus tard le jour{" "}
-                      {c.deadline} · {c.maxKg} kg maximum
+                      {formatUnitPrice(c.price)}/kg · livraison au plus tard le
+                      jour {c.deadline} · {c.maxKg} kg maximum
                     </p>
                     <small>
                       {batch
@@ -591,7 +626,13 @@ export function LogisticsPanel({ game, perform, stock }: Props) {
                   </div>
                   {!batch && (
                     <div className="contract-actions">
-                      <button
+                      <Button
+                        tone="primary"
+                        disabledReason={
+                          p.health < 60
+                            ? "Le lot doit retrouver une santé d’au moins 60 sur 100."
+                            : "Attendez le calibre commercial et la fin de l’observation."
+                        }
                         className="button primary"
                         disabled={!harvestReady(p) || p.health < 60}
                         onClick={() =>
@@ -599,7 +640,7 @@ export function LogisticsPanel({ game, perform, stock }: Props) {
                         }
                       >
                         Récolter {p.name}
-                      </button>
+                      </Button>
                       <button
                         className="text-button"
                         onClick={() =>
@@ -679,7 +720,13 @@ export function LogisticsPanel({ game, perform, stock }: Props) {
                         : `Transport frigorifique : ${euro(transportCost(b, c.buyer))}`}
                 </strong>
               </div>
-              <button
+              <Button
+                tone="primary"
+                disabledReason={
+                  b.processingDue !== null
+                    ? "Attendez la fin de la préparation."
+                    : "Le délai restant ne permet plus de livrer ce lot frais."
+                }
                 className="button primary"
                 disabled={b.processingDue !== null || tooLate}
                 onClick={() =>
@@ -689,7 +736,7 @@ export function LogisticsPanel({ game, perform, stock }: Props) {
                 {prepare
                   ? `Préparer le lot #${b.id}`
                   : `Expédier le lot #${b.id}`}
-              </button>
+              </Button>
             </article>
           );
         })}

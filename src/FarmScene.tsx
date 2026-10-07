@@ -8,15 +8,32 @@ import { animateFish, clearFishTextures, createFish } from "./fish3d";
 import { createFarm, disposeObject, POND_POSITIONS } from "./farm3d";
 import { type Pond, type SpeciesId } from "./game";
 import type { SceneMode } from "./world/types";
-export default function FarmScene({ponds, selected, select, day, mode, species, clearWater, reset}: {
-  ponds:Pond[]; selected:number; select:(id:number)=>void; day:number;
-  mode:SceneMode; species:SpeciesId; clearWater:boolean; reset:number;
+export default function FarmScene({
+  ponds,
+  selected,
+  select,
+  day,
+  mode,
+  species,
+  clearWater,
+  reset,
+}: {
+  ponds: Pond[];
+  selected: number;
+  select: (id: number) => void;
+  day: number;
+  mode: SceneMode;
+  species: SpeciesId;
+  clearWater: boolean;
+  reset: number;
 }) {
   const [error, setError] = useState("");
   const [ready, setReady] = useState(false);
   const host = useRef<HTMLDivElement>(null);
-  const state = useMemo(() => ({ponds, selected, select, day, mode, species, clearWater, reset}),
-    [ponds, selected, select, day, mode, species, clearWater, reset]);
+  const state = useMemo(
+    () => ({ ponds, selected, select, day, mode, species, clearWater, reset }),
+    [ponds, selected, select, day, mode, species, clearWater, reset],
+  );
   const latest = useRef(state);
   latest.current = state;
   useEffect(() => {
@@ -164,9 +181,13 @@ export default function FarmScene({ponds, selected, select, day, mode, species, 
     renderer.domElement.addEventListener("pointerdown", onDown);
     renderer.domElement.addEventListener("pointerup", onUp);
     renderer.domElement.addEventListener("webglcontextlost", contextLost);
-    const reduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const motionChanged = () => {
+      needsRender = true;
+      lastSwim = 0;
+    };
+    motionQuery.addEventListener("change", motionChanged);
+    window.addEventListener("etangs-preferences", motionChanged);
     const animate = (ms: number) => {
       frame = requestAnimationFrame(animate);
       if (
@@ -176,6 +197,9 @@ export default function FarmScene({ponds, selected, select, day, mode, species, 
       )
         return;
       lastRender = ms;
+      const reduced =
+        motionQuery.matches ||
+        document.documentElement.dataset.motion === "reduce";
       const state = latest.current;
       const changed = state !== previousState;
       previousState = state;
@@ -241,7 +265,13 @@ export default function FarmScene({ponds, selected, select, day, mode, species, 
           controls.target.set(x, 0.55, z);
         }
         if (state.mode === "fish") {
-          const distance = Math.max(7.5, 9 / (2 * Math.tan(T.MathUtils.degToRad(camera.fov / 2)) * camera.aspect));
+          const distance = Math.max(
+            7.5,
+            9 /
+              (2 *
+                Math.tan(T.MathUtils.degToRad(camera.fov / 2)) *
+                camera.aspect),
+          );
           camera.position.set(-0.1, 2.15, distance);
           controls.maxDistance = Math.max(13, distance * 1.8);
           controls.target.set(0, container.clientWidth < 700 ? 1.2 : 1.7, 0);
@@ -313,12 +343,19 @@ export default function FarmScene({ponds, selected, select, day, mode, species, 
       renderer.domElement.dataset.species = state.species;
       renderer.domElement.dataset.day = String(state.day);
       renderer.domElement.dataset.settled = String(pendingFrames === 0);
-      renderer.domElement.dataset.camera = [...camera.position.toArray(), ...controls.target.toArray()].map(n => n.toFixed(3)).join(",");
+      renderer.domElement.dataset.camera = [
+        ...camera.position.toArray(),
+        ...controls.target.toArray(),
+      ]
+        .map((n) => n.toFixed(3))
+        .join(",");
     };
     frame = requestAnimationFrame(animate);
     setReady(true);
     return () => {
       cancelAnimationFrame(frame);
+      motionQuery.removeEventListener("change", motionChanged);
+      window.removeEventListener("etangs-preferences", motionChanged);
       observer.disconnect();
       intersection.disconnect();
       controls.dispose();
@@ -334,12 +371,24 @@ export default function FarmScene({ponds, selected, select, day, mode, species, 
       renderer.domElement.remove();
     };
   }, []);
-  return <div className="world-scene" data-testid="farm-scene" data-ready={ready && !error ? "true" : "false"}>
-    <div className="world-canvas" ref={host} hidden={!!error} />
-    {error && <div className="world-fallback">
-      <p role="status">Carte de secours · la 3D est indisponible.</p>
-      <FarmMap ponds={ponds} selected={selected} select={select} />
-    </div>}
-    {!ready && !error && <div className="world-loading" role="status">Préparation du terrain…</div>}
-  </div>;
+  return (
+    <div
+      className="world-scene"
+      data-testid="farm-scene"
+      data-ready={ready && !error ? "true" : "false"}
+    >
+      <div className="world-canvas" ref={host} hidden={!!error} />
+      {error && (
+        <div className="world-fallback">
+          <p role="status">Carte de secours · la 3D est indisponible.</p>
+          <FarmMap ponds={ponds} selected={selected} select={select} />
+        </div>
+      )}
+      {!ready && !error && (
+        <div className="world-loading" role="status">
+          Préparation du terrain…
+        </div>
+      )}
+    </div>
+  );
 }

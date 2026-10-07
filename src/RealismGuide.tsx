@@ -1,3 +1,4 @@
+import { Card } from "./ui/Primitives";
 import {
   BookOpen,
   Droplets,
@@ -79,18 +80,29 @@ export default function RealismGuide() {
       </div>
       <div className="guide-grid">
         {sections.map((s) => (
-          <article className="guide-card" key={s.title}>
+          <Card className="guide-card" key={s.title}>
             <span className="guide-icon">{s.icon}</span>
             <h3>{s.title}</h3>
             <p>{s.text}</p>
-          </article>
+          </Card>
         ))}
       </div>
       <section className="research-card">
         <span className="section-kicker">DOCUMENTATION & TRANSPARENCE</span>
         <h2>À propos du modèle</h2>
-        <p>Le rendu 3D représente un échantillon des poissons du lot, à une échelle indicative. L’observation sous l’eau accentue sa transparence. Les planches d’identification sont des illustrations artistiques générées ; les modèles anatomiques originaux servent de repères visuels, pas de mesures scientifiques. Certains bâtiments sont encore décoratifs.</p>
-        <p>Les coûts, prix, températures et coefficients sont ceux d’un scénario pédagogique. Le froid, les contrôles et les délais sont simplifiés ; les obligations sanitaires réelles ne sont pas simulées intégralement.</p>
+        <p>
+          Le rendu 3D représente un échantillon des poissons du lot, à une
+          échelle indicative. L’observation sous l’eau accentue sa transparence.
+          Les planches d’identification sont des illustrations artistiques
+          générées ; les modèles anatomiques originaux servent de repères
+          visuels, pas de mesures scientifiques. Certains bâtiments sont encore
+          décoratifs.
+        </p>
+        <p>
+          Les coûts, prix, températures et coefficients sont ceux d’un scénario
+          pédagogique. Le froid, les contrôles et les délais sont simplifiés ;
+          les obligations sanitaires réelles ne sont pas simulées intégralement.
+        </p>
         <p>
           La documentation des logiciels scientifiques respirometry et marelac a
           été consultée pour les unités d’oxygène, le renouvellement d’eau, la

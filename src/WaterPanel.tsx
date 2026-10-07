@@ -1,3 +1,4 @@
+import { Toggle, Gauge } from "./ui/Primitives";
 import {
   Activity,
   Droplets,
@@ -87,13 +88,17 @@ export default function WaterPanel({
           {number(density(p), 2)} / {p.maxDensity} kg/m³
         </strong>
       </div>
-      <div className="technical-track">
-        <span
-          style={{
-            width: `${Math.min(100, (density(p) / p.maxDensity) * 100)}%`,
-          }}
-        />
-      </div>
+      <Gauge
+        label="Densité d’élevage"
+        value={density(p)}
+        max={p.maxDensity}
+        caption={
+          density(p) > p.maxDensity
+            ? "Densité excessive"
+            : "Densité sous la limite"
+        }
+        tone={density(p) > p.maxDensity ? "danger" : "success"}
+      />
       <div className="husbandry-fields">
         <label>
           Débit d’eau neuve
@@ -140,28 +145,14 @@ export default function WaterPanel({
       </div>
       {p.count > 0 && (
         <>
-          <div className="feeder-control">
-            <span>
-              <strong>Distribution automatique</strong>
-              <small>
-                {number(feedNeeded(p), 2)} kg prévus / jour, selon l’eau
-              </small>
-            </span>
-            <button
-              role="switch"
-              aria-label="Distribution automatique"
-              aria-checked={p.autoFeed}
-              onClick={() =>
-                perform({
-                  type: "autoFeed",
-                  pondId: p.id,
-                  enabled: !p.autoFeed,
-                })
-              }
-            >
-              <span />
-            </button>
-          </div>
+          <Toggle
+            label="Distribution automatique"
+            checked={p.autoFeed}
+            description={`${number(feedNeeded(p), 2)} kg prévus / jour, selon l’eau`}
+            onChange={(enabled) =>
+              perform({ type: "autoFeed", pondId: p.id, enabled })
+            }
+          />
           <div className="husbandry-summary">
             <span>
               Lot suivi depuis <b>{p.age} jours</b>
