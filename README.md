@@ -6,13 +6,13 @@ Jeu de pisciculture solo en français pour navigateur. La V3 commence sur un ter
 
 Le [prompt complet exécuté pour cette refonte](docs/PROMPT-PROGRESSION.md) détaille le parcours, la logistique, la nage et les validations.
 
-L’[audit de l’interface](docs/AUDIT-UI-STEAM.md) recense ce qui sépare la V3 d’un jeu de gestion de qualité Steam ; le [prompt de refonte UI](docs/PROMPT-UI-STEAM.md) définit les lots à exécuter. Le [lot 0](docs/ui/LOT-0.md) corrige les huit bugs préalables ; les lots 1 à 5 restent à réaliser. Les [captures et commandes de vérification](docs/ui/README.md) permettent de comparer les mêmes situations avant/après. Les [crédits et licences](docs/CREDITS.md) recensent les ressources embarquées.
+L’[audit de l’interface](docs/AUDIT-UI-STEAM.md) recense ce qui sépare la V3 d’un jeu de gestion de qualité Steam ; le [prompt de refonte UI](docs/PROMPT-UI-STEAM.md) définit les lots à exécuter. Le [lot 0](docs/ui/LOT-0.md) corrige les huit bugs préalables. Le **lot 1a** apporte les polices locales Inter/Fraunces, un plancher typographique de 12 px, les premiers composants partagés et des contrôles au clavier. Le [suivi des sous-lots](docs/ui/PROGRESSION.md) précise la suite : **1b, monde plein écran persistant, HUD et dock**. L’interface utilise encore les pages V3. Les [captures et commandes de vérification](docs/ui/README.md) et les [crédits et licences](docs/CREDITS.md) documentent chaque livraison.
 
 ## Édition autonome, sans installation pour le joueur
 
 L’édition `Les-Etangs.html` contient le jeu et ses images dans un seul fichier. Télécharger ce fichier (ou décompresser l’archive de livraison), puis l’ouvrir avec un navigateur moderne. Aucun serveur ni accès Internet n’est nécessaire pour jouer ; les liens vers les sources documentaires demandent Internet. La 3D requiert WebGL 2, avec carte de secours si indisponible.
 
-Pour produire cette édition depuis les sources : `npm ci`, puis `npm run build:portable`. Le résultat est `portable/Les-Etangs.html` (10,06 Mo au lot 0), distinct du build web `dist/`. Le script vérifie la limite de 15 Mo et intègre les polices locales et leurs licences.
+Pour produire cette édition depuis les sources : `npm ci`, puis `npm run build:portable`. Le résultat est `portable/Les-Etangs.html` (10 185 132 octets, soit 10,19 Mo au lot 1a), distinct du build web `dist/`. Le script vérifie la limite de 15 Mo et intègre les polices locales et leurs licences.
 
 Commencer dans **Mon projet** avec **Analyser l’eau**, puis suivre la carte **Votre prochaine action**. La partie démarre en pause. Les sauvegardes locales peuvent être attachées au chemin du fichier selon le navigateur : utiliser **Paramètres & sauvegarde → Exporter ma partie** avant de déplacer ou remplacer le fichier.
 
@@ -46,6 +46,8 @@ Le serveur Vite écoute sur toutes les interfaces. `npm run preview` sert le dos
 **Anciennes parties :** la migration conserve vos lots et votre argent. Pour découvrir le nouveau départ, exportez votre sauvegarde puis utilisez **Paramètres & sauvegarde → Nouvelle partie**.
 
 Le mode **réaliste avec aides pédagogiques** est activé par défaut. Le mode expert supprime les primes fictives et les arrêts automatiques de l’horloge ; la biologie reste identique. Le guide intégré explique chaque grandeur. Fenêtres de gestion et onglets masqués suspendent le temps ; il n’y a pas de progression hors ligne. Une partie rechargée revient en pause.
+
+**Clavier :** Tab / Maj+Tab parcourent les commandes, Entrée active un bouton. Dans une fenêtre, le focus reste à l’intérieur ; Échap ferme la fenêtre et rend le focus à la commande d’ouverture. Les boutons de bâtiments indisponibles expliquent la raison au survol ou au focus clavier ; Échap masque l’infobulle. Les raccourcis de temps, la manette et le réglage d’échelle de l’interface sont prévus dans les sous-lots suivants.
 
 ## Modèle et recherche
 
@@ -86,7 +88,10 @@ Import/export JSON (maximum 300 Ko), validation des nombres, espèces, lots, uni
 | `src/FishArt.tsx`, `public/assets/species-atlas.png` | Illustration d’identification des espèces |
 | `src/FarmMap.tsx` | Carte accessible de secours |
 | `src/styles.css`, `src/realism.css` | Thème et adaptation mobile |
+| `src/ui/tokens.css`, `src/ui/foundation.css` | Jetons sémantiques, échelle typographique et adaptations transitoires ; consolidation des anciennes feuilles prévue en 1c |
+| `src/ui/Button.tsx`, `src/ui/Tooltip.tsx`, `src/ui/Dialog.tsx` | Premiers composants partagés accessibles |
 | `tests/game.spec.ts` | Parcours Chromium, 3D et contrôles axe |
+| `tests/ui-lot1a.spec.ts`, `tests/keyboard-cycle.spec.ts` | Lisibilité sur sept états/cinq résolutions, géométrie, dialogues, axe et premier paiement au clavier seul |
 
 React 19, TypeScript, Vite, Three.js, Lucide, Vitest, Playwright et axe. Dépendances verrouillées dans `package-lock.json`. Le moteur 3D se charge séparément de l’interface et le rendu démarre à la demande ; ses ressources sont libérées lors du changement de page. Les scènes hors écran ne sont pas animées et les préférences de mouvement réduit sont respectées.
 

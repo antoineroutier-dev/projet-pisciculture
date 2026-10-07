@@ -1,0 +1,365 @@
+{
+  "totalBytes": 1582126,
+  "captures": [
+    {
+      "path": "docs/ui/apres/lot-1a/1440x900-projet.jpg",
+      "screen": "projet",
+      "state": "contrat-client",
+      "width": 1440,
+      "height": 900,
+      "bytes": 96442,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 1440,
+      "scrollY": 0
+    },
+    {
+      "path": "docs/ui/apres/lot-1a/1440x900-bassins.jpg",
+      "screen": "bassins",
+      "state": "contrat-client",
+      "width": 1440,
+      "height": 900,
+      "bytes": 113607,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 1440,
+      "scrollY": 703
+    },
+    {
+      "path": "docs/ui/apres/lot-1a/1440x900-bassin-detail.jpg",
+      "screen": "bassin-detail",
+      "state": "contrat-client",
+      "width": 1440,
+      "height": 900,
+      "bytes": 88572,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 1440,
+      "scrollY": 1184
+    },
+    {
+      "path": "docs/ui/apres/lot-1a/1440x900-logistique.jpg",
+      "screen": "logistique",
+      "state": "contrat-client",
+      "width": 1440,
+      "height": 900,
+      "bytes": 79259,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 1440,
+      "scrollY": 680
+    },
+    {
+      "path": "docs/ui/apres/lot-1a/1440x900-marche.jpg",
+      "screen": "marche",
+      "state": "contrat-client",
+      "width": 1440,
+      "height": 900,
+      "bytes": 107092,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 1440,
+      "scrollY": 308
+    },
+    {
+      "path": "docs/ui/apres/lot-1a/1440x900-journal.jpg",
+      "screen": "journal",
+      "state": "contrat-client",
+      "width": 1440,
+      "height": 900,
+      "bytes": 82888,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 1440,
+      "scrollY": 308
+    },
+    {
+      "path": "docs/ui/apres/lot-1a/1440x900-guide.jpg",
+      "screen": "guide",
+      "state": "contrat-client",
+      "width": 1440,
+      "height": 900,
+      "bytes": 130399,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 1440,
+      "scrollY": 499
+    },
+    {
+      "path": "docs/ui/apres/lot-1a/1440x900-parametres.jpg",
+      "screen": "parametres",
+      "state": "contrat-client",
+      "width": 1440,
+      "height": 900,
+      "bytes": 50012,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 1440,
+      "scrollY": 499
+    },
+    {
+      "path": "docs/ui/apres/lot-1a/1440x900-infobulle.jpg",
+      "screen": "infobulle",
+      "state": "chantier",
+      "width": 1440,
+      "height": 900,
+      "bytes": 91562,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 1440,
+      "scrollY": 1484
+    },
+    {
+      "path": "docs/ui/apres/lot-1a/1440x900-visite-3d.jpg",
+      "screen": "visite-3d",
+      "state": "contrat-client",
+      "width": 1440,
+      "height": 900,
+      "bytes": 120697,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 1440,
+      "scrollY": 703
+    },
+    {
+      "path": "docs/ui/apres/lot-1a/1440x900-identification.jpg",
+      "screen": "identification",
+      "state": "contrat-client",
+      "width": 1440,
+      "height": 900,
+      "bytes": 101448,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 1440,
+      "scrollY": 703
+    },
+    {
+      "path": "docs/ui/apres/lot-1a/1440x900-sans-webgl.jpg",
+      "screen": "sans-webgl",
+      "state": "terrain-vide",
+      "width": 1440,
+      "height": 900,
+      "bytes": 101125,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 1440,
+      "scrollY": 677
+    },
+    {
+      "path": "docs/ui/apres/lot-1a/390x844-projet.jpg",
+      "screen": "projet",
+      "state": "contrat-client",
+      "width": 390,
+      "height": 844,
+      "bytes": 40853,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 390,
+      "scrollY": 0
+    },
+    {
+      "path": "docs/ui/apres/lot-1a/390x844-bassins.jpg",
+      "screen": "bassins",
+      "state": "contrat-client",
+      "width": 390,
+      "height": 844,
+      "bytes": 35741,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 390,
+      "scrollY": 1337
+    },
+    {
+      "path": "docs/ui/apres/lot-1a/390x844-bassin-detail.jpg",
+      "screen": "bassin-detail",
+      "state": "contrat-client",
+      "width": 390,
+      "height": 844,
+      "bytes": 29969,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 390,
+      "scrollY": 2967
+    },
+    {
+      "path": "docs/ui/apres/lot-1a/390x844-logistique.jpg",
+      "screen": "logistique",
+      "state": "contrat-client",
+      "width": 390,
+      "height": 844,
+      "bytes": 31402,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 390,
+      "scrollY": 1390
+    },
+    {
+      "path": "docs/ui/apres/lot-1a/390x844-marche.jpg",
+      "screen": "marche",
+      "state": "contrat-client",
+      "width": 390,
+      "height": 844,
+      "bytes": 30851,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 390,
+      "scrollY": 636
+    },
+    {
+      "path": "docs/ui/apres/lot-1a/390x844-journal.jpg",
+      "screen": "journal",
+      "state": "contrat-client",
+      "width": 390,
+      "height": 844,
+      "bytes": 35195,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 390,
+      "scrollY": 710
+    },
+    {
+      "path": "docs/ui/apres/lot-1a/390x844-guide.jpg",
+      "screen": "guide",
+      "state": "contrat-client",
+      "width": 390,
+      "height": 844,
+      "bytes": 39060,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 390,
+      "scrollY": 902
+    },
+    {
+      "path": "docs/ui/apres/lot-1a/390x844-parametres.jpg",
+      "screen": "parametres",
+      "state": "contrat-client",
+      "width": 390,
+      "height": 844,
+      "bytes": 32748,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 390,
+      "scrollY": 723
+    },
+    {
+      "path": "docs/ui/apres/lot-1a/390x844-infobulle.jpg",
+      "screen": "infobulle",
+      "state": "chantier",
+      "width": 390,
+      "height": 844,
+      "bytes": 31942,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 390,
+      "scrollY": 3508
+    },
+    {
+      "path": "docs/ui/apres/lot-1a/390x844-visite-3d.jpg",
+      "screen": "visite-3d",
+      "state": "contrat-client",
+      "width": 390,
+      "height": 844,
+      "bytes": 37395,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 390,
+      "scrollY": 1337
+    },
+    {
+      "path": "docs/ui/apres/lot-1a/390x844-identification.jpg",
+      "screen": "identification",
+      "state": "contrat-client",
+      "width": 390,
+      "height": 844,
+      "bytes": 36392,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 390,
+      "scrollY": 1337
+    },
+    {
+      "path": "docs/ui/apres/lot-1a/390x844-sans-webgl.jpg",
+      "screen": "sans-webgl",
+      "state": "terrain-vide",
+      "width": 390,
+      "height": 844,
+      "bytes": 37475,
+      "minText": 12,
+      "hudNumbers": [
+        20,
+        20
+      ],
+      "documentWidth": 390,
+      "scrollY": 1275
+    }
+  ]
+}

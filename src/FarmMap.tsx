@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef, useState } from "react";
 import { Pond, pondStatus, number } from "./game";
 
 export function FishArt({
@@ -73,7 +74,21 @@ export default function FarmMap({
   selected: number;
   select: (id: number) => void;
 }) {
+  const frame = useRef<HTMLDivElement>(null);
+  const [size, setSize] = useState({ width: 900, height: 520 });
+  useLayoutEffect(() => {
+    const node = frame.current;
+    if (!node) return;
+    setSize({ width: node.clientWidth, height: node.clientHeight });
+    const observer = new ResizeObserver(([entry]) => setSize({ width: entry.contentRect.width, height: entry.contentRect.height }));
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+  const scale = Math.min(size.width / 900, size.height / 520);
+  const offsetX = (size.width - 900 * scale) / 2;
+  const offsetY = (size.height - 520 * scale) / 2;
   return (
+    <div ref={frame} className="farm-map-frame">
     <svg
       className="farm-map"
       viewBox="0 0 900 520"
@@ -206,7 +221,7 @@ export default function FarmMap({
             transform={`translate(${x} ${y})`}
             role="button"
             tabIndex={0}
-            aria-label={`Bassin ${pond.id}, ${pond.name}, ${status.label}`}
+            aria-label={`Bassin ${pond.id}, ${pond.name}, ${status.label}${pond.count ? `, ${number(pond.count)} poissons de ${number(pond.weight * 1000)} g` : ""}`}
             aria-pressed={active}
             onClick={() => select(pond.id)}
             onKeyDown={(e) => {
@@ -324,39 +339,6 @@ export default function FarmMap({
                     />
                   </g>
                 )}
-                <rect
-                  x="-90"
-                  y="-86"
-                  width="180"
-                  height="30"
-                  rx="15"
-                  fill={active ? "#204f41" : "#fcfcf4"}
-                  filter="url(#shadow)"
-                />
-                <text
-                  x="0"
-                  y="-66"
-                  textAnchor="middle"
-                  fill={active ? "#fff" : "#395746"}
-                  fontSize="12"
-                  fontWeight="600"
-                >
-                  {String(pond.id).padStart(2, "0")} · {pond.name}
-                </text>
-                <rect
-                  x="-64"
-                  y="77"
-                  width="128"
-                  height="23"
-                  rx="11.5"
-                  fill="#f7f7e9"
-                  fillOpacity=".92"
-                />
-                <text y="92" textAnchor="middle" fontSize="10" fill="#52674e">
-                  {pond.species
-                    ? `${number(pond.count)} ${pond.species === "trout" ? "truites" : pond.species === "carp" ? "carpes" : "tilapias"} · ${number(pond.weight * 1000)} g`
-                    : "Prêt à empoissonner"}
-                </text>
               </>
             ) : (
               <>
@@ -377,19 +359,6 @@ export default function FarmMap({
                 </g>
                 <circle cy="-5" r="22" fill="#eef0da" fillOpacity=".8" />
                 <path d="M-8-5H8M0-13V3" stroke="#718566" strokeWidth="1.6" />
-                <rect x="-116" y="17" width="232" height="26" rx="12" fill="#fcfcf4" />
-                <text
-                  y="34"
-                  textAnchor="middle"
-                  fontSize="12"
-                  fill="#687d59"
-                  fontWeight="600"
-                >
-                  {pond.name}
-                </text>
-                <text y="53" textAnchor="middle" fontSize="10" fill="#7b8a67">
-                  Un nouvel horizon
-                </text>
               </>
             )}
           </g>
@@ -404,17 +373,14 @@ export default function FarmMap({
       <g transform="translate(857 48)" stroke="#5a735c" fill="none">
         <circle r="17" strokeOpacity=".35" />
         <path d="m0-11 5 17-5-3-5 3Z" fill="#5a735c" stroke="none" />
-        <text
-          y="-23"
-          textAnchor="middle"
-          fill="#5a735c"
-          stroke="none"
-          fontSize="9"
-        >
-          N
-        </text>
       </g>
 
     </svg>
+    {ponds.map((pond, i) => <span key={pond.id} className="map-name" aria-hidden="true"
+      data-selected={pond.id === selected}
+      style={{ left: offsetX + positions[i][0] * scale, top: offsetY + (positions[i][1] + (pond.built ? -72 : 32)) * scale }}>
+      {pond.name}
+    </span>)}
+    </div>
   );
 }

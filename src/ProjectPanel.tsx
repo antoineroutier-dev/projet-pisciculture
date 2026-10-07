@@ -1,3 +1,4 @@
+import { Button } from "./ui/Button";
 import { formatMoney as euro, formatUnitPrice, formatEngineText, plural } from "./ui/format";
 import {
   ArrowRight,
@@ -504,8 +505,8 @@ export function LogisticsPanel({ game, perform, stock }: Props) {
                   <strong>
                     {euro(a.cost)} · {a.days} jours
                   </strong>
-                  <button
-                    className="button outline full"
+                  <Button
+                    className="full" tone="secondary"
                     disabled={
                       d.assets[key] ||
                       !!work ||
@@ -513,6 +514,11 @@ export function LogisticsPanel({ game, perform, stock }: Props) {
                       (key === "workshop" && !d.assets.coldstore) ||
                       game.money < a.cost
                     }
+                    disabledReason={d.assets[key] ? "Ce bâtiment est déjà en service."
+                      : work ? `Le chantier se termine dans ${work.due - game.day} ${plural(work.due - game.day, "jour")}.`
+                      : !d.surveyed ? "Faites analyser l’eau avant d’aménager les bâtiments."
+                      : key === "workshop" && !d.assets.coldstore ? "Aménagez d’abord la chambre froide."
+                      : `Il faut ${euro(a.cost)} de trésorerie pour ces travaux.`}
                     onClick={() => perform({ type: "asset", asset: key })}
                   >
                     {d.assets[key]
@@ -520,7 +526,7 @@ export function LogisticsPanel({ game, perform, stock }: Props) {
                       : work
                         ? `Travaux · ${work.due - game.day} j`
                         : `Aménager ${{ warehouse: "le magasin d’aliments", coldstore: "la chambre froide", workshop: "l’atelier de préparation" }[key]}`}
-                  </button>
+                  </Button>
                   {key === "workshop" && !d.assets.coldstore && (
                     <small>Chambre froide nécessaire au préalable.</small>
                   )}

@@ -5,6 +5,7 @@ Vérification effectuée le **7 octobre 2026**. Les fichiers ci-dessous sont loc
 | Ressource | Auteur / provenance | Licence / statut vérifié | Source |
 | --- | --- | --- | --- |
 | Inter, Latin, normal 400/500/600/700 (`@fontsource/inter`) | The Inter Project Authors, Rasmus Andersson | SIL Open Font License 1.1 ; texte fourni dans le paquet npm, copié dans [Inter-OFL.txt](licenses/Inter-OFL.txt). Fichiers de police non modifiés. | https://github.com/rsms/inter ; https://fontsource.org/fonts/inter |
+| Fraunces, Latin, normal 400/600 (`@fontsource/fraunces`) | The Fraunces Project Authors, Undercase Type | SIL Open Font License 1.1 vérifiée le 7 octobre 2026 dans le paquet npm ; [Fraunces-OFL.txt](licenses/Fraunces-OFL.txt). Polices non modifiées, licence intégrée au portable. | https://github.com/undercasetype/Fraunces ; https://fontsource.org/fonts/fraunces |
 | Icônes Lucide | Lucide Contributors | ISC ; [texte fourni](licenses/Lucide-ISC.txt) | https://lucide.dev/ |
 | Three.js et modules d’environnement/caméra | Three.js Authors | MIT ; [texte fourni](licenses/Three-MIT.txt) | https://threejs.org/ |
 | Modèles des trois poissons, bâtiments, végétation, matériaux et textures Canvas | Créations originales du projet, code de `fish3d.ts` et `farm3d.ts` | Créations du dépôt, aucun modèle ou texture tiers importé | Fichiers sources du dépôt |

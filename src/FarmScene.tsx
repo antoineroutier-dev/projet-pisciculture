@@ -611,7 +611,9 @@ export default function FarmScene({
         </p>
       )}
       <div className="scene-caption">
-        {landscape && mode === "farm"
+        {error
+          ? "Carte de secours · la gestion et les commandes des bassins restent disponibles."
+          : landscape && mode === "farm"
           ? "Illustration d’ambiance générée · consultez la 3D pour voir les travaux et l’état actuel de la ferme."
           : !started
             ? "Plan du terrain : les emplacements grisés ne sont pas aménagés. Ouvrez la 3D pour visiter."

@@ -227,6 +227,28 @@ test("sans WebGL : la carte et la gestion restent disponibles", async ({
     .getByRole("button", { name: "Explorer en 3D", exact: true })
     .click();
   await expect(page.getByText(/La 3D n’est pas disponible/)).toBeVisible();
+  for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
+    await page.setViewportSize(viewport);
+    await expect(page.locator(".scene-location")).toBeHidden();
+    await expect(page.locator(".scene-bottom")).toBeHidden();
+    await expect(page.locator(".scene-caption")).toContainText("Carte de secours");
+    const warningTop = await page.locator(".scene-fallback > p").evaluate(e => {
+      const range = document.createRange(); range.selectNodeContents(e); return range.getBoundingClientRect().top;
+    });
+    const toolbar = (await page.locator(".scene-toolbar").boundingBox())!;
+    expect(warningTop).toBeGreaterThanOrEqual(toolbar.y + toolbar.height);
+    for (const label of await page.locator(".scene-fallback .map-name").all()) {
+      expect(await label.evaluate(e => parseFloat(getComputedStyle(e).fontSize))).toBeGreaterThanOrEqual(12);
+      expect(await label.evaluate(e => {
+        const frame = e.closest(".farm-map-frame")!;
+        const index = [...frame.querySelectorAll(".map-name")].indexOf(e);
+        const group = frame.querySelectorAll<SVGGElement>(".map-pond")[index];
+        const point = new DOMPoint(0, 0).matrixTransform(group.getScreenCTM()!);
+        const r = e.getBoundingClientRect();
+        return Math.abs(r.x + r.width / 2 - point.x);
+      })).toBeLessThan(1);
+    }
+  }
   await page.getByRole("button", { name: /Bassin 2, La Roselière/ }).click();
   await expect(
     page.getByRole("heading", { name: "La Roselière", exact: true }),

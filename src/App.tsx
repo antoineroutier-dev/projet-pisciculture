@@ -1,10 +1,10 @@
+import { Dialog as Modal } from "./ui/Dialog";
 import { formatMoney as euro, formatUnitPrice, formatEngineText, plural } from "./ui/format";
 import {
   useCallback,
   useEffect,
   useRef,
   useState,
-  type ReactNode,
 } from "react";
 import {
   ArrowDownToLine,
@@ -120,77 +120,6 @@ function load() {
         "La sauvegarde ne peut pas être lue. Elle est conservée. Importez une copie ou choisissez « Nouvelle partie » dans les paramètres.",
     };
   }
-}
-function Modal({
-  title,
-  children,
-  close,
-}: {
-  title: string;
-  children: ReactNode;
-  close: () => void;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const previous = document.activeElement as HTMLElement | null;
-    const scroll = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    ref.current?.querySelector<HTMLButtonElement>("button")?.focus();
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
-      if (e.key === "Tab") {
-        const elements = [
-          ...(ref.current?.querySelectorAll<HTMLElement>(
-            'button:not(:disabled), input:not(:disabled), select, a[href], [tabindex="0"]',
-          ) || []),
-        ];
-        const first = elements[0],
-          last = elements.at(-1);
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last?.focus();
-        }
-        if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first?.focus();
-        }
-      }
-    };
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = scroll;
-      document.removeEventListener("keydown", onKey);
-      previous?.focus();
-    };
-  }, [close]);
-  return (
-    <div
-      className="modal-backdrop"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) close();
-      }}
-    >
-      <div
-        ref={ref}
-        className="modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modal-title"
-      >
-        <div className="modal-heading">
-          <h2 id="modal-title">{title}</h2>
-          <button
-            className="icon-button"
-            onClick={close}
-            aria-label="Fermer la fenêtre"
-          >
-            <X size={20} />
-          </button>
-        </div>
-        {children}
-      </div>
-    </div>
-  );
 }
 function StockForm({
   pond,

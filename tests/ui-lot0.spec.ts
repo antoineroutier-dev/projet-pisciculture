@@ -66,6 +66,7 @@ test("lot 0 : portable autonome, polices et portraits hors ligne, budget 15 Mo",
   await page.goto("http://portable.test/");
   await page.evaluate(() => document.fonts.ready);
   expect(await page.evaluate(() => [...document.fonts].some(f => f.family === "Inter" && f.status === "loaded"))).toBe(true);
+  expect(await page.evaluate(() => document.fonts.check('400 16px "Fraunces"') && [...document.fonts].some(f => f.family === "Fraunces" && f.status === "loaded"))).toBe(true);
   await page.getByRole("button", { name: "Marché", exact: true }).click();
   await expect(page.locator(".species-photo image").first()).toHaveAttribute("href", /^data:image\/png;base64,/);
   await page.getByRole("button", { name: "Jour suivant", exact: true }).click();
