@@ -1,0 +1,74 @@
+import { Check, AlertTriangle, Construction } from "lucide-react";
+import { pondStatus, SPECIES, type Pond } from "../game";
+export function WorldLabels({
+  ponds,
+  select,
+  selected,
+}: {
+  selected: number | null;
+  ponds: Pond[];
+  select: (id: number) => void;
+}) {
+  return (
+    <div className="world-labels" aria-label="Bassins dans le monde">
+      {ponds.map((p) => {
+        const status = pondStatus(p),
+          ratio = p.species
+            ? Math.min(1, p.weight / SPECIES[p.species].harvestWeight)
+            : 0;
+        const label = p.constructionDays
+          ? `Chantier · ${p.constructionDays} j`
+          : !p.built
+            ? "Parcelle disponible"
+            : status.label;
+        return (
+          <button
+            key={p.id}
+            className="world-label"
+            data-world-pond={p.id}
+            aria-pressed={p.id === selected}
+            data-tone={status.tone}
+            style={{ visibility: "hidden" }}
+            tabIndex={-1}
+            aria-hidden="true"
+            onClick={() => select(p.id)}
+            aria-label={`${p.name} · ${label}${p.count ? ` · calibre ${Math.round(ratio * 100)} %` : ""}`}
+          >
+            <span className="world-label-heading">
+              {!p.built ? (
+                <Construction size={16} />
+              ) : status.tone === "danger" || status.tone === "warning" ? (
+                <AlertTriangle size={16} />
+              ) : (
+                <Check size={16} />
+              )}
+              <strong>{p.name}</strong>
+            </span>
+            <span>{label}</span>
+            {p.count > 0 && (
+              <span className="world-calibre">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="24"
+                  height="24"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="9" className="ring-track" />
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="9"
+                    pathLength="100"
+                    strokeDasharray={`${ratio * 100} 100`}
+                    transform="rotate(-90 12 12)"
+                  />
+                </svg>
+                Calibre {Math.round(ratio * 100)} %
+              </span>
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
+}

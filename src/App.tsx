@@ -1,3 +1,8 @@
+import { useGraphics } from "./state/useGraphics";
+import { GraphicsSettings } from "./world/GraphicsSettings";
+import { NotificationStack } from "./world/NotificationStack";
+import { WorldContext } from "./world/WorldContext";
+import type { WorldTarget } from "./world/selection";
 import { publishLife, clearLife } from "./world/lifeBus";
 import { initialLedger, recordLedger, coldExpected } from "./state/ledger";
 import { parseSavedGame, serializeSave, SAVE_KEY } from "./state/saves";
@@ -276,6 +281,11 @@ export default function App() {
     toggle: togglePanel,
     close: closePanel,
   } = usePanelNavigation();
+  const { graphics, setGraphics, actual } = useGraphics();
+  const [worldTarget, setWorldTarget] = useState<WorldTarget | null>({
+    kind: "pond",
+    id: 1,
+  });
   const [worldMode, setWorldMode] = useState<SceneMode>("farm");
   const [species, setSpecies] = useState<SpeciesId>("trout");
   const [clearWater, setClearWater] = useState(false);
@@ -462,12 +472,44 @@ export default function App() {
   const selectPond = useCallback(
     (id: number) => {
       setSelected(id);
+      setWorldTarget({ kind: "pond", id });
+      setWorldMode("pond");
       setPondTab("water");
       navigate(
         pondState.current.find((p) => p.id === id)?.built ? "ponds" : "project",
       );
     },
     [navigate],
+  );
+  useEffect(() => {
+    setWorldTarget((old) =>
+      old?.kind === "pond" && old.id !== selected
+        ? { kind: "pond", id: selected }
+        : old,
+    );
+  }, [selected]);
+  const inspectWorld = useCallback(
+    (target: WorldTarget) => {
+      setWorldTarget(target);
+      if (target.kind === "pond") {
+        selectPond(target.id);
+        return;
+      }
+      setWorldMode("buildings");
+      setLogisticsTab(
+        target.kind === "asset"
+          ? "assets"
+          : target.cargo === "cold"
+            ? "shipments"
+            : "supply",
+      );
+      if (target.kind === "truck" && target.pondId) {
+        setSelected(target.pondId);
+        setWorldMode("pond");
+      }
+      navigate("logistics");
+    },
+    [selectPond, navigate],
   );
   useEffect(() => {
     const handle = (e: KeyboardEvent) => {
@@ -557,6 +599,7 @@ export default function App() {
       setLedger(restoredSave.ledger);
       clearFeedback();
       clearLife();
+      setWorldTarget({ kind: "pond", id: 1 });
       setEvents([]);
       surveyed.current = restored.development.surveyed;
       setSession((s) => s + 1);
@@ -610,6 +653,10 @@ export default function App() {
               clearWater={clearWater}
               reset={cameraReset}
               clock={clock}
+              graphics={graphics}
+              target={worldTarget}
+              inspect={inspectWorld}
+              panelOpen={!!panel}
             />
           </Suspense>
         </main>
@@ -627,10 +674,16 @@ export default function App() {
           follow={followTask}
           objectives={() => setModal("objectives")}
         />
+        <NotificationStack
+          game={game}
+          inspect={inspectWorld}
+          journal={() => navigate("journal")}
+        />
         <WorldControls
           mode={worldMode}
           changeMode={(mode) => {
             setWorldMode(mode);
+            if (mode === "buildings") setWorldTarget(null);
             if (mode === "fish") {
               closePanel();
               if (pond.species) setSpecies(pond.species);
@@ -685,14 +738,23 @@ export default function App() {
               />
             )}
             {panel === "logistics" && (
-              <LogisticsPanel
-                game={game}
-                perform={perform}
-                stock={openStock}
-                tab={logisticsTab}
-                onTab={setLogisticsTab}
-                inspect={selectPond}
-              />
+              <>
+                {worldTarget && worldTarget.kind !== "pond" && (
+                  <WorldContext
+                    target={worldTarget}
+                    game={game}
+                    close={() => setWorldTarget(null)}
+                  />
+                )}
+                <LogisticsPanel
+                  game={game}
+                  perform={perform}
+                  stock={openStock}
+                  tab={logisticsTab}
+                  onTab={setLogisticsTab}
+                  inspect={selectPond}
+                />
+              </>
             )}
             {panel === "finance" && (
               <FinancePanel game={game} ledger={ledger} perform={perform} />
@@ -879,6 +941,11 @@ export default function App() {
                 />
               ) : settingsTab === "display" ? (
                 <div className="display-settings">
+                  <GraphicsSettings
+                    value={graphics}
+                    change={setGraphics}
+                    actual={actual}
+                  />
                   <Slider
                     label="Échelle de l’interface"
                     value={preferences.scale}
@@ -993,6 +1060,7 @@ export default function App() {
                             onClick={() => {
                               clearFeedback();
                               clearLife();
+                              setWorldTarget({ kind: "pond", id: 1 });
                               setEvents([]);
                               surveyed.current = false;
                               setSession((s) => s + 1);

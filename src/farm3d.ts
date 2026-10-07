@@ -40,7 +40,6 @@ export type FarmObjects = {
   dispose: () => void;
   ponds: Map<number, { group: T.Group }>;
   assets: Map<Asset, { group: T.Group }>;
-  selection: T.Mesh;
   normal: T.CanvasTexture;
 };
 function seeded(seed: number) {
@@ -1061,6 +1060,7 @@ export function createFarm(initial: FarmState): FarmObjects {
   leaves.name = "foliage";
   leaves.castShadow = true;
   leaves.receiveShadow = true;
+  trunks.name = "trunks";
   trunks.castShadow = true;
   root.add(leaves, trunks);
   const grassGeo = new T.BufferGeometry();
@@ -1115,26 +1115,11 @@ export function createFarm(initial: FarmState): FarmObjects {
       }
     }
   }
-  const selection = new T.Mesh(
-    new T.RingGeometry(1, 1.025, 96),
-    new T.MeshBasicMaterial({
-      color: paint("selection"),
-      transparent: true,
-      opacity: 0.95,
-      side: T.DoubleSide,
-      depthWrite: false,
-    }),
-  );
-  selection.rotation.x = -Math.PI / 2;
-  selection.scale.set(7.8, 4.8, 1);
-  selection.position.y = 1.03;
-  root.add(selection);
   return {
     root,
     targets,
     fish,
     waters,
-    selection,
     normal,
     update,
     ponds: pondGroups,

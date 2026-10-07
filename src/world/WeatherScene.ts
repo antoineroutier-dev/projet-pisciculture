@@ -75,6 +75,7 @@ export function createWeather(
     ms: number,
     reduced: boolean,
     cameraDistance: number,
+    rainCount = 240,
   ) {
     for (let i = 0; i < foliage.count; i++) {
       windMatrix.copy(baseMatrices[i]);
@@ -141,6 +142,7 @@ export function createWeather(
     cloudMaterial.opacity = w.rainy ? 0.43 : 0.22;
     clouds.position.x = reduced ? 0 : Math.sin(ms * 0.000015) * 8;
     rain.visible = w.rainy;
+    rainGeometry.setDrawRange(0, rainCount * 2);
     if (w.rainy) {
       const positions = rainGeometry.getAttribute(
         "position",

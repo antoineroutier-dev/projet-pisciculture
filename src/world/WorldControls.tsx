@@ -1,7 +1,16 @@
+import { moveCamera } from "./cameraBus";
 import { Button } from "../ui/Button";
 import { IconButton } from "../ui/Primitives";
-import { useState } from "react";
-import { RotateCcw, Maximize2, Eye } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  RotateCcw,
+  Maximize2,
+  Eye,
+  ChevronLeft,
+  ChevronRight,
+  Minus,
+  Plus,
+} from "lucide-react";
 import { SPECIES, type SpeciesId } from "../game";
 import { SpeciesPortrait } from "./SpeciesPortrait";
 import type { SceneMode } from "./types";
@@ -23,6 +32,39 @@ export function WorldControls({
   canObserve: boolean;
   hiddenOnMobile: boolean;
 }) {
+  useEffect(() => {
+    const key = (e: KeyboardEvent) => {
+      if (
+        e.defaultPrevented ||
+        e.altKey ||
+        e.ctrlKey ||
+        e.metaKey ||
+        e.isComposing ||
+        document.querySelector('[role="dialog"]') ||
+        (e.target instanceof Element &&
+          e.target.closest('input,select,textarea,[contenteditable="true"]'))
+      )
+        return;
+      const code = e.key.toLowerCase();
+      if (code === "q" || code === "e") {
+        e.preventDefault();
+        moveCamera({
+          kind: "rotate",
+          amount: ((code === "q" ? -1 : 1) * Math.PI) / 8,
+        });
+      }
+      if (code === "+" || code === "-" || code === "=") {
+        e.preventDefault();
+        moveCamera({ kind: "zoom", amount: code === "-" ? 0.18 : -0.18 });
+      }
+      if (code === "r") {
+        e.preventDefault();
+        reset();
+      }
+    };
+    window.addEventListener("keydown", key);
+    return () => window.removeEventListener("keydown", key);
+  }, [reset]);
   const [notice, setNotice] = useState("");
   async function fullscreen() {
     try {
@@ -81,6 +123,35 @@ export function WorldControls({
       >
         <Eye size={18} />
       </Button>
+      <details className="camera-tools">
+        <summary title="Rotation Q/E · Zoom +/− · Recentrer R">Caméra</summary>
+        <div className="camera-more">
+          <IconButton
+            label="Tourner à gauche · Q"
+            onClick={() => moveCamera({ kind: "rotate", amount: -Math.PI / 8 })}
+          >
+            <ChevronLeft size={18} />
+          </IconButton>
+          <IconButton
+            label="Tourner à droite · E"
+            onClick={() => moveCamera({ kind: "rotate", amount: Math.PI / 8 })}
+          >
+            <ChevronRight size={18} />
+          </IconButton>
+          <IconButton
+            label="Rapprocher · +"
+            onClick={() => moveCamera({ kind: "zoom", amount: -0.18 })}
+          >
+            <Plus size={18} />
+          </IconButton>
+          <IconButton
+            label="Éloigner · −"
+            onClick={() => moveCamera({ kind: "zoom", amount: 0.18 })}
+          >
+            <Minus size={18} />
+          </IconButton>
+        </div>
+      </details>
       {notice && <p role="status">{notice}</p>}
     </div>
   );

@@ -1,3 +1,17 @@
+import { disposeRenderCaches } from "./world/renderCaches";
+import { Button } from "./ui/Button";
+import { WorldLabels } from "./world/WorldLabels";
+import { createLabelLayout } from "./world/LabelLayout";
+import { createCameraRig } from "./world/CameraRig";
+import { renderPipeline } from "./world/RenderPipeline";
+import {
+  QUALITY,
+  detectQuality,
+  type Graphics,
+  type Quality,
+} from "./world/quality";
+import { softContour, targetKey, type WorldTarget } from "./world/selection";
+import { ASSET_POSITIONS } from "./farm3d";
 import { createLifeEffects } from "./world/LifeEffects";
 import { createWeather } from "./world/WeatherScene";
 import { oxygenMotion } from "./world/lifeSelectors";
@@ -27,7 +41,15 @@ export default function FarmScene({
   clearWater,
   reset,
   clock,
+  graphics,
+  target,
+  inspect,
+  panelOpen,
 }: {
+  graphics: Graphics;
+  target: WorldTarget | null;
+  inspect: (target: WorldTarget) => void;
+  panelOpen: boolean;
   ponds: Pond[];
   development: FarmState["development"];
   food: number;
@@ -43,6 +65,7 @@ export default function FarmScene({
   const [error, setError] = useState("");
   const [ready, setReady] = useState(false);
   const host = useRef<HTMLDivElement>(null);
+  const recovering = useRef(false);
   const state = useMemo(
     () => ({
       ponds,
@@ -56,6 +79,10 @@ export default function FarmScene({
       clearWater,
       reset,
       clock,
+      graphics,
+      target,
+      inspect,
+      panelOpen,
     }),
     [
       ponds,
@@ -69,12 +96,16 @@ export default function FarmScene({
       clearWater,
       reset,
       clock,
+      graphics,
+      target,
+      inspect,
+      panelOpen,
     ],
   );
   const latest = useRef(state);
   latest.current = state;
   useEffect(() => {
-    if (!host.current) return;
+    if (!host.current || error) return;
     const container = host.current;
     let renderer: T.WebGLRenderer;
     try {
@@ -107,7 +138,7 @@ export default function FarmScene({
     const scene = new T.Scene();
     scene.background = new T.Color(paint("sky"));
     scene.fog = new T.Fog(paint("sky"), 100, 220);
-    const camera = new T.PerspectiveCamera(40, 1, 0.08, 250);
+    const camera = new T.PerspectiveCamera(40, 1, 0.08, 400);
     camera.position.set(37, 36, 45);
     const stopProjection = registerFeedbackProjector((id) => {
       if (latest.current.mode === "fish" || !POND_POSITIONS[id - 1])
@@ -156,6 +187,7 @@ export default function FarmScene({
     const environment = pmrem.fromScene(room, 0.04);
     scene.environment = environment.texture;
     scene.environmentIntensity = 0.45;
+    disposeRenderCaches(renderer, room);
     room.dispose();
     pmrem.dispose();
     const farm = createFarm(latest.current);
@@ -166,8 +198,7 @@ export default function FarmScene({
     specimen.visible = false;
     scene.add(specimen);
     let pendingFrames = 2;
-    let cameraKey = "",
-      fishSpecies: SpeciesId = "trout";
+    let fishSpecies: SpeciesId = "trout";
     let renderedFrames = 0;
     let frame = 0,
       lastRender = 0,
@@ -182,17 +213,116 @@ export default function FarmScene({
     });
     scene.add(life.root);
     const weatherScene = createWeather(scene, farm, sun, sky);
+    const pipeline = renderPipeline(renderer, scene, camera, sun, farm);
+    const invalidate = () => {
+      needsRender = true;
+    };
+    const rig = createCameraRig(camera, controls, invalidate);
+    const labels = createLabelLayout(container.parentElement!, invalidate);
+    const selection = softContour(),
+      hover = softContour(true);
+    scene.add(selection.root, hover.root);
+    let hovered: WorldTarget | null = null;
+    const gl = renderer.getContext(),
+      debug = gl.getExtension("WEBGL_debug_renderer_info");
+    const hardware = debug
+      ? String(gl.getParameter(debug.UNMASKED_RENDERER_WEBGL))
+      : String(gl.getParameter(gl.RENDERER));
+    const automatic = detectQuality({
+      renderer: hardware,
+      threads: navigator.hardwareConcurrency || 4,
+      width: container.clientWidth,
+      maxTextureSize: renderer.capabilities.maxTextureSize,
+    });
+    let quality: Quality =
+      latest.current.graphics.quality === "auto"
+        ? automatic
+        : latest.current.graphics.quality;
+    pipeline.quality(quality);
+    renderer.domElement.dataset.hardware = hardware;
+    renderer.domElement.dataset.automaticQuality = automatic;
+    function contour(
+      outline: ReturnType<typeof softContour>,
+      target: WorldTarget | null,
+    ) {
+      outline.root.rotation.y = 0;
+      if (!target || latest.current.mode === "fish") {
+        outline.hide();
+        return;
+      }
+      if (target.kind === "pond") {
+        const [x, z] = POND_POSITIONS[target.id - 1];
+        const p = latest.current.ponds[target.id - 1];
+        outline.show(x, z, 13.6, p.facility === "earth" ? 8.4 : 7.2);
+      }
+      if (target.kind === "asset") {
+        const [x, z] = ASSET_POSITIONS[target.id];
+        outline.show(x, z, 11.6, 11.2);
+      }
+      if (target.kind === "truck") {
+        const obj = life.root.children.find(
+          (o) =>
+            targetKey(o.userData.worldTarget ?? null) === targetKey(target),
+        );
+        if (obj) {
+          outline.show(obj.position.x, obj.position.z, 2.4, 4.7);
+          outline.root.rotation.y = obj.rotation.y;
+        } else outline.hide();
+      }
+    }
+    function pick(e: PointerEvent): WorldTarget | null {
+      if (latest.current.mode === "fish") return null;
+      const b = renderer.domElement.getBoundingClientRect();
+      pointer.set(
+        ((e.clientX - b.left) / b.width) * 2 - 1,
+        -((e.clientY - b.top) / b.height) * 2 + 1,
+      );
+      raycaster.setFromCamera(pointer, camera);
+      const objects = [
+        ...farm.targets,
+        ...[...farm.assets].map(([id, v]) => {
+          v.group.userData.worldTarget = { kind: "asset", id };
+          return v.group;
+        }),
+        ...life.root.children.filter((o) => o.userData.worldTarget),
+      ];
+      const hit = raycaster.intersectObjects(objects, true)[0];
+      let object: T.Object3D | null = hit?.object ?? null;
+      while (object) {
+        if (object.userData.worldTarget)
+          return object.userData.worldTarget as WorldTarget;
+        if (object.userData.pondId)
+          return { kind: "pond", id: object.userData.pondId };
+        object = object.parent;
+      }
+      return null;
+    }
+    const onMove = (e: PointerEvent) => {
+      if (e.buttons) return;
+      const target = pick(e);
+      if (targetKey(target) !== targetKey(hovered)) {
+        hovered = target;
+        invalidate();
+      }
+      renderer.domElement.style.cursor = target ? "pointer" : "grab";
+    };
+    const onLeave = () => {
+      hovered = null;
+      invalidate();
+    };
     let previousState = latest.current;
     controls.addEventListener("change", () => {
       needsRender = true;
     });
     const resize = () => {
       needsRender = true;
+      renderer.domElement.dataset.settled = "false";
       const w = container.clientWidth,
         h = container.clientHeight;
       renderer.setSize(w, h, false);
       camera.aspect = w / Math.max(1, h);
       camera.updateProjectionMatrix();
+      pipeline.resize();
     };
     const observer = new ResizeObserver(resize);
     observer.observe(container);
@@ -210,14 +340,8 @@ export default function FarmScene({
         Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5
       )
         return;
-      const b = renderer.domElement.getBoundingClientRect();
-      pointer.set(
-        ((e.clientX - b.left) / b.width) * 2 - 1,
-        (-(e.clientY - b.top) / b.height) * 2 + 1,
-      );
-      raycaster.setFromCamera(pointer, camera);
-      const hit = raycaster.intersectObjects(farm.targets, false)[0];
-      if (hit) latest.current.select(hit.object.userData.pondId);
+      const hit = pick(e);
+      if (hit) latest.current.inspect(hit);
     };
     const contextLost = (e: Event) => {
       e.preventDefault();
@@ -228,6 +352,8 @@ export default function FarmScene({
     };
     renderer.domElement.addEventListener("pointerdown", onDown);
     renderer.domElement.addEventListener("pointerup", onUp);
+    renderer.domElement.addEventListener("pointermove", onMove);
+    renderer.domElement.addEventListener("pointerleave", onLeave);
     renderer.domElement.addEventListener("webglcontextlost", contextLost);
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const motionChanged = () => {
@@ -241,7 +367,7 @@ export default function FarmScene({
       if (
         !active ||
         document.hidden ||
-        ms - lastRender < (window.innerWidth < 700 ? 50 : 32)
+        ms - lastRender < 1000 / QUALITY[quality].fps
       )
         return;
       lastRender = ms;
@@ -249,6 +375,10 @@ export default function FarmScene({
         motionQuery.matches ||
         document.documentElement.dataset.motion === "reduce";
       const state = latest.current;
+      quality =
+        state.graphics.quality === "auto" ? automatic : state.graphics.quality;
+      pipeline.quality(quality);
+      renderer.domElement.dataset.quality = quality;
       const changed = state !== previousState;
       previousState = state;
       // Let freshly uploaded geometry/materials settle before freezing reduced-motion views.
@@ -277,70 +407,25 @@ export default function FarmScene({
           objects: e.group.children.length,
         })),
       );
-      const key = `${state.mode}:${state.mode === "pond" ? state.selected : ""}:${state.reset}:${camera.aspect}`;
-      if (key !== cameraKey) {
-        controls.maxPolarAngle =
-          state.mode === "fish" ? Math.PI - 0.1 : Math.PI / 2 - 0.045;
-        controls.minDistance = state.mode === "fish" ? 3.5 : 6;
-        controls.maxDistance =
-          state.mode === "fish" ? 13 : state.mode === "buildings" ? 210 : 100;
-        if (state.mode === "farm") {
-          camera.position.set(37, 36, 45);
-          controls.target.set(0, 0, -2);
-        }
-        if (state.mode === "buildings") {
-          const distance = Math.max(
-            58,
-            60 /
-              (2 *
-                Math.tan(T.MathUtils.degToRad(camera.fov / 2)) *
-                camera.aspect),
-          );
-          controls.target.set(0, 1.6, -16);
-          camera.position
-            .copy(controls.target)
-            .add(
-              new T.Vector3(0.12, 0.46, 0.88)
-                .normalize()
-                .multiplyScalar(distance),
-            );
-        }
-        if (state.mode === "pond") {
-          const [x, z] = POND_POSITIONS[state.selected - 1];
-          controls.target.set(x, 0.55, z);
-          const distance = Math.max(
-            14,
-            17 /
-              (2 *
-                Math.tan(T.MathUtils.degToRad(camera.fov / 2)) *
-                camera.aspect),
-          );
-          camera.position
-            .copy(controls.target)
-            .add(
-              new T.Vector3(2.5, 7.45, 11).normalize().multiplyScalar(distance),
-            );
-        }
-        if (state.mode === "fish") {
-          const distance = Math.max(
-            8.8,
-            9 /
-              (2 *
-                Math.tan(T.MathUtils.degToRad(camera.fov / 2)) *
-                camera.aspect),
-          );
-          const offset = container.clientWidth < 700 ? 0 : 0.8;
-          camera.position.set(-0.1 + offset, 2.15, distance);
-          controls.maxDistance = Math.max(13, distance * 1.8);
-          controls.target.set(
-            offset,
-            container.clientWidth < 700 ? 1.2 : 1.7,
-            0,
-          );
-        }
-        cameraKey = key;
-        controls.update();
-      }
+      controls.enableDamping = !reduced;
+      const tracked =
+        state.target?.kind === "truck"
+          ? life.root.children.find(
+              (o) =>
+                targetKey(o.userData.worldTarget ?? null) ===
+                targetKey(state.target),
+            )
+          : undefined;
+      const flying = rig.update(
+        {
+          ...state,
+          targetPoint: tracked
+            ? { x: tracked.position.x, z: tracked.position.z }
+            : undefined,
+        },
+        ms,
+        reduced,
+      );
       if (state.species !== fishSpecies) {
         scene.remove(specimen);
         disposeObject(specimen);
@@ -355,8 +440,6 @@ export default function FarmScene({
       scene.background = new T.Color(
         state.mode === "fish" ? paint("specimen-background") : paint("sky"),
       );
-      const [sx, sz] = POND_POSITIONS[state.selected - 1];
-      farm.selection.position.set(sx, 1.035, sz);
       farm.normal.offset.set(-time * 0.008, time * 0.006);
       for (const water of farm.waters) {
         const p = state.ponds[water.userData.pondId - 1];
@@ -412,11 +495,32 @@ export default function FarmScene({
         ms,
         reduced,
         camera.position.distanceTo(controls.target),
+        QUALITY[quality].rain,
       );
       renderer.domElement.dataset.weather = JSON.stringify(conditions);
       renderer.domElement.dataset.life = JSON.stringify(life.diagnostics());
-      renderer.render(scene, camera);
+      contour(selection, state.target);
+      contour(hover, hovered);
+      labels.update(camera, state.graphics.labels && state.mode !== "fish");
+      const renderStart = performance.now();
+      pipeline.render();
+      if (renderer.domElement.dataset.measureGpu === "true") {
+        gl.finish();
+        renderer.domElement.dataset.gpuFrameMs = String(
+          performance.now() - renderStart,
+        );
+        renderer.domElement.dataset.gpuCompletedAt = String(performance.now());
+      }
+      renderer.domElement.dataset.drawCalls = String(
+        renderer.info.render.calls,
+      );
+      renderer.domElement.dataset.selection = targetKey(state.target);
+      renderer.domElement.dataset.hover = targetKey(hovered);
+      renderer.domElement.dataset.resources = JSON.stringify(
+        renderer.info.memory,
+      );
       renderer.domElement.dataset.frame = "rendered";
+      renderer.domElement.dataset.viewport = `${container.clientWidth}x${container.clientHeight}`;
       renderer.domElement.dataset.renderCount = String(++renderedFrames);
       renderer.domElement.dataset.view = state.mode;
       renderer.domElement.dataset.species = state.species;
@@ -427,7 +531,9 @@ export default function FarmScene({
             `${p.id}:${p.built}:${p.constructionDays}:${p.count}:${p.upgrade}`,
         )
         .join("|");
-      renderer.domElement.dataset.settled = String(pendingFrames === 0);
+      renderer.domElement.dataset.settled = String(
+        pendingFrames === 0 && !flying,
+      );
       renderer.domElement.dataset.camera = [
         ...camera.position.toArray(),
         ...controls.target.toArray(),
@@ -437,6 +543,14 @@ export default function FarmScene({
     };
     frame = requestAnimationFrame(animate);
     setReady(true);
+    if (recovering.current) {
+      recovering.current = false;
+      queueMicrotask(() =>
+        document
+          .querySelector<HTMLSelectElement>(".world-controls select")
+          ?.focus(),
+      );
+    }
     return () => {
       stopProjection();
       cancelAnimationFrame(frame);
@@ -444,9 +558,17 @@ export default function FarmScene({
       window.removeEventListener("etangs-preferences", motionChanged);
       observer.disconnect();
       intersection.disconnect();
+      rig.dispose();
+      labels.dispose();
+      disposeRenderCaches(renderer, scene);
+      pipeline.dispose();
+      selection.dispose();
+      hover.dispose();
       controls.dispose();
       renderer.domElement.removeEventListener("pointerdown", onDown);
       renderer.domElement.removeEventListener("pointerup", onUp);
+      renderer.domElement.removeEventListener("pointermove", onMove);
+      renderer.domElement.removeEventListener("pointerleave", onLeave);
       renderer.domElement.removeEventListener("webglcontextlost", contextLost);
       scene.remove(life.root);
       life.dispose();
@@ -455,11 +577,20 @@ export default function FarmScene({
       disposeObject(specimen);
       clearFishTextures();
       environment.dispose();
+      sun.shadow.dispose();
       renderer.dispose();
       renderer.forceContextLoss();
+      window.dispatchEvent(
+        new CustomEvent("etangs-render-disposed", {
+          detail: {
+            contextLost: gl.isContextLost(),
+            memory: { ...renderer.info.memory },
+          },
+        }),
+      );
       renderer.domElement.remove();
     };
-  }, []);
+  }, [error]);
   return (
     <div
       className="world-scene"
@@ -467,9 +598,30 @@ export default function FarmScene({
       data-ready={ready && !error ? "true" : "false"}
     >
       <div className="world-canvas" ref={host} hidden={!!error} />
+      {ready && !error && (
+        <WorldLabels
+          ponds={ponds}
+          select={select}
+          selected={target?.kind === "pond" ? target.id : null}
+        />
+      )}
       {error && (
         <div className="world-fallback">
-          <p role="status">Carte de secours · la 3D est indisponible.</p>
+          <p role="status">
+            Carte de secours · la 3D est indisponible.{" "}
+            <Button
+              className="retry-renderer"
+              size="small"
+              autoFocus={recovering.current}
+              onClick={() => {
+                recovering.current = true;
+                setReady(false);
+                setError("");
+              }}
+            >
+              Réessayer la 3D
+            </Button>
+          </p>
           <FarmMap ponds={ponds} selected={selected} select={select} />
         </div>
       )}

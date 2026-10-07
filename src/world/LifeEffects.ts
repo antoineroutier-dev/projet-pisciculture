@@ -186,6 +186,8 @@ export function createLifeEffects(farm: FarmObjects, invalidate: () => void) {
       event.kind === "truck"
         ? truck(event.cargo)
         : splashes(event.kind === "reveal");
+    if (event.kind === "truck")
+      group.userData.worldTarget = { ...event, kind: "truck" };
     root.add(group);
     const duration = reduced ? 10000 : event.kind === "truck" ? 14000 : 3000;
     const effect: Effect = {

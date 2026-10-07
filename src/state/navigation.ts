@@ -8,7 +8,7 @@ export const PANELS = [
   { id: "journal", label: "Journal", key: "J" },
   { id: "guide", label: "Guide", key: "G" },
 ] as const;
-export type PanelId = typeof PANELS[number]["id"];
+export type PanelId = (typeof PANELS)[number]["id"];
 
 /** Presentation state only: never persisted in the biological save. */
 export function usePanelNavigation() {
@@ -17,7 +17,10 @@ export function usePanelNavigation() {
   const restore = useRef(false);
   const open = useCallback((id: PanelId) => {
     restore.current = false;
-    opener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    opener.current =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
     setPanel(id);
   }, []);
   const close = useCallback(() => {
@@ -30,11 +33,25 @@ export function usePanelNavigation() {
     if (panel !== null || !restore.current) return;
     restore.current = false;
     const target = opener.current;
-    if (target?.isConnected && !target.closest('[inert]')) target.focus({preventScroll:true});
-    else document.querySelector<HTMLButtonElement>('.game-dock button')?.focus({preventScroll:true});
+    const available =
+      target?.isConnected &&
+      !target.closest('[inert],[aria-hidden="true"]') &&
+      target.getClientRects().length > 0 &&
+      getComputedStyle(target).visibility !== "hidden";
+    if (available) target.focus({ preventScroll: true });
+    // Projected labels can remain hidden until the next rendered frame after
+    // a drawer closes. Keep keyboard navigation in a visible control.
+    if (!available || document.activeElement !== target)
+      document
+        .querySelector<HTMLButtonElement>(".game-dock button")
+        ?.focus({ preventScroll: true });
   }, [panel]);
-  const toggle = useCallback((id: PanelId) => {
-    if (panel === id) close(); else open(id);
-  }, [panel, open, close]);
+  const toggle = useCallback(
+    (id: PanelId) => {
+      if (panel === id) close();
+      else open(id);
+    },
+    [panel, open, close],
+  );
   return { panel, open, close, toggle };
 }
