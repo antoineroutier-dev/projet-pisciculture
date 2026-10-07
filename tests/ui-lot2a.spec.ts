@@ -1,3 +1,4 @@
+import { SAVE_KEY } from "../src/state/saves";
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { readFileSync } from "node:fs";
@@ -55,15 +56,15 @@ test("2a : sélectionner et construire une parcelle dans le vrai monde 3D", asyn
     })
     .click();
   const before: Game = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key)!),
-    STORAGE_KEY,
+    (key) => JSON.parse(localStorage.getItem(key)!).game,
+    SAVE_KEY,
   );
   await page
     .getByRole("button", { name: "Construire La Roselière", exact: true })
     .click();
   const after: Game = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key)!),
-    STORAGE_KEY,
+    (key) => JSON.parse(localStorage.getItem(key)!).game,
+    SAVE_KEY,
   );
   expect(after.ponds[1].constructionDays).toBe(21);
   await expect(canvas).toHaveAttribute("data-ponds", /2:false:21:0:/);
@@ -129,13 +130,11 @@ for (const [width, height] of [
       readFileSync("docs/ui/fixtures/contrat-client.json", "utf8"),
     );
     urgent.ponds[0].oxygen = 1;
-    await page
-      .getByLabel("Fichier de sauvegarde")
-      .setInputFiles({
-        name: "urgent.json",
-        mimeType: "application/json",
-        buffer: Buffer.from(JSON.stringify(urgent)),
-      });
+    await page.getByLabel("Fichier de sauvegarde").setInputFiles({
+      name: "urgent.json",
+      mimeType: "application/json",
+      buffer: Buffer.from(JSON.stringify(urgent)),
+    });
     await page.getByTestId("task-action").click();
     await expect(
       page.getByRole("tab", { name: "Eau", exact: true }),

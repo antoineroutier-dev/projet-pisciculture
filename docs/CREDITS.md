@@ -34,3 +34,5 @@ Lot 2c : illustration de l’encyclopédie originale en SVG (`src/RealismGuide.t
 La synthèse est un choix délibéré pour garder le portable autonome : aucun téléchargement audio n’a été tenté ou bloqué. Budget des fichiers audio intégrés : **0 octet** ; le synthétiseur fait partie du JavaScript mesuré dans le portable. Les signaux sont produits en mémoire après une interaction du joueur, jamais au chargement automatique.
 
 Lot 3b : illustrations des cartes d’événement (relief, onde et feuilles en SVG/CSS) originales, créées dans le dépôt ; pictogrammes Lucide déjà recensés ci-dessus. Aucune ressource externe supplémentaire. Sources : `src/panels/EventCard.tsx`, `src/hud/time-events.css` (07/10/2026).
+
+Lot 3c : bilans, tableaux et prévision sont des composants originaux du projet, calculés localement depuis les états du moteur. Aucune nouvelle ressource externe, police, texture ou piste sonore.

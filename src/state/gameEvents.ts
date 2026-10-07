@@ -8,7 +8,9 @@ import {
 } from "../game";
 import { ASSETS, nextTask, type Asset, type Task } from "../development";
 import { formatEngineText } from "../ui/format";
+import type { ReportData } from "./ledger";
 export type GameEvent = {
+  report?: ReportData;
   id: string;
   kind: "alert" | "celebration" | "event";
   title: string;

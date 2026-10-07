@@ -1,3 +1,4 @@
+import { SAVE_KEY } from "../src/state/saves";
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { readFileSync } from "node:fs";
@@ -24,14 +25,14 @@ for (const [width, height] of [
     await expect(page.locator(".goal-hud > p")).toHaveCount(0);
     const before = await page.evaluate(
       (key) => localStorage.getItem(key),
-      STORAGE_KEY,
+      SAVE_KEY,
     );
     await page.getByTestId("task-action").click();
     await expect(
       page.getByLabel("Parcelle sélectionnée", { exact: true }),
     ).toHaveValue("2");
     expect(
-      await page.evaluate((key) => localStorage.getItem(key), STORAGE_KEY),
+      await page.evaluate((key) => localStorage.getItem(key), SAVE_KEY),
     ).toBe(before);
     await page
       .getByRole("button", { name: "Conseils d’exploitation", exact: true })

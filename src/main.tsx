@@ -27,3 +27,5 @@ import "./panels/logistics.css";
 import "./panels/editorial.css";
 
 import "./hud/time-events.css";
+
+import "./panels/finance.css";

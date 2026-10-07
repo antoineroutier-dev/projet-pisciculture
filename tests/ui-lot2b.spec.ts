@@ -1,3 +1,4 @@
+import { SAVE_KEY } from "../src/state/saves";
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { readFileSync } from "node:fs";
@@ -104,8 +105,8 @@ for (const [width, height] of [
     await expect(page.locator(".cash-x span")).toHaveCount(2);
     await page.locator(".chart-data summary").click();
     const game: Game = await page.evaluate(
-      (key) => JSON.parse(localStorage.getItem(key)!),
-      STORAGE_KEY,
+      (key) => JSON.parse(localStorage.getItem(key)!).game,
+      SAVE_KEY,
     );
     await expect(page.locator(".chart-data tbody tr").first()).toContainText(
       new Intl.NumberFormat("fr-FR", {
@@ -140,8 +141,8 @@ test("2b : récolte, transport et paiement restent des actions distinctes", asyn
     page.getByRole("tab", { name: "Expéditions", exact: true }),
   ).toHaveAttribute("aria-selected", "true");
   const before: Game = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key)!),
-    STORAGE_KEY,
+    (key) => JSON.parse(localStorage.getItem(key)!).game,
+    SAVE_KEY,
   );
   const expected = act(before, {
     type: "dispatch",
@@ -150,8 +151,8 @@ test("2b : récolte, transport et paiement restent des actions distinctes", asyn
   expect(expected.ok).toBe(true);
   await page.getByRole("button", { name: /^Expédier le lot/ }).click();
   const after: Game = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key)!),
-    STORAGE_KEY,
+    (key) => JSON.parse(localStorage.getItem(key)!).game,
+    SAVE_KEY,
   );
   expect(after).toEqual(expected.game);
   expect(after.stats.income).toBe(before.stats.income);

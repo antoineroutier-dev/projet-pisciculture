@@ -1,13 +1,8 @@
+import { SAVE_KEY } from "../src/state/saves";
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { readFileSync } from "node:fs";
-import {
-  STORAGE_KEY,
-  act,
-  advanceGuided,
-  parseSave,
-  type Game,
-} from "../src/game";
+import { act, advanceGuided, parseSave, type Game } from "../src/game";
 import { withoutWebGL } from "./ui-helpers";
 import { typography, noOverlap } from "./ui-measures";
 for (const [width, height] of [
@@ -76,8 +71,8 @@ for (const [width, height] of [
     await expect(page.getByTestId("day")).toHaveAttribute("data-day", "3");
     expect(
       await page.evaluate(
-        (key) => JSON.parse(localStorage.getItem(key)!).money,
-        STORAGE_KEY,
+        (key) => JSON.parse(localStorage.getItem(key)!).game.money,
+        SAVE_KEY,
       ),
     ).toBe(59760);
     await page
@@ -156,8 +151,8 @@ for (const [width, height] of [
       }
       await expect(page.locator(`[data-event$="${kind}"]`)).toBeVisible();
       const state: Game = await page.evaluate(
-        (key) => JSON.parse(localStorage.getItem(key)!),
-        STORAGE_KEY,
+        (key) => JSON.parse(localStorage.getItem(key)!).game,
+        SAVE_KEY,
       );
       expect(state).toEqual(expected);
       expect((await typography(page)).tooSmall).toEqual([]);
@@ -180,8 +175,8 @@ for (const [width, height] of [
       await page.clock.runFor(10000);
       expect(
         await page.evaluate(
-          (key) => JSON.parse(localStorage.getItem(key)!).day,
-          STORAGE_KEY,
+          (key) => JSON.parse(localStorage.getItem(key)!).game.day,
+          SAVE_KEY,
         ),
       ).toBe(state.day);
       while (await page.getByTestId("event-card").count())

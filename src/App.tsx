@@ -1,3 +1,6 @@
+import { initialLedger, recordLedger, coldExpected } from "./state/ledger";
+import { parseSavedGame, serializeSave, SAVE_KEY } from "./state/saves";
+import { CycleReport } from "./panels/CycleReport";
 import { useGameClock } from "./state/useGameClock";
 import {
   gameEvents,
@@ -79,7 +82,6 @@ import {
   nextDay,
   number,
   OBJECTIVES,
-  parseSave,
   SPECIES,
   STORAGE_KEY,
   UPGRADE_COST,
@@ -99,17 +101,26 @@ type ModalKind =
 function load() {
   try {
     const raw =
+      localStorage.getItem(SAVE_KEY) ||
       localStorage.getItem(STORAGE_KEY) ||
       localStorage.getItem(V2_STORAGE_KEY) ||
       localStorage.getItem(LEGACY_STORAGE_KEY);
+    const restored = raw
+      ? parseSavedGame(raw)
+      : (() => {
+          const game = initialGame();
+          return { game, ledger: initialLedger(game) };
+        })();
     return {
-      game: raw ? parseSave(raw) : initialGame(),
+      ...restored,
       blocked: false,
       error: "",
     };
   } catch {
+    const game = initialGame();
     return {
-      game: initialGame(),
+      game,
+      ledger: initialLedger(game),
       blocked: true,
       error:
         "La sauvegarde ne peut pas être lue. Elle est conservée. Importez une copie ou choisissez « Nouvelle partie » dans les paramètres.",
@@ -245,6 +256,9 @@ export default function App() {
   );
   const [boot] = useState(load);
   const [game, setGame] = useState<Game>(boot.game);
+  const [ledger, setLedger] = useState(boot.ledger);
+  const currentLedger = useRef(ledger);
+  currentLedger.current = ledger;
   const audio = useAudio(game.day);
   const currentGame = useRef(game);
   currentGame.current = game;
@@ -292,10 +306,39 @@ export default function App() {
             : "open",
       );
   }, [activeEvent, audio.play]);
-  function commit(before: Game, after: Game, reason = "") {
+  function commit(
+    before: Game,
+    after: Game,
+    reason = "",
+    action: Action | { type: "day" } = { type: "day" },
+  ) {
+    const updated = recordLedger(currentLedger.current, before, after, action);
+    currentLedger.current = updated;
+    setLedger(updated);
     currentGame.current = after;
     setGame(after);
     const incoming = gameEvents(before, after, reason);
+    const firstHarvest = incoming.some((e) => e.id.endsWith(":first-harvest"));
+    const paid = after.development.paid > before.development.paid;
+    if (firstHarvest || paid) {
+      const period = paid ? updated.cycles.at(-1)! : updated.current;
+      const milestone = incoming.findIndex((e) =>
+        e.id.endsWith(paid ? ":first-paid" : ":first-harvest"),
+      );
+      incoming.splice(milestone + 1, 0, {
+        id: `${after.day}:report-${paid ? "paid" : "harvest"}-${after.development.paid}`,
+        kind: "event",
+        title: paid ? "Bilan du cycle payé" : "Bilan provisoire",
+        text: "",
+        illustration: paid ? "payment" : "harvest",
+        report: {
+          period,
+          previous: paid ? updated.cycles.at(-2) : updated.cycles.at(-1),
+          provisional: !paid,
+          pending: coldExpected(after),
+        },
+      });
+    }
     if (incoming.length) {
       clock.pause();
       setNotice(null);
@@ -396,7 +439,7 @@ export default function App() {
   useEffect(() => {
     if (storageBlocked) return;
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(game));
+      localStorage.setItem(SAVE_KEY, serializeSave(game, ledger));
       setSaved(true);
       setSaveRevision((v) => v + 1);
       setStorageError("");
@@ -406,7 +449,7 @@ export default function App() {
         "La sauvegarde automatique est indisponible. Exportez votre partie depuis les paramètres pour la conserver.",
       );
     }
-  }, [game, storageBlocked]);
+  }, [game, ledger, storageBlocked]);
   useEffect(() => {
     if (!notice) return;
     const timer = setTimeout(() => setNotice(null), 5000);
@@ -444,11 +487,12 @@ export default function App() {
     return () => window.removeEventListener("keydown", handle);
   }, [modal, activeEvent, panel, closePanel, togglePanel]);
   function perform(action: Action, dismiss = false) {
+    const before = currentGame.current;
     const started = performance.now();
-    const pending = beginFeedback(game, action, audio.play, started);
-    const result = act(game, action);
+    const pending = beginFeedback(before, action, audio.play, started);
+    const result = act(before, action);
     const feedback = requestFeedback(
-      game,
+      before,
       result.game,
       action,
       result.ok,
@@ -458,7 +502,7 @@ export default function App() {
       pending,
     );
     if (result.ok) {
-      commit(game, result.game);
+      commit(before, result.game, "", action);
       if (action.type === "harvest") setLogisticsTab("shipments");
       if (dismiss) close();
     }
@@ -488,7 +532,7 @@ export default function App() {
     }
   }
   function exportSave() {
-    const blob = new Blob([JSON.stringify(game, null, 2)], {
+    const blob = new Blob([serializeSave(game, ledger, true)], {
       type: "application/json",
     });
     const url = URL.createObjectURL(blob);
@@ -503,13 +547,17 @@ export default function App() {
   async function importSave(file?: File) {
     if (!file) return;
     try {
-      if (file.size > 300_000)
+      if (file.size > 2_000_000)
         throw new Error("Ce fichier est trop volumineux.");
-      const restored = parseSave(await file.text());
+      const restoredSave = parseSavedGame(await file.text());
+      const restored = restoredSave.game;
+      currentLedger.current = restoredSave.ledger;
+      setLedger(restoredSave.ledger);
       clearFeedback();
       setEvents([]);
       surveyed.current = restored.development.surveyed;
       setSession((s) => s + 1);
+      currentGame.current = restored;
       setGame(restored);
       setStorageBlocked(false);
       clock.pause();
@@ -641,7 +689,7 @@ export default function App() {
               />
             )}
             {panel === "finance" && (
-              <FinancePanel game={game} perform={perform} />
+              <FinancePanel game={game} ledger={ledger} perform={perform} />
             )}
             {panel === "journal" && <JournalPanel game={game} />}
             {panel === "guide" && <Guide />}
@@ -941,7 +989,11 @@ export default function App() {
                               setEvents([]);
                               surveyed.current = false;
                               setSession((s) => s + 1);
-                              setGame(initialGame(game.mode));
+                              const fresh = initialGame(game.mode);
+                              currentGame.current = fresh;
+                              setGame(fresh);
+                              currentLedger.current = initialLedger(fresh);
+                              setLedger(currentLedger.current);
                               setStorageBlocked(false);
                               clock.pause();
                               setSelected(1);
@@ -982,25 +1034,37 @@ export default function App() {
           )}
         </Modal>
       )}
-      {activeEvent && (
-        <EventCard
+      {activeEvent?.report ? (
+        <CycleReport
           key={activeEvent.id}
-          event={activeEvent}
+          report={activeEvent.report}
           close={dismissEvent}
-          act={() => {
+          finances={() => {
             dismissEvent();
-            if (activeEvent.action) perform(activeEvent.action);
-            else if (activeEvent.task) followTask(activeEvent.task);
-          }}
-          inspect={() => {
-            dismissEvent();
-            if (activeEvent.pondId) {
-              setSelected(activeEvent.pondId);
-              setPondTab("water");
-              navigate("ponds");
-            }
+            navigate("finance");
           }}
         />
+      ) : (
+        activeEvent && (
+          <EventCard
+            key={activeEvent.id}
+            event={activeEvent}
+            close={dismissEvent}
+            act={() => {
+              dismissEvent();
+              if (activeEvent.action) perform(activeEvent.action);
+              else if (activeEvent.task) followTask(activeEvent.task);
+            }}
+            inspect={() => {
+              dismissEvent();
+              if (activeEvent.pondId) {
+                setSelected(activeEvent.pondId);
+                setPondTab("water");
+                navigate("ponds");
+              }
+            }}
+          />
+        )
       )}
     </>
   );

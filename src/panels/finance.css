@@ -1,0 +1,114 @@
+.modal.cycle-dialog {
+  width: min(760px, 100%);
+}
+.finance-tabs {
+  margin-bottom: 16px;
+}
+.cycle-details {
+  display: grid;
+  gap: 12px;
+}
+.cycle-details p {
+  margin: 0;
+  line-height: 1.5;
+}
+.report-scope {
+  color: var(--ink-muted);
+  font-size: var(--text-small);
+}
+.report-callout {
+  background: var(--surface-muted);
+  padding: 12px;
+  border-left: 3px solid var(--primary);
+  border-radius: var(--radius);
+}
+.report-callout svg {
+  vertical-align: middle;
+  margin-right: 8px;
+}
+.report-totals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: 12px;
+  margin: 0;
+}
+.report-totals > div {
+  background: var(--surface-muted);
+  padding: 12px;
+  border-radius: var(--radius);
+}
+.report-totals dt {
+  font-size: var(--text-small);
+  line-height: 1.5;
+}
+.report-totals dd {
+  margin: 8px 0 0;
+  font-size: var(--text-xl);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.report-breakdown table,
+.monthly-result table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-small);
+}
+.report-breakdown th,
+.report-breakdown td,
+.monthly-result th,
+.monthly-result td {
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  padding: 8px 4px;
+}
+.report-breakdown td,
+.monthly-result td {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.report-breakdown caption,
+.monthly-result caption {
+  text-align: left;
+  padding: 12px 0;
+  color: var(--ink-muted);
+}
+.report-breakdown summary,
+.report-advice summary,
+.monthly-result summary {
+  cursor: pointer;
+  padding: 12px 0;
+  font-weight: 600;
+}
+.report-advice li {
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+.finance-cycle {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.finance-cycle > summary {
+  cursor: pointer;
+  padding: 12px 0;
+  font-weight: 600;
+}
+@media (max-width: 680px) {
+  .report-totals {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .report-totals > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .report-totals dd {
+    margin: 0;
+    flex-shrink: 0;
+  }
+  .report-totals dt {
+    max-width: 58%;
+  }
+}

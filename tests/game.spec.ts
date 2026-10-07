@@ -1,3 +1,4 @@
+import { SAVE_KEY } from "../src/state/saves";
 import { withoutWebGL, settleEvents } from "./ui-helpers";
 import { expect, test } from "@playwright/test";
 import { operatingGame as initialGame } from "../src/test-fixtures";
@@ -85,9 +86,9 @@ test("import, export, mode expert et protection de sauvegarde corrompue", async 
   await page.getByLabel("Mode de gestion").selectOption("expert");
   const valid = await page.evaluate(
     (key) => localStorage.getItem(key),
-    STORAGE_KEY,
+    SAVE_KEY,
   );
-  expect(JSON.parse(valid!).mode).toBe("expert");
+  expect(JSON.parse(valid!).game.mode).toBe("expert");
   const download = page.waitForEvent("download");
   await page.getByRole("button", { name: /Exporter ma partie/ }).click();
   expect((await download).suggestedFilename()).toBe("les-etangs-jour-2.json");
@@ -98,7 +99,7 @@ test("import, export, mode expert et protection de sauvegarde corrompue", async 
   });
   await expect(page.locator(".toast")).toContainText("incompatible");
   expect(
-    await page.evaluate((key) => localStorage.getItem(key), STORAGE_KEY),
+    await page.evaluate((key) => localStorage.getItem(key), SAVE_KEY),
   ).toBe(valid);
   await page.getByRole("button", { name: /Nouvelle partie/ }).click();
   await page
@@ -114,16 +115,13 @@ test("import, export, mode expert et protection de sauvegarde corrompue", async 
     buffer: Buffer.from(valid!),
   });
   await expect(page.getByTestId("day")).toHaveAttribute("data-day", "2");
-  await page.evaluate(
-    (key) => localStorage.setItem(key, "{broken"),
-    STORAGE_KEY,
-  );
+  await page.evaluate((key) => localStorage.setItem(key, "{broken"), SAVE_KEY);
   await page.reload();
   await expect(page.getByRole("alert")).toContainText(
     "sauvegarde ne peut pas être lue",
   );
   expect(
-    await page.evaluate((key) => localStorage.getItem(key), STORAGE_KEY),
+    await page.evaluate((key) => localStorage.getItem(key), SAVE_KEY),
   ).toBe("{broken");
 });
 
@@ -151,11 +149,11 @@ test("migration automatique V1 conserve le fichier original", async ({
   await page.goto("/");
   await expect(page.getByTestId("day")).toHaveAttribute("data-day", "1");
   await expect
-    .poll(() => page.evaluate((key) => localStorage.getItem(key), STORAGE_KEY))
+    .poll(() => page.evaluate((key) => localStorage.getItem(key), SAVE_KEY))
     .not.toBeNull();
   const migrated = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key)!),
-    STORAGE_KEY,
+    (key) => JSON.parse(localStorage.getItem(key)!).game,
+    SAVE_KEY,
   );
   expect(migrated.version).toBe(3);
   expect(migrated.ponds[0].count).toBe(30);
@@ -329,7 +327,10 @@ test("nouvelle partie guidée : terrain vide jusqu’au premier règlement, uniq
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   const current = async (): Promise<Game> =>
-    page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), STORAGE_KEY);
+    page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key)!).game,
+      SAVE_KEY,
+    );
   const step = () => ({
     click: async () => {
       await page.getByTestId("task-action").click();
@@ -444,8 +445,8 @@ test("migration V2 préserve la partie et propose explicitement le nouveau dépa
     page.getByText("Votre ancienne exploitation est conservée."),
   ).toBeVisible();
   const state = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key)!),
-    STORAGE_KEY,
+    (key) => JSON.parse(localStorage.getItem(key)!).game,
+    SAVE_KEY,
   );
   expect(state.version).toBe(3);
   expect(state.ponds[0].count).toBe(1200);

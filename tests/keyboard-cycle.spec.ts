@@ -1,6 +1,7 @@
+import { SAVE_KEY } from "../src/state/saves";
 import { withoutWebGL } from "./ui-helpers";
 import { expect, test, type Locator, type Page } from "@playwright/test";
-import { STORAGE_KEY, type Game } from "../src/game";
+import { type Game } from "../src/game";
 
 // The DOM is read only to choose a shorter direction. Only real Tab key events
 // move focus; neither locator.focus(), click(), fill() nor engine actions are used.
@@ -60,7 +61,10 @@ test("1a : du terrain vide au paiement, uniquement au clavier en 1280×800", asy
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   const current = (): Promise<Game> =>
-    page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), STORAGE_KEY);
+    page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key)!).game,
+      SAVE_KEY,
+    );
   const press = async (target: Locator) => {
     await tabTo(page, target);
     await page.keyboard.press("Enter");

@@ -5,7 +5,9 @@ export function Dialog({
   title,
   children,
   close,
+  className = "",
 }: {
+  className?: string;
   title: string;
   children: ReactNode;
   close: () => void;
@@ -20,7 +22,7 @@ export function Dialog({
     const focusable = () =>
       [
         ...(ref.current?.querySelectorAll<HTMLElement>(
-          'button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), a[href], [tabindex="0"]',
+          'button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), a[href], [tabindex="0"], summary',
         ) || []),
       ].filter((e) => e.getClientRects().length > 0);
     focusable()[0]?.focus();
@@ -76,7 +78,7 @@ export function Dialog({
     >
       <div
         ref={ref}
-        className="modal ui-dialog"
+        className={`modal ui-dialog ${className}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}

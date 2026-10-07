@@ -1,3 +1,4 @@
+import { SAVE_KEY } from "../src/state/saves";
 import { expect, test, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { readFileSync } from "node:fs";
@@ -128,9 +129,9 @@ test("1a : focus du dialogue et explication de désactivation au clavier", async
   await expect(disabled).toBeDisabled();
   await page.getByRole("group", { name: "Mettez d’abord la chambre froide en service." }).focus();
   await expect(page.getByRole("tooltip")).toHaveText("Mettez d’abord la chambre froide en service.");
-  const before = await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY);
+  const before = await page.evaluate(key => localStorage.getItem(key), SAVE_KEY);
   await page.keyboard.press("Enter");
-  expect(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY)).toBe(before);
+  expect(await page.evaluate(key => localStorage.getItem(key), SAVE_KEY)).toBe(before);
   await page.keyboard.press("Escape"); await expect(page.getByRole("tooltip")).toHaveCount(0);
 });
 

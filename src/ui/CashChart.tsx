@@ -1,8 +1,14 @@
 import type { Game } from "../game";
 import { cashHistory, cashDomain } from "../state/financeSelectors";
 import { formatMoney, formatDate, plural } from "./format";
-export function CashChart({ game }: { game: Game }) {
-  const series = cashHistory(game),
+export function CashChart({
+  game,
+  projection,
+}: {
+  game: Game;
+  projection?: { day: number; money: number }[];
+}) {
+  const series = projection || cashHistory(game),
     { low, high } = cashDomain(series.map((h) => h.money));
   const first = series[0],
     last = series.at(-1)!;
@@ -17,7 +23,9 @@ export function CashChart({ game }: { game: Game }) {
         className="cash-chart"
         aria-label={`Trésorerie : ${formatMoney(first.money)} le ${formatDate(first.day)}, ${formatMoney(last.money)} le ${formatDate(last.day)}`}
       >
-        <figcaption>Trésorerie · euros</figcaption>
+        <figcaption>
+          {projection ? "Projection à 90 jours · euros" : "Trésorerie · euros"}
+        </figcaption>
         <div className="cash-plot">
           <div className="cash-y" aria-hidden="true">
             {[high, (low + high) / 2, low].map((v) => (
@@ -52,7 +60,9 @@ export function CashChart({ game }: { game: Game }) {
         </summary>
         <table>
           <caption>
-            Relevés disponibles · dernière valeur actualisée après vos actions
+            {projection
+              ? "Prévision à charges constantes, factures expédiées incluses"
+              : "Relevés disponibles · dernière valeur actualisée après vos actions"}
           </caption>
           <thead>
             <tr>

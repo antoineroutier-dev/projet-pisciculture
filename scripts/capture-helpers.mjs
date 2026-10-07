@@ -51,7 +51,7 @@ export async function captureLot(lot, visit, initial = "terrain-vide") {
       async function snap(name, { toast = true } = {}) {
         await page.evaluate(() => document.fonts.ready);
         const game = await page.evaluate(() =>
-          JSON.parse(localStorage.getItem("les-etangs-save-v3")),
+          JSON.parse(localStorage.getItem("les-etangs-save-v4"))?.game || JSON.parse(localStorage.getItem("les-etangs-save-v3")),
         );
         await expect(canvas).toHaveAttribute("data-day", String(game.day), {
           timeout: 120000,

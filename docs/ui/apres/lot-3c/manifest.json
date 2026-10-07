@@ -1,0 +1,101 @@
+{
+  "totalBytes": 1151308,
+  "captures": [
+    {
+      "file": "docs/ui/apres/lot-3c/1440-bilan-recolte.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 75037
+    },
+    {
+      "file": "docs/ui/apres/lot-3c/1440-bilan-paye.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 68630
+    },
+    {
+      "file": "docs/ui/apres/lot-3c/1440-postes.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 81223
+    },
+    {
+      "file": "docs/ui/apres/lot-3c/1440-conseils.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 86608
+    },
+    {
+      "file": "docs/ui/apres/lot-3c/1440-tresorerie.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 121640
+    },
+    {
+      "file": "docs/ui/apres/lot-3c/1440-prevision.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 120335
+    },
+    {
+      "file": "docs/ui/apres/lot-3c/1440-resultat-mensuel.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 127640
+    },
+    {
+      "file": "docs/ui/apres/lot-3c/1440-cycles.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 113179
+    },
+    {
+      "file": "docs/ui/apres/lot-3c/390-bilan-recolte.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 45998
+    },
+    {
+      "file": "docs/ui/apres/lot-3c/390-bilan-paye.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 39687
+    },
+    {
+      "file": "docs/ui/apres/lot-3c/390-postes.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 47158
+    },
+    {
+      "file": "docs/ui/apres/lot-3c/390-conseils.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 51734
+    },
+    {
+      "file": "docs/ui/apres/lot-3c/390-tresorerie.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 40261
+    },
+    {
+      "file": "docs/ui/apres/lot-3c/390-prevision.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 40815
+    },
+    {
+      "file": "docs/ui/apres/lot-3c/390-resultat-mensuel.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 48230
+    },
+    {
+      "file": "docs/ui/apres/lot-3c/390-cycles.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 43133
+    }
+  ]
+}
