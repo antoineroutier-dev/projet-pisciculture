@@ -12,6 +12,7 @@ import "./ui/foundation.css";
 import "./ui/game-shell.css";
 import "./ui/dialog.css";
 import "./panels/panels.css";
+import "./panels/inspector.css";
 import "./world/map.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

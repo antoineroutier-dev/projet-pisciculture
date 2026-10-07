@@ -3,31 +3,20 @@ import { Button } from "./ui/Button";
 import { formatMoney as euro, formatUnitPrice, plural } from "./ui/format";
 import {
   ArrowRight,
-  Check,
-  Clock3,
-  Droplets,
   Fish,
-  FlaskConical,
   Package,
-  Sprout,
   Truck,
   Warehouse,
   Snowflake,
-  CircleHelp,
   Scissors,
 } from "lucide-react";
-import { FishArt } from "./FishArt";
 import {
-  CONSTRUCTION_COST,
-  CONSTRUCTION_DAYS,
-  facilityName,
   FOOD_PACKS,
   harvestReady,
   number,
   SPECIES,
   type Action,
   type Game,
-  type SpeciesId,
 } from "./game";
 import {
   ASSETS,
@@ -37,9 +26,7 @@ import {
   FEED_FREIGHT,
   feedCapacity,
   reservedFood,
-  SOURCE_FLOW,
   transportCost,
-  waterUsed,
   type Asset,
   type Buyer,
 } from "./development";
@@ -49,225 +36,6 @@ type Props = {
   perform: (a: Action) => void;
   stock: (pondId: number) => void;
 };
-const ROUTES: Record<
-  SpeciesId,
-  { water: string; advice: string; duration: string; lot: number }
-> = {
-  trout: {
-    water: "Source fraîche · 11,8–15,2 °C",
-    advice:
-      "Le choix le plus direct sur ce terrain. Eau fraîche et renouvelée, oxygène à surveiller quand la biomasse augmente.",
-    duration: "Environ 5–8 mois à partir de 50 g",
-    lot: 1000,
-  },
-  carp: {
-    water: "Eau d’étang · environ 2–25 °C selon la saison",
-    advice:
-      "Faible renouvellement, grand volume et croissance saisonnière. La carpe ralentit fortement en hiver. Une aération peut devenir nécessaire.",
-    duration: "Environ 12–24 mois à partir de 100 g",
-    lot: 100,
-  },
-  tilapia: {
-    water: "Source réchauffée et recyclée · cible 27 °C",
-    advice:
-      "L’eau naturelle est trop froide. Chauffage, aération et filtre biologique sont inclus dans la mise en service du circuit.",
-    duration: "Environ 7–10 mois à partir de 30 g",
-    lot: 600,
-  },
-};
-export default function ProjectPanel({ game, perform }: Props) {
-  const d = game.development;
-  return (
-    <div className="project-layout">
-      {d.migrated && (
-        <div className="migration-note">
-          <CircleHelp size={20} />
-          <p>
-            <strong>Votre ancienne exploitation est conservée.</strong> Pour
-            découvrir le démarrage sur terrain vide, exportez votre partie puis
-            choisissez <b>Paramètres & sauvegarde → Nouvelle partie</b>.
-          </p>
-        </div>
-      )}
-      <section className="water-study">
-        <div className="water-study-intro">
-          <span className="project-icon">
-            <Droplets size={29} />
-          </span>
-          <div>
-            <span className="section-kicker">LE POINT DE DÉPART</span>
-            <h2>L’eau dessine votre ferme</h2>
-            <p>
-              Une source, un terrain d’étang et quatre emplacements. Les
-              bâtiments agricoles existent ; les équipements de production
-              restent à aménager.
-            </p>
-          </div>
-        </div>
-        <div className="resource-grid">
-          <article>
-            <FlaskConical size={23} />
-            <h3>La source</h3>
-            <strong>{d.surveyed ? "11,8–15,2 °C" : "À analyser"}</strong>
-            <p>
-              {d.surveyed
-                ? `pH 7,2 · eau oxygénée à l’arrivée. ${number(waterUsed(game), 2)} / ${SOURCE_FLOW} L/s réservés aux bassins en service et en chantier.`
-                : "Le laboratoire vérifie la température, le pH et le débit disponible avant le choix des poissons."}
-            </p>
-          </article>
-          <article>
-            <Sprout size={23} />
-            <h3>L’étang saisonnier</h3>
-            <strong>
-              {d.surveyed
-                ? "Une eau qui suit les saisons"
-                : "Un potentiel à étudier"}
-            </strong>
-            <p>
-              {d.surveyed
-                ? "pH 7,6 · faible apport d’eau de surface. Chaude en été, froide en hiver : la croissance ne sera pas régulière."
-                : "L’eau de surface alimente la parcelle de la Roselière. Sa température varie beaucoup plus que celle de la source."}
-            </p>
-          </article>
-          <article>
-            <Fish size={23} />
-            <h3>Le bon poisson, au bon endroit</h3>
-            <strong>
-              {d.surveyed
-                ? "Trois filières possibles"
-                : "Décider après les mesures"}
-            </strong>
-            <p>
-              La plage de croissance optimale est de 12–18 °C pour la truite,
-              20–26 °C pour la carpe et 26–30 °C pour le tilapia.
-            </p>
-          </article>
-        </div>
-        {!d.surveyed && (
-          <p className="project-footnote">
-            Les températures annuelles sont des hypothèses du site fictif.
-            L’analyse prend 2 jours de jeu ; utilisez le bouton de l’étape en
-            cours.
-          </p>
-        )}
-      </section>
-      {d.surveyed && (
-        <section className="project-plots" id="project-plots">
-          <div className="section-heading">
-            <div>
-              <span className="section-kicker">CHOISIR, PUIS CONSTRUIRE</span>
-              <h2>Votre terrain, vos filières</h2>
-            </div>
-            <span className="pill">
-              {game.ponds.filter((p) => p.built).length} / 4 aménagés
-            </span>
-          </div>
-          <div className="route-grid">
-            {game.ponds.map((p) => {
-              const species =
-                p.facility === "earth"
-                  ? "carp"
-                  : p.facility === "ras"
-                    ? "tilapia"
-                    : "trout";
-              const s = SPECIES[species],
-                route = ROUTES[species];
-              return (
-                <article
-                  className={`route-card ${p.plannedSpecies ? "chosen" : ""}`}
-                  key={p.id}
-                >
-                  <div className={`route-art ${species}`}>
-                    <FishArt color={s.color} />
-                    <span>
-                      {p.id === 3
-                        ? "Extension de la filière truite"
-                        : p.id === 1
-                          ? "Conseillé pour débuter"
-                          : p.id === 2
-                            ? "Cycle saisonnier"
-                            : "Filière technique"}
-                    </span>
-                  </div>
-                  <div className="route-content">
-                    <span className="section-kicker">
-                      PARCELLE {p.id} · {p.name}
-                    </span>
-                    <h3>{s.name}</h3>
-                    <p className="route-water">
-                      <Droplets size={14} />
-                      {route.water}
-                    </p>
-                    <p>{route.advice}</p>
-                    <dl>
-                      <div>
-                        <dt>Installation</dt>
-                        <dd>
-                          {facilityName(p)} · {p.volume} m³
-                        </dd>
-                      </div>
-                      <div>
-                        <dt>Travaux</dt>
-                        <dd>
-                          {euro(CONSTRUCTION_COST[p.id - 1])} ·{" "}
-                          {CONSTRUCTION_DAYS[p.id - 1]} jours
-                        </dd>
-                      </div>
-                      <div>
-                        <dt>Premier cycle indicatif</dt>
-                        <dd>{route.duration}</dd>
-                      </div>
-                      <div>
-                        <dt>Lot de découverte</dt>
-                        <dd>
-                          {route.lot} poissons, à ajuster chez le fournisseur
-                        </dd>
-                      </div>
-                    </dl>
-                    {p.built ? (
-                      <div className="project-done">
-                        <Check size={17} />
-                        Bassin en service
-                      </div>
-                    ) : p.constructionDays ? (
-                      <div className="project-done">
-                        <Clock3 size={17} />
-                        Chantier · encore {p.constructionDays} jours
-                      </div>
-                    ) : (
-                      <button
-                        className={`button ${p.plannedSpecies ? "primary" : "outline"} full`}
-                        onClick={() =>
-                          perform(
-                            p.plannedSpecies
-                              ? { type: "build", pondId: p.id }
-                              : { type: "plan", pondId: p.id, species },
-                          )
-                        }
-                      >
-                        {p.plannedSpecies
-                          ? `Construire ${p.name}`
-                          : `Choisir : ${s.name} · ${p.name}`}
-                        <ArrowRight size={15} />
-                      </button>
-                    )}
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-          <p className="project-footnote">
-            Le budget de construction ne couvre ni les poissons, ni leurs
-            aliments, ni les charges pendant la croissance. Gardez une réserve
-            de trésorerie pour plusieurs mois. Un petit lot d’apprentissage
-            supporte des coûts fixes élevés par kilogramme.
-          </p>
-        </section>
-      )}
-    </div>
-  );
-}
-
 export function LogisticsPanel({ game, perform, stock }: Props) {
   const d = game.development,
     ration = dailyFeed(game);

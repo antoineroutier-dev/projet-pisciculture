@@ -342,6 +342,12 @@ export default function FarmScene({
       renderer.domElement.dataset.view = state.mode;
       renderer.domElement.dataset.species = state.species;
       renderer.domElement.dataset.day = String(state.day);
+      renderer.domElement.dataset.ponds = state.ponds
+        .map(
+          (p) =>
+            `${p.id}:${p.built}:${p.constructionDays}:${p.count}:${p.upgrade}`,
+        )
+        .join("|");
       renderer.domElement.dataset.settled = String(pendingFrames === 0);
       renderer.domElement.dataset.camera = [
         ...camera.position.toArray(),

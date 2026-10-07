@@ -83,7 +83,7 @@ Import/export JSON (maximum 300 Ko), validation des nombres, espèces, lots, uni
 | `src/hud/`, `src/world/`, `src/panels/`, `src/state/navigation.ts` | HUD, objectif unique, dock, contrôles de caméra, panneaux et état de navigation |
 | `src/swimming.ts`, `src/swimming.test.ts` | Nage indépendante, orientation et limites des bassins |
 | `src/App.tsx` | Horloge, interface, fenêtres, stockage |
-| `src/WaterPanel.tsx`, `src/RealismGuide.tsx` | Mesures et explications pédagogiques |
+| `src/panels/PondInspector.tsx`, `src/RealismGuide.tsx` | Mesures, réglages et explications pédagogiques |
 | `src/FarmScene.tsx` | Caméra, interactions, cycle de vie WebGL, repli |
 | `src/farm3d.ts`, `src/fish3d.ts` | Géométries, matériaux, textures et animations originales |
 | `src/FishArt.tsx`, `public/assets/species-atlas.png` | Illustration d’identification des espèces |

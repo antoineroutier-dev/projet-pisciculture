@@ -40,7 +40,7 @@ test("1a : du terrain vide au paiement, uniquement au clavier en 1280×800", asy
   await withoutWebGL(page);
   await page.goto("/");
   expect((await current()).ponds.every(p => !p.built && !p.count)).toBe(true);
-  await step(); await step(); await step();
+  await step(); await step(); await press(button("Choisir une parcelle"));
   await press(button("Choisir : Truite arc-en-ciel · Les Saules"));
   await step(); await step();
   await expect(page.getByTestId("day")).toHaveAttribute("data-day", "17");

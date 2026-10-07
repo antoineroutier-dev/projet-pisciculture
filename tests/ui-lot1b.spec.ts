@@ -80,7 +80,7 @@ test("1b : raccourcis, restauration du focus, urgence et guide du modèle",async
   await page.getByRole("button",{name:"Paramètres & sauvegarde",exact:true}).click();
   await page.getByLabel("Fichier de sauvegarde").setInputFiles({name:"urgent.json",mimeType:"application/json",buffer:Buffer.from(JSON.stringify(seed))});
   await page.getByTestId("task-action").click();
-  await expect(page.locator(".water-details")).toHaveAttribute("open","");
+  await expect(page.getByRole("tab",{name:"Eau",exact:true})).toHaveAttribute("aria-selected","true");
   await page.setViewportSize({width:390,height:844});
   const axe=await new AxeBuilder({page}).withTags(["wcag2a","wcag2aa","wcag21aa"]).analyze();
   expect(axe.violations).toEqual([]);

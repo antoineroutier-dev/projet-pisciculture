@@ -25,6 +25,7 @@ export function formatDate(day: number, locale = "fr-FR") {
 /** Display adapter for V1–V3 engine text; the underlying log stays intact. */
 export function formatEngineText(text: string) {
   return text
+    .replaceAll("« Mon projet »", "« Construire »")
     .replace(/(\d+(?:[,.]\d+)?) (jour|cycle)\(s\)(?: (écoulé|réglé)\(s\))?/g,
       (_, value: string, noun: string, adjective?: string) => {
         const n = Number(value.replace(",", "."));

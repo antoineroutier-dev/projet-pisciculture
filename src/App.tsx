@@ -6,7 +6,6 @@ import { WorldControls, FishObservation } from "./world/WorldControls";
 import type { SceneMode } from "./world/types";
 import { ManagementPanel } from "./panels/ManagementPanel";
 import {
-  PondPanel,
   FinancePanel,
   JournalPanel,
   MarketPrices,
@@ -46,13 +45,19 @@ import {
 import { FishArt } from "./FishArt";
 import { lazy, Suspense } from "react";
 const FarmScene = lazy(() => import("./FarmScene"));
-import ProjectPanel, { LogisticsPanel } from "./ProjectPanel";
+import { LogisticsPanel } from "./ProjectPanel";
+import ConstructionPanel, { WaterSurvey } from "./panels/ConstructionPanel";
+import {
+  PondInspector,
+  VitalSummary,
+  type PondTab,
+} from "./panels/PondInspector";
+import { availability } from "./state/pondSelectors";
+import { usePondReadings } from "./state/usePondReadings";
 import { STOCK_FREIGHT, type Task } from "./development";
 import Guide from "./RealismGuide";
 import {
   act,
-  CONSTRUCTION_COST,
-  CONSTRUCTION_DAYS,
   LEGACY_STORAGE_KEY,
   V2_STORAGE_KEY,
   advanceGuided,
@@ -75,8 +80,7 @@ import {
 
 type ModalKind =
   | "stock"
-  | "build"
-  | "harvest"
+  | "survey"
   | "upgrade"
   | "objectives"
   | "settings"
@@ -121,6 +125,12 @@ function StockForm({
     pond.facility === "earth" ? 100 : pond.facility === "ras" ? 600 : 1000,
   );
   const cost = count * SPECIES[species].seedPrice + STOCK_FREIGHT;
+  const stockAvailability = availability(game, {
+    type: "stock",
+    pondId: pond.id,
+    species,
+    count,
+  });
   return (
     <form
       onSubmit={(e) => {
@@ -204,21 +214,10 @@ function StockForm({
       </div>
       <Button
         tone="primary"
-        disabledReason={
-          pond.fallowDays > 0
-            ? "Attendez la fin du vide sanitaire."
-            : count < 1 || count > pond.capacity
-              ? "Choisissez un effectif compris entre 1 et la capacité du bassin."
-              : "Trésorerie insuffisante pour les juvéniles et leur transport."
-        }
+        disabledReason={formatEngineText(stockAvailability.reason)}
         type="submit"
         className="button primary full"
-        disabled={
-          cost > game.money ||
-          count < 1 ||
-          count > pond.capacity ||
-          pond.fallowDays > 0
-        }
+        disabled={stockAvailability.disabled}
       >
         Commander {number(count)} juvéniles <ArrowRight size={17} />
       </Button>
@@ -233,6 +232,9 @@ export default function App() {
   const [settingsTab, setSettingsTab] = useState<"display" | "save">("save");
   const [boot] = useState(load);
   const [game, setGame] = useState<Game>(boot.game);
+  const [session, setSession] = useState(0);
+  const readings = usePondReadings(game, session);
+  const surveyed = useRef(boot.game.development.surveyed);
   const [storageBlocked, setStorageBlocked] = useState(boot.blocked);
   const [storageError, setStorageError] = useState(boot.error);
   const [saved, setSaved] = useState(false);
@@ -246,7 +248,7 @@ export default function App() {
   const [species, setSpecies] = useState<SpeciesId>("trout");
   const [clearWater, setClearWater] = useState(false);
   const [cameraReset, setCameraReset] = useState(0);
-  const [waterOpen, setWaterOpen] = useState(false);
+  const [pondTab, setPondTab] = useState<PondTab>("water");
   const [selected, setSelected] = useState(1);
   const [running, setRunning] = useState(false);
   const [speed, setSpeed] = useState(1);
@@ -256,6 +258,13 @@ export default function App() {
   const [notice, setNotice] = useState<{ text: string; ok: boolean } | null>(
     null,
   );
+  useEffect(() => {
+    if (!surveyed.current && game.development.surveyed) {
+      setRunning(false);
+      setModal("survey");
+    }
+    surveyed.current = game.development.surveyed;
+  }, [game.development.surveyed]);
   const fileInput = useRef<HTMLInputElement>(null);
   const pond = game.ponds.find((p) => p.id === selected)!;
   useLayoutEffect(() => {
@@ -332,10 +341,15 @@ export default function App() {
     const timer = setTimeout(() => setNotice(null), 5000);
     return () => clearTimeout(timer);
   }, [notice]);
+  const pondState = useRef(game.ponds);
+  pondState.current = game.ponds;
   const selectPond = useCallback(
     (id: number) => {
       setSelected(id);
-      navigate("ponds");
+      setPondTab("water");
+      navigate(
+        pondState.current.find((p) => p.id === id)?.built ? "ponds" : "project",
+      );
     },
     [navigate],
   );
@@ -383,7 +397,7 @@ export default function App() {
       });
     } else if (task.target) {
       if (task.pondId) setSelected(task.pondId);
-      if (task.urgent && task.target === "ponds") setWaterOpen(true);
+      if (task.urgent && task.target === "ponds") setPondTab("water");
       navigate(task.target);
     }
   }
@@ -405,6 +419,8 @@ export default function App() {
       if (file.size > 300_000)
         throw new Error("Ce fichier est trop volumineux.");
       const restored = parseSave(await file.text());
+      surveyed.current = restored.development.surveyed;
+      setSession((s) => s + 1);
       setGame(restored);
       setStorageBlocked(false);
       setRunning(false);
@@ -494,20 +510,36 @@ export default function App() {
           <FishObservation species={species} setSpecies={setSpecies} />
         )}
         {panel && (
-          <ManagementPanel id={panel} close={closePanel}>
+          <ManagementPanel
+            id={panel}
+            close={closePanel}
+            summary={
+              panel === "ponds" && pond.built ? (
+                <VitalSummary pond={pond} />
+              ) : undefined
+            }
+          >
             {panel === "project" && (
-              <ProjectPanel game={game} perform={perform} stock={openStock} />
+              <ConstructionPanel
+                game={game}
+                selected={selected}
+                select={setSelected}
+                perform={perform}
+                inspect={() => navigate("ponds")}
+              />
             )}
             {panel === "ponds" && (
-              <PondPanel
+              <PondInspector
                 game={game}
                 pond={pond}
                 perform={perform}
-                setModal={setModal}
+                stock={() => openStock(pond.id)}
+                upgrade={() => setModal("upgrade")}
                 navigate={navigate}
                 select={setSelected}
-                waterOpen={waterOpen}
-                setWaterOpen={setWaterOpen}
+                tab={pondTab}
+                setTab={setPondTab}
+                readings={readings[pond.id] || []}
               />
             )}
             {panel === "logistics" && (
@@ -542,15 +574,13 @@ export default function App() {
           title={
             modal === "stock"
               ? "De nouveaux habitants"
-              : modal === "build"
-                ? "Faire grandir les Étangs"
-                : modal === "harvest"
-                  ? "Le temps de la récolte"
-                  : modal === "upgrade"
-                    ? "Un bassin encore plus heureux"
-                    : modal === "objectives"
-                      ? "Les petits pas font les grandes fermes"
-                      : "Votre partie, bien au chaud"
+              : modal === "survey"
+                ? "Votre analyse de l’eau"
+                : modal === "upgrade"
+                  ? "Un bassin encore plus heureux"
+                  : modal === "objectives"
+                    ? "Les petits pas font les grandes fermes"
+                    : "Votre partie, bien au chaud"
           }
         >
           {modal === "stock" && (
@@ -560,49 +590,18 @@ export default function App() {
               submit={(a) => perform(a, true)}
             />
           )}
-          {modal === "build" && (
+          {modal === "survey" && (
             <>
-              <div className="modal-hero">
-                <Sprout size={46} />
-              </div>
-              <p className="modal-intro">
-                {pond.name} : {facilityName(pond).toLowerCase()},{" "}
-                <strong>{pond.volume} m³</strong>. Durée des travaux et de mise
-                en service : {CONSTRUCTION_DAYS[pond.id - 1]} jours.
-              </p>
-              <div className="checkout-line">
-                <span>Aménagement du terrain</span>
-                <strong>{euro(CONSTRUCTION_COST[pond.id - 1])}</strong>
-              </div>
-              <p className="hint">
-                Prévoyez les juvéniles, les aliments, l’eau et l’énergie. Le
-                chauffage et la filtration de la serre augmentent les charges.
-              </p>
+              <WaterSurvey game={game} />
               <Button
-                tone="primary"
-                disabledReason={
-                  !game.development.surveyed
-                    ? "Faites analyser l’eau."
-                    : !pond.plannedSpecies
-                      ? "Choisissez une filière pour cette parcelle."
-                      : "Trésorerie insuffisante pour ce chantier."
-                }
-                className="button primary full"
-                disabled={
-                  game.money < CONSTRUCTION_COST[pond.id - 1] ||
-                  !pond.plannedSpecies ||
-                  !game.development.surveyed
-                }
-                onClick={() =>
-                  perform({ type: "build", pondId: pond.id }, true)
-                }
+                className="full"
+                onClick={() => {
+                  close();
+                  navigate("project");
+                }}
               >
-                Aménager pour {euro(CONSTRUCTION_COST[pond.id - 1])}
-                <ArrowRight size={17} />
+                Choisir une parcelle
               </Button>
-              {game.money < CONSTRUCTION_COST[pond.id - 1] && (
-                <p className="inline-error">Trésorerie insuffisante.</p>
-              )}
             </>
           )}
           {modal === "upgrade" && (
@@ -837,6 +836,8 @@ export default function App() {
                           <button
                             className="button danger"
                             onClick={() => {
+                              surveyed.current = false;
+                              setSession((s) => s + 1);
                               setGame(initialGame(game.mode));
                               setStorageBlocked(false);
                               setRunning(false);

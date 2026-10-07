@@ -25,6 +25,7 @@ test("3D : ferme, bassin, bâtiments et identification des trois espèces", asyn
   await expect(canvas).toHaveAttribute("data-frame", "rendered", {
     timeout: 60000,
   });
+  await page.getByRole("tab",{name:"Équipement",exact:true}).click();
   await page
     .getByRole("button", { name: "Améliorer ce bassin", exact: true })
     .click();
@@ -234,6 +235,7 @@ test("sans WebGL : la carte et la gestion restent disponibles", async ({
   await expect(
     page.getByRole("heading", { name: "La Roselière", exact: true }),
   ).toBeVisible();
+  await page.getByRole("tab",{name:"Alimentation",exact:true}).click();
   await page.getByRole("button", { name: /Programmer la ration/ }).click();
   await expect(
     page.getByRole("button", { name: /Ration programmée/ }),
@@ -322,7 +324,7 @@ test("nouvelle partie guidée : terrain vide jusqu’au premier règlement, uniq
   expect((await current()).ponds.every((p) => !p.built && !p.count)).toBe(true);
   await step().click(); // Analysis order.
   await step().click(); // Receive analysis, day 3.
-  await step().click(); // Open construction choices.
+  await page.getByRole("button",{name:"Choisir une parcelle",exact:true}).click(); // Results → construction.
   await page
     .getByRole("button", {
       name: "Choisir : Truite arc-en-ciel · Les Saules",

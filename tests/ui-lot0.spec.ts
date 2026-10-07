@@ -40,7 +40,7 @@ for (const [width, height] of [[1920,1080], [1440,900], [1280,800], [1280,720], 
     await page.getByRole("navigation").getByRole("button", { name: "Bassins", exact: true }).click();
     await expect(page.locator(".scene-location")).toBeHidden();
     await expect(page.getByText("VOTRE PETIT COIN DE NATURE")).toHaveCount(0);
-    await page.locator(".water-details summary").click();
+    await page.getByRole("tab",{name:"Alimentation",exact:true}).click();
     const ration = page.getByLabel("Ration cible");
     expect(await ration.evaluate(e => {
       const select = e as HTMLSelectElement;

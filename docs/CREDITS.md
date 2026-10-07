@@ -19,3 +19,5 @@ Aucun son ni musique n’est intégré au lot 0. Leur provenance et licence sero
 Lot 1b : aucune nouvelle ressource externe. Les icônes supplémentaires proviennent du paquet Lucide déjà crédité. L’illustration paysagère historique n’est plus utilisée dans l’interface ni intégrée au portable ; la planche des espèces reste accessible depuis l’observation.
 
 Lot 1c : composants, styles et pictogrammes de jauge originaux, créés dans le dépôt. Aucune nouvelle ressource externe ; Inter/Fraunces (OFL) et Lucide (ISC) restent les seuls paquets visuels utilisés.
+
+Lot 2a : schéma de l’analyse d’eau original, dessiné en SVG dans `src/panels/ConstructionPanel.tsx`. Courbes des relevés calculées à partir des états observés du moteur, sans donnée externe. Aucune nouvelle ressource téléchargée.

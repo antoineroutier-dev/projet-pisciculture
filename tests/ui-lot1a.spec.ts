@@ -53,11 +53,11 @@ for (const [width, height] of [[1920,1080], [1440,900], [1280,800], [1280,720], 
         await page.getByRole("navigation").getByRole("button", { name, exact: true }).click();
         if (name === "Bassins") {
           await noOverlap(page, [".game-hud", ".goal-hud", ".management-panel", ".game-dock"]);
-          if (state === "elevage" || state === "contrat-client") await page.locator(".water-details summary").click();
-          const clipped = await page.locator(".water-grid > div").evaluateAll(cells => cells.filter(cell => cell.getClientRects().length).filter(cell =>
-            [...cell.querySelectorAll("dd")].some(dd => {
+          if (state === "elevage" || state === "contrat-client") await page.getByRole("tab",{name:"Eau",exact:true}).click();
+          const clipped = await page.locator("[data-vital]").evaluateAll(cells => cells.filter(cell => cell.getClientRects().length).filter(cell =>
+            [...cell.querySelectorAll("strong, small")].some(dd => {
               const range = document.createRange(); range.selectNodeContents(dd);
-              return range.getBoundingClientRect().right > cell.getBoundingClientRect().right - 8;
+              return range.getBoundingClientRect().right > cell.getBoundingClientRect().right + 1;
             }),
           ).map(cell => cell.textContent));
           expect(clipped, `Unités des mesures : ${state}`).toEqual([]);
@@ -97,7 +97,7 @@ for (const [width,height] of [[1440,900], [390,844]]) {
           const a = boxes[i], b = boxes[j];
           expect(a.x < b.right && a.right > b.x && a.y < b.bottom && a.bottom > b.y).toBe(false);
         }
-        await page.locator(".water-details summary").click();
+        await page.getByRole("tab",{name:"Eau",exact:true}).click();
       }
       const axe = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
       expect(axe.violations, name).toEqual([]);
@@ -146,6 +146,7 @@ test("1a : les fenêtres de gestion respectent le plancher de texte et axe", asy
     await page.keyboard.press("Escape");
   };
   await page.getByRole("button", { name: "Commander des juvéniles", exact: true }).click(); await verify();
+  await page.getByRole("tab",{name:"Équipement",exact:true}).click();
   await page.getByRole("button", { name: "Améliorer ce bassin", exact: true }).click(); await verify();
   await page.getByRole("button", { name: "Voir les objectifs", exact: true }).click(); await verify();
   const planned = act(parseSave(readFileSync("docs/ui/fixtures/chantier.json", "utf8")), { type: "plan", pondId: 3, species: "trout" });
@@ -153,7 +154,8 @@ test("1a : les fenêtres de gestion respectent le plancher de texte et axe", asy
   await page.getByRole("button", { name: "Paramètres & sauvegarde", exact: true }).click();
   await page.getByLabel("Fichier de sauvegarde").setInputFiles({ name: "planned.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(planned.game)) });
   await page.getByLabel("Bassin sélectionné", {exact:true}).selectOption("3");
-  await page.getByRole("button", { name: "Aménager le bassin", exact: true }).click(); await verify();
+  await page.getByRole("button", { name: "Construire Le Pré neuf", exact: true }).click();
+  await expect(page.getByTestId("construction-card")).toContainText("Mise en service");
   await page.getByRole("button", { name: "Paramètres & sauvegarde", exact: true }).click();
   await page.getByRole("button", { name: "Nouvelle partie", exact: false }).click(); await verify();
 });

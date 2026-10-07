@@ -35,11 +35,13 @@ export function Drawer({
   title,
   close,
   children,
+  summary,
 }: {
   id: string;
   title: string;
   close: () => void;
   children: ReactNode;
+  summary?: ReactNode;
 }) {
   const heading = useRef<HTMLHeadingElement>(null),
     content = useRef<HTMLDivElement>(null);
@@ -66,6 +68,7 @@ export function Drawer({
           <X size={20} />
         </IconButton>
       </header>
+      {summary && <div className="ui-drawer-summary">{summary}</div>}
       <div
         className="management-content"
         ref={content}
@@ -231,7 +234,7 @@ export function Gauge({
         aria-label={label}
         aria-valuemin={0}
         aria-valuemax={max}
-        aria-valuenow={Math.max(0, Math.min(max, value))}
+        aria-valuenow={Number(Math.max(0, Math.min(max, value)).toFixed(6))}
         aria-valuetext={caption}
       >
         {circular ? (
@@ -259,9 +262,13 @@ export function Gauge({
 export function Sparkline({
   values,
   label,
+  positions,
+  domain,
 }: {
   values: readonly number[];
   label: string;
+  positions?: readonly number[];
+  domain?: readonly [number, number];
 }) {
   const low = Math.min(...values),
     high = Math.max(...values),
@@ -269,7 +276,7 @@ export function Sparkline({
   const points = values
     .map(
       (v, i) =>
-        `${4 + (i / Math.max(1, values.length - 1)) * 192},${36 - ((v - low) / range) * 32}`,
+        `${4 + (positions && domain ? (positions[i] - domain[0]) / Math.max(1, domain[1] - domain[0]) : i / Math.max(1, values.length - 1)) * 192},${36 - ((v - low) / range) * 32}`,
     )
     .join(" ");
   return (
@@ -279,6 +286,13 @@ export function Sparkline({
       role="img"
       aria-label={label}
     >
+      {points
+        .split(" ")
+        .filter(Boolean)
+        .map((point, i) => {
+          const [cx, cy] = point.split(",");
+          return <circle key={i} cx={cx} cy={cy} r="2" fill="currentColor" />;
+        })}
       <polyline
         points={points}
         fill="none"
