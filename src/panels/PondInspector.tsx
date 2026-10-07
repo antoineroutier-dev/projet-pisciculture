@@ -15,6 +15,7 @@ import {
 import { BUYERS } from "../development";
 import { FishArt } from "../FishArt";
 import { Button } from "../ui/Button";
+import { ScientificHelp } from "../ui/ScientificHelp";
 import { Tooltip } from "../ui/Tooltip";
 import {
   Badge,
@@ -390,30 +391,32 @@ function WaterSettings({
     <div className="water-settings">
       <p className="hint">
         pH {number(p.pH, 1)} · azote ammoniacal total (TAN) {number(p.tan, 3)}{" "}
-        mg N/L
+        mg N/L <ScientificHelp term="tan" pond={p} />
       </p>
-      <label>
-        Débit d’eau neuve
-        <select
-          aria-label="Débit d’eau neuve"
-          value={p.flow}
-          onChange={(e) =>
-            perform({
-              type: "flow",
-              pondId: p.id,
-              value: Number(e.target.value),
-            })
-          }
-        >
-          {[...new Set([...ranges, p.flow])]
-            .sort((a, b) => a - b)
-            .map((v) => (
-              <option key={v} value={v}>
-                {number(v, 2)} L/s
-              </option>
-            ))}
-        </select>
-      </label>
+      <div className="field-help">
+        <label htmlFor={`flow-${p.id}`}>Débit d’eau neuve</label>
+        <ScientificHelp term="flow" pond={p} />
+      </div>
+      <select
+        id={`flow-${p.id}`}
+        aria-label="Débit d’eau neuve"
+        value={p.flow}
+        onChange={(e) =>
+          perform({
+            type: "flow",
+            pondId: p.id,
+            value: Number(e.target.value),
+          })
+        }
+      >
+        {[...new Set([...ranges, p.flow])]
+          .sort((a, b) => a - b)
+          .map((v) => (
+            <option key={v} value={v}>
+              {number(v, 2)} L/s
+            </option>
+          ))}
+      </select>
       <Button
         tone="secondary"
         disabled={guard.disabled}
@@ -487,11 +490,11 @@ function FeedingSettings({
         </Button>
       )}
       <p className="hint">
-        Hier : {number(p.lastFeed, 2)} kg distribués · FCR constaté{" "}
+        Hier : {number(p.lastFeed, 2)} kg distribués · FCR du lot{" "}
         {p.totalGain > 0.001
           ? number(p.totalFeed / p.totalGain, 2)
           : "indisponible"}
-        .
+        . <ScientificHelp term="fcr" pond={p} />
       </p>
       {p.quarantineDays > 0 && (
         <CountdownChip label="Fin de l’observation" days={p.quarantineDays} />

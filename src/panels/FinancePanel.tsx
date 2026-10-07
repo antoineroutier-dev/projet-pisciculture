@@ -1,15 +1,7 @@
 import { CashChart } from "../ui/CashChart";
 import { Button } from "../ui/Button";
-import { useState } from "react";
-import {
-  ShoppingBasket,
-  Heart,
-  TrendingUp,
-  AlertTriangle,
-  Leaf,
-  BookOpen,
-} from "lucide-react";
-import { formatMoney as euro, formatEngineText } from "../ui/format";
+import { Heart } from "lucide-react";
+import { formatMoney as euro } from "../ui/format";
 import {
   number,
   dailyCost,
@@ -95,71 +87,5 @@ export function FinancePanel({ game, perform }: Props) {
         )}
       </div>
     </aside>
-  );
-}
-export function JournalPanel({ game }: { game: Game }) {
-  const [journalFilter, setJournalFilter] = useState("all");
-  return (
-    <section className="journal-card">
-      <div className="section-heading">
-        <div>
-          <span className="section-kicker">LES PETITES ET GRANDES ÉTAPES</span>
-          <h2>La mémoire des Étangs</h2>
-        </div>
-        <span className="pill">{game.logs.length} événements</span>
-      </div>
-      <div className="journal-filters" aria-label="Filtrer les événements">
-        {[
-          ["all", "Tout"],
-          ["sale", "Récoltes & objectifs"],
-          ["purchase", "Achats"],
-          ["warning", "À surveiller"],
-        ].map(([id, label]) => (
-          <button
-            key={id}
-            className={journalFilter === id ? "active" : ""}
-            aria-pressed={journalFilter === id}
-            onClick={() => setJournalFilter(id)}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-      <div className="journal-entries">
-        {game.logs
-          .filter((l) => journalFilter === "all" || l.kind === journalFilter)
-          .map((l, i) => (
-            <article className="journal-entry" key={`${game.logs.length}-${i}`}>
-              <span className={`event-icon ${l.kind}`}>
-                {l.kind === "sale" ? (
-                  <TrendingUp size={18} />
-                ) : l.kind === "warning" ? (
-                  <AlertTriangle size={18} />
-                ) : l.kind === "purchase" ? (
-                  <ShoppingBasket size={18} />
-                ) : (
-                  <Leaf size={18} />
-                )}
-              </span>
-              <div>
-                <small>JOUR {l.day}</small>
-                <p>{formatEngineText(l.text)}</p>
-              </div>
-            </article>
-          ))}
-        {!game.logs.some(
-          (l) => journalFilter === "all" || l.kind === journalFilter,
-        ) && (
-          <div className="empty-journal">
-            <BookOpen size={32} />
-            <h3>Une page encore blanche.</h3>
-            <p>Les événements de cette catégorie apparaîtront ici.</p>
-          </div>
-        )}
-      </div>
-      <p className="journal-limit">
-        Les 120 événements les plus récents sont conservés.
-      </p>
-    </section>
   );
 }

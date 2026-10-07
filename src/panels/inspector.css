@@ -99,14 +99,7 @@
   color: var(--primary);
   font-size: var(--text-caption);
 }
-.vital-value {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px;
-  font-size: var(--text-lg);
-  margin-top: 4px;
-}
+
 .inspector-vitals .ui-gauge {
   margin-block: 8px 4px;
 }

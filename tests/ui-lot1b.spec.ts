@@ -71,6 +71,7 @@ test("1b : raccourcis, restauration du focus, urgence et guide du modèle",async
     await page.keyboard.press("Escape");
   }
   await dock.getByRole("button",{name:"Guide",exact:true}).click();
+  await page.getByRole("tab",{name:"À propos du modèle",exact:true}).click();
   await expect(page.getByRole("heading",{name:"À propos du modèle",exact:true})).toBeVisible();
   expect((await page.locator(".game-hud,.goal-hud").allTextContents()).join(" ")).not.toContain("hypothèses");
   await expect(page.locator(".sidebar,.stats-grid,.page-heading,.main-footer,.objective-banner,.pond-tabs")).toHaveCount(0);

@@ -303,7 +303,7 @@ function Buildings({ game, perform }: Commands) {
               </h3>
               <p>{a.description}</p>
               {d.assets[key] ? (
-                <Badge tone="success">✓ En service</Badge>
+                <Badge tone="success">En service</Badge>
               ) : work ? (
                 <CountdownChip
                   label="Mise en service"

@@ -205,7 +205,11 @@ body,
   line-height: 1.2;
   margin: 4px 0 8px;
 }
-.goal-hud > p {
+.goal-hud > .goal-description {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
   font-size: var(--text-small);
   line-height: 1.4;
   margin: 0 0 12px;
@@ -506,7 +510,7 @@ body,
     font-size: var(--text-body);
     margin: 0 0 4px;
   }
-  .goal-hud > p {
+  .goal-hud > .goal-description {
     font-size: var(--text-caption);
     margin-bottom: 6px;
   }
@@ -641,7 +645,7 @@ html[data-scale="150"] .game-hud {
   .game-hud .hud-resources small {
     max-width: 170px;
   }
-  .goal-hud > p {
+  .goal-hud > .goal-description {
     display: none;
   }
   .game-dock button {

@@ -20,6 +20,7 @@ import {
 import { dailyFeed, nextTask, STAGES, type Task } from "../development";
 import { number, simDate, weather, pondStatus, type Game } from "../game";
 import { formatMoney, formatEngineText, plural } from "../ui/format";
+import { presentationTask } from "../state/operatingGoals";
 import { PANELS, type PanelId } from "../state/navigation";
 
 export function GameHud({
@@ -174,7 +175,7 @@ export function GoalHud({
   objectives: () => void;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const task = nextTask(game);
+  const task = presentationTask(game);
   const text = formatEngineText(task.text);
   // A short explanation; the full operational guidance remains expandable.
   const firstSentence = text.split(/(?<=[.!?])\s/)[0];
@@ -207,7 +208,7 @@ export function GoalHud({
         </button>
       </div>
       <h2>{task.title}</h2>
-      <p>{description}</p>
+      <span className="goal-description">{description}</span>
       <button
         className="button primary goal-action"
         data-testid="task-action"
@@ -222,7 +223,13 @@ export function GoalHud({
         aria-controls="goal-details"
         onClick={() => setExpanded((v) => !v)}
       >
-        {expanded ? "Masquer le parcours" : "Parcours et conseils"}
+        {game.development.paid
+          ? expanded
+            ? "Masquer les conseils"
+            : "Conseils d’exploitation"
+          : expanded
+            ? "Masquer le parcours"
+            : "Parcours et conseils"}
       </button>
       {expanded && (
         <div

@@ -13,6 +13,7 @@ import {
 import { SOURCE_FLOW, waterUsed } from "../development";
 import { FishArt } from "../FishArt";
 import { Button } from "../ui/Button";
+import { ScientificHelp } from "../ui/ScientificHelp";
 import { Badge, Card, CountdownChip } from "../ui/Primitives";
 import { formatMoney, formatEngineText } from "../ui/format";
 import { availability } from "../state/pondSelectors";
@@ -123,7 +124,9 @@ export function ConstructionCard({
           </dd>
         </div>
         <div>
-          <dt>Eau neuve</dt>
+          <dt className="field-help">
+            Eau neuve <ScientificHelp term="flow" pond={pond} />
+          </dt>
           <dd>
             {number(pond.flow, 2)} L/s{" "}
             {pond.facility === "earth"

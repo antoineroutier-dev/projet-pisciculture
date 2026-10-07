@@ -5,7 +5,9 @@ import { GameHud, GoalHud, Dock } from "./hud/GameHud";
 import { WorldControls, FishObservation } from "./world/WorldControls";
 import type { SceneMode } from "./world/types";
 import { ManagementPanel } from "./panels/ManagementPanel";
-import { FinancePanel, JournalPanel } from "./panels/LegacyPanels";
+import { FinancePanel } from "./panels/FinancePanel";
+import { JournalPanel } from "./panels/JournalPanel";
+import { OperatingGoals } from "./panels/OperatingGoals";
 import { PANELS, usePanelNavigation } from "./state/navigation";
 import { Dialog as Modal } from "./ui/Dialog";
 import {
@@ -60,7 +62,6 @@ import {
   compatible,
   facilityName,
   initialGame,
-  level,
   nextDay,
   number,
   OBJECTIVES,
@@ -582,13 +583,13 @@ export default function App() {
           close={close}
           title={
             modal === "stock"
-              ? "De nouveaux habitants"
+              ? "Commander des juvéniles"
               : modal === "survey"
                 ? "Votre analyse de l’eau"
                 : modal === "upgrade"
-                  ? "Un bassin encore plus heureux"
+                  ? "Équiper le bassin"
                   : modal === "objectives"
-                    ? "Les petits pas font les grandes fermes"
+                    ? "Objectifs du domaine"
                     : "Votre partie, bien au chaud"
           }
         >
@@ -664,10 +665,8 @@ export default function App() {
           )}
           {modal === "objectives" && (
             <>
-              <p className="modal-intro">
-                Chaque étape compte. Récoltez vos récompenses et prenez le temps
-                de progresser.
-              </p>
+              {game.development.paid > 0 && <OperatingGoals game={game} />}
+              <h3>Étapes d’apprentissage</h3>
               <div className="objectives-list">
                 {OBJECTIVES.map((o) => {
                   const claimed = game.claimed.includes(o.id);
@@ -683,12 +682,9 @@ export default function App() {
                       <div>
                         <h3>{o.title}</h3>
                         <p>{o.description}</p>
-                        <small>
-                          {game.mode === "guided"
-                            ? `${euro(o.reward)} d’aide pédagogique · `
-                            : ""}
-                          {o.xp} XP
-                        </small>
+                        {game.mode === "guided" && (
+                          <small>{euro(o.reward)} d’aide pédagogique</small>
+                        )}
                         {!claimed && !ready && (
                           <div className="objective-progress">
                             <span
@@ -792,8 +788,7 @@ export default function App() {
                   </div>
                   <div className="settings-summary">
                     <span>
-                      <Sprout size={18} /> Jour {game.day} · Niveau{" "}
-                      {level(game)}
+                      <Sprout size={18} /> Jour {game.day}
                     </span>
                     <strong>{euro(game.money)}</strong>
                   </div>

@@ -8,6 +8,10 @@ Ne pas relancer la matrice historique : **uniquement les écrans modifiés**, en
 
 Au lot 1c, `node scripts/capture-lot-1c.mjs` couvre les six panneaux, les paramètres et une commande de juvéniles, avec deux vues supplémentaires à 150 %. Les captures sont inspectées : le contrôle géométrique inclut désormais les libellés à l’intérieur des boutons du HUD et du dock, en complément de leurs boîtes.
 
+Au lot 2, `capture-lot-2a.mjs`, `capture-lot-2b.mjs` et `capture-lot-2c.mjs` couvrent respectivement l’inspecteur/construction, la logistique/finance et le journal/guide/objectifs. Ils attendent les polices et la première image 3D stabilisée, vérifient le jour et l’état des bassins réellement rendus, puis exportent le manifeste sous 5 Mo.
+
+Le budget rédactionnel est mesuré séparément par `node scripts/measure-ui-text.mjs before|after URL fichier.json`. Le mode `before` vise un checkout de `0da1338` servi sur un autre port ; `after` vise le code courant. Il ne produit ni ne modifie de capture. Les 42 lignes comparent sept sauvegardes et six vues en 1440×900, sans défilement. Seuls les mots visibles à 80 % dans la fenêtre et les régions défilantes comptent ; les détails fermés, textes masqués et variantes lecteurs d’écran sont exclus. Le repli WebGL isole le texte de gestion. La méthode et ses limites accompagnent les résultats dans PROGRESSION.md.
+
 ## Méthode historique du lot 0 (ne pas relancer)
 
 ```bash

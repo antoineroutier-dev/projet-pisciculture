@@ -23,3 +23,5 @@ Lot 1c : composants, styles et pictogrammes de jauge originaux, créés dans le 
 Lot 2a : schéma de l’analyse d’eau original, dessiné en SVG dans `src/panels/ConstructionPanel.tsx`. Courbes des relevés calculées à partir des états observés du moteur, sans donnée externe. Aucune nouvelle ressource téléchargée.
 
 Lot 2b : diagramme de chaîne logistique et graphique de trésorerie originaux (HTML/SVG), icônes Lucide déjà créditées. Aucune nouvelle ressource externe.
+
+Lot 2c : illustration de l’encyclopédie originale en SVG (`src/RealismGuide.tsx`), courbes du journal issues des relevés du jeu. Pas de nouvelle ressource tierce ; icônes Lucide sous ISC.

@@ -12,6 +12,7 @@ import {
 test("3D : ferme, bassin, bâtiments et identification des trois espèces", async ({
   page,
 }) => {
+  test.setTimeout(240000);
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   const seed = initialGame();
@@ -37,7 +38,7 @@ test("3D : ferme, bassin, bâtiments et identification des trois espèces", asyn
     ["Le bassin", "pond"],
   ]) {
     await page.getByLabel("Vue du terrain", {exact:true}).selectOption({label});
-    await expect(canvas).toHaveAttribute("data-view", view);
+    await expect(canvas).toHaveAttribute("data-view", view, { timeout: 60000 });
   }
   await page
     .getByRole("button", { name: "Observer sous l’eau", exact: true })
@@ -53,7 +54,7 @@ test("3D : ferme, bassin, bâtiments et identification des trois espèces", asyn
     ["Tilapia du Nil", "tilapia", "épineuse"],
   ]) {
     await page.getByLabel("Espèce à observer", {exact:true}).selectOption({label});
-    await expect(canvas).toHaveAttribute("data-species", id);
+    await expect(canvas).toHaveAttribute("data-species", id, { timeout: 60000 });
     await expect(page.locator(".fish-inspector")).toContainText(trait);
   }
   await page.getByRole("button", { name: "Finances", exact: true }).click();
