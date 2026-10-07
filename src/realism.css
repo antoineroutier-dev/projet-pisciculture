@@ -1,0 +1,1206 @@
+/* Field edition: a tactile, natural-light scene and explicit physical measurements. */
+.scene-shell {
+  position: relative;
+  background: #dbe6dc;
+  border-top: 1px solid #dae1d2;
+  overflow: hidden;
+  isolation: isolate;
+}
+.scene-shell:fullscreen {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #e9eee5;
+}
+.scene-shell:fullscreen .scene-canvas {
+  height: auto;
+  flex: 1;
+  min-height: 0;
+}
+.scene-canvas {
+  height: 540px;
+  width: 100%;
+  position: relative;
+}
+.scene-canvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+.scene-canvas.has-error {
+  height: 0;
+}
+.scene-toolbar {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  z-index: 6;
+}
+.scene-tabs,
+.scene-utilities {
+  display: flex;
+  gap: 3px;
+  padding: 4px;
+  border: 1px solid #ffffffaa;
+  background: #f8faf0ed;
+  border-radius: 7px;
+  box-shadow: 0 2px 12px #223c231c;
+  backdrop-filter: blur(12px);
+}
+.scene-tabs button,
+.scene-utilities button {
+  background: none;
+  border: 0;
+  padding: 9px 11px;
+  border-radius: 4px;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #526b51;
+}
+.scene-tabs button[aria-pressed="true"] {
+  background: #244d3d;
+  color: #f6f8eb;
+}
+.scene-tabs button:hover:not([aria-pressed="true"]),
+.scene-utilities button:hover {
+  background: #e4ebd8;
+}
+.scene-utilities button {
+  padding: 9px;
+}
+.scene-location {
+  position: absolute;
+  left: 25px;
+  top: 83px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  pointer-events: none;
+  background: #f5f7eecc;
+  padding: 13px 16px;
+  border-radius: 5px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 3px 18px #2047360d;
+  max-width: 80%;
+}
+.scene-location > span {
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: #557052;
+}
+.scene-location > strong {
+  font:
+    400 22px Georgia,
+    serif;
+  color: #244c37;
+}
+.scene-location > small {
+  font-size: 9px;
+  color: #526a4d;
+}
+.scene-bottom {
+  position: absolute;
+  left: 17px;
+  right: 17px;
+  bottom: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  z-index: 4;
+}
+.scene-bottom > span {
+  font-size: 9px;
+  color: #f8faf0;
+  background: #294737cc;
+  border-radius: 4px;
+  padding: 8px 10px;
+  backdrop-filter: blur(6px);
+}
+.scene-bottom button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  border: 1px solid #edf1e3;
+  background: #f8faf0ed;
+  color: #3c5d43;
+  border-radius: 5px;
+  padding: 9px 11px;
+}
+.scene-bottom button[aria-pressed="true"] {
+  background: #dce9c5;
+}
+.scene-pond-picker {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  background: #f4f6eb;
+  border-top: 1px solid #ced9c4;
+}
+.scene-pond-picker button {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  border-right: 1px solid #e0e5d4;
+  font-size: 10px;
+  color: #51654b;
+  padding: 17px 8px;
+  white-space: nowrap;
+}
+.scene-pond-picker button > span {
+  font-size: 9px;
+  color: #526448;
+  border: 1px solid #c5d1b8;
+  border-radius: 3px;
+  padding: 3px 4px;
+}
+.scene-pond-picker button[aria-pressed="true"] {
+  background: #e5ecd6;
+  box-shadow: inset 0 -2px #667f50;
+}
+.scene-caption {
+  font-size: 9px;
+  line-height: 1.6;
+  color: #5c6d52;
+  background: #f9faf3;
+  padding: 12px 17px;
+  border-top: 1px solid #e3e7da;
+}
+.scene-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e3e9dc;
+  color: #5a704e;
+  font:
+    25px Georgia,
+    serif;
+}
+.scene-fallback > p {
+  font-size: 11px;
+  line-height: 1.7;
+  color: #604b27;
+  background: #f5eacb;
+  padding: 70px 20px 15px;
+}
+.species-picker {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 72px;
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  z-index: 4;
+}
+.species-picker > button {
+  background: #f9faf0de;
+  border: 1px solid #fdfdf699;
+  color: #536b4c;
+  font-size: 10px;
+  padding: 8px 12px;
+  border-radius: 30px;
+  backdrop-filter: blur(5px);
+}
+.species-picker > button[aria-pressed="true"] {
+  background: #476847;
+  color: #fffdf0;
+}
+.fish-observation {
+  background: #f7f8ef;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding: 22px 24px;
+  border-top: 1px solid #dfe6d4;
+}
+.fish-observation > div {
+  flex: 1;
+}
+.fish-observation h3 {
+  font:
+    400 27px Georgia,
+    serif;
+  color: #31533b;
+  margin-bottom: 5px;
+}
+.fish-observation em {
+  font:
+    italic 11px Georgia,
+    serif;
+  color: #66775c;
+}
+.fish-observation p {
+  font-size: 11px;
+  line-height: 1.7;
+  color: #5f7156;
+  margin-top: 11px;
+  max-width: 450px;
+}
+.fish-observation > .button {
+  white-space: nowrap;
+  font-size: 10px;
+}
+.species-photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4.5;
+  background-image: url("/assets/species-atlas.png");
+  background-repeat: no-repeat;
+  background-size: 100% 300%;
+  flex-shrink: 0;
+  mix-blend-mode: multiply;
+}
+.photo-observation {
+  position: absolute;
+  top: 129px;
+  left: 23px;
+  right: 23px;
+  height: 320px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #f4f1e6;
+  z-index: 3;
+  border-radius: 6px;
+  box-shadow: 0 12px 40px #14382718;
+  padding: 22px;
+}
+.photo-observation .species-photo {
+  width: 100%;
+}
+.photo-observation > span:last-child {
+  font-size: 9px;
+  color: #6b705e;
+  margin-top: 22px;
+  line-height: 1.6;
+}
+.fish-illustration {
+  height: auto;
+  min-height: 82px;
+  background: #f5f2e8;
+  border-radius: 8px;
+  padding: 10px 0;
+}
+.fish-profile > p {
+  margin-bottom: 5px;
+}
+.fish-profile h3 {
+  margin-top: 13px;
+}
+.fish-profile .species-photo {
+  width: 100%;
+  max-width: 350px;
+}
+.market-species-card .species-art {
+  background: #f4f1e6;
+  min-height: 108px;
+}
+.species-art .species-photo {
+  width: 100%;
+}
+.species-option .species-photo {
+  width: 86px;
+}
+.harvest-hero .species-photo {
+  width: 90%;
+  max-width: 320px;
+  margin-bottom: 20px;
+}
+.water-panel {
+  margin: 22px 0 16px;
+}
+.technical-heading {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 8px;
+  letter-spacing: 1.25px;
+  color: #5e7456;
+  margin-bottom: 17px;
+}
+.water-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: #e3e7d9;
+  border: 1px solid #e3e7d9;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 0 0 18px;
+}
+.water-grid > div {
+  background: #f7f9ef;
+  padding: 12px 10px;
+  min-width: 0;
+}
+.water-grid dt {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: #52694b;
+}
+.water-grid dd {
+  margin: 7px 0 4px;
+  font:
+    400 24px Georgia,
+    serif;
+  color: #325339;
+  white-space: nowrap;
+}
+.water-grid dd > small {
+  font:
+    10px system-ui,
+    sans-serif;
+  color: #657559;
+}
+.water-grid > div > .metric-hint {
+  font-size: 8px;
+  color: #617354;
+  line-height: 1.5;
+  display: block;
+}
+.water-grid .water-alert {
+  background: #f4e9db;
+}
+.water-grid .water-alert dd {
+  color: #974b31;
+}
+.density-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 10px;
+  color: #607454;
+}
+.density-line strong {
+  font-size: 10px;
+  font-weight: 500;
+}
+.technical-track {
+  height: 4px;
+  background: #e7ecd9;
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 9px 0 18px;
+}
+.technical-track span {
+  height: 100%;
+  display: block;
+  background: #9bad7a;
+}
+.husbandry-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+.husbandry-fields label {
+  font-size: 9px;
+  line-height: 1.6;
+  color: #526a49;
+  min-width: 0;
+}
+.husbandry-fields select {
+  display: block;
+  width: 100%;
+  padding: 9px 6px;
+  margin-top: 6px;
+  color: #4c6844;
+  font-size: 10px;
+  background: #f7f9ed;
+  border: 1px solid #dce4d0;
+  border-radius: 4px;
+}
+.feeder-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  margin: 18px 0;
+  padding: 13px 0;
+  border-top: 1px solid #e4e8d9;
+  border-bottom: 1px solid #e4e8d9;
+}
+.feeder-control strong {
+  display: block;
+  font-size: 10px;
+  color: #526d46;
+  font-weight: 500;
+}
+.feeder-control small {
+  display: block;
+  font-size: 8px;
+  line-height: 1.65;
+  color: #657559;
+  margin-top: 5px;
+}
+.feeder-control button {
+  width: 37px;
+  height: 22px;
+  background: #d9dfce;
+  border: 1px solid #c3cfb3;
+  border-radius: 20px;
+  padding: 2px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s;
+}
+.feeder-control button > span {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fffdf3;
+  box-shadow: 0 1px 3px #243d271e;
+  transition: transform 0.2s;
+}
+.feeder-control button[aria-checked="true"] {
+  background: #426d49;
+  border-color: #426d49;
+}
+.feeder-control button[aria-checked="true"] > span {
+  transform: translateX(14px);
+}
+.husbandry-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 11px;
+  font-size: 8px;
+  color: #65765a;
+}
+.husbandry-summary > span {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.husbandry-summary b {
+  font-size: 11px;
+  font-weight: 500;
+  color: #45613c;
+}
+.technical-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 9px;
+  line-height: 1.8;
+  background: #edf2e0;
+  color: #536d42;
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 15px;
+}
+.technical-notice svg {
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+.technical-notice.urgent {
+  background: #f5e5d5;
+  color: #8c4c2c;
+}
+.simulation-date {
+  font-size: 10px;
+  color: #587347;
+  display: block;
+  margin-left: 4px;
+  border-left: 1px solid #cdd7bd;
+  padding-left: 9px;
+}
+.day-weather {
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 7px;
+}
+.stat-card strong {
+  font-size: 24px;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+.stat-card small {
+  line-height: 1.6;
+}
+.pond-panel-heading .status-badge {
+  position: static;
+  display: inline-flex;
+  margin: 0 0 12px;
+}
+.pond-panel-heading > .section-kicker {
+  margin-bottom: 8px;
+}
+.pond-panel-heading p {
+  line-height: 1.8;
+}
+.pond-panel-heading h2 {
+  font-size: 29px;
+}
+.growth-section {
+  padding-bottom: 14px;
+}
+.mode-setting {
+  margin: 20px 0;
+  padding: 16px;
+  background: #f0f4e5;
+  border: 1px solid #e0e7d2;
+  border-radius: 6px;
+}
+.mode-setting label {
+  display: block;
+  font-size: 11px;
+  color: #506b43;
+  margin-bottom: 9px;
+}
+.mode-setting select {
+  width: 100%;
+  padding: 11px 8px;
+  background: #fcfdf4;
+  color: #46603c;
+  border: 1px solid #ccd9bc;
+  border-radius: 4px;
+  font:
+    11px system-ui,
+    sans-serif;
+}
+.mode-setting p {
+  font-size: 10px;
+  line-height: 1.8;
+  color: #607653;
+  margin-top: 12px;
+}
+.research-card {
+  margin-top: 22px;
+  padding: 28px;
+  border: 1px solid #dce5cb;
+  background: #eef3e1;
+  border-radius: 8px;
+}
+.research-card h2 {
+  font-size: 28px;
+  color: #46633c;
+}
+.research-card > p {
+  font-size: 12px;
+  line-height: 1.9;
+  color: #5d7450;
+  margin: 15px 0;
+}
+.research-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 18px 0;
+}
+.research-links a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f7faed;
+  border: 1px solid #d5e0c4;
+  padding: 10px 12px;
+  border-radius: 5px;
+  font-size: 10px;
+  color: #4b663e;
+}
+.scene-tabs button:focus-visible,
+.scene-pond-picker button:focus-visible,
+.species-picker button:focus-visible {
+  outline: 3px solid #254e3b;
+  outline-offset: 3px;
+}
+.husbandry-fields select:focus-visible,
+.mode-setting select:focus-visible {
+  outline: 3px solid #7ca47c;
+  outline-offset: 3px;
+}
+@media (min-width: 1450px) {
+  .dashboard-grid {
+    grid-template-columns: minmax(0, 1fr) 325px;
+  }
+  .scene-canvas {
+    height: 610px;
+  }
+  .water-grid dd {
+    font-size: 27px;
+  }
+  .technical-heading {
+    font-size: 9px;
+  }
+  .water-grid > div > .metric-hint,
+  .feeder-control small {
+    font-size: 9px;
+  }
+  .husbandry-summary {
+    font-size: 9px;
+  }
+  .fish-observation p {
+    font-size: 12px;
+  }
+  .scene-toolbar {
+    top: 20px;
+    left: 20px;
+    right: 20px;
+  }
+}
+@media (max-width: 1150px) {
+  .scene-canvas {
+    height: 475px;
+  }
+  .scene-toolbar {
+    left: 10px;
+    right: 10px;
+    top: 12px;
+  }
+  .scene-tabs button {
+    font-size: 10px;
+    padding: 8px;
+  }
+  .scene-tabs button svg {
+    display: none;
+  }
+  .scene-utilities button {
+    padding: 8px;
+  }
+  .scene-location {
+    left: 15px;
+    top: 74px;
+    padding: 11px;
+    max-width: 85%;
+  }
+  .scene-location strong {
+    font-size: 19px;
+  }
+  .scene-location > small {
+    font-size: 8px;
+  }
+  .scene-bottom {
+    left: 12px;
+    right: 12px;
+    bottom: 109px;
+  }
+  .scene-bottom > span {
+    display: none;
+  }
+  .scene-bottom > button {
+    margin-left: auto;
+  }
+  .scene-pond-picker {
+    grid-template-columns: 1fr 1fr;
+  }
+  .scene-pond-picker button {
+    padding: 12px 8px;
+    font-size: 9px;
+    border-bottom: 1px solid #e0e5d4;
+  }
+  .scene-bottom {
+    bottom: 140px;
+  }
+  .fish-observation {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 19px;
+  }
+  .fish-observation h3 {
+    font-size: 24px;
+  }
+  .fish-observation p {
+    font-size: 10px;
+  }
+  .fish-observation > .button {
+    align-self: flex-end;
+  }
+  .species-picker {
+    top: 65px;
+    gap: 5px;
+    left: 10px;
+    right: 10px;
+    flex-wrap: wrap;
+  }
+  .species-picker > button {
+    font-size: 9px;
+    padding: 7px 9px;
+  }
+  .photo-observation {
+    top: 125px;
+    height: 270px;
+    left: 15px;
+    right: 15px;
+    padding: 12px;
+  }
+  .photo-observation > span:last-child {
+    font-size: 8px;
+  }
+  .water-grid dd {
+    font-size: 22px;
+  }
+  .water-grid dd small {
+    font-size: 8px;
+  }
+  .water-grid > div > .metric-hint {
+    font-size: 8px;
+  }
+  .simulation-date {
+    font-size: 8px;
+  }
+  .pond-panel-heading h2 {
+    font-size: 27px;
+  }
+  .stat-card strong {
+    font-size: 22px;
+  }
+}
+@media (max-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  .farm-column {
+    width: 100%;
+  }
+  .pond-panel {
+    width: 100%;
+  }
+  .scene-canvas {
+    height: 510px;
+  }
+  .scene-tabs button svg {
+    display: block;
+  }
+  .scene-tabs button {
+    font-size: 11px;
+    padding: 9px 12px;
+  }
+  .scene-pond-picker {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .scene-pond-picker button {
+    font-size: 9px;
+    gap: 5px;
+  }
+  .scene-bottom {
+    bottom: 100px;
+  }
+  .scene-location {
+    top: 85px;
+  }
+  .water-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .water-grid dd {
+    font-size: 25px;
+  }
+  .fish-illustration {
+    max-width: 440px;
+    margin: 0 auto;
+    min-height: 100px;
+  }
+  .pond-numbers {
+    max-width: 460px;
+    margin: 20px auto 0;
+  }
+  .water-grid dt {
+    font-size: 11px;
+  }
+  .water-grid > div > .metric-hint {
+    font-size: 9px;
+  }
+  .husbandry-summary {
+    grid-template-columns: repeat(4, 1fr);
+    font-size: 10px;
+  }
+  .feeder-control strong {
+    font-size: 12px;
+  }
+  .feeder-control small {
+    font-size: 10px;
+  }
+  .density-line,
+  .density-line strong {
+    font-size: 11px;
+  }
+  .technical-heading {
+    font-size: 10px;
+  }
+  .husbandry-fields label,
+  .husbandry-fields select {
+    font-size: 11px;
+  }
+  .pond-actions .button {
+    font-size: 12px;
+  }
+  .technical-notice {
+    font-size: 11px;
+  }
+  .pond-tabs {
+    grid-template-columns: 1fr 1fr;
+  }
+  .objective-banner .button {
+    width: auto;
+    margin-left: auto;
+  }
+  .simulation-date {
+    font-size: 9px;
+  }
+  .fish-observation {
+    flex-direction: row;
+  }
+  .species-picker {
+    top: 74px;
+    gap: 8px;
+  }
+  .species-picker > button {
+    font-size: 10px;
+  }
+}
+@media (max-width: 680px) {
+  .scene-toolbar {
+    left: 10px;
+    right: 10px;
+    top: 11px;
+    gap: 5px;
+  }
+  .scene-tabs {
+    gap: 2px;
+    padding: 3px;
+  }
+  .scene-tabs button {
+    font-size: 9px;
+    padding: 8px 7px;
+    gap: 4px;
+  }
+  .scene-tabs button svg {
+    width: 12px;
+  }
+  .scene-utilities {
+    padding: 3px;
+    gap: 1px;
+  }
+  .scene-utilities button {
+    padding: 7px 5px;
+  }
+  .scene-utilities button svg {
+    width: 13px;
+  }
+  .scene-canvas {
+    height: 440px;
+  }
+  .scene-location {
+    left: 13px;
+    top: 72px;
+    max-width: 88%;
+  }
+  .scene-location strong {
+    font-size: 20px;
+  }
+  .scene-location > small {
+    font-size: 8px;
+  }
+  .scene-location > span {
+    font-size: 8px;
+  }
+  .scene-pond-picker {
+    grid-template-columns: 1fr 1fr;
+  }
+  .scene-pond-picker button {
+    font-size: 10px;
+    padding: 12px 6px;
+  }
+  .scene-caption {
+    padding: 11px 13px;
+    font-size: 9px;
+    min-height: 52px;
+  }
+  .scene-bottom {
+    bottom: 157px;
+    left: 12px;
+    right: 12px;
+  }
+  .scene-bottom button {
+    font-size: 9px;
+  }
+  .species-picker {
+    top: 64px;
+    gap: 4px;
+    left: 10px;
+    right: 10px;
+  }
+  .species-picker > button {
+    font-size: 9px;
+    padding: 7px 9px;
+  }
+  .fish-observation {
+    flex-direction: column;
+    padding: 20px;
+  }
+  .fish-observation h3 {
+    font-size: 27px;
+  }
+  .fish-observation p {
+    font-size: 11px;
+  }
+  .photo-observation {
+    top: 125px;
+    height: 240px;
+    left: 13px;
+    right: 13px;
+  }
+  .photo-observation > span:last-child {
+    text-align: center;
+    font-size: 8px;
+  }
+  .water-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .water-grid > div {
+    padding: 14px;
+  }
+  .water-grid dd {
+    font-size: 29px;
+  }
+  .water-grid dd small {
+    font-size: 10px;
+  }
+  .water-grid > div > .metric-hint {
+    font-size: 10px;
+  }
+  .husbandry-summary {
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    font-size: 10px;
+  }
+  .husbandry-summary b {
+    font-size: 12px;
+  }
+  .technical-notice {
+    font-size: 10px;
+  }
+  .technical-heading {
+    font-size: 9px;
+  }
+  .simulation-date {
+    display: none;
+  }
+  .day-weather {
+    align-items: flex-start;
+  }
+  .objective-banner .button {
+    margin: 10px 0 0 47px;
+  }
+  .research-card {
+    padding: 22px;
+  }
+  .research-card h2 {
+    font-size: 25px;
+  }
+  .research-card > p {
+    font-size: 11px;
+  }
+  .species-option .species-photo {
+    width: 75px;
+  }
+  .stat-card strong {
+    font-size: 23px;
+  }
+  .species-art .species-photo {
+    width: 100%;
+  }
+  .market-species-card {
+    grid-template-columns: 105px 1fr;
+  }
+  .species-art {
+    min-height: 115px;
+  }
+  .species-art .species-photo {
+    aspect-ratio: 3.2;
+    background-size: 120% 300%;
+  }
+  .scene-shell:fullscreen .scene-pond-picker {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .scene-shell:fullscreen .scene-bottom {
+    bottom: 130px;
+  }
+}
+.scene-placeholder {
+  height: 540px;
+  display: grid;
+  place-items: center;
+  background: #e3e9dc;
+  color: #35533b;
+  font:
+    24px Georgia,
+    serif;
+}
+.scene-notice {
+  padding: 12px 17px;
+  background: #f5eacb;
+  color: #604b27;
+  font-size: 11px;
+}
+@media (max-width: 680px) {
+  .scene-tabs button svg {
+    display: none;
+  }
+  .scene-tabs button {
+    padding: 8px 6px;
+    font-size: 9px;
+  }
+  .scene-tabs {
+    flex: 1;
+    justify-content: space-between;
+  }
+  .scene-utilities {
+    flex-shrink: 0;
+  }
+}
+.landscape-observation {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 540px;
+  z-index: 1;
+  overflow: hidden;
+}
+.landscape-observation > img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: center 48%;
+  display: block;
+}
+.scene-location {
+  z-index: 2;
+}
+.landscape-hotspots {
+  position: absolute;
+  left: 8%;
+  right: 12%;
+  bottom: 20%;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+.landscape-hotspots button {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: #f9faefed;
+  border: 1px solid #fcfff2b3;
+  box-shadow: 0 5px 20px #14261640;
+  backdrop-filter: blur(12px);
+  border-radius: 5px;
+  padding: 12px 15px 12px 44px;
+  text-align: left;
+  color: #284b35;
+}
+.landscape-hotspots button > span {
+  position: absolute;
+  left: 12px;
+  top: 15px;
+  font-size: 10px;
+  border: 1px solid #a9b792;
+  padding: 4px;
+  border-radius: 3px;
+}
+.landscape-hotspots strong {
+  font:
+    18px Georgia,
+    serif;
+}
+.landscape-hotspots small {
+  font-size: 9px;
+  color: #465e3e;
+}
+.scene-bottom .landscape-toggle {
+  margin-left: 0;
+  background: #244d3d;
+  color: #fffdf1;
+  border-color: #62826a;
+  box-shadow: 0 4px 14px #172b3640;
+  padding: 12px 17px;
+}
+.landscape-toggle + span {
+  margin-left: auto;
+}
+@media (min-width: 1450px) {
+  .landscape-observation {
+    height: 610px;
+  }
+}
+@media (max-width: 1150px) {
+  .landscape-observation {
+    height: 475px;
+  }
+  .landscape-hotspots {
+    left: 5%;
+    right: 5%;
+    gap: 8px;
+  }
+  .landscape-hotspots button {
+    padding: 10px;
+  }
+  .landscape-hotspots button > span {
+    display: none;
+  }
+  .landscape-hotspots strong {
+    font-size: 16px;
+  }
+}
+@media (max-width: 900px) {
+  .landscape-observation {
+    height: 510px;
+  }
+}
+@media (max-width: 680px) {
+  .landscape-observation {
+    height: 440px;
+  }
+  .landscape-observation > img {
+    object-position: 48% center;
+  }
+  .landscape-hotspots {
+    bottom: 25%;
+    left: 4%;
+    right: 4%;
+    gap: 6px;
+  }
+  .landscape-hotspots strong {
+    font-size: 15px;
+  }
+  .landscape-hotspots small {
+    font-size: 8px;
+  }
+  .scene-bottom .landscape-toggle {
+    padding: 10px 13px;
+  }
+}
+.scene-shell:fullscreen .landscape-observation {
+  height: calc(100vh - 97px);
+}
+
+.water-grid .metric-hint {
+  font-family: system-ui, sans-serif;
+  font-weight: 400;
+  white-space: normal;
+  margin: 0;
+}
+.scene-bottom .landscape-toggle[aria-pressed="true"] {
+  background: #244d3d;
+  color: #fffdf1;
+}
