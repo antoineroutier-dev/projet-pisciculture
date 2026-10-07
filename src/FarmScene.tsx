@@ -529,7 +529,7 @@ export default function FarmScene({
         </>
       ) : (
         <>
-          <div className="scene-location">
+          <div className="scene-location" hidden={!started && !landscape}>
             <span>DOMAINE DES SAULES</span>
             <strong>
               {mode === "pond"

@@ -39,10 +39,24 @@ try {
     const data = await readFile(join(root, 'public', path));
     html = html.replaceAll(`/${path}`, `data:${mime};base64,${data.toString('base64')}`);
   }
+  // Vite emits local font files referenced by the bundled CSS. Embed those
+  // emitted assets too; the portable must never depend on a sibling directory.
+  const mimeTypes = { woff2: 'font/woff2', woff: 'font/woff', png: 'image/png', svg: 'image/svg+xml', webp: 'image/webp', ogg: 'audio/ogg', mp3: 'audio/mpeg' };
+  for (const item of output) {
+    if (item.type !== 'asset') continue;
+    const mime = mimeTypes[item.fileName.split('.').at(-1)];
+    if (!mime) continue;
+    html = html.replaceAll(`/${item.fileName}`, `data:${mime};base64,${Buffer.from(item.source).toString('base64')}`);
+  }
+  for (const file of ['Inter-OFL.txt', 'Lucide-ISC.txt', 'Three-MIT.txt']) {
+    const license = await readFile(join(root, 'docs', 'licenses', file), 'utf8');
+    html += `\n<!-- ${file}\n${license.replaceAll('--', '—')}\n-->`;
+  }
+  if (Buffer.byteLength(html) > 15_000_000) throw new Error('Portable exceeds the 15 MB budget');
   const target = process.argv[2] ? resolve(process.argv[2]) : join(root, 'portable', 'Les-Etangs.html');
   await mkdir(dirname(target), { recursive: true });
   await writeFile(target, html);
-  console.log(`Portable game: ${target} (${Math.round(Buffer.byteLength(html) / 1024 / 1024 * 10) / 10} MB)`);
+  console.log(`Portable game: ${target} (${Buffer.byteLength(html)} bytes; ${(Buffer.byteLength(html) / 1_000_000).toFixed(2)} MB)`);
 } finally {
   await rm(scratch, { recursive: true, force: true });
 }

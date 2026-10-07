@@ -6,13 +6,13 @@ Jeu de pisciculture solo en français pour navigateur. La V3 commence sur un ter
 
 Le [prompt complet exécuté pour cette refonte](docs/PROMPT-PROGRESSION.md) détaille le parcours, la logistique, la nage et les validations.
 
-L’[audit de l’interface](docs/AUDIT-UI-STEAM.md) recense ce qui sépare la V3 d’un jeu de gestion de qualité Steam ; le [prompt de refonte UI](docs/PROMPT-UI-STEAM.md) décrit les corrections à exécuter (non encore implémentées).
+L’[audit de l’interface](docs/AUDIT-UI-STEAM.md) recense ce qui sépare la V3 d’un jeu de gestion de qualité Steam ; le [prompt de refonte UI](docs/PROMPT-UI-STEAM.md) définit les lots à exécuter. Le [lot 0](docs/ui/LOT-0.md) corrige les huit bugs préalables ; les lots 1 à 5 restent à réaliser. Les [captures et commandes de vérification](docs/ui/README.md) permettent de comparer les mêmes situations avant/après. Les [crédits et licences](docs/CREDITS.md) recensent les ressources embarquées.
 
 ## Édition autonome, sans installation pour le joueur
 
 L’édition `Les-Etangs.html` contient le jeu et ses images dans un seul fichier. Télécharger ce fichier (ou décompresser l’archive de livraison), puis l’ouvrir avec un navigateur moderne. Aucun serveur ni accès Internet n’est nécessaire pour jouer ; les liens vers les sources documentaires demandent Internet. La 3D requiert WebGL 2, avec carte de secours si indisponible.
 
-Pour produire cette édition depuis les sources : `npm ci`, puis `npm run build:portable`. Le résultat est `portable/Les-Etangs.html` (environ 9,2 Mo), distinct du build web `dist/`.
+Pour produire cette édition depuis les sources : `npm ci`, puis `npm run build:portable`. Le résultat est `portable/Les-Etangs.html` (10,06 Mo au lot 0), distinct du build web `dist/`. Le script vérifie la limite de 15 Mo et intègre les polices locales et leurs licences.
 
 Commencer dans **Mon projet** avec **Analyser l’eau**, puis suivre la carte **Votre prochaine action**. La partie démarre en pause. Les sauvegardes locales peuvent être attachées au chemin du fichier selon le navigateur : utiliser **Paramètres & sauvegarde → Exporter ma partie** avant de déplacer ou remplacer le fichier.
 

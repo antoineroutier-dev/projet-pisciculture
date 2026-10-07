@@ -826,7 +826,7 @@ h1 {
   justify-content: center;
   position: relative;
 }
-.fish-illustration svg {
+.fish-illustration svg:not(.species-photo) {
   width: 117px;
   height: 64px;
   position: relative;
@@ -1225,12 +1225,12 @@ h1 {
 .species-art.tilapia {
   background: #e8efeb;
 }
-.species-art svg {
+.species-art > svg:not(.species-photo) {
   width: 107px;
   height: 70px;
   transform: rotate(-10deg);
 }
-.species-art > span {
+.species-art > .species-level {
   position: absolute;
   right: 7px;
   top: 7px;
@@ -1696,7 +1696,7 @@ h1 {
   background: #eef4e3;
   border-color: #aabf94;
 }
-.species-option > svg:first-child {
+.species-option > svg:first-child:not(.species-photo) {
   width: 66px;
   height: 40px;
 }
@@ -1814,7 +1814,7 @@ h1 {
   padding: 25px;
   margin: 18px 0 24px;
 }
-.harvest-hero svg {
+.harvest-hero svg:not(.species-photo) {
   width: 113px;
   height: 65px;
   transform: rotate(-10deg);
@@ -2867,7 +2867,7 @@ h1 {
   .fish-illustration {
     height: 91px;
   }
-  .fish-illustration svg {
+  .fish-illustration svg:not(.species-photo) {
     width: 131px;
     height: 70px;
   }
@@ -2941,7 +2941,7 @@ h1 {
     min-height: 120px;
     margin: 0;
   }
-  .species-art svg {
+  .species-art > svg:not(.species-photo) {
     width: 85px;
   }
   .market-species-card h3 {

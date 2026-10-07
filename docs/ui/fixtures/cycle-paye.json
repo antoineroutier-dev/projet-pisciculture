@@ -1,0 +1,827 @@
+{
+  "version": 3,
+  "development": {
+    "surveyed": true,
+    "surveyDue": null,
+    "assets": {
+      "warehouse": true,
+      "coldstore": true,
+      "workshop": false
+    },
+    "works": [],
+    "orders": [],
+    "contracts": [],
+    "batches": [],
+    "shipments": [],
+    "nextId": 10,
+    "received": 6,
+    "harvestedKg": 453.989,
+    "deliveredKg": 453.989,
+    "paid": 1,
+    "wasteKg": 0,
+    "migrated": false
+  },
+  "mode": "guided",
+  "day": 185,
+  "money": 40232.36,
+  "food": 52.788,
+  "xp": 239,
+  "ponds": [
+    {
+      "id": 1,
+      "name": "Les Saules",
+      "built": true,
+      "capacity": 3000,
+      "species": null,
+      "plannedSpecies": "trout",
+      "count": 0,
+      "weight": 0,
+      "health": 100,
+      "water": 100,
+      "oxygen": 10.124,
+      "satiety": 0,
+      "upgrade": 0,
+      "facility": "raceway",
+      "volume": 60,
+      "maxDensity": 25,
+      "temperature": 13.51,
+      "flow": 12,
+      "pH": 7.2,
+      "tan": 6.808670437276084e-62,
+      "autoFeed": false,
+      "rationMultiplier": 1,
+      "feedToday": 0,
+      "lastFeed": 0,
+      "lastGrowth": 0,
+      "totalFeed": 447.21200000000005,
+      "totalGain": 403.98883912533796,
+      "age": 154,
+      "fastingDays": 0,
+      "filterAge": 0,
+      "quarantineDays": 0,
+      "fallowDays": 0,
+      "constructionDays": 0,
+      "mortality": 0
+    },
+    {
+      "id": 2,
+      "name": "La Roselière",
+      "built": false,
+      "capacity": 450,
+      "species": null,
+      "plannedSpecies": null,
+      "count": 0,
+      "weight": 0,
+      "health": 98,
+      "water": 95,
+      "oxygen": 8,
+      "satiety": 0,
+      "upgrade": 0,
+      "facility": "earth",
+      "volume": 600,
+      "maxDensity": 0.8,
+      "temperature": 16,
+      "flow": 0.08,
+      "pH": 7.6,
+      "tan": 0.05,
+      "autoFeed": false,
+      "rationMultiplier": 1,
+      "feedToday": 0,
+      "lastFeed": 0,
+      "lastGrowth": 0,
+      "totalFeed": 0,
+      "totalGain": 0,
+      "age": 0,
+      "fastingDays": 0,
+      "filterAge": 0,
+      "quarantineDays": 0,
+      "fallowDays": 0,
+      "constructionDays": 0,
+      "mortality": 0
+    },
+    {
+      "id": 3,
+      "name": "Le Pré neuf",
+      "built": false,
+      "capacity": 4500,
+      "species": null,
+      "plannedSpecies": null,
+      "count": 0,
+      "weight": 0,
+      "health": 98,
+      "water": 95,
+      "oxygen": 8,
+      "satiety": 0,
+      "upgrade": 0,
+      "facility": "raceway",
+      "volume": 90,
+      "maxDensity": 25,
+      "temperature": 13.5,
+      "flow": 10,
+      "pH": 7.2,
+      "tan": 0.05,
+      "autoFeed": false,
+      "rationMultiplier": 1,
+      "feedToday": 0,
+      "lastFeed": 0,
+      "lastGrowth": 0,
+      "totalFeed": 0,
+      "totalGain": 0,
+      "age": 0,
+      "fastingDays": 0,
+      "filterAge": 0,
+      "quarantineDays": 0,
+      "fallowDays": 0,
+      "constructionDays": 0,
+      "mortality": 0
+    },
+    {
+      "id": 4,
+      "name": "Les Sources",
+      "built": false,
+      "capacity": 1200,
+      "species": null,
+      "plannedSpecies": null,
+      "count": 0,
+      "weight": 0,
+      "health": 98,
+      "water": 95,
+      "oxygen": 8,
+      "satiety": 0,
+      "upgrade": 0,
+      "facility": "ras",
+      "volume": 40,
+      "maxDensity": 25,
+      "temperature": 27,
+      "flow": 0.03,
+      "pH": 7.2,
+      "tan": 0.05,
+      "autoFeed": false,
+      "rationMultiplier": 1,
+      "feedToday": 0,
+      "lastFeed": 0,
+      "lastGrowth": 0,
+      "totalFeed": 0,
+      "totalGain": 0,
+      "age": 0,
+      "fastingDays": 0,
+      "filterAge": 0,
+      "quarantineDays": 0,
+      "fallowDays": 0,
+      "constructionDays": 0,
+      "mortality": 0
+    }
+  ],
+  "logs": [
+    {
+      "day": 185,
+      "text": "Coopérative régionale : règlement reçu de 4 049,58 €. Le cycle de vente est terminé.",
+      "kind": "sale"
+    },
+    {
+      "day": 182,
+      "text": "Bilan hebdomadaire : 0 poissons ; 447,2 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 178,
+      "text": "Coopérative régionale : livraison de 454 kg acceptée. Règlement au jour 185.",
+      "kind": "sale"
+    },
+    {
+      "day": 177,
+      "text": "Lot #8 confié au transporteur frigorifique · 167,64 €. Livraison demain, paiement 7 jours après réception.",
+      "kind": "purchase"
+    },
+    {
+      "day": 177,
+      "text": "454 kg récoltés et mis au froid · 113,5 €. Livraison avant péremption dans 3 jours. Bassin vidé : vide sanitaire de 7 jours.",
+      "kind": "purchase"
+    },
+    {
+      "day": 177,
+      "text": "Les Saules : calibre commercial atteint, 454 g par poisson.",
+      "kind": "sale"
+    },
+    {
+      "day": 175,
+      "text": "Bilan hebdomadaire : 1 000 poissons ; 436,2 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 168,
+      "text": "Bilan hebdomadaire : 1 000 poissons ; 398,9 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 163,
+      "text": "Livraison reçue : 100 kg d’aliments contrôlés et rangés au sec.",
+      "kind": "info"
+    },
+    {
+      "day": 161,
+      "text": "100 kg commandés au fabricant. Livraison dans 2 jours · 248 €, transport inclus.",
+      "kind": "purchase"
+    },
+    {
+      "day": 161,
+      "text": "Bilan hebdomadaire : 1 000 poissons ; 363,8 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 157,
+      "text": "Coopérative régionale : poissons entiers à 8,92 €/kg. Livraison sous 30 jours, règlement 7 jours après réception.",
+      "kind": "info"
+    },
+    {
+      "day": 154,
+      "text": "Bilan hebdomadaire : 1 000 poissons ; 330,8 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 147,
+      "text": "Bilan hebdomadaire : 1 000 poissons ; 299,8 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 144,
+      "text": "Chambre froide : aménagement terminé, équipement disponible.",
+      "kind": "info"
+    },
+    {
+      "day": 142,
+      "text": "Livraison reçue : 100 kg d’aliments contrôlés et rangés au sec.",
+      "kind": "info"
+    },
+    {
+      "day": 140,
+      "text": "100 kg commandés au fabricant. Livraison dans 2 jours · 248 €, transport inclus.",
+      "kind": "purchase"
+    },
+    {
+      "day": 140,
+      "text": "Bilan hebdomadaire : 1 000 poissons ; 270,8 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 134,
+      "text": "Chambre froide : travaux commandés, 10 jours · 4 800 €.",
+      "kind": "purchase"
+    },
+    {
+      "day": 133,
+      "text": "Bilan hebdomadaire : 1 000 poissons ; 243,6 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 126,
+      "text": "Bilan hebdomadaire : 1 000 poissons ; 218,1 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 119,
+      "text": "Bilan hebdomadaire : 1 000 poissons ; 194,3 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 115,
+      "text": "Livraison reçue : 100 kg d’aliments contrôlés et rangés au sec.",
+      "kind": "info"
+    },
+    {
+      "day": 113,
+      "text": "100 kg commandés au fabricant. Livraison dans 2 jours · 248 €, transport inclus.",
+      "kind": "purchase"
+    },
+    {
+      "day": 112,
+      "text": "Bilan hebdomadaire : 1 000 poissons ; 172,2 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 105,
+      "text": "Bilan hebdomadaire : 1 000 poissons ; 151,5 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 98,
+      "text": "Bilan hebdomadaire : 1 000 poissons ; 132,3 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 91,
+      "text": "Bilan hebdomadaire : 1 000 poissons ; 114,5 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 84,
+      "text": "Bilan hebdomadaire : 1 000 poissons ; 98,1 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 80,
+      "text": "Livraison reçue : 100 kg d’aliments contrôlés et rangés au sec.",
+      "kind": "info"
+    },
+    {
+      "day": 78,
+      "text": "100 kg commandés au fabricant. Livraison dans 2 jours · 248 €, transport inclus.",
+      "kind": "purchase"
+    },
+    {
+      "day": 77,
+      "text": "Bilan hebdomadaire : 1 000 poissons ; 82,8 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 70,
+      "text": "Bilan hebdomadaire : 1 000 poissons ; 68,8 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 63,
+      "text": "Bilan hebdomadaire : 1 000 poissons ; 55,8 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 56,
+      "text": "Bilan hebdomadaire : 1 000 poissons ; 43,9 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 49,
+      "text": "Bilan hebdomadaire : 1 000 poissons ; 33 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 42,
+      "text": "Bilan hebdomadaire : 1 000 poissons ; 23 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 35,
+      "text": "Bilan hebdomadaire : 1 000 poissons ; 13,8 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 28,
+      "text": "Bilan hebdomadaire : 1 000 poissons ; 5,5 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 23,
+      "text": "Les Saules : distribution automatique activée. Le stock sera consommé au passage des journées.",
+      "kind": "info"
+    },
+    {
+      "day": 23,
+      "text": "Les Saules : 1000 juvéniles reçus de l’écloserie, acclimatés. Observation pendant 14 jours. Activez la distribution d’aliments.",
+      "kind": "info"
+    },
+    {
+      "day": 21,
+      "text": "Bilan hebdomadaire : 0 poissons ; 0 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 19,
+      "text": "1000 juvéniles réservés à l’écloserie. Transport vivant et acclimatation dans 4 jours · 940 €.",
+      "kind": "purchase"
+    },
+    {
+      "day": 19,
+      "text": "Livraison reçue : 100 kg d’aliments contrôlés et rangés au sec.",
+      "kind": "info"
+    },
+    {
+      "day": 17,
+      "text": "100 kg commandés au fabricant. Livraison dans 2 jours · 248 €, transport inclus.",
+      "kind": "purchase"
+    },
+    {
+      "day": 17,
+      "text": "Les Saules : chantier et mise en service terminés. Le bassin est disponible.",
+      "kind": "info"
+    },
+    {
+      "day": 14,
+      "text": "Bilan hebdomadaire : 0 poissons ; 0 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 10,
+      "text": "Magasin d’aliments : aménagement terminé, équipement disponible.",
+      "kind": "info"
+    },
+    {
+      "day": 7,
+      "text": "Bilan hebdomadaire : 0 poissons ; 0 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 3,
+      "text": "Magasin d’aliments : travaux commandés, 7 jours · 2 600 €.",
+      "kind": "purchase"
+    },
+    {
+      "day": 3,
+      "text": "Les Saules : chantier et mise en service, 14 jours · 8 000 €.",
+      "kind": "purchase"
+    },
+    {
+      "day": 3,
+      "text": "Les Saules : projet Truite arc-en-ciel retenu. Vous pouvez lancer le chantier.",
+      "kind": "info"
+    },
+    {
+      "day": 3,
+      "text": "Analyse reçue : source fraîche à 11,8–15,2 °C, débit disponible partagé de 24 L/s ; eau d’étang saisonnière. Choisissez votre filière.",
+      "kind": "info"
+    },
+    {
+      "day": 1,
+      "text": "Prélèvements envoyés au laboratoire. Résultats dans 2 jours ; coût 240 €.",
+      "kind": "purchase"
+    },
+    {
+      "day": 1,
+      "text": "Bienvenue sur votre terrain. Aucun bassin n’est exploité. Commencez par l’étude de l’eau dans « Mon projet », puis choisissez une filière adaptée.",
+      "kind": "info"
+    }
+  ],
+  "claimed": [],
+  "stats": {
+    "fed": 1,
+    "soldKg": 453.989,
+    "sales": 1,
+    "income": 4049.58,
+    "expenses": 23817.22,
+    "upgrades": 0,
+    "feedUsed": 447.212,
+    "mortality": 0,
+    "energyKwh": 828
+  },
+  "history": [
+    {
+      "day": 96,
+      "money": 45086.98
+    },
+    {
+      "day": 97,
+      "money": 45053.6
+    },
+    {
+      "day": 98,
+      "money": 45020.22
+    },
+    {
+      "day": 99,
+      "money": 44986.84
+    },
+    {
+      "day": 100,
+      "money": 44953.46
+    },
+    {
+      "day": 101,
+      "money": 44920.08
+    },
+    {
+      "day": 102,
+      "money": 44886.7
+    },
+    {
+      "day": 103,
+      "money": 44853.32
+    },
+    {
+      "day": 104,
+      "money": 44819.94
+    },
+    {
+      "day": 105,
+      "money": 44786.56
+    },
+    {
+      "day": 106,
+      "money": 44753.18
+    },
+    {
+      "day": 107,
+      "money": 44719.8
+    },
+    {
+      "day": 108,
+      "money": 44686.42
+    },
+    {
+      "day": 109,
+      "money": 44653.04
+    },
+    {
+      "day": 110,
+      "money": 44619.66
+    },
+    {
+      "day": 111,
+      "money": 44586.28
+    },
+    {
+      "day": 112,
+      "money": 44552.9
+    },
+    {
+      "day": 113,
+      "money": 44519.52
+    },
+    {
+      "day": 114,
+      "money": 44238.14
+    },
+    {
+      "day": 115,
+      "money": 44204.76
+    },
+    {
+      "day": 116,
+      "money": 44171.38
+    },
+    {
+      "day": 117,
+      "money": 44138
+    },
+    {
+      "day": 118,
+      "money": 44104.62
+    },
+    {
+      "day": 119,
+      "money": 44071.24
+    },
+    {
+      "day": 120,
+      "money": 44037.86
+    },
+    {
+      "day": 121,
+      "money": 44004.48
+    },
+    {
+      "day": 122,
+      "money": 43971.1
+    },
+    {
+      "day": 123,
+      "money": 43937.72
+    },
+    {
+      "day": 124,
+      "money": 43904.34
+    },
+    {
+      "day": 125,
+      "money": 43870.96
+    },
+    {
+      "day": 126,
+      "money": 43837.58
+    },
+    {
+      "day": 127,
+      "money": 43804.2
+    },
+    {
+      "day": 128,
+      "money": 43770.82
+    },
+    {
+      "day": 129,
+      "money": 43737.44
+    },
+    {
+      "day": 130,
+      "money": 43704.06
+    },
+    {
+      "day": 131,
+      "money": 43670.68
+    },
+    {
+      "day": 132,
+      "money": 43637.3
+    },
+    {
+      "day": 133,
+      "money": 43603.92
+    },
+    {
+      "day": 134,
+      "money": 43570.54
+    },
+    {
+      "day": 135,
+      "money": 38737.16
+    },
+    {
+      "day": 136,
+      "money": 38703.78
+    },
+    {
+      "day": 137,
+      "money": 38670.4
+    },
+    {
+      "day": 138,
+      "money": 38637.02
+    },
+    {
+      "day": 139,
+      "money": 38603.64
+    },
+    {
+      "day": 140,
+      "money": 38570.26
+    },
+    {
+      "day": 141,
+      "money": 38288.88
+    },
+    {
+      "day": 142,
+      "money": 38255.5
+    },
+    {
+      "day": 143,
+      "money": 38222.12
+    },
+    {
+      "day": 144,
+      "money": 38188.74
+    },
+    {
+      "day": 145,
+      "money": 38152.72
+    },
+    {
+      "day": 146,
+      "money": 38116.7
+    },
+    {
+      "day": 147,
+      "money": 38080.68
+    },
+    {
+      "day": 148,
+      "money": 38044.66
+    },
+    {
+      "day": 149,
+      "money": 38008.64
+    },
+    {
+      "day": 150,
+      "money": 37972.62
+    },
+    {
+      "day": 151,
+      "money": 37936.6
+    },
+    {
+      "day": 152,
+      "money": 37900.58
+    },
+    {
+      "day": 153,
+      "money": 37864.56
+    },
+    {
+      "day": 154,
+      "money": 37828.54
+    },
+    {
+      "day": 155,
+      "money": 37792.52
+    },
+    {
+      "day": 156,
+      "money": 37756.5
+    },
+    {
+      "day": 157,
+      "money": 37720.48
+    },
+    {
+      "day": 158,
+      "money": 37684.46
+    },
+    {
+      "day": 159,
+      "money": 37648.44
+    },
+    {
+      "day": 160,
+      "money": 37612.42
+    },
+    {
+      "day": 161,
+      "money": 37576.4
+    },
+    {
+      "day": 162,
+      "money": 37292.38
+    },
+    {
+      "day": 163,
+      "money": 37256.36
+    },
+    {
+      "day": 164,
+      "money": 37220.34
+    },
+    {
+      "day": 165,
+      "money": 37184.32
+    },
+    {
+      "day": 166,
+      "money": 37148.3
+    },
+    {
+      "day": 167,
+      "money": 37112.28
+    },
+    {
+      "day": 168,
+      "money": 37076.26
+    },
+    {
+      "day": 169,
+      "money": 37040.24
+    },
+    {
+      "day": 170,
+      "money": 37004.22
+    },
+    {
+      "day": 171,
+      "money": 36968.2
+    },
+    {
+      "day": 172,
+      "money": 36932.18
+    },
+    {
+      "day": 173,
+      "money": 36896.16
+    },
+    {
+      "day": 174,
+      "money": 36860.14
+    },
+    {
+      "day": 175,
+      "money": 36824.12
+    },
+    {
+      "day": 176,
+      "money": 36788.1
+    },
+    {
+      "day": 177,
+      "money": 36752.08
+    },
+    {
+      "day": 178,
+      "money": 36434.92
+    },
+    {
+      "day": 179,
+      "money": 36398.9
+    },
+    {
+      "day": 180,
+      "money": 36362.88
+    },
+    {
+      "day": 181,
+      "money": 36326.86
+    },
+    {
+      "day": 182,
+      "money": 36290.84
+    },
+    {
+      "day": 183,
+      "money": 36254.82
+    },
+    {
+      "day": 184,
+      "money": 36218.8
+    },
+    {
+      "day": 185,
+      "money": 40232.36
+    }
+  ],
+  "lastAidDay": -90
+}

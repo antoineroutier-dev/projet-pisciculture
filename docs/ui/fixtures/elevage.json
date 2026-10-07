@@ -1,0 +1,364 @@
+{
+  "version": 3,
+  "development": {
+    "surveyed": true,
+    "surveyDue": null,
+    "assets": {
+      "warehouse": true,
+      "coldstore": false,
+      "workshop": false
+    },
+    "works": [],
+    "orders": [],
+    "contracts": [],
+    "batches": [],
+    "shipments": [],
+    "nextId": 3,
+    "received": 2,
+    "harvestedKg": 0,
+    "deliveredKg": 0,
+    "paid": 0,
+    "wasteKg": 0,
+    "migrated": false
+  },
+  "mode": "guided",
+  "day": 23,
+  "money": 47771.72,
+  "food": 100,
+  "xp": 52,
+  "ponds": [
+    {
+      "id": 1,
+      "name": "Les Saules",
+      "built": true,
+      "capacity": 3000,
+      "species": "trout",
+      "plannedSpecies": "trout",
+      "count": 1000,
+      "weight": 0.05,
+      "health": 100,
+      "water": 100,
+      "oxygen": 10.006,
+      "satiety": 0,
+      "upgrade": 0,
+      "facility": "raceway",
+      "volume": 60,
+      "maxDensity": 25,
+      "temperature": 14.04,
+      "flow": 12,
+      "pH": 7.2,
+      "tan": 7.496586931160062e-55,
+      "autoFeed": true,
+      "rationMultiplier": 1,
+      "feedToday": 0,
+      "lastFeed": 0,
+      "lastGrowth": 0,
+      "totalFeed": 0,
+      "totalGain": 0,
+      "age": 0,
+      "fastingDays": 0,
+      "filterAge": 0,
+      "quarantineDays": 14,
+      "fallowDays": 0,
+      "constructionDays": 0,
+      "mortality": 0
+    },
+    {
+      "id": 2,
+      "name": "La Roselière",
+      "built": false,
+      "capacity": 450,
+      "species": null,
+      "plannedSpecies": null,
+      "count": 0,
+      "weight": 0,
+      "health": 98,
+      "water": 95,
+      "oxygen": 8,
+      "satiety": 0,
+      "upgrade": 0,
+      "facility": "earth",
+      "volume": 600,
+      "maxDensity": 0.8,
+      "temperature": 16,
+      "flow": 0.08,
+      "pH": 7.6,
+      "tan": 0.05,
+      "autoFeed": false,
+      "rationMultiplier": 1,
+      "feedToday": 0,
+      "lastFeed": 0,
+      "lastGrowth": 0,
+      "totalFeed": 0,
+      "totalGain": 0,
+      "age": 0,
+      "fastingDays": 0,
+      "filterAge": 0,
+      "quarantineDays": 0,
+      "fallowDays": 0,
+      "constructionDays": 0,
+      "mortality": 0
+    },
+    {
+      "id": 3,
+      "name": "Le Pré neuf",
+      "built": false,
+      "capacity": 4500,
+      "species": null,
+      "plannedSpecies": null,
+      "count": 0,
+      "weight": 0,
+      "health": 98,
+      "water": 95,
+      "oxygen": 8,
+      "satiety": 0,
+      "upgrade": 0,
+      "facility": "raceway",
+      "volume": 90,
+      "maxDensity": 25,
+      "temperature": 13.5,
+      "flow": 10,
+      "pH": 7.2,
+      "tan": 0.05,
+      "autoFeed": false,
+      "rationMultiplier": 1,
+      "feedToday": 0,
+      "lastFeed": 0,
+      "lastGrowth": 0,
+      "totalFeed": 0,
+      "totalGain": 0,
+      "age": 0,
+      "fastingDays": 0,
+      "filterAge": 0,
+      "quarantineDays": 0,
+      "fallowDays": 0,
+      "constructionDays": 0,
+      "mortality": 0
+    },
+    {
+      "id": 4,
+      "name": "Les Sources",
+      "built": false,
+      "capacity": 1200,
+      "species": null,
+      "plannedSpecies": null,
+      "count": 0,
+      "weight": 0,
+      "health": 98,
+      "water": 95,
+      "oxygen": 8,
+      "satiety": 0,
+      "upgrade": 0,
+      "facility": "ras",
+      "volume": 40,
+      "maxDensity": 25,
+      "temperature": 27,
+      "flow": 0.03,
+      "pH": 7.2,
+      "tan": 0.05,
+      "autoFeed": false,
+      "rationMultiplier": 1,
+      "feedToday": 0,
+      "lastFeed": 0,
+      "lastGrowth": 0,
+      "totalFeed": 0,
+      "totalGain": 0,
+      "age": 0,
+      "fastingDays": 0,
+      "filterAge": 0,
+      "quarantineDays": 0,
+      "fallowDays": 0,
+      "constructionDays": 0,
+      "mortality": 0
+    }
+  ],
+  "logs": [
+    {
+      "day": 23,
+      "text": "Les Saules : distribution automatique activée. Le stock sera consommé au passage des journées.",
+      "kind": "info"
+    },
+    {
+      "day": 23,
+      "text": "Les Saules : 1000 juvéniles reçus de l’écloserie, acclimatés. Observation pendant 14 jours. Activez la distribution d’aliments.",
+      "kind": "info"
+    },
+    {
+      "day": 21,
+      "text": "Bilan hebdomadaire : 0 poissons ; 0 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 19,
+      "text": "1000 juvéniles réservés à l’écloserie. Transport vivant et acclimatation dans 4 jours · 940 €.",
+      "kind": "purchase"
+    },
+    {
+      "day": 19,
+      "text": "Livraison reçue : 100 kg d’aliments contrôlés et rangés au sec.",
+      "kind": "info"
+    },
+    {
+      "day": 17,
+      "text": "100 kg commandés au fabricant. Livraison dans 2 jours · 248 €, transport inclus.",
+      "kind": "purchase"
+    },
+    {
+      "day": 17,
+      "text": "Les Saules : chantier et mise en service terminés. Le bassin est disponible.",
+      "kind": "info"
+    },
+    {
+      "day": 14,
+      "text": "Bilan hebdomadaire : 0 poissons ; 0 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 10,
+      "text": "Magasin d’aliments : aménagement terminé, équipement disponible.",
+      "kind": "info"
+    },
+    {
+      "day": 7,
+      "text": "Bilan hebdomadaire : 0 poissons ; 0 kg d’aliments distribués depuis le début ; 0 mortalités cumulées.",
+      "kind": "info"
+    },
+    {
+      "day": 3,
+      "text": "Magasin d’aliments : travaux commandés, 7 jours · 2 600 €.",
+      "kind": "purchase"
+    },
+    {
+      "day": 3,
+      "text": "Les Saules : chantier et mise en service, 14 jours · 8 000 €.",
+      "kind": "purchase"
+    },
+    {
+      "day": 3,
+      "text": "Les Saules : projet Truite arc-en-ciel retenu. Vous pouvez lancer le chantier.",
+      "kind": "info"
+    },
+    {
+      "day": 3,
+      "text": "Analyse reçue : source fraîche à 11,8–15,2 °C, débit disponible partagé de 24 L/s ; eau d’étang saisonnière. Choisissez votre filière.",
+      "kind": "info"
+    },
+    {
+      "day": 1,
+      "text": "Prélèvements envoyés au laboratoire. Résultats dans 2 jours ; coût 240 €.",
+      "kind": "purchase"
+    },
+    {
+      "day": 1,
+      "text": "Bienvenue sur votre terrain. Aucun bassin n’est exploité. Commencez par l’étude de l’eau dans « Mon projet », puis choisissez une filière adaptée.",
+      "kind": "info"
+    }
+  ],
+  "claimed": [],
+  "stats": {
+    "fed": 1,
+    "soldKg": 0,
+    "sales": 0,
+    "income": 0,
+    "expenses": 12228.28,
+    "upgrades": 0,
+    "feedUsed": 0,
+    "mortality": 0,
+    "energyKwh": 12
+  },
+  "history": [
+    {
+      "day": 1,
+      "money": 60000
+    },
+    {
+      "day": 2,
+      "money": 59760
+    },
+    {
+      "day": 3,
+      "money": 59760
+    },
+    {
+      "day": 4,
+      "money": 49160
+    },
+    {
+      "day": 5,
+      "money": 49160
+    },
+    {
+      "day": 6,
+      "money": 49160
+    },
+    {
+      "day": 7,
+      "money": 49160
+    },
+    {
+      "day": 8,
+      "money": 49160
+    },
+    {
+      "day": 9,
+      "money": 49160
+    },
+    {
+      "day": 10,
+      "money": 49160
+    },
+    {
+      "day": 11,
+      "money": 49160
+    },
+    {
+      "day": 12,
+      "money": 49160
+    },
+    {
+      "day": 13,
+      "money": 49160
+    },
+    {
+      "day": 14,
+      "money": 49160
+    },
+    {
+      "day": 15,
+      "money": 49160
+    },
+    {
+      "day": 16,
+      "money": 49160
+    },
+    {
+      "day": 17,
+      "money": 49160
+    },
+    {
+      "day": 18,
+      "money": 48878.62
+    },
+    {
+      "day": 19,
+      "money": 48845.24
+    },
+    {
+      "day": 20,
+      "money": 47871.86
+    },
+    {
+      "day": 21,
+      "money": 47838.48
+    },
+    {
+      "day": 22,
+      "money": 47805.1
+    },
+    {
+      "day": 23,
+      "money": 47771.72
+    }
+  ],
+  "lastAidDay": -90
+}

@@ -324,7 +324,7 @@ test("nouvelle partie guidée : terrain vide jusqu’au premier règlement, uniq
   await step().click(); // Receive analysis, day 3.
   await page
     .getByRole("button", {
-      name: "Choisir truite arc-en-ciel · Les Saules",
+      name: "Choisir : Truite arc-en-ciel · Les Saules",
       exact: true,
     })
     .click();

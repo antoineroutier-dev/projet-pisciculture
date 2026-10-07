@@ -693,10 +693,46 @@
   pointer-events: none;
 }
 
+/* Lot 0: keep the actual game information and clock in the persistent header. */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: auto;
+  min-height: 92px;
+  gap: 16px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+.topbar .time-widget { margin: 0; }
+.hud-resources { display: flex; gap: 24px; }
+.hud-resources > div { display: grid; gap: 4px; }
+.hud-resources span { font-size: 12px; }
+.hud-resources strong { font-size: 18px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.money-value { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.stat-card .money-value { font-size: clamp(18px, 2vw, 26px); }
+.scene-location[hidden] { display: none; }
+.species-photo { transform: none; padding: 0; }
+
+@media (max-width: 1100px) {
+  .topbar .save-indicator > span { display: none; }
+  .hud-resources { gap: 16px; }
+}
+@media (max-width: 680px) {
+  .topbar { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; padding: 10px 18px; }
+  .topbar .hud-resources { grid-column: 1; grid-row: 1; }
+  .topbar .time-widget { grid-column: 1 / -1; grid-row: 2; width: 100%; padding: 0; border: 0; justify-content: space-between; }
+  .topbar .save-indicator { grid-column: 2; grid-row: 1; margin: 0; }
+  .topbar .mobile-settings { grid-column: 3; grid-row: 1; }
+  .topbar .day-weather > span { font-size: 12px; }
+  .topbar .day-weather > span > svg, .topbar .day-weather > span > b { display: none; }
+  .topbar .day-weather small { display: none; }
+  .topbar .time-controls { margin: 0; }
+}
+
 .route-art .species-photo {
   height: 125px;
-  aspect-ratio: auto;
-  background-size: 100% 330%;
+  max-width: 100%;
 }
 .route-art {
   align-items: center;
