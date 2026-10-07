@@ -5,11 +5,7 @@ import { GameHud, GoalHud, Dock } from "./hud/GameHud";
 import { WorldControls, FishObservation } from "./world/WorldControls";
 import type { SceneMode } from "./world/types";
 import { ManagementPanel } from "./panels/ManagementPanel";
-import {
-  FinancePanel,
-  JournalPanel,
-  MarketPrices,
-} from "./panels/LegacyPanels";
+import { FinancePanel, JournalPanel } from "./panels/LegacyPanels";
 import { PANELS, usePanelNavigation } from "./state/navigation";
 import { Dialog as Modal } from "./ui/Dialog";
 import {
@@ -45,7 +41,7 @@ import {
 import { FishArt } from "./FishArt";
 import { lazy, Suspense } from "react";
 const FarmScene = lazy(() => import("./FarmScene"));
-import { LogisticsPanel } from "./ProjectPanel";
+import { LogisticsPanel, type LogisticsTab } from "./panels/LogisticsPanel";
 import ConstructionPanel, { WaterSurvey } from "./panels/ConstructionPanel";
 import {
   PondInspector,
@@ -248,6 +244,7 @@ export default function App() {
   const [species, setSpecies] = useState<SpeciesId>("trout");
   const [clearWater, setClearWater] = useState(false);
   const [cameraReset, setCameraReset] = useState(0);
+  const [logisticsTab, setLogisticsTab] = useState<LogisticsTab>("supply");
   const [pondTab, setPondTab] = useState<PondTab>("water");
   const [selected, setSelected] = useState(1);
   const [running, setRunning] = useState(false);
@@ -376,6 +373,7 @@ export default function App() {
     const result = act(game, action);
     if (result.ok) {
       setGame(result.game);
+      if (action.type === "harvest") setLogisticsTab("shipments");
       if (dismiss) close();
     }
     setNotice({ text: result.message, ok: result.ok });
@@ -396,6 +394,14 @@ export default function App() {
         ok: true,
       });
     } else if (task.target) {
+      if (task.target === "logistics")
+        setLogisticsTab(
+          task.stage === 7
+            ? "shipments"
+            : task.stage === 5 || task.stage === 6
+              ? "clients"
+              : "supply",
+        );
       if (task.pondId) setSelected(task.pondId);
       if (task.urgent && task.target === "ponds") setPondTab("water");
       navigate(task.target);
@@ -535,7 +541,10 @@ export default function App() {
                 perform={perform}
                 stock={() => openStock(pond.id)}
                 upgrade={() => setModal("upgrade")}
-                navigate={navigate}
+                navigate={(id) => {
+                  if (id === "logistics") setLogisticsTab("clients");
+                  navigate(id);
+                }}
                 select={setSelected}
                 tab={pondTab}
                 setTab={setPondTab}
@@ -543,14 +552,14 @@ export default function App() {
               />
             )}
             {panel === "logistics" && (
-              <>
-                <LogisticsPanel
-                  game={game}
-                  perform={perform}
-                  stock={openStock}
-                />
-                <MarketPrices game={game} />
-              </>
+              <LogisticsPanel
+                game={game}
+                perform={perform}
+                stock={openStock}
+                tab={logisticsTab}
+                onTab={setLogisticsTab}
+                inspect={selectPond}
+              />
             )}
             {panel === "finance" && (
               <FinancePanel game={game} perform={perform} />

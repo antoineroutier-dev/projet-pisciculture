@@ -21,3 +21,5 @@ Lot 1b : aucune nouvelle ressource externe. Les icônes supplémentaires provien
 Lot 1c : composants, styles et pictogrammes de jauge originaux, créés dans le dépôt. Aucune nouvelle ressource externe ; Inter/Fraunces (OFL) et Lucide (ISC) restent les seuls paquets visuels utilisés.
 
 Lot 2a : schéma de l’analyse d’eau original, dessiné en SVG dans `src/panels/ConstructionPanel.tsx`. Courbes des relevés calculées à partir des états observés du moteur, sans donnée externe. Aucune nouvelle ressource téléchargée.
+
+Lot 2b : diagramme de chaîne logistique et graphique de trésorerie originaux (HTML/SVG), icônes Lucide déjà créditées. Aucune nouvelle ressource externe.

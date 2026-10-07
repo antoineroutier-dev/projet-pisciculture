@@ -1,4 +1,4 @@
-import { Sparkline } from "../ui/Primitives";
+import { CashChart } from "../ui/CashChart";
 import { Button } from "../ui/Button";
 import { useState } from "react";
 import {
@@ -9,16 +9,9 @@ import {
   Leaf,
   BookOpen,
 } from "lucide-react";
-import { FishArt } from "../FishArt";
+import { formatMoney as euro, formatEngineText } from "../ui/format";
 import {
-  formatMoney as euro,
-  formatUnitPrice,
-  formatEngineText,
-} from "../ui/format";
-import {
-  SPECIES,
   number,
-  marketPrice,
   dailyCost,
   costBreakdown,
   type Game,
@@ -29,18 +22,13 @@ type Props = { game: Game; perform: (action: Action) => void };
 export function FinancePanel({ game, perform }: Props) {
   return (
     <aside className="finance-card">
-      <span className="section-kicker">LE CARNET DE COMPTES</span>
-      <h2>Une ferme qui dure</h2>
       <div className="finance-balance">
         <span>Votre trésorerie</span>
         <strong>{euro(game.money)}</strong>
       </div>
-      <Sparkline
-        values={game.history.map((h) => h.money)}
-        label={`Évolution de la trésorerie sur ${game.history.length} journées`}
-      />
+      <CashChart game={game} />
       <div className="finance-row">
-        <span>Revenus des récoltes</span>
+        <span>Règlements clients reçus</span>
         <strong className="positive">+{euro(game.stats.income)}</strong>
       </div>
       <div className="finance-row">
@@ -107,51 +95,6 @@ export function FinancePanel({ game, perform }: Props) {
         )}
       </div>
     </aside>
-  );
-}
-export function MarketPrices({ game }: { game: Game }) {
-  return (
-    <details className="market-prices">
-      <summary>Prix et espèces</summary>{" "}
-      <div className="market-species">
-        {Object.values(SPECIES).map((s) => (
-          <article className="market-species-card" key={s.id}>
-            <div className={`species-art ${s.id}`}>
-              <FishArt color={s.color} />
-            </div>
-            <h3>{s.name}</h3>
-            <p>{s.description}</p>
-            <div className="market-price">
-              <strong>
-                {formatUnitPrice(marketPrice(s.id, game.day))}
-                <small>/ kg</small>
-              </strong>
-              <span
-                className={
-                  marketPrice(s.id, game.day) >= s.price
-                    ? "positive"
-                    : "negative"
-                }
-              >
-                {marketPrice(s.id, game.day) >= s.price ? "+" : ""}
-                {number((marketPrice(s.id, game.day) / s.price - 1) * 100, 1)} %
-              </span>
-            </div>
-            <div className="species-facts">
-              <span>
-                Alevin <b>{formatUnitPrice(s.seedPrice)}</b>
-              </span>
-              <span>
-                Poids de vente <b>{s.harvestWeight * 1000} g</b>
-              </span>
-              <span>
-                Eau préférée <b>{s.temperature.join("–")} °C</b>
-              </span>
-            </div>
-          </article>
-        ))}
-      </div>
-    </details>
   );
 }
 export function JournalPanel({ game }: { game: Game }) {

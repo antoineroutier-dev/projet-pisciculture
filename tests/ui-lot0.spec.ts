@@ -17,6 +17,7 @@ for (const [width, height] of [[1920,1080], [1440,900], [1280,800], [1280,720], 
     expect(await page.evaluate(() => document.fonts.check('400 16px "Inter"') && [...document.fonts].some(f => f.family === "Inter" && f.status === "loaded"))).toBe(true);
     await page.getByRole("navigation").getByRole("button", { name: "Logistique", exact: true }).focus();
     await page.keyboard.press("Enter");
+    await page.getByRole("tab", { name: "Clients", exact: true }).click();
     await page.getByText("Prix et espèces", {exact:true}).click();
     await expect(page.locator(".market-species-card")).toHaveCount(3);
     for (const portrait of await page.locator(".market-species-card .species-photo").all()) {
@@ -71,7 +72,8 @@ test("lot 0 : portable autonome, polices et portraits hors ligne, budget 15 Mo",
   expect(await page.evaluate(() => [...document.fonts].some(f => f.family === "Inter" && f.status === "loaded"))).toBe(true);
   expect(await page.evaluate(() => document.fonts.check('600 16px "Fraunces"') && [...document.fonts].some(f => f.family === "Fraunces" && f.status === "loaded"))).toBe(true);
   await page.getByRole("button", { name: "Logistique", exact: true }).click();
-  await page.getByText("Prix et espèces", {exact:true}).click();
+  await page.getByRole("tab", { name: "Clients", exact: true }).click();
+    await page.getByText("Prix et espèces", {exact:true}).click();
   await expect(page.locator(".species-photo image").first()).toHaveAttribute("href", /^data:image\/png;base64,/);
   await page.getByRole("button", { name: "Jour suivant", exact: true }).click();
   await expect(page.getByTestId("day")).toHaveAttribute("data-day", "2");

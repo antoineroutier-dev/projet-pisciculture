@@ -123,10 +123,11 @@ test("1a : focus du dialogue et explication de désactivation au clavier", async
   await expect(dialog.getByRole("button", { name: "Fermer la fenêtre" })).toBeFocused();
   await page.keyboard.press("Escape"); await expect(settings).toBeFocused();
   await page.getByRole("navigation").getByRole("button", { name: "Logistique", exact: true }).click();
+  await page.getByRole("tab", { name: "Bâtiments", exact: true }).click();
   const disabled = page.getByRole("button", { name: "Aménager l’atelier de préparation", exact: true });
   await expect(disabled).toBeDisabled();
-  await page.getByRole("group", { name: "Aménagez d’abord la chambre froide." }).focus();
-  await expect(page.getByRole("tooltip")).toHaveText("Aménagez d’abord la chambre froide.");
+  await page.getByRole("group", { name: "Mettez d’abord la chambre froide en service." }).focus();
+  await expect(page.getByRole("tooltip")).toHaveText("Mettez d’abord la chambre froide en service.");
   const before = await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY);
   await page.keyboard.press("Enter");
   expect(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY)).toBe(before);
