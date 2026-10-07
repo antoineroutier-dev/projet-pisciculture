@@ -1,0 +1,18 @@
+{
+  "baseCommit": "3db0c33",
+  "branch": "codex/ui-steam",
+  "node": "v24.19.0",
+  "chromium": "Chromium 151.0.7922.173 built on Debian GNU/Linux 13 (trixie)",
+  "portableBytes": 10055512,
+  "beforeScreenshots": 168,
+  "afterScreenshots": 168,
+  "additionalDetailScreenshots": 5,
+  "minComputedTextPx": 7,
+  "hudResourceNumberPx": 18,
+  "engineDiff": "",
+  "qualityFps": null,
+  "qualityFpsReason": "Les niveaux de qualité appartiennent au lot 4, non commencé.",
+  "manualReview": "Échantillon détaillé décrit dans LOT-0.md ; pas une inspection individuelle des 336 captures.",
+  "fullKeyboardCycle": false,
+  "gamepadCycle": false
+}

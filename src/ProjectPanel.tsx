@@ -1,3 +1,4 @@
+import { formatMoney as euro, formatUnitPrice, formatEngineText, plural } from "./ui/format";
 import {
   ArrowRight,
   Check,
@@ -17,7 +18,6 @@ import { FishArt } from "./FishArt";
 import {
   CONSTRUCTION_COST,
   CONSTRUCTION_DAYS,
-  euro,
   facilityName,
   FOOD_PACKS,
   harvestReady,
@@ -79,10 +79,10 @@ export function Journey({
       <div className="journey-main">
         <div>
           <h2>{task.title}</h2>
-          <p>{task.text}</p>
+          <p>{formatEngineText(task.text)}</p>
         </div>
         <button className="button primary" onClick={() => follow(task)}>
-          {task.label}
+          {formatEngineText(task.label)}
           <ArrowRight size={17} />
         </button>
       </div>
@@ -102,7 +102,7 @@ export function Journey({
       </ol>
       {game.development.paid > 0 && (
         <p className="cycle-success">
-          <Check size={15} /> {game.development.paid} cycle(s) réglé(s) ·{" "}
+          <Check size={15} /> {game.development.paid} {plural(game.development.paid, "cycle")} {plural(game.development.paid, "réglé")} ·{" "}
           {number(game.stats.soldKg, 1)} kg commercialisés. Réinvestissez ou
           relancez un lot.
         </p>
@@ -308,7 +308,7 @@ export default function ProjectPanel({ game, perform }: Props) {
                       >
                         {p.plannedSpecies
                           ? `Construire ${p.name}`
-                          : `Choisir ${s.name.toLowerCase()} · ${p.name}`}
+                          : `Choisir : ${s.name} · ${p.name}`}
                         <ArrowRight size={15} />
                       </button>
                     )}
@@ -466,7 +466,7 @@ export function LogisticsPanel({ game, perform, stock }: Props) {
                   Commande #{o.id} ·{" "}
                   {o.kind === "feed"
                     ? `${o.amount} kg d’aliments`
-                    : `${o.amount} ${SPECIES[o.species!].name.toLowerCase()} · ${game.ponds[o.pondId! - 1].name}`}
+                    : `${o.amount} ${SPECIES[o.species!].name} · ${game.ponds[o.pondId! - 1].name}`}
                 </span>
                 <strong>Dans {o.due - game.day} j</strong>
               </div>
@@ -519,7 +519,7 @@ export function LogisticsPanel({ game, perform, stock }: Props) {
                       ? "En service"
                       : work
                         ? `Travaux · ${work.due - game.day} j`
-                        : `Aménager ${a.name.toLowerCase()}`}
+                        : `Aménager ${{ warehouse: "le magasin d’aliments", coldstore: "la chambre froide", workshop: "l’atelier de préparation" }[key]}`}
                   </button>
                   {key === "workshop" && !d.assets.coldstore && (
                     <small>Chambre froide nécessaire au préalable.</small>
@@ -556,7 +556,7 @@ export function LogisticsPanel({ game, perform, stock }: Props) {
                   {b.factor === 1 ? "" : "× 1,5"}.
                 </p>
                 <p>
-                  Transport : {euro(b.freight)} + {euro(b.perKg)}/kg. Livraison
+                  Transport : {euro(b.freight)} + {formatUnitPrice(b.perKg)}/kg. Livraison
                   en 1 jour ; paiement {b.payment} jours après réception.
                 </p>
                 {b.processed && (
@@ -637,7 +637,7 @@ export function LogisticsPanel({ game, perform, stock }: Props) {
                       {p.name} → {BUYERS[c.buyer].name}
                     </strong>
                     <p>
-                      {euro(c.price)}/kg · livraison au plus tard le jour{" "}
+                      {formatUnitPrice(c.price)}/kg · livraison au plus tard le jour{" "}
                       {c.deadline} · {c.maxKg} kg maximum
                     </p>
                     <small>

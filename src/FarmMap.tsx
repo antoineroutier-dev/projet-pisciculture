@@ -377,6 +377,7 @@ export default function FarmMap({
                 </g>
                 <circle cy="-5" r="22" fill="#eef0da" fillOpacity=".8" />
                 <path d="M-8-5H8M0-13V3" stroke="#718566" strokeWidth="1.6" />
+                <rect x="-116" y="17" width="232" height="26" rx="12" fill="#fcfcf4" />
                 <text
                   y="34"
                   textAnchor="middle"
@@ -413,13 +414,7 @@ export default function FarmMap({
           N
         </text>
       </g>
-      <g transform="translate(25 492)">
-        <rect width="132" height="5" rx="2" fill="#8fa77d" />
-        <rect width="66" height="5" rx="2" fill="#eef0d5" />
-        <text y="-7" fontSize="9" fill="#6b805d">
-          VOTRE PETIT COIN DE NATURE
-        </text>
-      </g>
+
     </svg>
   );
 }

@@ -1,3 +1,4 @@
+import { formatMoney as euro, formatUnitPrice, formatEngineText, plural } from "./ui/format";
 import {
   useCallback,
   useEffect,
@@ -69,7 +70,6 @@ import {
   simDate,
   costBreakdown,
   dailyCost,
-  euro,
   feedNeeded,
   FOOD_PACKS,
   harvestReady,
@@ -240,7 +240,7 @@ function StockForm({
               <small>
                 {!compatible(pond, s.id)
                   ? "Installation incompatible"
-                  : `${euro(s.seedPrice)} / alevin · ${s.temperature.join("–")} °C`}
+                  : `${formatUnitPrice(s.seedPrice)} / alevin · ${s.temperature.join("–")} °C`}
               </small>
             </span>
             {!compatible(pond, s.id) ? (
@@ -413,7 +413,7 @@ export default function App() {
       const result = advanceGuided(game, task.wait);
       setGame(result.game);
       setNotice({
-        text: `${result.elapsed} jour(s) écoulé(s). ${result.reason || "Vérifiez votre prochaine étape."}`,
+        text: `${result.elapsed} ${plural(result.elapsed, "jour")} ${plural(result.elapsed, "écoulé")}. ${result.reason || "Vérifiez votre prochaine étape."}`,
         ok: true,
       });
     } else if (task.target) {
@@ -587,10 +587,53 @@ export default function App() {
         </aside>
         <div className="workspace">
           <header className="topbar">
-            <div className="breadcrumb">
-              Mon exploitation <ChevronRight size={13} />
-              <span>{viewNames[view]}</span>
+            <div className="hud-resources" aria-label="Ressources">
+              <div><span>Trésorerie</span><strong className="money-value" data-testid="money">{euro(game.money)}</strong></div>
+              <div><span>Aliments</span><strong>{number(game.food, 1)} kg</strong></div>
             </div>
+              <div className="time-widget">
+                <div className="day-weather">
+                  <span>
+                    <Sun size={16} /> {today.season} <b>·</b>{" "}
+                    <strong data-testid="day">Jour {game.day}</strong>
+                    <span className="simulation-date">{simDate(game.day)}</span>
+                  </span>
+                  <small>
+                    <CloudSun size={15} />
+                    {today.label} · air {today.temperature} °C
+                  </small>
+                </div>
+                <div className="time-controls">
+                  <button
+                    className={`icon-button play-button ${running ? "is-running" : ""}`}
+                    title={running ? "Mettre en pause" : "Lancer la simulation"}
+                    aria-label={
+                      running ? "Mettre en pause" : "Lancer la simulation"
+                    }
+                    onClick={() => setRunning(!running)}
+                  >
+                    {running ? <Pause size={15} /> : <Play size={15} />}
+                  </button>
+                  <button
+                    className="speed-button"
+                    aria-label={`Vitesse ${speed}, passer à ${[1, 3, 12, 60][([1, 3, 12, 60].indexOf(speed) + 1) % 4]}`}
+                    onClick={() =>
+                      setSpeed(
+                        [1, 3, 12, 60][([1, 3, 12, 60].indexOf(speed) + 1) % 4],
+                      )
+                    }
+                  >
+                    ×{speed}
+                  </button>
+                  <span className="control-divider" />
+                  <button
+                    className="next-day"
+                    onClick={() => setGame((g) => nextDay(g))}
+                  >
+                    Jour suivant <SkipForward size={14} />
+                  </button>
+                </div>
+              </div>
             <div className="save-indicator">
               {saved && !storageError ? (
                 <CheckCheck size={15} />
@@ -644,49 +687,6 @@ export default function App() {
                             : "Les bons gestes pour une ferme florissante."}
                 </p>
               </div>
-              <div className="time-widget">
-                <div className="day-weather">
-                  <span>
-                    <Sun size={16} /> {today.season} <b>·</b>{" "}
-                    <strong data-testid="day">Jour {game.day}</strong>
-                    <span className="simulation-date">{simDate(game.day)}</span>
-                  </span>
-                  <small>
-                    <CloudSun size={15} />
-                    {today.label} · air {today.temperature} °C
-                  </small>
-                </div>
-                <div className="time-controls">
-                  <button
-                    className={`icon-button play-button ${running ? "is-running" : ""}`}
-                    title={running ? "Mettre en pause" : "Lancer la simulation"}
-                    aria-label={
-                      running ? "Mettre en pause" : "Lancer la simulation"
-                    }
-                    onClick={() => setRunning(!running)}
-                  >
-                    {running ? <Pause size={15} /> : <Play size={15} />}
-                  </button>
-                  <button
-                    className="speed-button"
-                    aria-label={`Vitesse ${speed}, passer à ${[1, 3, 12, 60][([1, 3, 12, 60].indexOf(speed) + 1) % 4]}`}
-                    onClick={() =>
-                      setSpeed(
-                        [1, 3, 12, 60][([1, 3, 12, 60].indexOf(speed) + 1) % 4],
-                      )
-                    }
-                  >
-                    ×{speed}
-                  </button>
-                  <span className="control-divider" />
-                  <button
-                    className="next-day"
-                    onClick={() => setGame((g) => nextDay(g))}
-                  >
-                    Jour suivant <SkipForward size={14} />
-                  </button>
-                </div>
-              </div>
             </section>
             {(view === "project" ||
               view === "ponds" ||
@@ -700,9 +700,9 @@ export default function App() {
                 </span>
                 <div>
                   <span>Trésorerie</span>
-                  <strong data-testid="money">{euro(game.money)}</strong>
+                  <strong className="money-value">{euro(game.money)}</strong>
                   <small>
-                    <span className="small-dot" /> −{euro(dailyCost(game))} de
+                    <span className="small-dot" /> {euro(-dailyCost(game))} de
                     charges / jour
                   </small>
                 </div>
@@ -1103,7 +1103,7 @@ export default function App() {
                         <div className={`species-art ${s.id}`}>
                           <FishArt color={s.color} />
                           {level(game) < s.level && (
-                            <span>
+                            <span className="species-level">
                               <LockKeyhole size={12} /> Niveau {s.level}
                             </span>
                           )}
@@ -1112,7 +1112,7 @@ export default function App() {
                         <p>{s.description}</p>
                         <div className="market-price">
                           <strong>
-                            {euro(marketPrice(s.id, game.day))}
+                            {formatUnitPrice(marketPrice(s.id, game.day))}
                             <small>/ kg</small>
                           </strong>
                           <span
@@ -1132,7 +1132,7 @@ export default function App() {
                         </div>
                         <div className="species-facts">
                           <span>
-                            Alevin <b>{euro(s.seedPrice)}</b>
+                            Alevin <b>{formatUnitPrice(s.seedPrice)}</b>
                           </span>
                           <span>
                             Poids de vente <b>{s.harvestWeight * 1000} g</b>
@@ -1187,7 +1187,7 @@ export default function App() {
                                 ? "La bonne réserve"
                                 : "Le grand format"}
                           </span>
-                          <small>{euro(pack.cost / pack.kg)} / kg</small>
+                          <small>{formatUnitPrice(pack.cost / pack.kg)} / kg</small>
                           <b>
                             Commander · {euro(pack.cost + FEED_FREIGHT)}{" "}
                             <Plus size={14} />
@@ -1246,7 +1246,7 @@ export default function App() {
                   </div>
                   <div className="finance-row">
                     <span>Dépenses cumulées</span>
-                    <strong>−{euro(game.stats.expenses)}</strong>
+                    <strong>{euro(-game.stats.expenses)}</strong>
                   </div>
                   <div className="finance-row">
                     <span>Volume vendu</span>
@@ -1359,7 +1359,7 @@ export default function App() {
                         </span>
                         <div>
                           <small>JOUR {l.day}</small>
-                          <p>{l.text}</p>
+                          <p>{formatEngineText(l.text)}</p>
                         </div>
                       </article>
                     ))}
@@ -1392,7 +1392,7 @@ export default function App() {
       {notice && (
         <div className={`toast ${notice.ok ? "" : "error"}`} role="status">
           {notice.ok ? <Check size={18} /> : <AlertTriangle size={18} />}
-          <span>{notice.text}</span>
+          <span>{formatEngineText(notice.text)}</span>
           <button
             aria-label="Fermer la notification"
             onClick={() => setNotice(null)}

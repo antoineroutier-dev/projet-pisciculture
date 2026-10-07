@@ -1,0 +1,25 @@
+
+> les-etangs@3.0.0 test
+> vitest run
+
+
+ RUN  v3.2.7 /workspace/projet-pisciculture
+
+ ✓ src/development.test.ts (14 tests) 436ms
+ ✓ src/swimming.test.ts (4 tests) 1024ms
+   ✓ trout nage sans téléportation ni sortie du bassin pendant cinq minutes  472ms
+   ✓ tilapia nage sans téléportation ni sortie du bassin pendant cinq minutes  371ms
+ ✓ src/ui/format.test.ts (3 tests) 44ms
+ ✓ src/game.test.ts (27 tests) 1204ms
+   ✓ persistance et stabilité > reste déterministe, finie et rechargeable après deux ans  627ms
+
+ Test Files  4 passed (4)
+      Tests  48 passed (48)
+   Start at  13:14:02
+   Duration  1.88s (transform 470ms, setup 0ms, collect 761ms, tests 2.71s, environment 1ms, prepare 396ms)
+
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

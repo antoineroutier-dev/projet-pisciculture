@@ -1,0 +1,34 @@
+
+> les-etangs@3.0.0 test:e2e
+> playwright test
+
+[WebServer] (node:40030) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:40043) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 14 tests using 1 worker
+
+(node:40061) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/game.spec.ts:11:1 › 3D : ferme, bassin, bâtiments et identification des trois espèces (38.8s)
+  ✓   2 tests/game.spec.ts:80:1 › import, export, mode expert et protection de sauvegarde corrompue (5.8s)
+  ✓   3 tests/game.spec.ts:133:1 › migration automatique V1 conserve le fichier original (1.6s)
+  ✓   4 tests/game.spec.ts:171:1 › horloge : vitesse ×60, fenêtre de gestion et pause (2.9s)
+  ✓   5 tests/game.spec.ts:200:1 › sans WebGL : la carte et la gestion restent disponibles (3.3s)
+  ✓   6 tests/game.spec.ts:240:1 › mobile et accessibilité des pages principales (14.7s)
+  ✓   7 tests/game.spec.ts:309:1 › nouvelle partie guidée : terrain vide jusqu’au premier règlement, uniquement par les commandes du jeu (19.1s)
+  ✓   8 tests/game.spec.ts:405:1 › migration V2 préserve la partie et propose explicitement le nouveau départ (1.7s)
+  ✓   9 tests/ui-lot0.spec.ts:8:3 › lot 0 : HUD, portraits, ration et clavier à 1920×1080 (6.1s)
+  ✓  10 tests/ui-lot0.spec.ts:8:3 › lot 0 : HUD, portraits, ration et clavier à 1440×900 (6.2s)
+  ✓  11 tests/ui-lot0.spec.ts:8:3 › lot 0 : HUD, portraits, ration et clavier à 1280×800 (6.6s)
+  ✓  12 tests/ui-lot0.spec.ts:8:3 › lot 0 : HUD, portraits, ration et clavier à 1280×720 (4.9s)
+  ✓  13 tests/ui-lot0.spec.ts:8:3 › lot 0 : HUD, portraits, ration et clavier à 390×844 (3.6s)
+  ✓  14 tests/ui-lot0.spec.ts:57:1 › lot 0 : portable autonome, polices et portraits hors ligne, budget 15 Mo (4.2s)
+
+  14 passed (2.1m)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

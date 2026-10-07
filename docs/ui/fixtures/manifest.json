@@ -1,0 +1,51 @@
+[
+  {
+    "name": "terrain-vide",
+    "day": 1,
+    "money": 60000,
+    "fish": 0,
+    "weight": 0
+  },
+  {
+    "name": "chantier",
+    "day": 7,
+    "money": 49160,
+    "fish": 0,
+    "weight": 0
+  },
+  {
+    "name": "elevage",
+    "day": 23,
+    "money": 47771.72,
+    "fish": 1000,
+    "weight": 0.05
+  },
+  {
+    "name": "contrat-client",
+    "day": 157,
+    "money": 37720.48,
+    "fish": 1000,
+    "weight": 0.3608133845798834
+  },
+  {
+    "name": "lot-au-froid",
+    "day": 177,
+    "money": 36638.58,
+    "fish": 0,
+    "weight": 0
+  },
+  {
+    "name": "expedition",
+    "day": 177,
+    "money": 36470.94,
+    "fish": 0,
+    "weight": 0
+  },
+  {
+    "name": "cycle-paye",
+    "day": 185,
+    "money": 40232.36,
+    "fish": 0,
+    "weight": 0
+  }
+]
