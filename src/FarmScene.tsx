@@ -1,3 +1,4 @@
+import { registerFeedbackProjector } from "./state/feedback";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as T from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
@@ -72,6 +73,19 @@ export default function FarmScene({
     scene.fog = new T.Fog("#dbe6dc", 100, 220);
     const camera = new T.PerspectiveCamera(40, 1, 0.08, 250);
     camera.position.set(37, 36, 45);
+    const stopProjection = registerFeedbackProjector((id) => {
+      if (latest.current.mode === "fish" || !POND_POSITIONS[id - 1])
+        return null;
+      const [x, z] = POND_POSITIONS[id - 1];
+      const v = new T.Vector3(x, 1.5, z).project(camera),
+        rect = renderer.domElement.getBoundingClientRect();
+      return v.z < 1
+        ? {
+            x: rect.left + ((v.x + 1) * rect.width) / 2,
+            y: rect.top + ((1 - v.y) * rect.height) / 2,
+          }
+        : null;
+    });
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.07;
@@ -359,6 +373,7 @@ export default function FarmScene({
     frame = requestAnimationFrame(animate);
     setReady(true);
     return () => {
+      stopProjection();
       cancelAnimationFrame(frame);
       motionQuery.removeEventListener("change", motionChanged);
       window.removeEventListener("etangs-preferences", motionChanged);

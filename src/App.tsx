@@ -1,3 +1,11 @@
+import { useAudio } from "./audio/useAudio";
+import { AudioSettings } from "./audio/AudioSettings";
+import {
+  requestFeedback,
+  beginFeedback,
+  clearFeedback,
+} from "./state/feedback";
+import { FeedbackLayer, DialogFeedback } from "./world/FeedbackLayer";
 import { Toast, Slider, SegmentedControl, Tabs } from "./ui/Primitives";
 import { usePreferences } from "./state/preferences";
 import { Button } from "./ui/Button";
@@ -226,15 +234,21 @@ function StockForm({
 }
 export default function App() {
   const { preferences, setPreferences } = usePreferences();
-  const [settingsTab, setSettingsTab] = useState<"display" | "save">("save");
+  const [settingsTab, setSettingsTab] = useState<"display" | "save" | "audio">(
+    "save",
+  );
   const [boot] = useState(load);
   const [game, setGame] = useState<Game>(boot.game);
+  const audio = useAudio(game.day);
+  const currentGame = useRef(game);
+  currentGame.current = game;
   const [session, setSession] = useState(0);
   const readings = usePondReadings(game, session);
   const surveyed = useRef(boot.game.development.surveyed);
   const [storageBlocked, setStorageBlocked] = useState(boot.blocked);
   const [storageError, setStorageError] = useState(boot.error);
   const [saved, setSaved] = useState(false);
+  const [saveRevision, setSaveRevision] = useState(0);
   const {
     panel,
     open: navigate,
@@ -253,9 +267,14 @@ export default function App() {
   const [visible, setVisible] = useState(!document.hidden);
   const [modal, setModal] = useState<ModalKind>(null);
   const [resetConfirm, setResetConfirm] = useState(false);
-  const [notice, setNotice] = useState<{ text: string; ok: boolean } | null>(
-    null,
-  );
+  const [notice, setNotice] = useState<{
+    text: string;
+    ok: boolean;
+    feedbackId?: number;
+  } | null>(null);
+  useEffect(() => {
+    if (panel || modal) audio.play("open");
+  }, [panel, modal, audio.play]);
   useEffect(() => {
     if (!surveyed.current && game.development.surveyed) {
       setRunning(false);
@@ -304,6 +323,7 @@ export default function App() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(game));
       setSaved(true);
+      setSaveRevision((v) => v + 1);
       setStorageError("");
     } catch {
       setSaved(false);
@@ -319,21 +339,38 @@ export default function App() {
   }, []);
   useEffect(() => {
     if (!running || modal || !visible) return;
-    const timer = setInterval(
-      () =>
-        setGame((g) => {
-          if (g.mode === "expert") return nextDay(g);
-          const result = advanceGuided(g, 1);
-          if (result.reason) {
-            setRunning(false);
-            setNotice({ text: result.reason, ok: true });
-          }
-          return result.game;
-        }),
-      12000 / speed,
-    );
+    const timer = setInterval(() => {
+      const before = currentGame.current,
+        started = performance.now();
+      const pending = beginFeedback(
+        before,
+        { type: "day" },
+        audio.play,
+        started,
+      );
+      const result =
+        before.mode === "expert"
+          ? { game: nextDay(before), reason: "" }
+          : advanceGuided(before, 1);
+      if (result.reason) {
+        setRunning(false);
+        setNotice({ text: result.reason, ok: true });
+      }
+      requestFeedback(
+        before,
+        result.game,
+        { type: "day" },
+        true,
+        result.reason || "Une journée écoulée.",
+        audio.play,
+        started,
+        pending,
+      );
+      currentGame.current = result.game;
+      setGame(result.game);
+    }, 12000 / speed);
     return () => clearInterval(timer);
-  }, [running, speed, modal, visible]);
+  }, [running, speed, modal, visible, audio.play]);
   useEffect(() => {
     if (!notice) return;
     const timer = setTimeout(() => setNotice(null), 5000);
@@ -371,13 +408,26 @@ export default function App() {
     return () => window.removeEventListener("keydown", handle);
   }, [modal, panel, closePanel, togglePanel]);
   function perform(action: Action, dismiss = false) {
+    const started = performance.now();
+    const pending = beginFeedback(game, action, audio.play, started);
     const result = act(game, action);
+    const feedback = requestFeedback(
+      game,
+      result.game,
+      action,
+      result.ok,
+      result.message,
+      audio.play,
+      started,
+      pending,
+    );
     if (result.ok) {
+      currentGame.current = result.game;
       setGame(result.game);
       if (action.type === "harvest") setLogisticsTab("shipments");
       if (dismiss) close();
     }
-    setNotice({ text: result.message, ok: result.ok });
+    setNotice({ text: result.message, ok: result.ok, feedbackId: feedback.id });
   }
   function openStock(pondId: number) {
     setSelected(pondId);
@@ -388,7 +438,25 @@ export default function App() {
     else if (task.stock) openStock(task.stock);
     else if (task.wait) {
       setRunning(false);
+      const started = performance.now();
+      const pending = beginFeedback(
+        game,
+        { type: "advance" },
+        audio.play,
+        started,
+      );
       const result = advanceGuided(game, task.wait);
+      requestFeedback(
+        game,
+        result.game,
+        { type: "advance" },
+        true,
+        result.reason || "Avance terminée.",
+        audio.play,
+        started,
+        pending,
+      );
+      currentGame.current = result.game;
       setGame(result.game);
       setNotice({
         text: `${result.elapsed} ${plural(result.elapsed, "jour")} ${plural(result.elapsed, "écoulé")}. ${result.reason || "Vérifiez votre prochaine étape."}`,
@@ -418,6 +486,7 @@ export default function App() {
     a.download = `les-etangs-jour-${game.day}.json`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
+    audio.play("confirm");
     setNotice({ text: "Votre copie de sauvegarde a été exportée.", ok: true });
   }
   async function importSave(file?: File) {
@@ -426,6 +495,7 @@ export default function App() {
       if (file.size > 300_000)
         throw new Error("Ce fichier est trop volumineux.");
       const restored = parseSave(await file.text());
+      clearFeedback();
       surveyed.current = restored.development.surveyed;
       setSession((s) => s + 1);
       setGame(restored);
@@ -438,6 +508,7 @@ export default function App() {
         ok: true,
       });
     } catch (error) {
+      audio.play("error");
       setNotice({
         text:
           error instanceof SyntaxError
@@ -479,6 +550,7 @@ export default function App() {
         <GameHud
           game={game}
           saved={saved}
+          saveRevision={saveRevision}
           storageError={storageError}
           running={running}
           speed={speed}
@@ -486,7 +558,29 @@ export default function App() {
           changeSpeed={() =>
             setSpeed([1, 3, 12, 60][([1, 3, 12, 60].indexOf(speed) + 1) % 4])
           }
-          nextDay={() => setGame((g) => nextDay(g))}
+          nextDay={() => {
+            const started = performance.now(),
+              before = currentGame.current;
+            const pending = beginFeedback(
+              before,
+              { type: "day" },
+              audio.play,
+              started,
+            );
+            const after = nextDay(before);
+            requestFeedback(
+              before,
+              after,
+              { type: "day" },
+              true,
+              "Une journée écoulée.",
+              audio.play,
+              started,
+              pending,
+            );
+            currentGame.current = after;
+            setGame(after);
+          }}
           settings={() => setModal("settings")}
           alerts={() => navigate("journal")}
         />
@@ -569,10 +663,12 @@ export default function App() {
             {panel === "guide" && <Guide />}
           </ManagementPanel>
         )}
+        <FeedbackLayer panelOpen={!!panel} />
         <Dock active={panel} open={togglePanel} />
       </div>
-      {notice && (
+      {notice && !modal && (
         <Toast
+          feedbackId={notice.feedbackId}
           text={formatEngineText(notice.text)}
           ok={notice.ok}
           close={() => setNotice(null)}
@@ -593,6 +689,16 @@ export default function App() {
                     : "Votre partie, bien au chaud"
           }
         >
+          <DialogFeedback />
+          {notice && (
+            <Toast
+              inline
+              feedbackId={notice.feedbackId}
+              text={formatEngineText(notice.text)}
+              ok={notice.ok}
+              close={() => setNotice(null)}
+            />
+          )}
           {modal === "stock" && (
             <StockForm
               pond={pond}
@@ -722,11 +828,18 @@ export default function App() {
               items={[
                 { id: "save", label: "Partie" },
                 { id: "display", label: "Affichage" },
+                { id: "audio", label: "Audio" },
               ]}
               value={settingsTab}
               onChange={setSettingsTab}
             >
-              {settingsTab === "display" ? (
+              {settingsTab === "audio" ? (
+                <AudioSettings
+                  volumes={audio.volumes}
+                  change={audio.change}
+                  play={audio.play}
+                />
+              ) : settingsTab === "display" ? (
                 <div className="display-settings">
                   <Slider
                     label="Échelle de l’interface"
@@ -840,6 +953,7 @@ export default function App() {
                           <button
                             className="button danger"
                             onClick={() => {
+                              clearFeedback();
                               surveyed.current = false;
                               setSession((s) => s + 1);
                               setGame(initialGame(game.mode));

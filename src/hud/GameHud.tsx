@@ -1,3 +1,4 @@
+import { AnimatedNumber } from "../ui/AnimatedNumber";
 import { Stepper, ResourcePill } from "../ui/Primitives";
 import { useState } from "react";
 import {
@@ -26,6 +27,7 @@ import { PANELS, type PanelId } from "../state/navigation";
 export function GameHud({
   game,
   saved,
+  saveRevision,
   storageError,
   running,
   speed,
@@ -37,6 +39,7 @@ export function GameHud({
 }: {
   game: Game;
   saved: boolean;
+  saveRevision: number;
   storageError: string;
   running: boolean;
   speed: number;
@@ -72,7 +75,7 @@ export function GameHud({
       <div className="hud-resources" aria-label="Ressources">
         <ResourcePill
           label="Trésorerie"
-          value={formatMoney(game.money)}
+          value={<AnimatedNumber value={game.money} format={formatMoney} />}
           testId="money"
           detail={
             <span title="Variation depuis le dernier relevé quotidien">
@@ -95,7 +98,12 @@ export function GameHud({
               )}
             </>
           }
-          value={`${number(game.food, 1)} kg`}
+          value={
+            <AnimatedNumber
+              value={game.food}
+              format={(v) => `${number(v, 1)} kg`}
+            />
+          }
           detail={
             days === null
               ? "Aucun lot à nourrir"
@@ -143,7 +151,11 @@ export function GameHud({
           title={storageError || "Partie sauvegardée"}
         >
           {saved && !storageError ? (
-            <CheckCheck size={18} />
+            <CheckCheck
+              key={saveRevision}
+              className="save-indicator"
+              size={18}
+            />
           ) : (
             <AlertTriangle size={18} />
           )}

@@ -33,3 +33,7 @@ Chaque série historique contient les six vues principales × sept états × qua
 Les manifestes enregistrent la hauteur réelle du document et la plus petite taille de texte calculée. Ce sont des observations, pas une preuve que les critères finaux sont déjà remplis. Les vérifications automatiques supplémentaires couvrent également 1280×720.
 
 Les sorties effectives des quatre commandes de validation sont conservées dans `verification/lot-N/`. Les tests arrêtés, les échecs et les relances doivent être distingués des dernières validations complètes.
+
+À partir de 3a, `node scripts/capture-lot-3a.mjs` utilise l’aide commune `capture-helpers.mjs`. Les retours éphémères sont photographiés avec l’horloge de test suspendue, après rendu réel du monde ; le mode mouvement réduit évite de capturer une animation à mi-course. Les autres captures attendent l’expiration des notifications.
+
+Playwright conserve les captures d’échec par défaut. `UI_TRACE=1 npm run test:e2e` active les traces complètes à des fins de diagnostic ; l’enregistrement de chaque état intermédiaire de la 3D est coûteux sous SwiftShader. Ce réglage ne retire aucune assertion et ne change pas le rendu demandé par les tests.

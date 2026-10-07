@@ -1,0 +1,136 @@
+.feedback-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 65;
+}
+.world-feedback {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transform: translate(-50%, -50%);
+  max-width: 170px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-panel);
+  font-size: var(--text-small);
+  animation: float-feedback 2.4s var(--ease) both;
+}
+.world-feedback strong {
+  display: block;
+}
+.delta-positive,
+.world-feedback.positive > svg {
+  color: var(--success);
+}
+.delta-negative,
+.world-feedback.negative > svg {
+  color: var(--danger);
+}
+@keyframes float-feedback {
+  0% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% - 32px));
+  }
+}
+.resource-pulse {
+  animation: resource-pulse var(--duration-slow) var(--ease);
+  border-radius: 4px;
+}
+@keyframes resource-pulse {
+  0%,
+  100% {
+    background: transparent;
+  }
+  35% {
+    background: var(--accent);
+  }
+}
+.audio-settings {
+  display: grid;
+  gap: 16px;
+}
+.audio-settings > p {
+  font-size: var(--text-small);
+}
+@media (prefers-reduced-motion: reduce) {
+  .world-feedback,
+  .resource-pulse {
+    animation: none;
+  }
+}
+html[data-motion="reduce"] .world-feedback,
+html[data-motion="reduce"] .resource-pulse {
+  animation: none;
+}
+.management-panel,
+.modal {
+  animation: panel-reveal var(--duration-normal) var(--ease);
+}
+@keyframes panel-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.save-indicator {
+  animation: save-pulse var(--duration-slow) var(--ease);
+}
+@keyframes save-pulse {
+  from {
+    opacity: 0.35;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.inline-feedback {
+  position: static;
+  transform: none;
+  animation: feedback-fade 2.4s var(--ease) both;
+  flex-shrink: 0;
+  padding: 4px 8px;
+  box-shadow: none;
+  max-width: 170px;
+}
+@keyframes feedback-fade {
+  0%,
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .inline-feedback {
+    animation: none;
+  }
+}
+html[data-motion="reduce"] .inline-feedback {
+  animation: none;
+}
+
+.toast.toast-inline {
+  position: static;
+  transform: none;
+  width: 100%;
+  max-width: none;
+  margin-bottom: 16px;
+}

@@ -437,6 +437,13 @@ button:not(:disabled):active {
   color: var(--ink);
   box-shadow: var(--shadow-panel);
 }
+.toast > span {
+  min-width: 0;
+}
+.toast > svg,
+.toast > button {
+  flex-shrink: 0;
+}
 .toast.error {
   border-color: var(--danger);
 }

@@ -1,5 +1,8 @@
+import { feedbackStore, feedbackPhase } from "../state/feedback";
+import { InlineFeedback } from "../world/FeedbackLayer";
 import {
   useEffect,
+  useLayoutEffect,
   useId,
   useRef,
   type ButtonHTMLAttributes,
@@ -60,6 +63,7 @@ export function Drawer({
         <h2 id="panel-heading" ref={heading} tabIndex={-1}>
           {title}
         </h2>
+        <InlineFeedback />
         <IconButton
           onClick={close}
           label="Fermer le panneau"
@@ -145,13 +149,32 @@ export function Toast({
   text,
   ok,
   close,
+  inline = false,
+  feedbackId,
 }: {
   text: string;
   ok: boolean;
   close: () => void;
+  inline?: boolean;
+  feedbackId?: number;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    if (inline) ref.current?.scrollIntoView({ block: "nearest" });
+    const event = feedbackStore.getSnapshot().find((e) => e.id === feedbackId);
+    if (event && ref.current?.isConnected)
+      feedbackPhase(event, "result-visual", {
+        connected: true,
+        channel: "toast",
+        inline,
+      });
+  }, [text, inline, feedbackId]);
   return (
-    <div className={`toast ${ok ? "" : "error"}`} role="status">
+    <div
+      ref={ref}
+      className={`toast ${ok ? "" : "error"} ${inline ? "toast-inline" : ""}`}
+      role="status"
+    >
       {ok ? <Check size={18} /> : <AlertTriangle size={18} />}
       <span>{text}</span>
       <IconButton label="Fermer la notification" onClick={close}>

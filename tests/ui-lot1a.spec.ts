@@ -154,7 +154,11 @@ test("1a : les fenêtres de gestion respectent le plancher de texte et axe", asy
   expect(planned.ok).toBe(true);
   await page.getByRole("button", { name: "Paramètres & sauvegarde", exact: true }).click();
   await page.getByLabel("Fichier de sauvegarde").setInputFiles({ name: "planned.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(planned.game)) });
+  // The File API is asynchronous: wait until import has closed its dialog.
+  await expect(page.getByRole("dialog")).toBeHidden();
+  await expect(page.getByTestId("day")).toHaveAttribute("data-day", String(planned.game.day));
   await page.getByLabel("Bassin sélectionné", {exact:true}).selectOption("3");
+  await expect(page.getByLabel("Bassin sélectionné", {exact:true})).toHaveValue("3");
   await page.getByRole("button", { name: "Construire Le Pré neuf", exact: true }).click();
   await expect(page.getByTestId("construction-card")).toContainText("Mise en service");
   await page.getByRole("button", { name: "Paramètres & sauvegarde", exact: true }).click();

@@ -221,6 +221,7 @@ export default function FarmMap({
             transform={`translate(${x} ${y})`}
             role="button"
             tabIndex={0}
+            data-pond-id={pond.id}
             aria-label={`Bassin ${pond.id}, ${pond.name}, ${status.label}${pond.count ? `, ${number(pond.count)} poissons de ${number(pond.weight * 1000)} g` : ""}`}
             aria-pressed={active}
             onClick={() => select(pond.id)}

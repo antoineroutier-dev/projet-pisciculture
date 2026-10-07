@@ -25,3 +25,10 @@ Lot 2a : schéma de l’analyse d’eau original, dessiné en SVG dans `src/pane
 Lot 2b : diagramme de chaîne logistique et graphique de trésorerie originaux (HTML/SVG), icônes Lucide déjà créditées. Aucune nouvelle ressource externe.
 
 Lot 2c : illustration de l’encyclopédie originale en SVG (`src/RealismGuide.tsx`), courbes du journal issues des relevés du jeu. Pas de nouvelle ressource tierce ; icônes Lucide sous ISC.
+
+| Ressource ajoutée au lot 3a | Auteur / provenance | Licence / statut | Source / date |
+| --- | --- | --- | --- |
+| Ambiances d’eau, oiseaux saisonniers, pluie et vent ; clic, ouverture, validation, erreur, caisse, nourrissage, camion, chantier, alerte et célébration | Créations originales du projet par synthèse Web Audio (oscillateurs et bruit déterministe filtré) | Aucune captation, banque de sons ou ressource tierce. Créations du dépôt. | `src/audio/mixer.ts`, 7 octobre 2026 |
+| Musique générative, trois phrases harmoniques calmes | Composition algorithmique originale du projet | Aucun morceau ni échantillon tiers | `src/audio/mixer.ts`, 7 octobre 2026 |
+
+La synthèse est un choix délibéré pour garder le portable autonome : aucun téléchargement audio n’a été tenté ou bloqué. Budget des fichiers audio intégrés : **0 octet** ; le synthétiseur fait partie du JavaScript mesuré dans le portable. Les signaux sont produits en mémoire après une interaction du joueur, jamais au chargement automatique.

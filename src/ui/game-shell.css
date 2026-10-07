@@ -127,8 +127,8 @@ body,
   line-height: 1.4;
   white-space: nowrap;
 }
-.game-hud .hud-resources span,
-.game-hud .hud-resources small {
+.game-hud .hud-resources > div > span,
+.game-hud .hud-resources > div > small {
   font-size: var(--text-caption);
   color: var(--ink-muted);
   line-height: 1.3;
@@ -421,6 +421,7 @@ body,
   right: auto;
   bottom: 104px;
   transform: translateX(-50%);
+  width: max-content;
   max-width: min(520px, calc(100vw - 32px));
   z-index: 30;
   font-size: var(--text-small);

@@ -1,3 +1,4 @@
+import "./world/feedback.css";
 import "@fontsource/fraunces/latin-400.css";
 import "@fontsource/fraunces/latin-600.css";
 import "./ui/tokens.css";
