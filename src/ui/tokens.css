@@ -131,3 +131,25 @@
   --paint-fish-scale-light: #f5f2ce47;
   --paint-fish-spot: #18271d;
 }
+
+/* Original seasonal grading and logistics colors. */
+:root {
+  --paint-truck-feed: #b99348;
+  --paint-truck-living: #477e84;
+  --paint-truck-cold: #557866;
+  --paint-cloud: #edf0e8;
+  --paint-rain: #b5c9cf;
+  --paint-rain-sky: #b8c9c6;
+  --paint-night-sky: #46596c;
+  --paint-sunset: #f4cc95;
+  --paint-frost: #e5e5d6;
+  --paint-ice: #d0e5df;
+  --paint-ground-spring: #ffffff;
+  --paint-ground-summer: #e9ddb0;
+  --paint-ground-autumn: #d1b486;
+  --paint-ground-winter: #c5c9c0;
+  --paint-foliage-spring: #ffffff;
+  --paint-foliage-summer: #c8dfb1;
+  --paint-foliage-autumn: #dcaa64;
+  --paint-foliage-winter: #c0bdb0;
+}

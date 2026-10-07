@@ -1,3 +1,7 @@
+import { createLifeEffects } from "./world/LifeEffects";
+import { createWeather } from "./world/WeatherScene";
+import { oxygenMotion } from "./world/lifeSelectors";
+import type { GameClock } from "./state/useGameClock";
 import { registerFeedbackProjector } from "./state/feedback";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as T from "three";
@@ -22,6 +26,7 @@ export default function FarmScene({
   species,
   clearWater,
   reset,
+  clock,
 }: {
   ponds: Pond[];
   development: FarmState["development"];
@@ -33,6 +38,7 @@ export default function FarmScene({
   species: SpeciesId;
   clearWater: boolean;
   reset: number;
+  clock: Pick<GameClock, "active" | "phase" | "seeking">;
 }) {
   const [error, setError] = useState("");
   const [ready, setReady] = useState(false);
@@ -49,6 +55,7 @@ export default function FarmScene({
       species,
       clearWater,
       reset,
+      clock,
     }),
     [
       ponds,
@@ -61,6 +68,7 @@ export default function FarmScene({
       species,
       clearWater,
       reset,
+      clock,
     ],
   );
   const latest = useRef(state);
@@ -160,6 +168,7 @@ export default function FarmScene({
     let pendingFrames = 2;
     let cameraKey = "",
       fishSpecies: SpeciesId = "trout";
+    let renderedFrames = 0;
     let frame = 0,
       lastRender = 0,
       lastSwim = 0;
@@ -168,6 +177,11 @@ export default function FarmScene({
     let down = { x: 0, y: 0 };
     let active = true,
       needsRender = true;
+    const life = createLifeEffects(farm, () => {
+      needsRender = true;
+    });
+    scene.add(life.root);
+    const weatherScene = createWeather(scene, farm, sun, sky);
     let previousState = latest.current;
     controls.addEventListener("change", () => {
       needsRender = true;
@@ -343,7 +357,7 @@ export default function FarmScene({
       );
       const [sx, sz] = POND_POSITIONS[state.selected - 1];
       farm.selection.position.set(sx, 1.035, sz);
-      farm.normal.offset.set(time * 0.008, time * 0.006);
+      farm.normal.offset.set(-time * 0.008, time * 0.006);
       for (const water of farm.waters) {
         const p = state.ponds[water.userData.pondId - 1];
         water.material.opacity = state.clearWater
@@ -363,7 +377,7 @@ export default function FarmScene({
         const members = farm.fish.filter((f) => f.pondId === p.id);
         stepSchool(
           members.map((f) => f.swimmer),
-          delta,
+          delta * oxygenMotion(p) * (life.feeding(p.id) ? 1.2 : 1),
           {
             halfWidth: p.facility === "earth" ? 5.1 : 4.8,
             halfDepth: p.facility === "earth" ? 2.9 : 1.75,
@@ -377,7 +391,12 @@ export default function FarmScene({
           f.mesh.rotation.y = swimRotation(swim.heading);
           f.mesh.rotation.z = -swim.turn * 0.025;
           f.mesh.scale.setScalar(0.17 + p.weight ** (1 / 3) * 0.14);
-          animateFish(f.mesh, swim.phase, swim.effort, swim.turn);
+          animateFish(
+            f.mesh,
+            swim.phase,
+            swim.effort + (life.feeding(p.id) ? 0.25 : 0),
+            swim.turn,
+          );
         }
       }
       if (specimen.visible) {
@@ -385,13 +404,20 @@ export default function FarmScene({
         animateFish(specimen, time * 5.5, 0.55);
       }
       controls.update();
-      // Keep distant scenery hazy without fogging the subject when portrait screens zoom out.
-      if (scene.fog instanceof T.Fog) {
-        scene.fog.near = Math.max(100, camera.position.distanceTo(controls.target) + 35);
-        scene.fog.far = scene.fog.near + 120;
-      }
+      life.root.visible = farm.root.visible;
+      life.update(ms, reduced);
+      const conditions = weatherScene.update(
+        state,
+        state.clock,
+        ms,
+        reduced,
+        camera.position.distanceTo(controls.target),
+      );
+      renderer.domElement.dataset.weather = JSON.stringify(conditions);
+      renderer.domElement.dataset.life = JSON.stringify(life.diagnostics());
       renderer.render(scene, camera);
       renderer.domElement.dataset.frame = "rendered";
+      renderer.domElement.dataset.renderCount = String(++renderedFrames);
       renderer.domElement.dataset.view = state.mode;
       renderer.domElement.dataset.species = state.species;
       renderer.domElement.dataset.day = String(state.day);
@@ -422,6 +448,9 @@ export default function FarmScene({
       renderer.domElement.removeEventListener("pointerdown", onDown);
       renderer.domElement.removeEventListener("pointerup", onUp);
       renderer.domElement.removeEventListener("webglcontextlost", contextLost);
+      scene.remove(life.root);
+      life.dispose();
+      weatherScene.dispose();
       farm.dispose();
       disposeObject(specimen);
       clearFishTextures();

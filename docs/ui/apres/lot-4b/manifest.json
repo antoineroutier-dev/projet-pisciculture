@@ -1,0 +1,125 @@
+{
+  "totalBytes": 1416621,
+  "captures": [
+    {
+      "file": "docs/ui/apres/lot-4b/1440-printemps.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 98103
+    },
+    {
+      "file": "docs/ui/apres/lot-4b/1440-ete.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 104992
+    },
+    {
+      "file": "docs/ui/apres/lot-4b/1440-automne.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 107744
+    },
+    {
+      "file": "docs/ui/apres/lot-4b/1440-hiver.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 105033
+    },
+    {
+      "file": "docs/ui/apres/lot-4b/1440-pluie-hiver.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 104127
+    },
+    {
+      "file": "docs/ui/apres/lot-4b/1440-livraison-aliments.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 104719
+    },
+    {
+      "file": "docs/ui/apres/lot-4b/1440-nourrissage.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 87598
+    },
+    {
+      "file": "docs/ui/apres/lot-4b/1440-livraison-vivant.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 100395
+    },
+    {
+      "file": "docs/ui/apres/lot-4b/1440-depart-frigorifique.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 125553
+    },
+    {
+      "file": "docs/ui/apres/lot-4b/1440-chantier-vivant.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 102702
+    },
+    {
+      "file": "docs/ui/apres/lot-4b/390-printemps.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 35764
+    },
+    {
+      "file": "docs/ui/apres/lot-4b/390-ete.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 36627
+    },
+    {
+      "file": "docs/ui/apres/lot-4b/390-automne.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 38306
+    },
+    {
+      "file": "docs/ui/apres/lot-4b/390-hiver.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 37038
+    },
+    {
+      "file": "docs/ui/apres/lot-4b/390-pluie-hiver.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 36920
+    },
+    {
+      "file": "docs/ui/apres/lot-4b/390-livraison-aliments.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 39449
+    },
+    {
+      "file": "docs/ui/apres/lot-4b/390-nourrissage.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 35490
+    },
+    {
+      "file": "docs/ui/apres/lot-4b/390-livraison-vivant.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 36376
+    },
+    {
+      "file": "docs/ui/apres/lot-4b/390-depart-frigorifique.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 45078
+    },
+    {
+      "file": "docs/ui/apres/lot-4b/390-chantier-vivant.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 34607
+    }
+  ]
+}

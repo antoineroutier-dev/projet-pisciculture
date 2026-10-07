@@ -20,6 +20,11 @@ export const POND_POSITIONS: [number, number][] = [
   [-9, 12],
   [10, 12],
 ];
+export const ASSET_POSITIONS: Record<Asset, [number, number]> = {
+  warehouse: [9, -16],
+  coldstore: [22, -16],
+  workshop: [-23, -16],
+};
 export type FishInstance = {
   mesh: T.Group;
   pondId: number;
@@ -422,10 +427,12 @@ export function createFarm(initial: FarmState): FarmObjects {
       roughness: 0.35,
     }),
   };
+  materials.reed.userData.seasonal = "reed";
   const floor = new T.Mesh(
     new T.PlaneGeometry(220, 180, 30, 30),
     new T.MeshStandardMaterial({ map: ground, roughness: 1 }),
   );
+  floor.name = "terrain";
   floor.rotation.x = -Math.PI / 2;
   floor.position.y = -0.12;
   floor.receiveShadow = true;
@@ -627,6 +634,7 @@ export function createFarm(initial: FarmState): FarmObjects {
             new T.CircleGeometry(0.18 + r() * 0.12, 12, 0, Math.PI * 1.85),
             materials.leaf,
           );
+          pad.name = "lily-pad";
           pad.rotation.x = -Math.PI / 2;
           pad.position.set(
             x - w / 2 + 1 + r(),
@@ -845,11 +853,6 @@ export function createFarm(initial: FarmState): FarmObjects {
     entry.targets.push(hit);
     return entry;
   }
-  const assetPositions: Record<Asset, [number, number]> = {
-    warehouse: [9, -16],
-    coldstore: [22, -16],
-    workshop: [-23, -16],
-  };
   function makeAsset(game: FarmState, id: Asset) {
     const state = assetState(game, id),
       group = new T.Group();
@@ -861,7 +864,7 @@ export function createFarm(initial: FarmState): FarmObjects {
         progress?: T.Mesh;
         stock?: T.Group;
       } = { group, key: `${state.built}:${state.working}` },
-      [x, z] = assetPositions[id];
+      [x, z] = ASSET_POSITIONS[id];
     if (state.working) {
       entry.progress = earthworks(group, x, z, 8, 6);
       for (const sign of [-1, 1])
@@ -1055,6 +1058,7 @@ export function createFarm(initial: FarmState): FarmObjects {
       );
     }
   }
+  leaves.name = "foliage";
   leaves.castShadow = true;
   leaves.receiveShadow = true;
   trunks.castShadow = true;
@@ -1093,6 +1097,7 @@ export function createFarm(initial: FarmState): FarmObjects {
       new T.Color(paint("reed")).multiplyScalar(0.85 + r() * 0.3),
     );
   }
+  grass.name = "meadow";
   root.add(grass);
   // Split-rail fencing with a gate across the front.
   for (const side of [-1, 1]) {
@@ -1151,7 +1156,7 @@ export function disposeObject(
     materials = new Set<T.Material>(),
     textures = new Set<T.Texture>();
   root.traverse((o) => {
-    if (o instanceof T.Mesh || o instanceof T.Line) {
+    if (o instanceof T.Mesh || o instanceof T.Line || o instanceof T.Points) {
       if (o.geometry) geometries.add(o.geometry);
       if (o instanceof T.InstancedMesh) o.dispose();
       for (const m of Array.isArray(o.material) ? o.material : [o.material])

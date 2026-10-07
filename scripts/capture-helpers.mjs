@@ -8,17 +8,21 @@ export async function captureLot(lot, visit, initial = "terrain-vide") {
     args: [
       "--no-sandbox",
       "--disable-dev-shm-usage",
+      // Keep CSS rasterization on CPU while WebGL uses SwiftShader.
+      "--disable-gpu-rasterization",
       "--enable-unsafe-swiftshader",
       "--use-angle=swiftshader",
     ],
   });
-  const captures = [],
+  const onlyWidth = Number(process.env.UI_CAPTURE_WIDTH) || null;
+  const previous = onlyWidth && fs.existsSync(`${directory}/manifest.json`) ? JSON.parse(fs.readFileSync(`${directory}/manifest.json`, "utf8")).captures : [];
+  const captures = previous.filter(c => c.width !== onlyWidth),
     errors = [];
   try {
     for (const [width, height] of [
       [1440, 900],
       [390, 844],
-    ]) {
+    ].filter(([width]) => !onlyWidth || width === onlyWidth)) {
       const page = await browser.newPage({
         viewport: { width, height },
         reducedMotion: "reduce",
@@ -47,6 +51,7 @@ export async function captureLot(lot, visit, initial = "terrain-vide") {
           mimeType: "application/json",
           buffer: fs.readFileSync(`docs/ui/fixtures/${name}.json`),
         });
+        await page.getByRole("dialog").waitFor({state:"hidden"});
       }
       async function snap(name, { toast = true } = {}) {
         await page.evaluate(() => document.fonts.ready);
@@ -83,6 +88,7 @@ export async function captureLot(lot, visit, initial = "terrain-vide") {
     await browser.close();
   }
   if (errors.length) throw Error(errors.join("\n"));
+  for (const c of captures) c.bytes = fs.statSync(c.file).size;
   const totalBytes = captures.reduce((sum, c) => sum + c.bytes, 0);
   if (totalBytes > 5e6) throw Error("Budget captures dépassé");
   fs.writeFileSync(

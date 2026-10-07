@@ -1,6 +1,6 @@
 import { Card, Tabs } from "./ui/Primitives";
 import { useState } from "react";
-import {SpeciesPortrait} from "./world/SpeciesPortrait";
+import { SpeciesPortrait } from "./world/SpeciesPortrait";
 import { SPECIES, number } from "./game";
 import {
   SCIENCE_TERMS,
@@ -73,7 +73,7 @@ export default function RealismGuide() {
     {
       icon: <Eye />,
       title: "Reconnaître les espèces",
-      text: "La truite a une bande rosée, des points noirs et une nageoire adipeuse. La carpe porte de grandes écailles bronze et des barbillons. Le tilapia a une dorsale épineuse et une queue striée. Le terrain montre l’état actuel des bassins. La carte prend le relais lorsque la 3D est indisponible. La vue Poissons permet de tourner les modèles et de consulter une planche artistique réaliste. Les poissons de la ferme sont un échantillon visuel ; le mode observation accentue la transparence de l’eau.",
+      text: "La truite a une bande rosée, des points noirs et une nageoire adipeuse. La carpe porte de grandes écailles bronze et des barbillons. Le tilapia a une dorsale épineuse et une queue striée. Le terrain montre l’état actuel des bassins. La carte prend le relais lorsque la 3D est indisponible. La vue Poissons permet de tourner les modèles et de consulter un portrait issu du même modèle 3D. Les poissons de la ferme sont un échantillon visuel ; le mode observation accentue la transparence de l’eau.",
     },
   ];
   const article = (i: number) => (
@@ -177,10 +177,17 @@ export default function RealismGuide() {
               <p>
                 Le rendu 3D représente un échantillon des poissons du lot, à une
                 échelle indicative. L’observation sous l’eau accentue sa
-                transparence. Les planches d’identification sont des
-                illustrations artistiques générées ; les modèles anatomiques
-                originaux servent de repères visuels, pas de mesures
-                scientifiques. Certains bâtiments sont encore décoratifs.
+                transparence. Les portraits utilisent les mêmes modèles
+                originaux que le monde. Ce sont des repères visuels, pas des
+                mesures scientifiques. Magasin, froid et atelier apparaissent à
+                la fin des travaux ; la maison initiale appartient au décor.
+              </p>
+              <p>
+                Les camions illustrent les arrivées et départs enregistrés. La
+                lumière suit l’horloge du jeu ; elle ne change pas la biologie.
+                Le givre du décor interprète l’air froid. La glace sur l’étang
+                exige une eau à 0 °C ou moins : le climat annuel standard ne la
+                produit pas. Les saisons ne déclenchent pas un gel artificiel.
               </p>
               <p>
                 Les coûts, prix, températures et coefficients sont ceux d’un

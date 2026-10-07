@@ -1,3 +1,4 @@
+import { publishLife, clearLife } from "./world/lifeBus";
 import { initialLedger, recordLedger, coldExpected } from "./state/ledger";
 import { parseSavedGame, serializeSave, SAVE_KEY } from "./state/saves";
 import { CycleReport } from "./panels/CycleReport";
@@ -57,7 +58,7 @@ import {
   Upload,
   RotateCcw,
 } from "lucide-react";
-import {SpeciesPortrait} from "./world/SpeciesPortrait";
+import { SpeciesPortrait } from "./world/SpeciesPortrait";
 import { lazy, Suspense } from "react";
 const FarmScene = lazy(() => import("./FarmScene"));
 import { LogisticsPanel, type LogisticsTab } from "./panels/LogisticsPanel";
@@ -317,6 +318,7 @@ export default function App() {
     setLedger(updated);
     currentGame.current = after;
     setGame(after);
+    publishLife(before, after);
     const incoming = gameEvents(before, after, reason);
     const firstHarvest = incoming.some((e) => e.id.endsWith(":first-harvest"));
     const paid = after.development.paid > before.development.paid;
@@ -554,6 +556,7 @@ export default function App() {
       currentLedger.current = restoredSave.ledger;
       setLedger(restoredSave.ledger);
       clearFeedback();
+      clearLife();
       setEvents([]);
       surveyed.current = restored.development.surveyed;
       setSession((s) => s + 1);
@@ -606,6 +609,7 @@ export default function App() {
               species={species}
               clearWater={clearWater}
               reset={cameraReset}
+              clock={clock}
             />
           </Suspense>
         </main>
@@ -988,6 +992,7 @@ export default function App() {
                             className="button danger"
                             onClick={() => {
                               clearFeedback();
+                              clearLife();
                               setEvents([]);
                               surveyed.current = false;
                               setSession((s) => s + 1);

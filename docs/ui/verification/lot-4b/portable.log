@@ -1,0 +1,10 @@
+
+> les-etangs@3.0.0 build:portable
+> tsc -b && node scripts/build-portable.mjs
+
+Portable game: /workspace/projet-pisciculture/portable/Les-Etangs.html (1623682 bytes; 1.62 MB)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

@@ -3,7 +3,7 @@ import { IconButton } from "../ui/Primitives";
 import { useState } from "react";
 import { RotateCcw, Maximize2, Eye } from "lucide-react";
 import { SPECIES, type SpeciesId } from "../game";
-import {SpeciesPortrait} from "./SpeciesPortrait";
+import { SpeciesPortrait } from "./SpeciesPortrait";
 import type { SceneMode } from "./types";
 
 export function WorldControls({
