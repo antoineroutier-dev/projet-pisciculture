@@ -6,6 +6,8 @@ Jeu de pisciculture solo en français pour navigateur. La V3 commence sur un ter
 
 Le [prompt complet exécuté pour cette refonte](docs/PROMPT-PROGRESSION.md) détaille le parcours, la logistique, la nage et les validations.
 
+L’[audit de l’interface](docs/AUDIT-UI-STEAM.md) recense ce qui sépare la V3 d’un jeu de gestion de qualité Steam ; le [prompt de refonte UI](docs/PROMPT-UI-STEAM.md) décrit les corrections à exécuter (non encore implémentées).
+
 ## Édition autonome, sans installation pour le joueur
 
 L’édition `Les-Etangs.html` contient le jeu et ses images dans un seul fichier. Télécharger ce fichier (ou décompresser l’archive de livraison), puis l’ouvrir avec un navigateur moderne. Aucun serveur ni accès Internet n’est nécessaire pour jouer ; les liens vers les sources documentaires demandent Internet. La 3D requiert WebGL 2, avec carte de secours si indisponible.
