@@ -57,7 +57,7 @@ import {
   Upload,
   RotateCcw,
 } from "lucide-react";
-import { FishArt } from "./FishArt";
+import {SpeciesPortrait} from "./world/SpeciesPortrait";
 import { lazy, Suspense } from "react";
 const FarmScene = lazy(() => import("./FarmScene"));
 import { LogisticsPanel, type LogisticsTab } from "./panels/LogisticsPanel";
@@ -179,7 +179,7 @@ function StockForm({
             aria-pressed={s.id === species}
             onClick={() => setSpecies(s.id)}
           >
-            <FishArt color={s.color} />
+            <SpeciesPortrait species={s.id} />
             <span>
               <strong>{s.name}</strong>
               <small>
@@ -597,6 +597,8 @@ export default function App() {
           >
             <FarmScene
               ponds={game.ponds}
+              development={game.development}
+              food={game.food}
               selected={selected}
               select={selectPond}
               day={game.day}

@@ -12,8 +12,8 @@ it("centralise la palette UI et supprime les trois feuilles concurrentes", () =>
         expect(source, full).not.toMatch(/#[\da-f]{3,8}\b/i);
         expect(source, full).not.toContain("!important");
         expect(source, full).not.toMatch(/font-size:\s*\d+(?:\.\d+)?px/);
-      } else if (file.name.endsWith(".tsx") && !["FarmScene.tsx", "FarmMap.tsx"].includes(file.name)) {
-        // Renderer and fallback drawing palettes are consolidated in lot 4a.
+      } else if (/\.tsx?$/.test(file.name) && !file.name.endsWith(".test.ts") && file.name !== "game.ts") {
+        // The three immutable species identity colors in game.ts are the only exception.
         expect(readFileSync(full, "utf8"), full).not.toMatch(/#[\da-f]{3,8}\b/i);
       }
     }

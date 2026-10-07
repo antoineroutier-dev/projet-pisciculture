@@ -117,7 +117,7 @@
   display: grid;
   gap: 8px;
 }
-.guide-species > svg {
+.guide-species > .species-photo {
   height: 92px;
   width: 100%;
   background: var(--surface-muted);

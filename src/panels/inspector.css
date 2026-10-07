@@ -11,7 +11,7 @@
   display: grid;
   gap: 8px;
 }
-.construction-portrait > svg {
+.construction-portrait > .species-photo {
   width: 100%;
   height: 96px;
   background: var(--surface-muted);
@@ -68,7 +68,7 @@
   font-size: var(--text-xl);
   margin-bottom: 8px;
 }
-.inspector-title > svg {
+.inspector-title > .species-photo {
   width: 100px;
   height: 64px;
 }
@@ -146,7 +146,7 @@
   font-size: var(--text-small);
 }
 @media (max-width: 680px) {
-  .inspector-title > svg {
+  .inspector-title > .species-photo {
     width: 80px;
     height: 48px;
   }

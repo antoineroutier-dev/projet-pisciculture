@@ -2,6 +2,17 @@ import * as T from "three";
 import { type Pond } from "./game";
 import { createSwimmer, type Swimmer } from "./swimming";
 import { createFish } from "./fish3d";
+import { paint } from "./world/palette";
+import {
+  assetIds,
+  assetState,
+  pondStructure,
+  pondProgress,
+  pondSize,
+  type FarmState,
+} from "./world/artSelectors";
+import type { Asset } from "./development";
+type WaterMesh = T.Mesh<T.BufferGeometry, T.MeshPhysicalMaterial>;
 
 export const POND_POSITIONS: [number, number][] = [
   [-9, -1],
@@ -19,7 +30,11 @@ export type FarmObjects = {
   root: T.Group;
   targets: T.Mesh[];
   fish: FishInstance[];
-  waters: T.Mesh<T.PlaneGeometry, T.MeshPhysicalMaterial>[];
+  waters: WaterMesh[];
+  update: (state: FarmState) => void;
+  dispose: () => void;
+  ponds: Map<number, { group: T.Group }>;
+  assets: Map<Asset, { group: T.Group }>;
   selection: T.Mesh;
   normal: T.CanvasTexture;
 };
@@ -36,11 +51,36 @@ function surface(kind: "stone" | "wood" | "roof" | "ground" | "gravel") {
   const ctx = c.getContext("2d")!;
   const r = seeded(52);
   const palette = {
-    stone: ["#a89e88", "#b5ac96", "#938e7e", "#c1b69f"],
-    wood: ["#81664a", "#8b7150", "#987c56", "#69543e"],
-    roof: ["#525d60", "#606b6d", "#6c7678", "#4a5659"],
-    ground: ["#829166", "#75895d", "#909971", "#6d8159"],
-    gravel: ["#c5bda6", "#b0ad96", "#d2c9b0", "#999d8b"],
+    stone: [
+      paint("stone-mid"),
+      paint("stone"),
+      paint("stone-shadow"),
+      paint("stone-light"),
+    ],
+    wood: [
+      paint("wood-shadow"),
+      paint("wood-mid"),
+      paint("wood"),
+      paint("wood-dark"),
+    ],
+    roof: [
+      paint("roof-shadow"),
+      paint("roof"),
+      paint("roof-light"),
+      paint("roof-dark"),
+    ],
+    ground: [
+      paint("grass"),
+      paint("grass-shadow"),
+      paint("grass-light"),
+      paint("grass-dark"),
+    ],
+    gravel: [
+      paint("gravel"),
+      paint("gravel-shadow"),
+      paint("gravel-light"),
+      paint("gravel-dark"),
+    ],
   }[kind];
   ctx.fillStyle = palette[0];
   ctx.fillRect(0, 0, 512, 512);
@@ -55,7 +95,7 @@ function surface(kind: "stone" | "wood" | "roof" | "ground" | "gravel") {
           (kind === "roof" ? 70 : 110) - 4,
           (kind === "roof" ? 40 : 70) - 4,
         );
-        ctx.strokeStyle = "#302e231f";
+        ctx.strokeStyle = paint("mortar");
         ctx.lineWidth = 2;
         ctx.strokeRect(
           xx + 2,
@@ -69,7 +109,7 @@ function surface(kind: "stone" | "wood" | "roof" | "ground" | "gravel") {
       ctx.fillStyle = palette[Math.floor(r() * 4)];
       ctx.fillRect(i * 30, 0, 28, 512);
       for (let j = 0; j < 10; j++) {
-        ctx.strokeStyle = "#322b1e27";
+        ctx.strokeStyle = paint("wood-grain");
         ctx.beginPath();
         const x = i * 30 + r() * 25;
         ctx.moveTo(x, 0);
@@ -77,8 +117,8 @@ function surface(kind: "stone" | "wood" | "roof" | "ground" | "gravel") {
         ctx.stroke();
       }
     }
-  for (let i = 0; i < 22000; i++) {
-    ctx.fillStyle = i % 2 ? "#f6edc316" : "#18201c13";
+  for (let i = 0; i < 5500; i++) {
+    ctx.fillStyle = i % 2 ? paint("grain-light") : paint("grain-shadow");
     const size = kind === "gravel" ? 1 + r() * 5 : 1 + r() * 2;
     ctx.fillRect(r() * 512, r() * 512, size, size);
   }
@@ -305,22 +345,51 @@ function building(
     box(g, [0.16, 2.85, 0.16], [xx, 1.6, d / 2 + 2.22], materials.darkwood);
   return g;
 }
-export function createFarm(ponds: Pond[]): FarmObjects {
+function roundedRectangle(w: number, d: number, r: number) {
+  const s = new T.Shape(),
+    x = -w / 2,
+    y = -d / 2;
+  s.moveTo(x + r, y);
+  s.lineTo(x + w - r, y);
+  s.quadraticCurveTo(x + w, y, x + w, y + r);
+  s.lineTo(x + w, y + d - r);
+  s.quadraticCurveTo(x + w, y + d, x + w - r, y + d);
+  s.lineTo(x + r, y + d);
+  s.quadraticCurveTo(x, y + d, x, y + d - r);
+  s.lineTo(x, y + r);
+  s.quadraticCurveTo(x, y, x + r, y);
+  s.closePath();
+  return s;
+}
+export function createFarm(initial: FarmState): FarmObjects {
   const root = new T.Group();
   const targets: T.Mesh[] = [],
     fish: FishInstance[] = [],
-    waters: T.Mesh<T.PlaneGeometry, T.MeshPhysicalMaterial>[] = [];
+    waters: WaterMesh[] = [];
   const r = seeded(139);
   const stone = surface("stone"),
     wood = surface("wood"),
     slate = surface("roof"),
     ground = surface("ground"),
     gravel = surface("gravel");
+  for (const texture of [stone, wood, slate, ground, gravel])
+    texture.userData.shared = true;
   stone.repeat.set(2, 1);
   slate.repeat.set(2, 2);
   ground.repeat.set(28, 28);
   gravel.repeat.set(10, 2);
   const materials = {
+    soil: new T.MeshStandardMaterial({ color: paint("soil"), roughness: 1 }),
+    reed: new T.MeshStandardMaterial({ color: paint("reed"), roughness: 1 }),
+    leaf: new T.MeshStandardMaterial({
+      color: paint("leaf"),
+      side: T.DoubleSide,
+      roughness: 1,
+    }),
+    machine: new T.MeshStandardMaterial({
+      color: paint("machine"),
+      roughness: 0.75,
+    }),
     stone: new T.MeshStandardMaterial({ map: stone, roughness: 0.92 }),
     wood: new T.MeshStandardMaterial({ map: wood, roughness: 0.82 }),
     roof: new T.MeshStandardMaterial({
@@ -329,17 +398,26 @@ export function createFarm(ponds: Pond[]): FarmObjects {
       metalness: 0.08,
       side: T.DoubleSide,
     }),
-    concrete: new T.MeshStandardMaterial({ color: "#b5b6a3", roughness: 0.96 }),
-    darkwood: new T.MeshStandardMaterial({ color: "#594b35", roughness: 0.87 }),
-    trim: new T.MeshStandardMaterial({ color: "#ddd5bd", roughness: 0.86 }),
-    greenwood: new T.MeshStandardMaterial({ color: "#476052", roughness: 0.8 }),
+    concrete: new T.MeshStandardMaterial({
+      color: paint("concrete"),
+      roughness: 0.96,
+    }),
+    darkwood: new T.MeshStandardMaterial({
+      color: paint("timber"),
+      roughness: 0.87,
+    }),
+    trim: new T.MeshStandardMaterial({ color: paint("trim"), roughness: 0.86 }),
+    greenwood: new T.MeshStandardMaterial({
+      color: paint("shutter"),
+      roughness: 0.8,
+    }),
     glass: new T.MeshStandardMaterial({
-      color: "#9db2ae",
+      color: paint("glass"),
       metalness: 0.55,
       roughness: 0.16,
     }),
     metal: new T.MeshStandardMaterial({
-      color: "#8c9590",
+      color: paint("metal"),
       metalness: 0.75,
       roughness: 0.35,
     }),
@@ -357,14 +435,14 @@ export function createFarm(ponds: Pond[]): FarmObjects {
   box(root, [50, 0.08, 4], [0, -0.035, 5.5], roadMat);
   box(root, [43, 0.08, 4], [0, -0.035, -8], roadMat);
   building(root, -10, -17, 9, 6, 0, materials);
-  building(root, 10, -16, 10, 7, 0, materials, true);
+
   // Water intake channel and headworks; stream is a real separate source in the scene.
   box(root, [64, 0.16, 2.4], [0, -0.01, -27], materials.concrete);
   const normal = waterNormal();
   const stream = new T.Mesh(
     new T.PlaneGeometry(65, 2.05),
     new T.MeshPhysicalMaterial({
-      color: "#658f86",
+      color: paint("stream"),
       roughness: 0.17,
       metalness: 0.28,
       normalMap: normal,
@@ -376,174 +454,341 @@ export function createFarm(ponds: Pond[]): FarmObjects {
   root.add(stream);
   for (const sign of [-1, 1])
     box(root, [65, 0.2, 0.25], [0, 0.1, -27 + sign * 1.2], materials.stone);
-  for (const p of ponds) {
-    const [x, z] = POND_POSITIONS[p.id - 1];
-    const earth = p.facility === "earth";
-    const w = earth ? 13 : 12,
-      d = earth ? 8 : 5.8;
-    if (!p.built) {
+  type PondGroup = {
+    group: T.Group;
+    key: string;
+    targets: T.Mesh[];
+    fish: FishInstance[];
+    waters: WaterMesh[];
+    progress?: T.Mesh;
+  };
+  const pondGroups = new Map<number, PondGroup>();
+  const assetGroups = new Map<
+    Asset,
+    { group: T.Group; key: string; progress?: T.Mesh; stock?: T.Group }
+  >();
+  const sharedMaterials = new Set<T.Material>(Object.values(materials));
+  normal.userData.shared = true;
+  function progressMarker(
+    parent: T.Group,
+    x: number,
+    z: number,
+    width: number,
+  ) {
+    box(parent, [width, 0.65, 0.12], [x, 1.8, z], materials.darkwood);
+    const fill = box(
+      parent,
+      [width - 0.12, 0.22, 0.14],
+      [x, 1.8, z + 0.01],
+      materials.trim,
+    );
+    box(parent, [0.12, 1.7, 0.12], [x, 0.9, z], materials.wood);
+    return fill;
+  }
+  function earthworks(
+    parent: T.Group,
+    x: number,
+    z: number,
+    w: number,
+    d: number,
+  ) {
+    box(parent, [w, 0.12, d], [x, 0.03, z], materials.soil);
+    const foundation = box(
+      parent,
+      [w - 0.5, 0.18, d - 0.5],
+      [x, 0.16, z],
+      materials.concrete,
+    );
+    foundation.name = "foundation";
+    for (let i = 0; i < 6; i++)
       box(
-        root,
-        [w, 0.045, d],
-        [x, 0, z],
-        new T.MeshStandardMaterial({
-          color: p.constructionDays ? "#b6a083" : "#7f8b59",
-          roughness: 1,
-        }),
+        parent,
+        [0.8, 0.3, 1.2],
+        [x - 2 + (i % 3), 0.36 + Math.floor(i / 3) * 0.3, z + d / 2 + 0.9],
+        materials.trim,
       );
+    const machine = new T.Group();
+    machine.position.set(x + w / 2 - 1.3, 0.2, z + d / 2 - 1.1);
+    parent.add(machine);
+    box(machine, [1.5, 0.4, 1.9], [0, 0.2, 0], materials.darkwood);
+    box(machine, [1.1, 0.65, 1.15], [0, 0.7, 0], materials.machine);
+    box(machine, [0.85, 0.8, 0.75], [0, 1.35, -0.12], materials.glass);
+    const boom = new T.Group();
+    boom.name = "excavator";
+    machine.add(boom);
+    pipe(
+      boom,
+      new T.Vector3(0.25, 0.8, 0.2),
+      new T.Vector3(0.25, 2.4, 1.15),
+      0.12,
+      materials.machine,
+    );
+    pipe(
+      boom,
+      new T.Vector3(0.25, 2.4, 1.15),
+      new T.Vector3(0.25, 0.5, 2.4),
+      0.1,
+      materials.machine,
+    );
+    box(boom, [0.75, 0.35, 0.55], [0.25, 0.35, 2.5], materials.metal);
+    return progressMarker(parent, x, z + d / 2 + 0.7, 2.8);
+  }
+  function makePond(p: Pond): PondGroup {
+    const group = new T.Group();
+    group.name = `pond-${p.id}`;
+    root.add(group);
+    const entry: PondGroup = {
+      group,
+      key: pondStructure(p),
+      targets: [],
+      fish: [],
+      waters: [],
+    };
+    const [x, z] = POND_POSITIONS[p.id - 1],
+      [w, d] = pondSize(p),
+      earth = p.facility === "earth";
+    if (!p.built) {
       for (const xx of [-w / 2, w / 2])
         for (const zz of [-d / 2, d / 2]) {
-          box(root, [0.12, 0.95, 0.12], [x + xx, 0.47, z + zz], materials.wood);
-        }
-      if (p.constructionDays) {
-        for (let i = 0; i < 8; i++)
+          box(group, [0.1, 1, 0.1], [x + xx, 0.5, z + zz], materials.wood);
           box(
-            root,
-            [0.7, 0.3, 1.2],
-            [x - 3 + (i % 4) * 1.0, 0.2 + Math.floor(i / 4) * 0.3, z],
+            group,
+            [0.35, 0.22, 0.025],
+            [x + xx + 0.17, 0.87, z + zz],
+            materials.machine,
+          );
+        }
+      for (const zz of [-d / 2, d / 2])
+        pipe(
+          group,
+          new T.Vector3(x - w / 2, 0.63, z + zz),
+          new T.Vector3(x + w / 2, 0.63, z + zz),
+          0.018,
+          materials.trim,
+        );
+      for (const xx of [-w / 2, w / 2])
+        pipe(
+          group,
+          new T.Vector3(x + xx, 0.63, z - d / 2),
+          new T.Vector3(x + xx, 0.63, z + d / 2),
+          0.018,
+          materials.trim,
+        );
+      if (p.constructionDays) entry.progress = earthworks(group, x, z, w, d);
+      else
+        for (let i = 0; i < 18; i++) {
+          const tuft = new T.Mesh(
+            new T.ConeGeometry(0.15, 0.6, 4),
+            materials.reed,
+          );
+          tuft.position.set(
+            x + (r() - 0.5) * (w - 1),
+            0.3,
+            z + (r() - 0.5) * (d - 1),
+          );
+          group.add(tuft);
+        }
+    } else {
+      if (earth) {
+        const bankShape = roundedRectangle(w + 1.8, d + 1.8, 1.8);
+        bankShape.holes.push(roundedRectangle(w - 0.3, d - 0.3, 1.1));
+        const bank = new T.Mesh(
+          new T.ExtrudeGeometry(bankShape, {
+            depth: 0.65,
+            bevelEnabled: true,
+            bevelSegments: 2,
+            steps: 1,
+            bevelSize: 0.32,
+            bevelThickness: 0.2,
+            curveSegments: 6,
+          }),
+          materials.soil,
+        );
+        bank.rotation.x = -Math.PI / 2;
+        bank.position.set(x, 0.15, z);
+        bank.receiveShadow = true;
+        bank.castShadow = true;
+        group.add(bank);
+        for (let i = 0; i < 26; i++) {
+          const side = i % 2 ? -1 : 1,
+            xx = x + (r() - 0.5) * (w - 2),
+            zz = z + side * (d / 2 + 0.25);
+          for (let j = 0; j < 3; j++)
+            pipe(
+              group,
+              new T.Vector3(xx + j * 0.06, 0.25, zz),
+              new T.Vector3(xx + 0.1 + j * 0.08, 1 + r() * 0.7, zz + 0.1),
+              0.027,
+              materials.reed,
+            );
+        }
+        for (let i = 0; i < 7; i++) {
+          const pad = new T.Mesh(
+            new T.CircleGeometry(0.18 + r() * 0.12, 12, 0, Math.PI * 1.85),
+            materials.leaf,
+          );
+          pad.rotation.x = -Math.PI / 2;
+          pad.position.set(
+            x - w / 2 + 1 + r(),
+            0.695,
+            z + (r() - 0.5) * (d - 2),
+          );
+          group.add(pad);
+        }
+      } else {
+        box(group, [w + 0.5, 0.32, d + 0.5], [x, 0.06, z], materials.concrete);
+        for (const zz of [-d / 2, d / 2]) {
+          box(
+            group,
+            [w + 0.5, 0.8, 0.3],
+            [x, 0.44, z + zz],
             materials.concrete,
           );
+          box(group, [w + 0.6, 0.1, 0.43], [x, 0.89, z + zz], materials.trim);
+        }
+        for (const xx of [-w / 2, w / 2]) {
+          box(group, [0.3, 0.8, d], [x + xx, 0.44, z], materials.concrete);
+          box(group, [0.43, 0.1, d + 0.35], [x + xx, 0.89, z], materials.trim);
+        }
       }
-    } else {
-      const shell = new T.Group();
-      shell.position.set(x, 0, z);
-      root.add(shell);
-      const basinMat = earth
-        ? new T.MeshStandardMaterial({ color: "#726d45", roughness: 1 })
-        : materials.concrete;
-      box(shell, [w + 0.5, 0.35, d + 0.5], [0, 0.06, 0], basinMat);
-      // Above-ground rim: 0.8 m wall, interior water at 0.64 m.
-      for (const zz of [-d / 2, d / 2]) {
-        box(shell, [w + 0.5, 0.8, 0.3], [0, 0.44, zz], basinMat);
-        box(
-          shell,
-          [w + 0.7, 0.1, 0.48],
-          [0, 0.89, zz],
-          earth ? materials.wood : materials.trim,
-        );
-      }
-      for (const xx of [-w / 2, w / 2]) {
-        box(shell, [0.3, 0.8, d], [xx, 0.44, 0], basinMat);
-        box(
-          shell,
-          [0.48, 0.1, d + 0.35],
-          [xx, 0.89, 0],
-          earth ? materials.wood : materials.trim,
-        );
-      }
-      const waterMat = new T.MeshPhysicalMaterial({
-        color: earth ? "#596f43" : "#387775",
-        transparent: true,
-        opacity: earth ? 0.92 : 0.62,
-        roughness: 0.18,
-        metalness: 0.16,
-        normalMap: normal,
-        normalScale: new T.Vector2(0.14, 0.12),
-        envMapIntensity: 1.5,
-        side: T.DoubleSide,
-        depthWrite: false,
-      });
+      const geometry = earth
+        ? new T.ShapeGeometry(roundedRectangle(w - 0.3, d - 0.3, 1.1), 10)
+        : new T.PlaneGeometry(w - 0.3, d - 0.3, 8, 5);
       const water = new T.Mesh(
-        new T.PlaneGeometry(w - 0.3, d - 0.3, 10, 7),
-        waterMat,
+        geometry,
+        new T.MeshPhysicalMaterial({
+          color: paint(earth ? "water-earth" : "water-source"),
+          transparent: true,
+          opacity: earth ? 0.92 : 0.64,
+          roughness: 0.32,
+          metalness: 0.08,
+          normalMap: normal,
+          normalScale: new T.Vector2(0.12, 0.1),
+          side: T.DoubleSide,
+          depthWrite: false,
+        }),
       );
       water.rotation.x = -Math.PI / 2;
       water.position.set(x, 0.67, z);
       water.userData.pondId = p.id;
-      root.add(water);
-      waters.push(water);
-      // Timber access platform, guard rails and sluice boards.
-      box(root, [2.2, 0.12, d + 1.9], [x + w / 2 + 1, 0.5, z], materials.wood);
-      for (let k = 0; k < 4; k++) {
+      group.add(water);
+      entry.waters.push(water);
+      box(
+        group,
+        [1.35, 0.13, d + 1.4],
+        [x + w / 2 + 0.85, 0.5, z],
+        materials.wood,
+      );
+      for (const zz of [-d / 2, d / 2])
         box(
-          root,
-          [0.1, 1.15, 0.1],
-          [x + w / 2 + 1.9, 1, z - d / 2 + k * (d / 3)],
+          group,
+          [0.09, 1.1, 0.09],
+          [x + w / 2 + 1.4, 1, z + zz],
           materials.darkwood,
         );
-      }
       box(
-        root,
-        [0.08, 0.08, d + 1],
-        [x + w / 2 + 1.9, 1.53, z],
+        group,
+        [0.08, 0.08, d],
+        [x + w / 2 + 1.4, 1.5, z],
         materials.darkwood,
       );
-      box(
-        root,
-        [1, 0.75, 0.15],
-        [x + w / 2 - 0.25, 0.57, z],
-        materials.greenwood,
-      );
       pipe(
-        root,
-        new T.Vector3(x - w / 2 - 1, 0.3, z - 1),
-        new T.Vector3(x - w / 2 - 1, 1.2, z - 1),
-        0.15,
+        group,
+        new T.Vector3(x - w / 2 - 0.5, 0.1, z - 1),
+        new T.Vector3(x - w / 2 - 0.5, 1.3, z - 1),
+        0.13,
         materials.metal,
       );
       pipe(
-        root,
-        new T.Vector3(x - w / 2 - 1, 1.2, z - 1),
-        new T.Vector3(x - w / 2 + 0.5, 1.2, z - 1),
-        0.15,
+        group,
+        new T.Vector3(x - w / 2 - 0.5, 1.3, z - 1),
+        new T.Vector3(x - w / 2 + 0.6, 1.3, z - 1),
+        0.13,
         materials.metal,
       );
-      // Thin falling inlet ribbon, intentionally distinct from the pond surface.
-      const fall = new T.Mesh(
-        new T.PlaneGeometry(0.22, 0.56),
-        new T.MeshPhysicalMaterial({
-          color: "#b8e0d9",
-          transparent: true,
-          opacity: 0.55,
-          roughness: 0.2,
-          side: T.DoubleSide,
-        }),
-      );
-      fall.position.set(x - w / 2 + 0.5, 0.91, z - 1);
-      root.add(fall);
+      for (const [fx, fz, height, cy] of [
+        [x - w / 2 + 0.6, z - 1, 0.62, 0.98],
+        [x + w / 2 + 0.3, z + 1, 0.5, 0.42],
+      ]) {
+        const fall = new T.Mesh(
+          new T.PlaneGeometry(0.3, height),
+          new T.MeshBasicMaterial({
+            color: paint("water-foam"),
+            transparent: true,
+            opacity: 0.55,
+            side: T.DoubleSide,
+          }),
+        );
+        fall.position.set(fx, cy, fz);
+        group.add(fall);
+      }
+      if (!earth)
+        for (let i = 0; i < 7; i++) {
+          const foam = new T.Mesh(
+            new T.PlaneGeometry(0.2 + r() * 0.35, 0.055),
+            new T.MeshBasicMaterial({
+              color: paint("water-foam"),
+              transparent: true,
+              opacity: 0.42,
+              depthWrite: false,
+            }),
+          );
+          foam.rotation.x = -Math.PI / 2;
+          foam.position.set(
+            x - w / 2 + 0.55 + r(),
+            0.69,
+            z - 1 + (r() - 0.5) * 0.8,
+          );
+          group.add(foam);
+        }
       if (p.upgrade >= 1) {
         box(
-          root,
+          group,
           [0.8, 0.5, 0.8],
-          [x + w / 2 + 1, 0.78, z - d / 2 + 0.5],
+          [x + w / 2 + 0.8, 0.82, z - d / 2 + 0.5],
           materials.greenwood,
         );
         for (let j = 0; j < 3; j++) {
           const ring = new T.Mesh(
-            new T.TorusGeometry(0.3 + j * 0.13, 0.012, 4, 30),
+            new T.TorusGeometry(0.3 + j * 0.13, 0.012, 4, 24),
             new T.MeshBasicMaterial({
-              color: "#d6e5d9",
+              color: paint("water-foam"),
               transparent: true,
               opacity: 0.45 - j * 0.1,
             }),
           );
           ring.rotation.x = Math.PI / 2;
           ring.position.set(x + w / 2 - 1, 0.69, z);
-          root.add(ring);
+          group.add(ring);
         }
       }
-      if (p.upgrade >= 2) {
-        const filter = new T.Mesh(
-          new T.CylinderGeometry(0.6, 0.6, 1.3, 20),
-          materials.greenwood,
-        );
-        filter.position.set(x - w / 2 - 1, 0.8, z + 1.4);
-        filter.castShadow = true;
-        root.add(filter);
-        pipe(
-          root,
-          new T.Vector3(x - w / 2 - 1, 1.3, z + 1.4),
-          new T.Vector3(x - w / 2 + 0.4, 1.3, z + 1.4),
-          0.09,
-          materials.metal,
-        );
-      }
+      if (p.upgrade >= 2 || p.facility === "ras")
+        for (let i = 0; i < (p.facility === "ras" ? 2 : 1); i++) {
+          const filter = new T.Mesh(
+            new T.CylinderGeometry(0.6, 0.6, 1.3, 16),
+            materials.greenwood,
+          );
+          filter.position.set(x - w / 2 - 0.9, 0.8, z + 0.8 + i * 1.6);
+          filter.castShadow = true;
+          group.add(filter);
+          pipe(
+            group,
+            new T.Vector3(x - w / 2 - 0.9, 1.3, z + 0.8 + i * 1.6),
+            new T.Vector3(x - w / 2 + 0.4, 1.3, z + 0.8 + i * 1.6),
+            0.09,
+            materials.metal,
+          );
+          const lid = new T.Mesh(
+            new T.CylinderGeometry(0.62, 0.62, 0.08, 16),
+            materials.trim,
+          );
+          lid.position.copy(filter.position).y = 1.49;
+          group.add(lid);
+        }
       if (p.facility === "ras") {
-        // Clear greenhouse roof, with access left visible from the front.
         const glass = new T.MeshPhysicalMaterial({
-          color: "#d5e8db",
-          roughness: 0.06,
-          metalness: 0.08,
+          color: paint("glass"),
+          roughness: 0.2,
           transparent: true,
           opacity: 0.13,
           side: T.DoubleSide,
@@ -551,57 +796,40 @@ export function createFarm(ponds: Pond[]): FarmObjects {
         });
         for (let j = 0; j < 5; j++) {
           const zz = z - d / 2 - 1 + (j * (d + 2)) / 4;
-          pipe(
-            root,
-            new T.Vector3(x - w / 2 - 0.5, 0, zz),
-            new T.Vector3(x - w / 2 - 0.5, 3.2, zz),
-            0.045,
-            materials.metal,
-          );
-          pipe(
-            root,
-            new T.Vector3(x + w / 2 + 0.5, 0, zz),
-            new T.Vector3(x + w / 2 + 0.5, 3.2, zz),
-            0.045,
-            materials.metal,
-          );
-          pipe(
-            root,
-            new T.Vector3(x - w / 2 - 0.5, 3.2, zz),
-            new T.Vector3(x, 4.6, zz),
-            0.045,
-            materials.metal,
-          );
-          pipe(
-            root,
-            new T.Vector3(x + w / 2 + 0.5, 3.2, zz),
-            new T.Vector3(x, 4.6, zz),
-            0.045,
-            materials.metal,
-          );
+          for (const sign of [-1, 1]) {
+            pipe(
+              group,
+              new T.Vector3(x + sign * (w / 2 + 0.5), 0, zz),
+              new T.Vector3(x + sign * (w / 2 + 0.5), 3.2, zz),
+              0.045,
+              materials.metal,
+            );
+            pipe(
+              group,
+              new T.Vector3(x + sign * (w / 2 + 0.5), 3.2, zz),
+              new T.Vector3(x, 4.6, zz),
+              0.045,
+              materials.metal,
+            );
+          }
         }
         const greenhouse = new T.Group();
         greenhouse.position.set(x, 0, z);
-        root.add(greenhouse);
+        group.add(greenhouse);
         roof(greenhouse, w + 1, d + 2, 1.4, 3.2, glass);
       }
       if (p.count && p.species)
-        for (let i = 0; i < 8; i++) {
-          const f = createFish(p.species, false);
-          const scale = 0.17 + p.weight ** (1 / 3) * 0.14;
-          f.scale.setScalar(scale);
-          f.position.set(
-            x + (r() - 0.5) * (w - 3),
-            0.42,
-            z + (r() - 0.5) * (d - 1.2),
-          );
-          root.add(f);
-          fish.push({
-            mesh: f,
+        for (let i = 0; i < Math.min(8, p.count); i++) {
+          const mesh = createFish(p.species, false),
+            scale = 0.17 + p.weight ** (1 / 3) * 0.14;
+          mesh.scale.setScalar(scale);
+          group.add(mesh);
+          entry.fish.push({
+            mesh,
             pondId: p.id,
             swimmer: createSwimmer(i + p.id * 13, p.species, {
-              halfWidth: p.facility === "earth" ? 5.1 : 4.8,
-              halfDepth: p.facility === "earth" ? 2.9 : 1.75,
+              halfWidth: earth ? 5.1 : 4.8,
+              halfDepth: earth ? 2.9 : 1.75,
             }),
             scale,
           });
@@ -613,48 +841,160 @@ export function createFarm(ponds: Pond[]): FarmObjects {
     );
     hit.position.set(x, 1, z);
     hit.userData.pondId = p.id;
-    root.add(hit);
-    targets.push(hit);
+    group.add(hit);
+    entry.targets.push(hit);
+    return entry;
   }
-  // Service yard: feed silo, clean storage and stone boundary.
-  const silo = new T.Group();
-  silo.position.set(18, 0, -15);
-  root.add(silo);
-  const metalWhite = new T.MeshStandardMaterial({
-    color: "#d1d1bd",
-    metalness: 0.3,
-    roughness: 0.5,
-  });
-  const siloBody = new T.Mesh(
-    new T.CylinderGeometry(1.05, 1.05, 3, 20),
-    metalWhite,
-  );
-  siloBody.position.y = 3.1;
-  siloBody.castShadow = true;
-  silo.add(siloBody);
-  const cone = new T.Mesh(new T.ConeGeometry(1.1, 1, 20), materials.roof);
-  cone.position.y = 5.1;
-  silo.add(cone);
-  for (const [xx, zz] of [
-    [-0.7, -0.7],
-    [0.7, -0.7],
-    [-0.7, 0.7],
-    [0.7, 0.7],
-  ])
-    box(silo, [0.1, 2, 0.1], [xx, 1, zz], materials.metal);
-  for (let i = 0; i < 10; i++) {
-    box(
-      root,
-      [1.1, 0.32, 0.65],
-      [6 + (i % 5) * 1.2, 0.38 + Math.floor(i / 5) * 0.34, -10.6],
-      new T.MeshStandardMaterial({
-        color: i % 3 ? "#b9ac89" : "#9b9e7c",
-        roughness: 0.9,
-      }),
+  const assetPositions: Record<Asset, [number, number]> = {
+    warehouse: [9, -16],
+    coldstore: [22, -16],
+    workshop: [-23, -16],
+  };
+  function makeAsset(game: FarmState, id: Asset) {
+    const state = assetState(game, id),
+      group = new T.Group();
+    group.name = id;
+    root.add(group);
+    const entry: {
+        group: T.Group;
+        key: string;
+        progress?: T.Mesh;
+        stock?: T.Group;
+      } = { group, key: `${state.built}:${state.working}` },
+      [x, z] = assetPositions[id];
+    if (state.working) {
+      entry.progress = earthworks(group, x, z, 8, 6);
+      for (const sign of [-1, 1])
+        for (let i = 0; i < 3; i++)
+          pipe(
+            group,
+            new T.Vector3(x - 4 + i * 4, 0, z + sign * 3.2),
+            new T.Vector3(x - 4 + i * 4, 3, z + sign * 3.2),
+            0.055,
+            materials.metal,
+          );
+    }
+    if (state.built) {
+      building(group, x, z, 8, 6, 0, materials, id !== "coldstore");
+      if (id === "warehouse") {
+        const silo = new T.Mesh(
+          new T.CylinderGeometry(0.85, 0.85, 3, 16),
+          materials.metal,
+        );
+        silo.position.set(x + 5.5, 2.5, z);
+        silo.castShadow = true;
+        group.add(silo);
+        const top = new T.Mesh(
+          new T.ConeGeometry(0.89, 0.8, 16),
+          materials.roof,
+        );
+        top.position.set(x + 5.5, 4.4, z);
+        group.add(top);
+        for (const sx of [-0.5, 0.5])
+          for (const sz of [-0.5, 0.5])
+            box(
+              group,
+              [0.1, 1.3, 0.1],
+              [x + 5.5 + sx, 0.65, z + sz],
+              materials.metal,
+            );
+        const stock = new T.Group();
+        entry.stock = stock;
+        group.add(stock);
+        for (let i = 0; i < 10; i++)
+          box(
+            stock,
+            [0.9, 0.33, 0.6],
+            [x - 2 + (i % 5), 0.4 + Math.floor(i / 5) * 0.34, z + 3.8],
+            materials.trim,
+          );
+      }
+      if (id === "coldstore") {
+        box(group, [1.5, 1.4, 0.7], [x + 2, 1.8, z + 3.45], materials.trim);
+        for (const sx of [-0.38, 0.38]) {
+          const fan = new T.Mesh(
+            new T.TorusGeometry(0.28, 0.035, 6, 16),
+            materials.metal,
+          );
+          fan.position.set(x + 2 + sx, 1.8, z + 3.82);
+          group.add(fan);
+          for (let j = 0; j < 3; j++) {
+            const blade = box(
+              group,
+              [0.48, 0.06, 0.03],
+              [x + 2 + sx, 1.8, z + 3.85],
+              materials.metal,
+            );
+            blade.rotation.z = (j * Math.PI) / 3;
+          }
+        }
+      }
+      if (id === "workshop")
+        box(group, [3, 0.65, 0.12], [x, 3.3, z + 3.08], materials.machine);
+    }
+    return entry;
+  }
+  function update(game: FarmState) {
+    for (const p of game.ponds) {
+      let entry = pondGroups.get(p.id);
+      if (!entry || entry.key !== pondStructure(p)) {
+        const previous = entry?.fish.map((f) => f.swimmer);
+        if (entry) {
+          root.remove(entry.group);
+          disposeObject(entry.group, sharedMaterials);
+        }
+        entry = makePond(p);
+        pondGroups.set(p.id, entry);
+        entry.fish.forEach((f, i) => {
+          if (previous?.[i]?.species === f.swimmer.species)
+            f.swimmer = previous[i];
+        });
+      }
+      const progress = pondProgress(p);
+      entry.group.userData.progress = progress;
+      if (entry.progress) entry.progress.scale.x = Math.max(0.01, progress);
+      const foundation = entry.group.getObjectByName("foundation");
+      if (foundation) foundation.scale.x = Math.max(0.02, progress);
+    }
+    for (const id of assetIds) {
+      const state = assetState(game, id),
+        key = `${state.built}:${state.working}`;
+      let entry = assetGroups.get(id);
+      if (!entry || entry.key !== key) {
+        if (entry) {
+          root.remove(entry.group);
+          disposeObject(entry.group, sharedMaterials);
+        }
+        entry = makeAsset(game, id);
+        assetGroups.set(id, entry);
+      }
+      entry.group.userData.progress = state.progress;
+      if (entry.progress)
+        entry.progress.scale.x = Math.max(0.01, state.progress);
+      if (entry.stock)
+        entry.stock.children.forEach((child, i) => {
+          child.visible = game.food > i * 50;
+        });
+    }
+    targets.splice(
+      0,
+      targets.length,
+      ...[...pondGroups.values()].flatMap((e) => e.targets),
+    );
+    fish.splice(
+      0,
+      fish.length,
+      ...[...pondGroups.values()].flatMap((e) => e.fish),
+    );
+    waters.splice(
+      0,
+      waters.length,
+      ...[...pondGroups.values()].flatMap((e) => e.waters),
     );
   }
+  update(initial);
   // Instanced trees keep draw calls bounded while retaining canopy variation.
-  const leafGeometry = new T.SphereGeometry(1, 24, 18);
+  const leafGeometry = new T.IcosahedronGeometry(1, 2);
   const leafPos = leafGeometry.getAttribute("position");
   for (let i = 0; i < leafPos.count; i++) {
     const x = leafPos.getX(i),
@@ -667,7 +1007,10 @@ export function createFarm(ponds: Pond[]): FarmObjects {
   leafGeometry.computeVertexNormals();
   const leaves = new T.InstancedMesh(
     leafGeometry,
-    new T.MeshStandardMaterial({ roughness: 1, color: "#415a31" }),
+    new T.MeshStandardMaterial({
+      roughness: 1,
+      color: paint("fish-highlight"),
+    }),
     280,
   );
   const trunks = new T.InstancedMesh(
@@ -708,11 +1051,7 @@ export function createFarm(ponds: Pond[]): FarmObjects {
       leaves.setMatrixAt(i * 5 + j, dummy.matrix);
       leaves.setColorAt(
         i * 5 + j,
-        new T.Color().setHSL(
-          0.22 + r() * 0.035,
-          0.2 + r() * 0.14,
-          0.28 + r() * 0.13,
-        ),
+        new T.Color(paint("leaf")).multiplyScalar(0.85 + r() * 0.3),
       );
     }
   }
@@ -732,7 +1071,7 @@ export function createFarm(ponds: Pond[]): FarmObjects {
   const grass = new T.InstancedMesh(
     grassGeo,
     new T.MeshStandardMaterial({
-      color: "#7c8b51",
+      color: paint("meadow"),
       side: T.DoubleSide,
       roughness: 1,
     }),
@@ -751,11 +1090,7 @@ export function createFarm(ponds: Pond[]): FarmObjects {
     grass.setMatrixAt(i, dummy.matrix);
     grass.setColorAt(
       i,
-      new T.Color().setHSL(
-        0.19 + r() * 0.05,
-        0.2 + r() * 0.2,
-        0.34 + r() * 0.12,
-      ),
+      new T.Color(paint("reed")).multiplyScalar(0.85 + r() * 0.3),
     );
   }
   root.add(grass);
@@ -778,7 +1113,7 @@ export function createFarm(ponds: Pond[]): FarmObjects {
   const selection = new T.Mesh(
     new T.RingGeometry(1, 1.025, 96),
     new T.MeshBasicMaterial({
-      color: "#ece5bf",
+      color: paint("selection"),
       transparent: true,
       opacity: 0.95,
       side: T.DoubleSide,
@@ -789,20 +1124,42 @@ export function createFarm(ponds: Pond[]): FarmObjects {
   selection.scale.set(7.8, 4.8, 1);
   selection.position.y = 1.03;
   root.add(selection);
-  return { root, targets, fish, waters, selection, normal };
+  return {
+    root,
+    targets,
+    fish,
+    waters,
+    selection,
+    normal,
+    update,
+    ponds: pondGroups,
+    assets: assetGroups,
+    dispose() {
+      disposeObject(root, sharedMaterials);
+      normal.dispose();
+      for (const m of sharedMaterials) m.dispose();
+      for (const texture of [stone, wood, slate, ground, gravel])
+        texture.dispose();
+    },
+  };
 }
-export function disposeObject(root: T.Object3D) {
+export function disposeObject(
+  root: T.Object3D,
+  preserved = new Set<T.Material>(),
+) {
   const geometries = new Set<T.BufferGeometry>(),
     materials = new Set<T.Material>(),
     textures = new Set<T.Texture>();
   root.traverse((o) => {
     if (o instanceof T.Mesh || o instanceof T.Line) {
       if (o.geometry) geometries.add(o.geometry);
+      if (o instanceof T.InstancedMesh) o.dispose();
       for (const m of Array.isArray(o.material) ? o.material : [o.material])
         materials.add(m);
     }
   });
   for (const m of materials) {
+    if (preserved.has(m)) continue;
     for (const value of Object.values(m))
       if (value instanceof T.Texture) textures.add(value);
     m.dispose();

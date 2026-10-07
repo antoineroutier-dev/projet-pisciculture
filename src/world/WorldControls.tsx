@@ -3,7 +3,7 @@ import { IconButton } from "../ui/Primitives";
 import { useState } from "react";
 import { RotateCcw, Maximize2, Eye } from "lucide-react";
 import { SPECIES, type SpeciesId } from "../game";
-import { FishArt } from "../FishArt";
+import {SpeciesPortrait} from "./SpeciesPortrait";
 import type { SceneMode } from "./types";
 
 export function WorldControls({
@@ -113,7 +113,7 @@ export function FishObservation({
       <p>{SPECIES[species].identification}</p>
       <details>
         <summary>Planche d’identification</summary>
-        <FishArt species={species} />
+        <SpeciesPortrait species={species} />
       </details>
     </section>
   );

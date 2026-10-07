@@ -13,7 +13,7 @@ import {
   type Action,
 } from "../game";
 import { BUYERS } from "../development";
-import { FishArt } from "../FishArt";
+import {SpeciesPortrait} from "../world/SpeciesPortrait";
 import { Button } from "../ui/Button";
 import { ScientificHelp } from "../ui/ScientificHelp";
 import { Tooltip } from "../ui/Tooltip";
@@ -195,7 +195,7 @@ export function PondInspector({
                 {status.label}
               </Badge>
             </div>
-            {s && <FishArt species={s.id} />}
+            {s && <SpeciesPortrait species={s.id} />}
           </header>
           {s && (
             <>

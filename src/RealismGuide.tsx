@@ -1,6 +1,6 @@
 import { Card, Tabs } from "./ui/Primitives";
 import { useState } from "react";
-import { FishArt } from "./FishArt";
+import {SpeciesPortrait} from "./world/SpeciesPortrait";
 import { SPECIES, number } from "./game";
 import {
   SCIENCE_TERMS,
@@ -130,7 +130,7 @@ export default function RealismGuide() {
           <div className="guide-articles">
             {Object.values(SPECIES).map((s) => (
               <Card className="guide-species" key={s.id}>
-                <FishArt species={s.id} />
+                <SpeciesPortrait species={s.id} />
                 <h3>{s.name}</h3>
                 <p>
                   {s.id === "trout"

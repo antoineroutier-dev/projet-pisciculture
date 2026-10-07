@@ -69,7 +69,7 @@
   background: var(--surface-muted);
   border-color: var(--primary);
 }
-.species-option > svg.species-photo {
+.species-option > img.species-photo {
   width: 96px;
   height: 56px;
 }
@@ -255,7 +255,7 @@
     padding: 16px;
     max-height: calc(100dvh - 24px);
   }
-  .species-option > svg.species-photo {
+  .species-option > img.species-photo {
     width: 72px;
   }
   .checkout-line {

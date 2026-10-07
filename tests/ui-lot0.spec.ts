@@ -161,9 +161,9 @@ test("lot 0 : portable autonome, polices et portraits hors ligne, budget 15 Mo",
   await page.getByRole("button", { name: "Logistique", exact: true }).click();
   await page.getByRole("tab", { name: "Clients", exact: true }).click();
   await page.getByText("Prix et espèces", { exact: true }).click();
-  await expect(page.locator(".species-photo image").first()).toHaveAttribute(
-    "href",
-    /^data:image\/png;base64,/,
+  await expect(page.locator(".species-photo").first()).toHaveAttribute(
+    "src",
+    /^data:image\/webp;base64,/,
   );
   await page.getByRole("button", { name: "Jour suivant", exact: true }).click();
   await expect(page.getByTestId("day")).toHaveAttribute("data-day", "2");

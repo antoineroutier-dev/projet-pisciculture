@@ -8,9 +8,13 @@ import { stepSchool, swimRotation } from "./swimming";
 import { animateFish, clearFishTextures, createFish } from "./fish3d";
 import { createFarm, disposeObject, POND_POSITIONS } from "./farm3d";
 import { type Pond, type SpeciesId } from "./game";
+import { paint } from "./world/palette";
+import type { FarmState } from "./world/artSelectors";
 import type { SceneMode } from "./world/types";
 export default function FarmScene({
   ponds,
+  development,
+  food,
   selected,
   select,
   day,
@@ -20,6 +24,8 @@ export default function FarmScene({
   reset,
 }: {
   ponds: Pond[];
+  development: FarmState["development"];
+  food: number;
   selected: number;
   select: (id: number) => void;
   day: number;
@@ -32,8 +38,30 @@ export default function FarmScene({
   const [ready, setReady] = useState(false);
   const host = useRef<HTMLDivElement>(null);
   const state = useMemo(
-    () => ({ ponds, selected, select, day, mode, species, clearWater, reset }),
-    [ponds, selected, select, day, mode, species, clearWater, reset],
+    () => ({
+      ponds,
+      development,
+      food,
+      selected,
+      select,
+      day,
+      mode,
+      species,
+      clearWater,
+      reset,
+    }),
+    [
+      ponds,
+      development,
+      food,
+      selected,
+      select,
+      day,
+      mode,
+      species,
+      clearWater,
+      reset,
+    ],
   );
   const latest = useRef(state);
   latest.current = state;
@@ -69,8 +97,8 @@ export default function FarmScene({
     renderer.domElement.dataset.engine = "three-webgl";
     container.appendChild(renderer.domElement);
     const scene = new T.Scene();
-    scene.background = new T.Color("#dbe6dc");
-    scene.fog = new T.Fog("#dbe6dc", 100, 220);
+    scene.background = new T.Color(paint("sky"));
+    scene.fog = new T.Fog(paint("sky"), 100, 220);
     const camera = new T.PerspectiveCamera(40, 1, 0.08, 250);
     camera.position.set(37, 36, 45);
     const stopProjection = registerFeedbackProjector((id) => {
@@ -94,9 +122,13 @@ export default function FarmScene({
     controls.maxDistance = 100;
     controls.maxPolarAngle = Math.PI / 2 - 0.045;
     controls.enablePan = true;
-    const sky = new T.HemisphereLight("#eef4ec", "#736749", 1.05);
+    const sky = new T.HemisphereLight(
+      paint("sky-light"),
+      paint("ground-light"),
+      1.05,
+    );
     scene.add(sky);
-    const sun = new T.DirectionalLight("#fff0ce", 2.5);
+    const sun = new T.DirectionalLight(paint("sun"), 2.5);
     sun.position.set(-30, 50, 25);
     sun.castShadow = true;
     sun.shadow.mapSize.set(
@@ -118,7 +150,7 @@ export default function FarmScene({
     scene.environmentIntensity = 0.45;
     room.dispose();
     pmrem.dispose();
-    let farm = createFarm(latest.current.ponds);
+    const farm = createFarm(latest.current);
     scene.add(farm.root);
     let specimen = createFish("trout", true);
     specimen.scale.setScalar(2.1);
@@ -126,19 +158,7 @@ export default function FarmScene({
     specimen.visible = false;
     scene.add(specimen);
     let pendingFrames = 2;
-    let signature = latest.current.ponds
-        .map((p) =>
-          [
-            p.built,
-            p.species,
-            p.count > 0,
-            p.upgrade,
-            p.facility,
-            p.constructionDays > 0,
-          ].join(":"),
-        )
-        .join("|"),
-      cameraKey = "",
+    let cameraKey = "",
       fishSpecies: SpeciesId = "trout";
     let frame = 0,
       lastRender = 0,
@@ -226,69 +246,83 @@ export default function FarmScene({
         reduced || !lastSwim ? 0 : Math.min(0.1, (ms - lastSwim) * 0.001);
       lastSwim = ms;
       const time = reduced ? 0 : ms * 0.001;
-      const nextSignature = state.ponds
-        .map((p) =>
-          [
-            p.built,
-            p.species,
-            p.count > 0,
-            p.upgrade,
-            p.facility,
-            p.constructionDays > 0,
-          ].join(":"),
-        )
-        .join("|");
-      if (nextSignature !== signature) {
-        const swimmers = new globalThis.Map(
-          state.ponds.map((p) => [
-            p.id,
-            farm.fish.filter((f) => f.pondId === p.id).map((f) => f.swimmer),
-          ]),
-        );
-        scene.remove(farm.root);
-        disposeObject(farm.root);
-        farm = createFarm(state.ponds);
-        for (const p of state.ponds) {
-          farm.fish
-            .filter((f) => f.pondId === p.id)
-            .forEach((f, i) => {
-              const previous = swimmers.get(p.id)?.[i];
-              if (previous?.species === f.swimmer.species) f.swimmer = previous;
-            });
-        }
-        scene.add(farm.root);
-        signature = nextSignature;
-      }
-      const key = `${state.mode}:${state.mode === "pond" ? state.selected : ""}:${state.reset}:${state.mode === "fish" ? camera.aspect : ""}`;
+      if (changed) farm.update(state);
+      renderer.domElement.dataset.farmId = farm.root.uuid;
+      renderer.domElement.dataset.pondGroups = JSON.stringify(
+        [...farm.ponds].map(([id, e]) => ({
+          id,
+          uuid: e.group.uuid,
+          progress: e.group.userData.progress,
+        })),
+      );
+      renderer.domElement.dataset.assetGroups = JSON.stringify(
+        [...farm.assets].map(([id, e]) => ({
+          id,
+          uuid: e.group.uuid,
+          progress: e.group.userData.progress,
+          objects: e.group.children.length,
+        })),
+      );
+      const key = `${state.mode}:${state.mode === "pond" ? state.selected : ""}:${state.reset}:${camera.aspect}`;
       if (key !== cameraKey) {
         controls.maxPolarAngle =
           state.mode === "fish" ? Math.PI - 0.1 : Math.PI / 2 - 0.045;
         controls.minDistance = state.mode === "fish" ? 3.5 : 6;
-        controls.maxDistance = state.mode === "fish" ? 13 : 100;
+        controls.maxDistance =
+          state.mode === "fish" ? 13 : state.mode === "buildings" ? 210 : 100;
         if (state.mode === "farm") {
           camera.position.set(37, 36, 45);
           controls.target.set(0, 0, -2);
         }
         if (state.mode === "buildings") {
-          camera.position.set(-7, 5.2, -3);
-          controls.target.set(-10, 2.1, -17);
+          const distance = Math.max(
+            58,
+            60 /
+              (2 *
+                Math.tan(T.MathUtils.degToRad(camera.fov / 2)) *
+                camera.aspect),
+          );
+          controls.target.set(0, 1.6, -16);
+          camera.position
+            .copy(controls.target)
+            .add(
+              new T.Vector3(0.12, 0.46, 0.88)
+                .normalize()
+                .multiplyScalar(distance),
+            );
         }
         if (state.mode === "pond") {
           const [x, z] = POND_POSITIONS[state.selected - 1];
-          camera.position.set(x + 2.5, 8, z + 11);
           controls.target.set(x, 0.55, z);
+          const distance = Math.max(
+            14,
+            17 /
+              (2 *
+                Math.tan(T.MathUtils.degToRad(camera.fov / 2)) *
+                camera.aspect),
+          );
+          camera.position
+            .copy(controls.target)
+            .add(
+              new T.Vector3(2.5, 7.45, 11).normalize().multiplyScalar(distance),
+            );
         }
         if (state.mode === "fish") {
           const distance = Math.max(
-            7.5,
+            8.8,
             9 /
               (2 *
                 Math.tan(T.MathUtils.degToRad(camera.fov / 2)) *
                 camera.aspect),
           );
-          camera.position.set(-0.1, 2.15, distance);
+          const offset = container.clientWidth < 700 ? 0 : 0.8;
+          camera.position.set(-0.1 + offset, 2.15, distance);
           controls.maxDistance = Math.max(13, distance * 1.8);
-          controls.target.set(0, container.clientWidth < 700 ? 1.2 : 1.7, 0);
+          controls.target.set(
+            offset,
+            container.clientWidth < 700 ? 1.2 : 1.7,
+            0,
+          );
         }
         cameraKey = key;
         controls.update();
@@ -305,7 +339,7 @@ export default function FarmScene({
       farm.root.visible = state.mode !== "fish";
       specimen.visible = state.mode === "fish";
       scene.background = new T.Color(
-        state.mode === "fish" ? "#d9e2da" : "#dbe6dc",
+        state.mode === "fish" ? paint("specimen-background") : paint("sky"),
       );
       const [sx, sz] = POND_POSITIONS[state.selected - 1];
       farm.selection.position.set(sx, 1.035, sz);
@@ -319,10 +353,10 @@ export default function FarmScene({
             : 0.64;
         water.material.color.set(
           p.facility === "earth"
-            ? "#617747"
+            ? paint("water-earth")
             : p.tan > 1
-              ? "#596e4d"
-              : "#397876",
+              ? paint("water-turbid")
+              : paint("water-source"),
         );
       }
       for (const p of state.ponds) {
@@ -351,6 +385,11 @@ export default function FarmScene({
         animateFish(specimen, time * 5.5, 0.55);
       }
       controls.update();
+      // Keep distant scenery hazy without fogging the subject when portrait screens zoom out.
+      if (scene.fog instanceof T.Fog) {
+        scene.fog.near = Math.max(100, camera.position.distanceTo(controls.target) + 35);
+        scene.fog.far = scene.fog.near + 120;
+      }
       renderer.render(scene, camera);
       renderer.domElement.dataset.frame = "rendered";
       renderer.domElement.dataset.view = state.mode;
@@ -383,7 +422,7 @@ export default function FarmScene({
       renderer.domElement.removeEventListener("pointerdown", onDown);
       renderer.domElement.removeEventListener("pointerup", onUp);
       renderer.domElement.removeEventListener("webglcontextlost", contextLost);
-      disposeObject(farm.root);
+      farm.dispose();
       disposeObject(specimen);
       clearFishTextures();
       environment.dispose();

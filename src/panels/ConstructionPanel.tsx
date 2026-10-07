@@ -11,7 +11,7 @@ import {
   type Pond,
 } from "../game";
 import { SOURCE_FLOW, waterUsed } from "../development";
-import { FishArt } from "../FishArt";
+import {SpeciesPortrait} from "../world/SpeciesPortrait";
 import { Button } from "../ui/Button";
 import { ScientificHelp } from "../ui/ScientificHelp";
 import { Badge, Card, CountdownChip } from "../ui/Primitives";
@@ -95,7 +95,7 @@ export function ConstructionCard({
   return (
     <Card className="construction-card" data-testid="construction-card">
       <div className="construction-portrait">
-        <FishArt species={species} />
+        <SpeciesPortrait species={species} />
         <Badge tone={pond.built ? "success" : "neutral"}>
           {pondStatus(pond).label}
         </Badge>

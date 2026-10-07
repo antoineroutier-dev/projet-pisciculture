@@ -10,9 +10,9 @@ Vérification effectuée le **7 octobre 2026**. Les fichiers ci-dessous sont loc
 | Three.js et modules d’environnement/caméra | Three.js Authors | MIT ; [texte fourni](licenses/Three-MIT.txt) | https://threejs.org/ |
 | Modèles des trois poissons, bâtiments, végétation, matériaux et textures Canvas | Créations originales du projet, code de `fish3d.ts` et `farm3d.ts` | Créations du dépôt, aucun modèle ou texture tiers importé | Fichiers sources du dépôt |
 | Carte du domaine, favicon | Créations originales du projet en SVG | Créations du dépôt | `src/FarmMap.tsx`, `public/favicon.svg` |
-| Planche des espèces et vue paysagère | Images originales générées pour les versions précédentes du projet | Images générées, pas de photographie documentaire ni de ressource de banque d’images. Le lot 4 prévoit leur remplacement par des rendus cohérents avec les modèles du jeu. | `public/assets/species-atlas.png`, `public/assets/farm-landscape.png` ; provenance décrite dans le README et le prompt V2 |
+| Portraits des trois espèces (WebP) | Projet Les Étangs, rendus locaux des modèles originaux | Créations originales, aucun modèle, photo ni texture tiers | `src/assets/portraits/`, `scripts/render-portraits.mjs`, 07/10/2026 |
 
-Les masques d’affichage de la planche préservent les proportions ; ils n’ajoutent aucune ressource tierce. React et React DOM sont sous licence MIT ; les notices des dépendances restent dans leurs paquets verrouillés par `package-lock.json`.
+React et React DOM sont sous licence MIT ; les notices des dépendances restent dans leurs paquets verrouillés par `package-lock.json`.
 
 Aucun son ni musique n’est intégré au lot 0. Leur provenance et licence seront ajoutées lors du lot 3. Aucune attribution de licence CC0 n’est présumée pour une ressource trouvée sur Internet.
 
@@ -36,3 +36,5 @@ La synthèse est un choix délibéré pour garder le portable autonome : aucun t
 Lot 3b : illustrations des cartes d’événement (relief, onde et feuilles en SVG/CSS) originales, créées dans le dépôt ; pictogrammes Lucide déjà recensés ci-dessus. Aucune ressource externe supplémentaire. Sources : `src/panels/EventCard.tsx`, `src/hud/time-events.css` (07/10/2026).
 
 Lot 3c : bilans, tableaux et prévision sont des composants originaux du projet, calculés localement depuis les états du moteur. Aucune nouvelle ressource externe, police, texture ou piste sonore.
+
+Lot 4a : portraits WebP (640 × 300) générés localement par `scripts/render-portraits.mjs` / `src/world/portraitScene.ts` à partir des trois modèles originaux de `src/fish3d.ts`. Auteur : projet Les Étangs ; création originale, sans modèle, photo ni texture tiers. Palette commune de diorama dans `src/ui/tokens.css`. Bassins, cuves, végétation de rive, engin de chantier et équipements frigorifiques sont également des maillages originaux procéduraux. Date : 07/10/2026. Les deux anciennes images générées et leurs masques SVG sont retirés du jeu et du portable ; elles subsistent seulement dans l’historique Git.

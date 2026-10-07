@@ -42,7 +42,7 @@ import {
   plural,
 } from "../ui/format";
 import { availability } from "../state/pondSelectors";
-import { FishArt } from "../FishArt";
+import {SpeciesPortrait} from "../world/SpeciesPortrait";
 export type LogisticsTab = "supply" | "assets" | "clients" | "shipments";
 type Props = {
   game: Game;
@@ -455,7 +455,7 @@ function Clients({ game, perform }: Commands) {
           {Object.values(SPECIES).map((s) => (
             <article className="market-species-card" key={s.id}>
               <div className={`species-art ${s.id}`}>
-                <FishArt species={s.id} />
+                <SpeciesPortrait species={s.id} />
               </div>
               <h3>{s.name}</h3>
               <div className="market-price">

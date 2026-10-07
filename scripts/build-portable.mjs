@@ -35,7 +35,7 @@ try {
       html = html.replace(/<link\b[^>]*rel="stylesheet"[^>]*>/g, () => `<style>${String(item.source).replace(/<\/style/gi, '<\\/style')}</style>`);
     }
   }
-  for (const [path, mime] of [['assets/farm-landscape.png', 'image/png'], ['assets/species-atlas.png', 'image/png'], ['favicon.svg', 'image/svg+xml']]) {
+  for (const [path, mime] of [['favicon.svg', 'image/svg+xml']]) {
     const data = await readFile(join(root, 'public', path));
     html = html.replaceAll(`/${path}`, `data:${mime};base64,${data.toString('base64')}`);
   }
