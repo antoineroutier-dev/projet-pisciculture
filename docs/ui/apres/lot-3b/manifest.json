@@ -1,0 +1,89 @@
+{
+  "totalBytes": 600439,
+  "captures": [
+    {
+      "file": "docs/ui/apres/lot-3b/1440-horloge.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 109974
+    },
+    {
+      "file": "docs/ui/apres/lot-3b/1440-chantier-termine.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 48745
+    },
+    {
+      "file": "docs/ui/apres/lot-3b/1440-premiers-poissons.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 51116
+    },
+    {
+      "file": "docs/ui/apres/lot-3b/1440-premiere-recolte.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 51573
+    },
+    {
+      "file": "docs/ui/apres/lot-3b/1440-premier-paiement.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 50375
+    },
+    {
+      "file": "docs/ui/apres/lot-3b/1440-objectif.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 49410
+    },
+    {
+      "file": "docs/ui/apres/lot-3b/1440-urgence.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 53996
+    },
+    {
+      "file": "docs/ui/apres/lot-3b/390-horloge.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 33302
+    },
+    {
+      "file": "docs/ui/apres/lot-3b/390-chantier-termine.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 23182
+    },
+    {
+      "file": "docs/ui/apres/lot-3b/390-premiers-poissons.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 27014
+    },
+    {
+      "file": "docs/ui/apres/lot-3b/390-premiere-recolte.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 25097
+    },
+    {
+      "file": "docs/ui/apres/lot-3b/390-premier-paiement.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 25382
+    },
+    {
+      "file": "docs/ui/apres/lot-3b/390-objectif.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 22665
+    },
+    {
+      "file": "docs/ui/apres/lot-3b/390-urgence.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 28608
+    }
+  ]
+}

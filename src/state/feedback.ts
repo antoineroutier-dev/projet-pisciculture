@@ -80,24 +80,40 @@ export function requestFeedback(
   previous?: Feedback,
   pending = false,
 ) {
+  const id = previous?.id ?? ++serial;
+  const sound = pending
+    ? "click"
+    : transitionSound(before, after, action.type, ok);
+  const timing = { id, started, action: action.type };
+  if (pending) feedbackPhase(timing, "requested");
+  const scheduled = play(sound);
+  if (pending) feedbackPhase(timing, "audio", { scheduled });
   const pondId = "pondId" in action ? action.pondId : undefined;
-  const projected = pondId ? project?.(pondId) : null;
-  const fallback = pondId
-    ? document
-        .querySelector(`[data-pond-id="${pondId}"]`)
-        ?.getBoundingClientRect()
-    : document.querySelector(".hud-resources")?.getBoundingClientRect();
+  // Do not force browser layout on the acknowledgement's critical path.
+  // The completed delta is still projected from its actual world/resource source.
+  const projected = pending
+    ? events.find((e) => e.pondId === pondId)?.point
+    : pondId
+      ? project?.(pondId)
+      : null;
+  const fallback = pending
+    ? undefined
+    : pondId
+      ? document
+          .querySelector(`[data-pond-id="${pondId}"]`)
+          ?.getBoundingClientRect()
+      : document.querySelector(".hud-resources")?.getBoundingClientRect();
   const point = projected || {
     x: fallback ? fallback.x + fallback.width / 2 : innerWidth / 2,
     y: fallback ? fallback.bottom + 36 : innerHeight / 2,
   };
   const event: Feedback = {
-    id: previous?.id ?? ++serial,
+    id,
     pending,
     started,
     action: action.type,
     ok,
-    sound: pending ? "click" : transitionSound(before, after, action.type, ok),
+    sound,
     message,
     pondId,
     money: after.money - before.money,
@@ -107,11 +123,7 @@ export function requestFeedback(
       y: Math.max(50, Math.min(innerHeight - 80, point.y)),
     },
   };
-  const scheduled = play(event.sound);
-  if (pending) {
-    feedbackPhase(event, "requested");
-    feedbackPhase(event, "audio", { scheduled });
-  } else feedbackPhase(event, "completed", { scheduled, ok });
+  if (!pending) feedbackPhase(event, "completed", { scheduled, ok });
   // Replace the previous delta from the same source instead of drawing labels on top of each other.
   events = [...events.filter((e) => e.pondId !== pondId).slice(-2), event];
   for (const [id, timer] of timers)

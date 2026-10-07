@@ -1,4 +1,4 @@
-import { withoutWebGL } from "./ui-helpers";
+import { withoutWebGL, settleEvents } from "./ui-helpers";
 import { expect, test } from "@playwright/test";
 import { operatingGame as initialGame } from "../src/test-fixtures";
 import AxeBuilder from "@axe-core/playwright";
@@ -26,18 +26,21 @@ test("3D : ferme, bassin, bâtiments et identification des trois espèces", asyn
   await expect(canvas).toHaveAttribute("data-frame", "rendered", {
     timeout: 60000,
   });
-  await page.getByRole("tab",{name:"Équipement",exact:true}).click();
+  await page.getByRole("tab", { name: "Équipement", exact: true }).click();
   await page
     .getByRole("button", { name: "Améliorer ce bassin", exact: true })
     .click();
   await page
     .getByRole("button", { name: "Installer l’équipement", exact: true })
     .click();
+  await settleEvents(page);
   for (const [label, view] of [
     ["Bâtiments", "buildings"],
     ["Le bassin", "pond"],
   ]) {
-    await page.getByLabel("Vue du terrain", {exact:true}).selectOption({label});
+    await page
+      .getByLabel("Vue du terrain", { exact: true })
+      .selectOption({ label });
     await expect(canvas).toHaveAttribute("data-view", view, { timeout: 60000 });
   }
   await page
@@ -46,15 +49,19 @@ test("3D : ferme, bassin, bâtiments et identification des trois espèces", asyn
   await expect(
     page.getByRole("button", { name: "Observer sous l’eau", exact: true }),
   ).toHaveAttribute("aria-pressed", "true");
-  await page.getByLabel("Vue du terrain", {exact:true}).selectOption("fish");
+  await page.getByLabel("Vue du terrain", { exact: true }).selectOption("fish");
   await expect(page.locator(".fish-inspector")).toBeVisible();
   for (const [label, id, trait] of [
     ["Truite arc-en-ciel", "trout", "adipeuse"],
     ["Carpe commune", "carp", "barbillons"],
     ["Tilapia du Nil", "tilapia", "épineuse"],
   ]) {
-    await page.getByLabel("Espèce à observer", {exact:true}).selectOption({label});
-    await expect(canvas).toHaveAttribute("data-species", id, { timeout: 60000 });
+    await page
+      .getByLabel("Espèce à observer", { exact: true })
+      .selectOption({ label });
+    await expect(canvas).toHaveAttribute("data-species", id, {
+      timeout: 60000,
+    });
     await expect(page.locator(".fish-inspector")).toContainText(trait);
   }
   await page.getByRole("button", { name: "Finances", exact: true }).click();
@@ -159,33 +166,24 @@ test("migration automatique V1 conserve le fichier original", async ({
   ).toBe(raw);
 });
 
-test("horloge : vitesse ×60, fenêtre de gestion et pause", async ({ page }) => {
+test("horloge : vitesse ×8, fenêtre de gestion et pause", async ({ page }) => {
   await withoutWebGL(page);
   await page.clock.install({ time: new Date("2026-01-01T00:00:00Z") });
   await page.goto("/");
   await page.clock.pauseAt(new Date("2026-01-01T00:01:00Z"));
-  for (const [from, to] of [
-    [1, 3],
-    [3, 12],
-    [12, 60],
-  ])
-    await page
-      .getByRole("button", {
-        name: `Vitesse ${from}, passer à ${to}`,
-        exact: true,
-      })
-      .click();
-  await page.getByRole("button", { name: "Lancer la simulation" }).click();
-  await page.clock.fastForward(210);
+  await page.getByRole("button", { name: "Vitesse ×8", exact: true }).click();
+  await page.clock.runFor(500);
   await expect(page.getByTestId("day")).toHaveAttribute("data-day", "2");
   await page
     .getByRole("button", { name: "Paramètres & sauvegarde", exact: true })
     .click();
-  await page.clock.fastForward(1000);
+  await page.clock.runFor(4000);
   await page.keyboard.press("Escape");
   await expect(page.getByTestId("day")).toHaveAttribute("data-day", "2");
-  await page.getByRole("button", { name: "Mettre en pause" }).click();
-  await page.clock.fastForward(1000);
+  await page
+    .getByRole("button", { name: "Mettre en pause", exact: true })
+    .click();
+  await page.clock.runFor(4000);
   await expect(page.getByTestId("day")).toHaveAttribute("data-day", "2");
 });
 
@@ -215,28 +213,42 @@ test("sans WebGL : la carte et la gestion restent disponibles", async ({
   );
   await page.goto("/");
   await expect(page.getByText(/Carte de secours/)).toBeVisible();
-  for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
+  for (const viewport of [
+    { width: 1440, height: 900 },
+    { width: 390, height: 844 },
+  ]) {
     await page.setViewportSize(viewport);
     await expect(page.locator(".scene-location")).toBeHidden();
     await expect(page.locator(".scene-bottom")).toBeHidden();
-    await expect(page.locator(".world-fallback > p")).toContainText("Carte de secours");
+    await expect(page.locator(".world-fallback > p")).toContainText(
+      "Carte de secours",
+    );
     for (const label of await page.locator(".world-fallback .map-name").all()) {
-      expect(await label.evaluate(e => parseFloat(getComputedStyle(e).fontSize))).toBeGreaterThanOrEqual(12);
-      await expect.poll(() => label.evaluate(e => {
-        const frame = e.closest(".farm-map-frame")!;
-        const index = [...frame.querySelectorAll(".map-name")].indexOf(e);
-        const group = frame.querySelectorAll<SVGGElement>(".map-pond")[index];
-        const point = new DOMPoint(0, 0).matrixTransform(group.getScreenCTM()!);
-        const r = e.getBoundingClientRect();
-        return Math.abs(r.x + r.width / 2 - point.x);
-      })).toBeLessThan(1);
+      expect(
+        await label.evaluate((e) => parseFloat(getComputedStyle(e).fontSize)),
+      ).toBeGreaterThanOrEqual(12);
+      await expect
+        .poll(() =>
+          label.evaluate((e) => {
+            const frame = e.closest(".farm-map-frame")!;
+            const index = [...frame.querySelectorAll(".map-name")].indexOf(e);
+            const group =
+              frame.querySelectorAll<SVGGElement>(".map-pond")[index];
+            const point = new DOMPoint(0, 0).matrixTransform(
+              group.getScreenCTM()!,
+            );
+            const r = e.getBoundingClientRect();
+            return Math.abs(r.x + r.width / 2 - point.x);
+          }),
+        )
+        .toBeLessThan(1);
     }
   }
   await page.getByRole("button", { name: /Bassin 2, La Roselière/ }).click();
   await expect(
     page.getByRole("heading", { name: "La Roselière", exact: true }),
   ).toBeVisible();
-  await page.getByRole("tab",{name:"Alimentation",exact:true}).click();
+  await page.getByRole("tab", { name: "Alimentation", exact: true }).click();
   await page.getByRole("button", { name: /Programmer la ration/ }).click();
   await expect(
     page.getByRole("button", { name: /Ration programmée/ }),
@@ -296,7 +308,9 @@ test("mobile et accessibilité des pages principales", async ({ page }) => {
       `Largeur de ${name}`,
     ).toBe(true);
     if (name === "Bassins") {
-      await page.getByLabel("Bassin sélectionné", {exact:true}).selectOption("2");
+      await page
+        .getByLabel("Bassin sélectionné", { exact: true })
+        .selectOption("2");
       await expect(
         page.getByRole("heading", { name: "La Roselière", exact: true }),
       ).toBeVisible();
@@ -311,12 +325,17 @@ test("mobile et accessibilité des pages principales", async ({ page }) => {
 test("nouvelle partie guidée : terrain vide jusqu’au premier règlement, uniquement par les commandes du jeu", async ({
   page,
 }) => {
-  test.setTimeout(120000);
+  test.setTimeout(240000);
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   const current = async (): Promise<Game> =>
     page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), STORAGE_KEY);
-  const step = () => page.getByTestId("task-action");
+  const step = () => ({
+    click: async () => {
+      await page.getByTestId("task-action").click();
+      await settleEvents(page);
+    },
+  });
   await withoutWebGL(page);
   await page.goto("/");
   await expect(
@@ -325,7 +344,9 @@ test("nouvelle partie guidée : terrain vide jusqu’au premier règlement, uniq
   expect((await current()).ponds.every((p) => !p.built && !p.count)).toBe(true);
   await step().click(); // Analysis order.
   await step().click(); // Receive analysis, day 3.
-  await page.getByRole("button",{name:"Choisir une parcelle",exact:true}).click(); // Results → construction.
+  await page
+    .getByRole("button", { name: "Choisir une parcelle", exact: true })
+    .click(); // Results → construction.
   await page
     .getByRole("button", {
       name: "Choisir : Truite arc-en-ciel · Les Saules",
@@ -366,6 +387,7 @@ test("nouvelle partie guidée : terrain vide jusqu’au premier règlement, uniq
   });
   let iterations = 0;
   while ((await current()).development.paid === 0 && iterations++ < 90) {
+    await settleEvents(page);
     const state = await current(),
       title = await page
         .getByTestId("next-task")
@@ -417,7 +439,7 @@ test("migration V2 préserve la partie et propose explicitement le nouveau dépa
     raw,
   });
   await page.goto("/");
-  await page.getByRole("button", {name:"Construire",exact:true}).click();
+  await page.getByRole("button", { name: "Construire", exact: true }).click();
   await expect(
     page.getByText("Votre ancienne exploitation est conservée."),
   ).toBeVisible();

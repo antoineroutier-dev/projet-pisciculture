@@ -37,7 +37,7 @@ async function tabTo(page: Page, target: Locator) {
 test("1a : du terrain vide au paiement, uniquement au clavier en 1280×800", async ({
   page,
 }, info) => {
-  test.setTimeout(180000);
+  test.setTimeout(240000);
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.addInitScript(() => {
     const events: {
@@ -64,6 +64,22 @@ test("1a : du terrain vide au paiement, uniquement au clavier en 1280×800", asy
   const press = async (target: Locator) => {
     await tabTo(page, target);
     await page.keyboard.press("Enter");
+    await expect(page.locator(".hud-clock")).toHaveAttribute(
+      "data-seeking",
+      "false",
+      { timeout: 20000 },
+    );
+    for (
+      let i = 0;
+      i < 8 && (await page.getByTestId("event-card").count());
+      i++
+    ) {
+      await tabTo(
+        page,
+        page.getByRole("button", { name: "Continuer", exact: true }),
+      );
+      await page.keyboard.press("Enter");
+    }
   };
   const step = () => press(page.getByTestId("task-action"));
   const button = (name: string | RegExp) =>

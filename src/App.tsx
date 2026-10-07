@@ -1,3 +1,10 @@
+import { useGameClock } from "./state/useGameClock";
+import {
+  gameEvents,
+  hasUpcomingEvent,
+  type GameEvent,
+} from "./state/gameEvents";
+import { EventCard } from "./panels/EventCard";
 import { useAudio } from "./audio/useAudio";
 import { AudioSettings } from "./audio/AudioSettings";
 import {
@@ -22,7 +29,6 @@ import {
   formatMoney as euro,
   formatUnitPrice,
   formatEngineText,
-  plural,
 } from "./ui/format";
 import {
   useCallback,
@@ -60,7 +66,7 @@ import {
 } from "./panels/PondInspector";
 import { availability } from "./state/pondSelectors";
 import { usePondReadings } from "./state/usePondReadings";
-import { STOCK_FREIGHT, type Task } from "./development";
+import { STOCK_FREIGHT, nextTask, type Task } from "./development";
 import Guide from "./RealismGuide";
 import {
   act,
@@ -262,9 +268,7 @@ export default function App() {
   const [logisticsTab, setLogisticsTab] = useState<LogisticsTab>("supply");
   const [pondTab, setPondTab] = useState<PondTab>("water");
   const [selected, setSelected] = useState(1);
-  const [running, setRunning] = useState(false);
-  const [speed, setSpeed] = useState(1);
-  const [visible, setVisible] = useState(!document.hidden);
+  const [events, setEvents] = useState<GameEvent[]>([]);
   const [modal, setModal] = useState<ModalKind>(null);
   const [resetConfirm, setResetConfirm] = useState(false);
   const [notice, setNotice] = useState<{
@@ -272,12 +276,83 @@ export default function App() {
     ok: boolean;
     feedbackId?: number;
   } | null>(null);
+  const activeEvent = modal ? undefined : events[0];
+  const clock = useGameClock(tickDay, !!modal || events.length > 0);
+  const dismissEvent = useCallback(
+    () => setEvents((queue) => queue.slice(1)),
+    [],
+  );
+  useEffect(() => {
+    if (activeEvent)
+      audio.play(
+        activeEvent.kind === "celebration"
+          ? "celebrate"
+          : activeEvent.kind === "alert"
+            ? "alert"
+            : "open",
+      );
+  }, [activeEvent, audio.play]);
+  function commit(before: Game, after: Game, reason = "") {
+    currentGame.current = after;
+    setGame(after);
+    const incoming = gameEvents(before, after, reason);
+    if (incoming.length) {
+      clock.pause();
+      setNotice(null);
+      setEvents((queue) =>
+        [
+          ...queue,
+          ...incoming.filter((e) => !queue.some((old) => old.id === e.id)),
+        ].sort(
+          (a, b) => Number(b.kind === "alert") - Number(a.kind === "alert"),
+        ),
+      );
+    }
+    return (
+      incoming.length > 0 ||
+      !!reason ||
+      (!before.development.surveyed && after.development.surveyed)
+    );
+  }
+  function tickDay(seeking: boolean) {
+    const before = currentGame.current,
+      started = performance.now();
+    if (seeking && !hasUpcomingEvent(before)) {
+      setEvents([
+        {
+          id: `${before.day}:nothing-scheduled`,
+          kind: "event",
+          title: "Préparez votre prochaine étape",
+          text: "Aucune livraison ni activité n’est en cours. Choisissez une action pour développer votre ferme.",
+          illustration: "water",
+          task: nextTask(before),
+        },
+      ]);
+      return true;
+    }
+    const pending = beginFeedback(before, { type: "day" }, audio.play, started);
+    const result =
+      seeking || before.mode === "guided"
+        ? advanceGuided(before, 1)
+        : { game: nextDay(before), reason: "" };
+    requestFeedback(
+      before,
+      result.game,
+      { type: "day" },
+      true,
+      result.reason || "Une journée écoulée.",
+      audio.play,
+      started,
+      pending,
+    );
+    return commit(before, result.game, result.reason);
+  }
   useEffect(() => {
     if (panel || modal) audio.play("open");
   }, [panel, modal, audio.play]);
   useEffect(() => {
     if (!surveyed.current && game.development.surveyed) {
-      setRunning(false);
+      clock.pause();
       setModal("survey");
     }
     surveyed.current = game.development.surveyed;
@@ -333,45 +408,6 @@ export default function App() {
     }
   }, [game, storageBlocked]);
   useEffect(() => {
-    const fn = () => setVisible(!document.hidden);
-    document.addEventListener("visibilitychange", fn);
-    return () => document.removeEventListener("visibilitychange", fn);
-  }, []);
-  useEffect(() => {
-    if (!running || modal || !visible) return;
-    const timer = setInterval(() => {
-      const before = currentGame.current,
-        started = performance.now();
-      const pending = beginFeedback(
-        before,
-        { type: "day" },
-        audio.play,
-        started,
-      );
-      const result =
-        before.mode === "expert"
-          ? { game: nextDay(before), reason: "" }
-          : advanceGuided(before, 1);
-      if (result.reason) {
-        setRunning(false);
-        setNotice({ text: result.reason, ok: true });
-      }
-      requestFeedback(
-        before,
-        result.game,
-        { type: "day" },
-        true,
-        result.reason || "Une journée écoulée.",
-        audio.play,
-        started,
-        pending,
-      );
-      currentGame.current = result.game;
-      setGame(result.game);
-    }, 12000 / speed);
-    return () => clearInterval(timer);
-  }, [running, speed, modal, visible, audio.play]);
-  useEffect(() => {
     if (!notice) return;
     const timer = setTimeout(() => setNotice(null), 5000);
     return () => clearTimeout(timer);
@@ -390,7 +426,7 @@ export default function App() {
   );
   useEffect(() => {
     const handle = (e: KeyboardEvent) => {
-      if (modal || e.defaultPrevented || e.isComposing) return;
+      if (modal || activeEvent || e.defaultPrevented || e.isComposing) return;
       if (e.key === "Escape") {
         e.preventDefault();
         if (panel) closePanel();
@@ -406,7 +442,7 @@ export default function App() {
     };
     window.addEventListener("keydown", handle);
     return () => window.removeEventListener("keydown", handle);
-  }, [modal, panel, closePanel, togglePanel]);
+  }, [modal, activeEvent, panel, closePanel, togglePanel]);
   function perform(action: Action, dismiss = false) {
     const started = performance.now();
     const pending = beginFeedback(game, action, audio.play, started);
@@ -422,8 +458,7 @@ export default function App() {
       pending,
     );
     if (result.ok) {
-      currentGame.current = result.game;
-      setGame(result.game);
+      commit(game, result.game);
       if (action.type === "harvest") setLogisticsTab("shipments");
       if (dismiss) close();
     }
@@ -437,31 +472,7 @@ export default function App() {
     if (task.action) perform(task.action);
     else if (task.stock) openStock(task.stock);
     else if (task.wait) {
-      setRunning(false);
-      const started = performance.now();
-      const pending = beginFeedback(
-        game,
-        { type: "advance" },
-        audio.play,
-        started,
-      );
-      const result = advanceGuided(game, task.wait);
-      requestFeedback(
-        game,
-        result.game,
-        { type: "advance" },
-        true,
-        result.reason || "Avance terminée.",
-        audio.play,
-        started,
-        pending,
-      );
-      currentGame.current = result.game;
-      setGame(result.game);
-      setNotice({
-        text: `${result.elapsed} ${plural(result.elapsed, "jour")} ${plural(result.elapsed, "écoulé")}. ${result.reason || "Vérifiez votre prochaine étape."}`,
-        ok: true,
-      });
+      clock.seek(task.wait);
     } else if (task.target) {
       if (task.target === "logistics")
         setLogisticsTab(
@@ -496,11 +507,12 @@ export default function App() {
         throw new Error("Ce fichier est trop volumineux.");
       const restored = parseSave(await file.text());
       clearFeedback();
+      setEvents([]);
       surveyed.current = restored.development.surveyed;
       setSession((s) => s + 1);
       setGame(restored);
       setStorageBlocked(false);
-      setRunning(false);
+      clock.pause();
       setSelected(1);
       close();
       setNotice({
@@ -523,7 +535,7 @@ export default function App() {
     <>
       <div
         className="game-shell"
-        inert={modal ? true : undefined}
+        inert={modal || activeEvent ? true : undefined}
         data-panel={panel ?? "none"}
       >
         <h1 className="sr-only">Les Étangs — votre exploitation</h1>
@@ -552,35 +564,7 @@ export default function App() {
           saved={saved}
           saveRevision={saveRevision}
           storageError={storageError}
-          running={running}
-          speed={speed}
-          toggleRunning={() => setRunning(!running)}
-          changeSpeed={() =>
-            setSpeed([1, 3, 12, 60][([1, 3, 12, 60].indexOf(speed) + 1) % 4])
-          }
-          nextDay={() => {
-            const started = performance.now(),
-              before = currentGame.current;
-            const pending = beginFeedback(
-              before,
-              { type: "day" },
-              audio.play,
-              started,
-            );
-            const after = nextDay(before);
-            requestFeedback(
-              before,
-              after,
-              { type: "day" },
-              true,
-              "Une journée écoulée.",
-              audio.play,
-              started,
-              pending,
-            );
-            currentGame.current = after;
-            setGame(after);
-          }}
+          clock={clock}
           settings={() => setModal("settings")}
           alerts={() => navigate("journal")}
         />
@@ -666,7 +650,7 @@ export default function App() {
         <FeedbackLayer panelOpen={!!panel} />
         <Dock active={panel} open={togglePanel} />
       </div>
-      {notice && !modal && (
+      {notice && !modal && !activeEvent && (
         <Toast
           feedbackId={notice.feedbackId}
           text={formatEngineText(notice.text)}
@@ -954,11 +938,12 @@ export default function App() {
                             className="button danger"
                             onClick={() => {
                               clearFeedback();
+                              setEvents([]);
                               surveyed.current = false;
                               setSession((s) => s + 1);
                               setGame(initialGame(game.mode));
                               setStorageBlocked(false);
-                              setRunning(false);
+                              clock.pause();
                               setSelected(1);
                               closePanel();
                               setWorldMode("farm");
@@ -996,6 +981,26 @@ export default function App() {
             </Tabs>
           )}
         </Modal>
+      )}
+      {activeEvent && (
+        <EventCard
+          key={activeEvent.id}
+          event={activeEvent}
+          close={dismissEvent}
+          act={() => {
+            dismissEvent();
+            if (activeEvent.action) perform(activeEvent.action);
+            else if (activeEvent.task) followTask(activeEvent.task);
+          }}
+          inspect={() => {
+            dismissEvent();
+            if (activeEvent.pondId) {
+              setSelected(activeEvent.pondId);
+              setPondTab("water");
+              navigate("ponds");
+            }
+          }}
+        />
       )}
     </>
   );

@@ -38,7 +38,7 @@ function Delta({
 }) {
   const [top, setTop] = useState(event.point.y);
   useLayoutEffect(() => {
-    if (mobile && !inline) {
+    if (mobile && !inline && !event.pending) {
       const goal = document.querySelector(".goal-hud")?.getBoundingClientRect();
       if (goal) setTop(Math.max(event.point.y, goal.bottom + 36));
     }
@@ -57,7 +57,19 @@ function Delta({
       className={`world-feedback ${inline ? "inline-feedback" : ""} ${event.pending ? "pending" : event.ok ? "positive" : "negative"}`}
       data-feedback-id={event.id}
       data-pond-source={event.pondId}
-      style={inline ? undefined : { left: event.point.x, top }}
+      style={
+        inline
+          ? undefined
+          : {
+              left: event.point.x,
+              top:
+                mobile && event.pending
+                  ? "max(50vh, calc(var(--goal-bottom, 352px) + 36px))"
+                  : mobile
+                    ? top
+                    : event.point.y,
+            }
+      }
       aria-hidden="true"
     >
       {event.pending ? (

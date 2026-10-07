@@ -38,7 +38,7 @@ export default function RealismGuide() {
     {
       icon: <Clock3 />,
       title: "Le rythme biologique",
-      text: "Une journée de jeu contient 24 pas horaires de calcul de l’eau. La croissance de 50 g à la taille de vente prend des mois. Les vitesses ×1, ×3, ×12 et ×60 accélèrent seulement l’attente. Vous démarrez sans bassin aménagé. L’avance guidée s’arrête aux réceptions, aux risques et aux étapes de vente. Il n’y a pas de progression hors ligne.",
+      text: "Une journée de jeu contient 24 pas horaires de calcul de l’eau. La croissance de 50 g à la taille de vente prend des mois. Pause arrête le calendrier. ×1, ×2, ×4 et ×8 durent respectivement 4, 2, 1 et 0,5 seconde par jour. L’avance au prochain événement prend 0,25 seconde par jour et peut être interrompue. Espace suspend/reprend ; 1–5 choisissent Pause à ×8 hors des champs de saisie. Vous démarrez sans bassin aménagé. L’avance guidée s’arrête aux réceptions, aux risques et aux étapes de vente. Il n’y a pas de progression hors ligne.",
     },
     {
       icon: <Thermometer />,

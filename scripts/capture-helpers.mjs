@@ -42,13 +42,11 @@ export async function captureLot(lot, visit, initial = "terrain-vide") {
           .getByRole("button", { name: "Paramètres & sauvegarde", exact: true })
           .click();
         await page.getByRole("tab", { name: "Partie", exact: true }).click();
-        await page
-          .getByLabel("Fichier de sauvegarde")
-          .setInputFiles({
-            name: `${name}.json`,
-            mimeType: "application/json",
-            buffer: fs.readFileSync(`docs/ui/fixtures/${name}.json`),
-          });
+        await page.getByLabel("Fichier de sauvegarde").setInputFiles({
+          name: `${name}.json`,
+          mimeType: "application/json",
+          buffer: fs.readFileSync(`docs/ui/fixtures/${name}.json`),
+        });
       }
       async function snap(name, { toast = true } = {}) {
         await page.evaluate(() => document.fonts.ready);
@@ -68,7 +66,9 @@ export async function captureLot(lot, visit, initial = "terrain-vide") {
             .join("|"),
           { timeout: 120000 },
         );
-        await expect(canvas).toHaveAttribute("data-settled", "true");
+        await expect(canvas).toHaveAttribute("data-settled", "true", {
+          timeout: 120000,
+        });
         await canvas.evaluate((c) => c.getContext("webgl2")?.finish());
         if (toast) await page.locator(".toast").waitFor({ state: "hidden" });
         const file = `${directory}/${width}-${name}.jpg`;

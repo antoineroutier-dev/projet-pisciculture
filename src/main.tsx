@@ -25,3 +25,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 import "./panels/logistics.css";
 
 import "./panels/editorial.css";
+
+import "./hud/time-events.css";

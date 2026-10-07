@@ -1,3 +1,5 @@
+import { TimeControls } from "./TimeControls";
+import type { GameClock } from "../state/useGameClock";
 import { AnimatedNumber } from "../ui/AnimatedNumber";
 import { Stepper, ResourcePill } from "../ui/Primitives";
 import { useState } from "react";
@@ -5,9 +7,6 @@ import {
   AlertTriangle,
   CheckCheck,
   Settings2,
-  Pause,
-  Play,
-  SkipForward,
   Hammer,
   Waves,
   Package,
@@ -29,11 +28,7 @@ export function GameHud({
   saved,
   saveRevision,
   storageError,
-  running,
-  speed,
-  toggleRunning,
-  changeSpeed,
-  nextDay,
+  clock,
   settings,
   alerts,
 }: {
@@ -41,11 +36,7 @@ export function GameHud({
   saved: boolean;
   saveRevision: number;
   storageError: string;
-  running: boolean;
-  speed: number;
-  toggleRunning: () => void;
-  changeSpeed: () => void;
-  nextDay: () => void;
+  clock: GameClock;
   settings: () => void;
   alerts: () => void;
 }) {
@@ -111,26 +102,7 @@ export function GameHud({
           }
         />
       </div>
-      <div className="hud-clock" aria-label="Contrôle du temps">
-        <button
-          aria-label={running ? "Mettre en pause" : "Lancer la simulation"}
-          onClick={toggleRunning}
-          title={running ? "En marche" : "En pause"}
-        >
-          {running ? <Pause size={18} /> : <Play size={18} />}
-          <span>{running ? "Pause" : "Jouer"}</span>
-        </button>
-        <button
-          aria-label={`Vitesse ${speed}, passer à ${[1, 3, 12, 60][([1, 3, 12, 60].indexOf(speed) + 1) % 4]}`}
-          onClick={changeSpeed}
-        >
-          ×{speed}
-        </button>
-        <button onClick={nextDay} aria-label="Jour suivant">
-          <SkipForward size={18} />
-          <span>Jour suivant</span>
-        </button>
-      </div>
+      <TimeControls clock={clock} />
       <div className="hud-utilities">
         <button
           onClick={alerts}
