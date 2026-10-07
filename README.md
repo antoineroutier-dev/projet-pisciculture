@@ -1,6 +1,10 @@
-# Les Étangs · édition de terrain
+# Les Étangs · de la source au client · V3
 
-Jeu de pisciculture solo en français pour navigateur, avec ferme 3D, poissons identifiables et simulation pédagogique sur des mois. La V2 remplace la croissance accélérée de la première version par une ration en kg, des bilans d’eau horaires et un calendrier annuel.
+Jeu de pisciculture solo en français pour navigateur. La V3 commence sur un terrain sans bassin aménagé : étude de l’eau, choix d’espèce, construction, fournisseurs, élevage, récolte, chaîne du froid, livraison et paiement. La biologie conserve des cycles de plusieurs mois et des bilans d’eau horaires.
+
+**Jouer en ligne : <https://antoineroutier-dev.github.io/projet-pisciculture/>**
+
+Le [prompt complet exécuté pour cette refonte](docs/PROMPT-PROGRESSION.md) détaille le parcours, la logistique, la nage et les validations.
 
 ## Édition autonome, sans installation pour le joueur
 
@@ -8,7 +12,7 @@ L’édition `Les-Etangs.html` contient le jeu et ses images dans un seul fichie
 
 Pour produire cette édition depuis les sources : `npm ci`, puis `npm run build:portable`. Le résultat est `portable/Les-Etangs.html` (environ 9,2 Mo), distinct du build web `dist/`.
 
-Commencer par activer **Distribution automatique** dans les deux bassins peuplés, puis utiliser **Jour suivant** ou la lecture ▶. La partie démarre en pause. Les sauvegardes locales peuvent être attachées au chemin du fichier selon le navigateur : utiliser **Paramètres & sauvegarde → Exporter ma partie** avant de déplacer ou remplacer le fichier.
+Commencer dans **Mon projet** avec **Analyser l’eau**, puis suivre la carte **Votre prochaine action**. La partie démarre en pause. Les sauvegardes locales peuvent être attachées au chemin du fichier selon le navigateur : utiliser **Paramètres & sauvegarde → Exporter ma partie** avant de déplacer ou remplacer le fichier.
 
 Le navigateur administré de l’environnement cloud bloque les URL `file://`. La vérification de l’édition autonome utilise donc le contenu HTML complet dans une origine locale isolée, en bloquant tout chargement supplémentaire ; l’ouverture directe depuis le disque n’est pas vérifiable ici.
 
@@ -28,14 +32,18 @@ Le serveur Vite écoute sur toutes les interfaces. `npm run preview` sert le dos
 
 ## Jouer
 
-1. La simulation démarre en pause, au 1er avril 2026. Vous reprenez deux lots déjà avancés, 48 000 € et 500 kg d’aliments.
-2. Sélectionnez **Les Saules**, lisez température/O₂/TAN/NH₃-N puis **Programmer la ration**. Activez **Distribution automatique** pour le suivi quotidien. Faites de même pour les carpes de **La Roselière**.
-3. Avancez avec **Jour suivant** ou l’horloge ×1/×3/×12/×60. Une journée biologique correspond toujours à 24 h simulées ; les vitesses réduisent seulement l’attente. Surveillez aliments, débit, oxygène et charges.
-4. Récoltez au calibre commercial. Respectez ensuite 7 jours de vide sanitaire avant de réintroduire un lot. Les nouveaux lots restent 14 jours en observation.
-5. **Le Pré neuf** est un bassin de truites construit en 14 jours ; **Les Sources**, un circuit recirculé chauffé pour tilapias, demande 45 jours de travaux et mise en service.
-6. Les vues **La ferme**, **Le bassin**, **Les poissons** et **Bâtiments** donnent accès à la visite. Glissez pour tourner, utilisez molette/pincement pour zoomer. La vue Poissons propose une planche réaliste et des modèles 3D. Les boutons de sélection sont utilisables au clavier.
+1. La simulation démarre en pause au 1er avril 2026 : terrain vide, bâtiments agricoles existants, 60 000 € de capital, aucun poisson ni aliment.
+2. Dans **Mon projet**, faites analyser l’eau (240 €, 2 jours). Choisissez truite/source fraîche, carpe/étang saisonnier ou tilapia/circuit chauffé. Lancez le chantier de la parcelle choisie ; aucun ordre imposé entre parcelles.
+3. Suivez la **prochaine action**. Aménagez le magasin d’aliments, commandez une réserve (livraison en 2 jours), puis les juvéniles (4 jours, transport vivant inclus). À réception, activez la distribution automatique et surveillez les 14 jours d’observation.
+4. Laissez passer les mois en réapprovisionnant avant les ruptures. L’avance guidée traite chaque journée et s’arrête aux événements importants. Les réglages techniques se trouvent dans **Mes bassins → Mesures de l’eau & réglages d’élevage**.
+5. Préparez la chambre froide (10 jours). À 80 % du calibre commercial, réservez un client pour 30 jours. La coopérative prend les poissons entiers ; les poissonneries demandent un atelier et une préparation d’un jour, avec rendement de 85 %.
+6. Au calibre commercial, récoltez depuis **Logistique**. Les grands lots sont fractionnés selon les capacités du froid et du client ; les poissons restants continuent leur élevage. Le bassin entièrement vidé observe 7 jours de vide sanitaire.
+7. Expédiez immédiatement les poissons entiers, ou dès la fin de préparation les poissons éviscérés. Le froid du scénario conserve au maximum 3 jours ; le transport prend 1 jour. Une rupture de financement du froid entraîne une perte. Le paiement arrive 7 jours après livraison à la coopérative, 3 jours pour les poissonneries.
+8. Réinvestissez et lancez d’autres cycles ou parcelles. **Mes bassins → Explorer en 3D** ouvre la visite : ferme, bassins, poissons et bâtiments. Les poissons utilisent des trajectoires individuelles, un évitement des parois et des voisins et une ondulation continue du corps et de la queue.
 
-Le mode **réaliste avec aides pédagogiques** est activé par défaut. Le mode expert supprime les primes fictives ; la biologie reste identique. Le guide intégré explique chaque grandeur. Fenêtres de gestion et onglets masqués suspendent le temps ; il n’y a pas de progression hors ligne. Une partie rechargée revient en pause.
+**Anciennes parties :** la migration conserve vos lots et votre argent. Pour découvrir le nouveau départ, exportez votre sauvegarde puis utilisez **Paramètres & sauvegarde → Nouvelle partie**.
+
+Le mode **réaliste avec aides pédagogiques** est activé par défaut. Le mode expert supprime les primes fictives et les arrêts automatiques de l’horloge ; la biologie reste identique. Le guide intégré explique chaque grandeur. Fenêtres de gestion et onglets masqués suspendent le temps ; il n’y a pas de progression hors ligne. Une partie rechargée revient en pause.
 
 ## Modèle et recherche
 
@@ -43,16 +51,20 @@ Le mode **réaliste avec aides pédagogiques** est activé par défaut. Le mode 
 - Biomasse, densité, ration ajustable, FCR, gaspillage, croissance, jeûne et hivernage des carpes.
 - Oxygène en mg/L, débit en L/s, TAN en mg N/L, NH₃-N selon température et pH ; échanges calculés chaque heure.
 - Aération, biofiltre avec maturation, entretien partiel, exposition critique et mortalités.
-- Travaux différés, suivi de lot, vide sanitaire, achat/vente, budget de travail/eau/énergie/entretien et journal.
+- Travaux différés, débit de source partagé (24 L/s), suivi de lot et vide sanitaire.
+- Fournisseurs, transport de juvéniles, commandes et réceptions d’aliments, capacité de stockage et équipements.
+- Réservations clients, récoltes partielles, préparation, pertes, expéditions frigorifiques, créances et règlements.
+- Budget de travail/eau/énergie/entretien et journal de traçabilité.
 - Ferme Three.js avec bâtiments détaillés, eau, végétation et trois anatomies de poissons ; carte SVG de secours sans WebGL. Les images et textures restent locales.
 
-Le [prompt complet de refonte](docs/PROMPT-REALISME.md) définit la recherche, la simulation, le rendu et la validation. Le [registre de recherche](docs/research/REALISME.md) sépare **sources effectivement consultées**, hypothèses de scénario et références métier encore bloquées par le réseau. La documentation scientifique `respirometry` et `marelac` a été consultée ; les manuels FAO identifiés n’ont pas pu être lus (HTTP 403). Les coefficients d’élevage doivent encore être confrontés à ces sources et à un professionnel.
+Le [prompt de recherche et de réalisme V2](docs/PROMPT-REALISME.md) définit la recherche, la simulation, le rendu et la validation. Le [registre de recherche](docs/research/REALISME.md) sépare **sources effectivement consultées**, hypothèses de scénario et références métier encore bloquées par le réseau. La documentation scientifique `respirometry` et `marelac` a été consultée ; les manuels FAO identifiés n’ont pas pu être lus (HTTP 403). Les coefficients d’élevage doivent encore être confrontés à ces sources et à un professionnel.
 
-Le rendu combine une vue paysagère au rendu photographique, une scène 3D détaillée et une planche d’identification générée. La vue paysagère est une illustration d’ambiance fixe ; les travaux et l’état actuel sont visibles dans la visite 3D. Ce n’est pas une capture documentaire ou de la photogrammétrie. Les poissons visibles sont un échantillon à échelle indicative ; l’observation sous l’eau accentue volontairement sa transparence.
+Le rendu combine un plan du terrain reflétant les parcelles vides, une scène 3D détaillée, une illustration d’ambiance facultative et une planche d’identification générée. La vue paysagère est une illustration d’ambiance fixe ; les travaux et l’état actuel sont visibles dans la visite 3D. Ce n’est pas une capture documentaire ou de la photogrammétrie. Les poissons visibles sont un échantillon à échelle indicative ; l’observation sous l’eau accentue volontairement sa transparence.
 
 ## Sauvegardes
 
-Clé locale `les-etangs-save-v2`. Lorsqu’aucune V2 n’existe, une ancienne `les-etangs-save-v1` est migrée : lots, jours et trésorerie conservés, oxygène converti, installations incompatibles adaptées. La clé V1 d’origine n’est pas écrasée. Les anciens fichiers JSON peuvent aussi être importés. Le modèle V2 modifie l’équilibrage des anciennes parties ; celles-ci ne retrouvent pas les dotations financières d’une nouvelle partie.
+Clé locale `les-etangs-save-v3`. À défaut de V3, migration de `les-etangs-save-v2`, puis de `les-etangs-save-v1`. Lots, dates, trésorerie et progression sont conservés ; les anciennes clés restent intactes. Les anciennes fermes conservent leurs bâtiments et reçoivent un magasin et une chambre froide en service pour passer au circuit logistique. Les JSON V1/V2 restent importables. Les réglages d’eau V1 sont convertis en unités physiques. Une nouvelle partie est une action explicite, jamais une conséquence de la mise à jour.
+
 
 Import/export JSON (maximum 300 Ko), validation des nombres, espèces, lots, unités et délais, reconstruction des seuls champs connus. Un import invalide conserve la partie active. Une sauvegarde locale corrompue n’est pas automatiquement remplacée ; une alerte permet une récupération explicite. En cas de stockage plein ou interdit, l’export manuel reste disponible. Une sauvegarde est propre au domaine et au port du navigateur, sans synchronisation distante.
 
@@ -60,8 +72,11 @@ Import/export JSON (maximum 300 Ko), validation des nombres, espèces, lots, uni
 
 | Fichier | Rôle |
 | --- | --- |
-| `src/game.ts` | Moteur pur, espèces, bilans, actions, sauvegardes V1/V2 |
+| `src/game.ts` | Moteur pur, espèces, bilans, actions, sauvegardes V1/V2/V3 |
 | `src/game.test.ts` | Tests physiques, biologiques, économiques et migrations |
+| `src/development.ts`, `src/development.test.ts` | Étapes, fournisseurs, froid, contrats, transport, paiements et validation |
+| `src/ProjectPanel.tsx`, `src/progression.css` | Projet, prochaine action et chaîne logistique |
+| `src/swimming.ts`, `src/swimming.test.ts` | Nage indépendante, orientation et limites des bassins |
 | `src/App.tsx` | Horloge, interface, fenêtres, stockage |
 | `src/WaterPanel.tsx`, `src/RealismGuide.tsx` | Mesures et explications pédagogiques |
 | `src/FarmScene.tsx` | Caméra, interactions, cycle de vie WebGL, repli |
@@ -81,6 +96,6 @@ Le workflow `.github/workflows/pages.yml` teste, construit puis déploie le jeu 
 
 `npm run build` reste disponible pour un hébergement statique à la racine d’un autre domaine. Publier la configuration de l’environnement cloud ne publie pas le jeu.
 
-Ce simulateur n’est pas validé pour le dimensionnement ou la conduite d’une exploitation réelle. Maladies, traitements, reproduction, tri des tailles, nourriture naturelle d’étang, nitrites/nitrates, effluents, fiscalité et chaîne du froid ne sont pas simulés. Prix et coûts sont fictifs. Voir le registre de recherche pour les formules, coefficients et limites précises. Solo, sans compte, multijoueur ou sauvegarde serveur. Les contrôles automatiques d’accessibilité ne remplacent pas une évaluation complète avec des utilisateurs.
+Ce simulateur n’est pas validé pour le dimensionnement ou la conduite d’une exploitation réelle. Maladies, traitements, reproduction, tri des tailles, nourriture naturelle d’étang, nitrites/nitrates, effluents, et fiscalité ne sont pas simulés. Froid et préparation sont des modèles de scénario, sans simulation microbiologique ni procédure réglementaire complète. Prix et coûts sont fictifs. Voir le registre de recherche pour les formules, coefficients et limites précises. Solo, sans compte, multijoueur ou sauvegarde serveur. Les contrôles automatiques d’accessibilité ne remplacent pas une évaluation complète avec des utilisateurs.
 
-Le [prompt initial V1](docs/PROMPT.md) reste disponible comme historique de conception ; les règles V2 ci-dessus le remplacent.
+Le [prompt initial V1](docs/PROMPT.md) reste disponible comme historique de conception ; les règles V3 ci-dessus le remplacent.

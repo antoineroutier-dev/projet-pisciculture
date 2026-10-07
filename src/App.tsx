@@ -46,6 +46,14 @@ import { FishArt } from "./FishArt";
 import { lazy, Suspense } from "react";
 const FarmScene = lazy(() => import("./FarmScene"));
 import WaterPanel from "./WaterPanel";
+import ProjectPanel, { Journey, LogisticsPanel } from "./ProjectPanel";
+import {
+  STOCK_FREIGHT,
+  FEED_FREIGHT,
+  feedCapacity,
+  reservedFood,
+  type Task,
+} from "./development";
 import Guide from "./RealismGuide";
 import {
   act,
@@ -53,6 +61,8 @@ import {
   CONSTRUCTION_COST,
   CONSTRUCTION_DAYS,
   LEGACY_STORAGE_KEY,
+  V2_STORAGE_KEY,
+  advanceGuided,
   cleaningCost,
   compatible,
   facilityName,
@@ -63,7 +73,6 @@ import {
   feedNeeded,
   FOOD_PACKS,
   harvestReady,
-  harvestValue,
   initialGame,
   level,
   marketPrice,
@@ -85,11 +94,18 @@ import {
 } from "./game";
 
 type ModalKind =
-  "stock" | "build" | "harvest" | "upgrade" | "objectives" | "settings" | null;
+  | "stock"
+  | "build"
+  | "harvest"
+  | "upgrade"
+  | "objectives"
+  | "settings"
+  | null;
 function load() {
   try {
     const raw =
       localStorage.getItem(STORAGE_KEY) ||
+      localStorage.getItem(V2_STORAGE_KEY) ||
       localStorage.getItem(LEGACY_STORAGE_KEY);
     return {
       game: raw ? parseSave(raw) : initialGame(),
@@ -192,8 +208,10 @@ function StockForm({
         ? "tilapia"
         : "trout",
   );
-  const [count, setCount] = useState(Math.min(500, pond.capacity));
-  const cost = count * SPECIES[species].seedPrice;
+  const [count, setCount] = useState(
+    pond.facility === "earth" ? 100 : pond.facility === "ras" ? 600 : 1000,
+  );
+  const cost = count * SPECIES[species].seedPrice + STOCK_FREIGHT;
   return (
     <form
       onSubmit={(e) => {
@@ -202,8 +220,9 @@ function StockForm({
       }}
     >
       <p className="modal-intro">
-        Un nouveau cycle commence à {pond.name}. Choisissez votre espèce et la
-        taille du lot.
+        Commandez un lot pour {pond.name}. Livraison et acclimatation dans 4
+        jours, puis observation pendant 14 jours. Prévoyez les aliments avant
+        l’arrivée.
       </p>
       <div className="species-options">
         {Object.values(SPECIES).map((s) => (
@@ -267,7 +286,7 @@ function StockForm({
         jours.
       </p>
       <div className="checkout-line">
-        <span>Coût du lot</span>
+        <span>Coût du lot + transport vivant ({euro(STOCK_FREIGHT)})</span>
         <strong>{euro(cost)}</strong>
       </div>
       <button
@@ -279,7 +298,7 @@ function StockForm({
           pond.fallowDays > 0
         }
       >
-        Introduire {number(count)} alevins <ArrowRight size={17} />
+        Commander {number(count)} juvéniles <ArrowRight size={17} />
       </button>
       {cost > game.money && (
         <p className="inline-error">Trésorerie insuffisante.</p>
@@ -293,7 +312,7 @@ export default function App() {
   const [storageBlocked, setStorageBlocked] = useState(boot.blocked);
   const [storageError, setStorageError] = useState(boot.error);
   const [saved, setSaved] = useState(false);
-  const [view, setView] = useState<View>("ponds");
+  const [view, setView] = useState<View>("project");
   const [selected, setSelected] = useState(1);
   const [running, setRunning] = useState(false);
   const [speed, setSpeed] = useState(1);
@@ -337,7 +356,19 @@ export default function App() {
   }, []);
   useEffect(() => {
     if (!running || modal || !visible) return;
-    const timer = setInterval(() => setGame((g) => nextDay(g)), 12000 / speed);
+    const timer = setInterval(
+      () =>
+        setGame((g) => {
+          if (g.mode === "expert") return nextDay(g);
+          const result = advanceGuided(g, 1);
+          if (result.reason) {
+            setRunning(false);
+            setNotice({ text: result.reason, ok: true });
+          }
+          return result.game;
+        }),
+      12000 / speed,
+    );
     return () => clearInterval(timer);
   }, [running, speed, modal, visible]);
   useEffect(() => {
@@ -369,6 +400,38 @@ export default function App() {
       if (dismiss) close();
     }
     setNotice({ text: result.message, ok: result.ok });
+  }
+  function openStock(pondId: number) {
+    setSelected(pondId);
+    setModal("stock");
+  }
+  function followTask(task: Task) {
+    if (task.action) perform(task.action);
+    else if (task.stock) openStock(task.stock);
+    else if (task.wait) {
+      setRunning(false);
+      const result = advanceGuided(game, task.wait);
+      setGame(result.game);
+      setNotice({
+        text: `${result.elapsed} jour(s) écoulé(s). ${result.reason || "Vérifiez votre prochaine étape."}`,
+        ok: true,
+      });
+    } else if (task.target) {
+      if (task.pondId) setSelected(task.pondId);
+      if (task.urgent && task.target === "ponds")
+        requestAnimationFrame(() => {
+          const detail =
+            document.querySelector<HTMLDetailsElement>(".water-details");
+          if (detail) detail.open = true;
+        });
+      navigate(task.target);
+      if (task.target === "project")
+        requestAnimationFrame(() =>
+          document
+            .getElementById("project-plots")
+            ?.scrollIntoView({ block: "start" }),
+        );
+    }
   }
   function exportSave() {
     const blob = new Blob([JSON.stringify(game, null, 2)], {
@@ -409,12 +472,20 @@ export default function App() {
     if (fileInput.current) fileInput.current.value = "";
   }
   const viewNames: Record<View, string> = {
+    project: "Mon projet",
+    logistics: "Chaîne logistique",
     ponds: "Mes bassins",
     market: "Le marché",
     journal: "Le journal de bord",
     guide: "Le guide des Étangs",
   };
   const nav = [
+    { id: "project" as View, label: "Mon projet", icon: <Sprout size={19} /> },
+    {
+      id: "logistics" as View,
+      label: "Logistique",
+      icon: <Package size={19} />,
+    },
     { id: "ponds" as View, label: "Mes bassins", icon: <Map size={19} /> },
     {
       id: "market" as View,
@@ -433,7 +504,7 @@ export default function App() {
             href="#"
             onClick={(e) => {
               e.preventDefault();
-              navigate("ponds");
+              navigate("project");
             }}
             aria-label="Les Étangs, accueil"
           >
@@ -552,7 +623,7 @@ export default function App() {
               <div>
                 <span className="eyebrow">
                   {view === "ponds"
-                    ? "SIMULATION DE TERRAIN · ÉDITION 3D"
+                    ? "SIMULATION DE TERRAIN · ÉDITION V3"
                     : "LA VIE DE VOTRE EXPLOITATION"}
                 </span>
                 <h1>
@@ -560,13 +631,17 @@ export default function App() {
                   <span className="title-dot">.</span>
                 </h1>
                 <p>
-                  {view === "ponds"
-                    ? "Observer, comprendre, élever. Au rythme du vivant."
-                    : view === "market"
-                      ? "De belles récoltes font les projets de demain."
-                      : view === "journal"
-                        ? "Chaque petit geste écrit l’histoire de votre ferme."
-                        : "Les bons gestes pour une ferme florissante."}
+                  {view === "project"
+                    ? "De la première analyse à la première livraison. Une décision à la fois."
+                    : view === "logistics"
+                      ? "Des fournisseurs aux clients : chaque livraison compte."
+                      : view === "ponds"
+                        ? "Observer, comprendre, élever. Au rythme du vivant."
+                        : view === "market"
+                          ? "De belles récoltes font les projets de demain."
+                          : view === "journal"
+                            ? "Chaque petit geste écrit l’histoire de votre ferme."
+                            : "Les bons gestes pour une ferme florissante."}
                 </p>
               </div>
               <div className="time-widget">
@@ -613,6 +688,11 @@ export default function App() {
                 </div>
               </div>
             </section>
+            {(view === "project" ||
+              view === "ponds" ||
+              view === "logistics") && (
+              <Journey game={game} follow={followTask} />
+            )}
             <section className="stats-grid" aria-label="État de l’exploitation">
               <div className="stat-card">
                 <span className="stat-icon money">
@@ -642,7 +722,7 @@ export default function App() {
               </div>
               <button
                 className="stat-card stat-clickable"
-                onClick={() => navigate("market")}
+                onClick={() => navigate("logistics")}
               >
                 <span className="stat-icon sand">
                   <Package size={21} />
@@ -655,8 +735,8 @@ export default function App() {
                   </strong>
                   <small>
                     {game.food < 10
-                      ? "Pensez à refaire le stock"
-                      : "De quoi régaler vos poissons"}{" "}
+                      ? "Commandes et livraisons"
+                      : "Suivre les approvisionnements"}{" "}
                     <ArrowUpRight size={11} />
                   </small>
                 </div>
@@ -670,22 +750,30 @@ export default function App() {
                 <div>
                   <span>Santé des poissons</span>
                   <strong>
-                    {number(averageHealth)}
-                    <em>%</em>
+                    {activePonds.length ? number(averageHealth) : "—"}
+                    <em>{activePonds.length ? "%" : ""}</em>
                   </strong>
                   <small>
                     <span
                       className={`small-dot ${averageHealth < 45 ? "warning" : "green"}`}
                     />
-                    {averageHealth >= 80
-                      ? "Tout le monde se porte bien"
-                      : averageHealth >= 45
-                        ? "Quelques soins feront du bien"
-                        : "Vos poissons ont besoin de soins"}
+                    {!activePonds.length
+                      ? "Aucun lot en élevage"
+                      : averageHealth >= 80
+                        ? "Tout le monde se porte bien"
+                        : averageHealth >= 45
+                          ? "Quelques soins feront du bien"
+                          : "Vos poissons ont besoin de soins"}
                   </small>
                 </div>
               </div>
             </section>
+            {view === "project" && (
+              <ProjectPanel game={game} perform={perform} stock={openStock} />
+            )}
+            {view === "logistics" && (
+              <LogisticsPanel game={game} perform={perform} stock={openStock} />
+            )}
             {view === "ponds" && (
               <div className="dashboard-grid">
                 <div className="farm-column">
@@ -822,12 +910,18 @@ export default function App() {
                       </div>
                       <button
                         className="button primary full"
-                        onClick={() => setModal("build")}
+                        onClick={() =>
+                          pond.plannedSpecies
+                            ? setModal("build")
+                            : navigate("project")
+                        }
                         disabled={pond.constructionDays > 0}
                       >
                         {pond.constructionDays
                           ? `Chantier · encore ${pond.constructionDays} jours`
-                          : "Aménager le bassin"}{" "}
+                          : pond.plannedSpecies
+                            ? "Aménager le bassin"
+                            : "Choisir une filière"}{" "}
                         <Plus size={17} />
                       </button>
                       <small>
@@ -892,7 +986,7 @@ export default function App() {
                             </div>
                             <p>
                               {harvestReady(pond)
-                                ? "Votre lot est prêt pour le marché !"
+                                ? "Calibre atteint : préparez le client et le transport."
                                 : `Vente à ${number(SPECIES[pond.species].harvestWeight * 1000)} g · hier +${number(pond.lastGrowth * 1000, 1)} g/poisson`}
                             </p>
                           </div>
@@ -905,16 +999,28 @@ export default function App() {
                           <button
                             className="button primary full"
                             onClick={() => setModal("stock")}
-                            disabled={pond.fallowDays > 0}
+                            disabled={
+                              pond.fallowDays > 0 ||
+                              game.development.orders.some(
+                                (o) => o.pondId === pond.id,
+                              )
+                            }
                           >
                             <Plus size={17} />{" "}
                             {pond.fallowDays
                               ? `Vide sanitaire · ${pond.fallowDays} jours`
-                              : "Introduire des alevins"}
+                              : game.development.orders.some(
+                                    (o) => o.pondId === pond.id,
+                                  )
+                                ? "Juvéniles en livraison"
+                                : "Commander des juvéniles"}
                           </button>
                         </div>
                       )}
-                      <WaterPanel pond={pond} perform={perform} />
+                      <details className="water-details">
+                        <summary>Mesures de l’eau & réglages d’élevage</summary>
+                        <WaterPanel pond={pond} perform={perform} />
+                      </details>
                       <div className="pond-actions">
                         {pond.count > 0 && (
                           <button
@@ -944,17 +1050,15 @@ export default function App() {
                         {pond.count > 0 && (
                           <button
                             className={`button full ${harvestReady(pond) ? "harvest-button" : "muted-button"}`}
-                            onClick={() => setModal("harvest")}
+                            onClick={() => navigate("logistics")}
                             disabled={!harvestReady(pond)}
                           >
                             <ShoppingBasket size={16} />
                             {harvestReady(pond)
-                              ? "Vendre la récolte"
+                              ? "Préparer la vente"
                               : "Laissons-les grandir"}
                             {harvestReady(pond) && (
-                              <small>
-                                {euro(harvestValue(pond, game.day))}
-                              </small>
+                              <small>{number(biomass(pond), 1)} kg</small>
                             )}
                           </button>
                         )}
@@ -990,7 +1094,7 @@ export default function App() {
                       <h2>De l’étang à l’étal</h2>
                     </div>
                     <span className="pill">
-                      <TrendingUp size={14} /> Vente à la ferme
+                      <TrendingUp size={14} /> Prix indicatifs
                     </span>
                   </div>
                   <div className="market-species">
@@ -1043,11 +1147,11 @@ export default function App() {
                   <div className="market-callout">
                     <Fish size={19} />
                     <p>
-                      Les ventes se font depuis vos bassins, lorsque le lot a
-                      atteint son poids de récolte.
+                      Réservez un client, récoltez au calibre commercial, puis
+                      organisez le transport dans la chaîne logistique.
                     </p>
-                    <button onClick={() => navigate("ponds")}>
-                      Mes bassins <ArrowRight size={15} />
+                    <button onClick={() => navigate("logistics")}>
+                      Logistique <ArrowRight size={15} />
                     </button>
                   </div>
                   <section className="food-shop">
@@ -1059,8 +1163,8 @@ export default function App() {
                       <Package size={23} />
                     </div>
                     <p>
-                      Des granulés adaptés à toutes vos espèces. Stock actuel :{" "}
-                      <strong>{number(game.food, 1)} kg</strong>.
+                      Aliments adaptés à l’espèce, livraison sous 2 jours. Stock
+                      actuel : <strong>{number(game.food, 1)} kg</strong>.
                     </p>
                     <div className="food-packs">
                       {FOOD_PACKS.map((pack, i) => (
@@ -1068,7 +1172,11 @@ export default function App() {
                           key={pack.kg}
                           className="food-pack"
                           onClick={() => perform({ type: "food", pack: i })}
-                          disabled={game.money < pack.cost}
+                          disabled={
+                            !game.development.surveyed ||
+                            game.money < pack.cost + FEED_FREIGHT ||
+                            reservedFood(game) + pack.kg > feedCapacity(game)
+                          }
                         >
                           <Package size={27} />
                           <strong>{pack.kg} kg</strong>
@@ -1081,7 +1189,8 @@ export default function App() {
                           </span>
                           <small>{euro(pack.cost / pack.kg)} / kg</small>
                           <b>
-                            Acheter · {euro(pack.cost)} <Plus size={14} />
+                            Commander · {euro(pack.cost + FEED_FREIGHT)}{" "}
+                            <Plus size={14} />
                           </b>
                         </button>
                       ))}
@@ -1171,9 +1280,9 @@ export default function App() {
                     <Heart size={18} />
                     <h3>Un coup de pouce ?</h3>
                     <p>
-                      Aide pédagogique fictive : 5 000 € et 100 kg d’aliments
-                      sous 1 000 € de trésorerie, une fois tous les 90 jours.
-                      Désactivée en mode expert.
+                      Aide pédagogique fictive : 5 000 € et jusqu’à 100 kg
+                      d’aliments sous 1 000 € de trésorerie, une fois tous les
+                      90 jours. Désactivée en mode expert.
                     </p>
                     <button
                       className="button outline full"
@@ -1275,7 +1384,7 @@ export default function App() {
                 <Waves size={15} /> Les Étangs
               </span>
               <span>Faites grandir quelque chose de beau.</span>
-              <span>SIMULATION BIOLOGIQUE · V2.0</span>
+              <span>DE LA SOURCE AU CLIENT · V3.0</span>
             </footer>
           </main>
         </div>
@@ -1334,16 +1443,12 @@ export default function App() {
                 Prévoyez les juvéniles, les aliments, l’eau et l’énergie. Le
                 chauffage et la filtration de la serre augmentent les charges.
               </p>
-              {game.ponds.some((p) => p.id < pond.id && !p.built) && (
-                <p className="inline-error">
-                  Aménagez d’abord Le Pré neuf, le troisième bassin.
-                </p>
-              )}
               <button
                 className="button primary full"
                 disabled={
                   game.money < CONSTRUCTION_COST[pond.id - 1] ||
-                  game.ponds.some((p) => p.id < pond.id && !p.built)
+                  !pond.plannedSpecies ||
+                  !game.development.surveyed
                 }
                 onClick={() =>
                   perform({ type: "build", pondId: pond.id }, true)
@@ -1355,40 +1460,6 @@ export default function App() {
               {game.money < CONSTRUCTION_COST[pond.id - 1] && (
                 <p className="inline-error">Trésorerie insuffisante.</p>
               )}
-            </>
-          )}
-          {modal === "harvest" && pond.species && (
-            <>
-              <div className="harvest-hero">
-                <FishArt color={SPECIES[pond.species].color} />
-                <strong>{euro(harvestValue(pond, game.day))}</strong>
-                <span>pour votre récolte de {pond.name}</span>
-              </div>
-              <div className="checkout-line">
-                <span>
-                  {pond.count} poissons · {number(biomass(pond), 2)} kg
-                </span>
-                <strong>
-                  {euro(marketPrice(pond.species, game.day))} / kg
-                </strong>
-              </div>
-              <div className="checkout-line">
-                <span>Facteur qualité lié à la santé</span>
-                <strong>{number(85 + pond.health * 0.15, 1)} %</strong>
-              </div>
-              <p className="hint">
-                Tout le lot sera vendu. Le nettoyage et le vide sanitaire
-                réserveront ce bassin pendant 7 jours avant un nouveau lot. Le
-                temps est en pause pendant votre décision.
-              </p>
-              <button
-                className="button primary full"
-                onClick={() =>
-                  perform({ type: "harvest", pondId: pond.id }, true)
-                }
-              >
-                Confirmer la vente <ArrowRight size={17} />
-              </button>
             </>
           )}
           {modal === "upgrade" && (
@@ -1580,7 +1651,7 @@ export default function App() {
                           setStorageBlocked(false);
                           setRunning(false);
                           setSelected(1);
-                          setView("ponds");
+                          setView("project");
                           close();
                           setNotice({
                             text: "Une nouvelle aventure commence aux Étangs.",
@@ -1600,9 +1671,7 @@ export default function App() {
                     <RotateCcw size={20} />
                     <span>
                       <strong>Nouvelle partie</strong>
-                      <small>
-                        Retrouver les bassins et le budget de départ
-                      </small>
+                      <small>Repartir du terrain vide avec 60 000 €</small>
                     </span>
                     <ChevronRight size={17} />
                   </button>

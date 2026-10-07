@@ -1,7 +1,21 @@
+import {
+  advanceDevelopment,
+  developmentAction,
+  initialDevelopment,
+  parseDevelopment,
+  type Development,
+  type DevelopmentAction,
+} from "./development";
 /** Daily farm model. Coefficients and unmodelled processes: docs/research/REALISME.md. */
 export type SpeciesId = "trout" | "carp" | "tilapia";
 export type Facility = "raceway" | "earth" | "ras";
-export type View = "ponds" | "market" | "journal" | "guide";
+export type View =
+  | "project"
+  | "logistics"
+  | "ponds"
+  | "market"
+  | "journal"
+  | "guide";
 export interface Species {
   id: SpeciesId;
   name: string;
@@ -104,6 +118,7 @@ export interface Pond {
   built: boolean;
   capacity: number;
   species: SpeciesId | null;
+  plannedSpecies: SpeciesId | null;
   count: number;
   weight: number;
   health: number;
@@ -139,7 +154,8 @@ export interface Log {
   kind: "info" | "sale" | "warning" | "purchase";
 }
 export interface Game {
-  version: 2;
+  version: 3;
+  development: Development;
   mode: "guided" | "expert";
   day: number;
   money: number;
@@ -162,10 +178,11 @@ export interface Game {
   history: { day: number; money: number }[];
   lastAidDay: number;
 }
-export const STORAGE_KEY = "les-etangs-save-v2";
+export const STORAGE_KEY = "les-etangs-save-v3";
+export const V2_STORAGE_KEY = "les-etangs-save-v2";
 export const LEGACY_STORAGE_KEY = "les-etangs-save-v1";
-export const CONSTRUCTION_COST = [0, 0, 12000, 28000];
-export const CONSTRUCTION_DAYS = [0, 0, 14, 45];
+export const CONSTRUCTION_COST = [8000, 9000, 12000, 28000];
+export const CONSTRUCTION_DAYS = [14, 21, 14, 45];
 export const UPGRADE_COST = [1200, 3400];
 export const FOOD_PACKS = [
   { kg: 25, cost: 65 },
@@ -309,9 +326,12 @@ export function energyUse(p: Pond, day: number) {
 }
 export function costBreakdown(g: Game) {
   const ponds = g.ponds.filter((p) => p.built);
-  const kwh = ponds.reduce((n, p) => n + energyUse(p, g.day), 0);
+  const kwh =
+    ponds.reduce((n, p) => n + energyUse(p, g.day), 0) +
+    (g.development.assets.coldstore ? 12 : 0) +
+    (g.development.assets.workshop ? 2 : 0);
   return {
-    labour: 55,
+    labour: ponds.length ? 18 + Math.max(0, ponds.length - 1) * 10 : 0,
     maintenance: ponds.length * 2.5,
     electricity: round(kwh * 0.22),
     water: round(ponds.reduce((n, p) => n + p.flow * 86.4 * 0.012, 0)),
@@ -368,11 +388,12 @@ export function initialGame(mode: Game["mode"] = "guided"): Game {
   const ponds: Pond[] = names.map((name, i) => ({
     id: i + 1,
     name,
-    built: i < 2,
+    built: false,
     capacity: caps[i],
-    species: i === 0 ? "trout" : i === 1 ? "carp" : null,
-    count: i === 0 ? 1200 : i === 1 ? 300 : 0,
-    weight: i === 0 ? 0.38 : i === 1 ? 0.78 : 0,
+    species: null,
+    plannedSpecies: null,
+    count: 0,
+    weight: 0,
     health: 98,
     water: 95,
     oxygen: i === 0 ? 9.4 : 8,
@@ -392,7 +413,7 @@ export function initialGame(mode: Game["mode"] = "guided"): Game {
     lastGrowth: 0,
     totalFeed: 0,
     totalGain: 0,
-    age: i < 2 ? 180 : 0,
+    age: 0,
     fastingDays: 0,
     filterAge: 0,
     quarantineDays: 0,
@@ -401,17 +422,18 @@ export function initialGame(mode: Game["mode"] = "guided"): Game {
     mortality: 0,
   }));
   return {
-    version: 2,
+    version: 3,
+    development: initialDevelopment(),
     mode,
     day: 1,
-    money: 48000,
-    food: 500,
+    money: 60000,
+    food: 0,
     xp: 0,
     ponds,
     logs: [
       {
         day: 1,
-        text: "Reprise d’exploitation : les bâtiments et deux lots en croissance sont déjà en place. Contrôlez l’eau puis programmez les rations.",
+        text: "Bienvenue sur votre terrain. Aucun bassin n’est exploité. Commencez par l’étude de l’eau dans « Mon projet », puis choisissez une filière adaptée.",
         kind: "info",
       },
     ],
@@ -427,15 +449,15 @@ export function initialGame(mode: Game["mode"] = "guided"): Game {
       mortality: 0,
       energyKwh: 0,
     },
-    history: [{ day: 1, money: 48000 }],
+    history: [{ day: 1, money: 60000 }],
     lastAidDay: -90,
   };
 }
-function log(g: Game, text: string, kind: Log["kind"] = "info") {
+export function log(g: Game, text: string, kind: Log["kind"] = "info") {
   g.logs.unshift({ day: g.day, text, kind });
   g.logs = g.logs.slice(0, 120);
 }
-function spend(g: Game, cost: number) {
+export function spend(g: Game, cost: number) {
   g.money = round(g.money - cost);
   g.stats.expenses = round(g.stats.expenses + cost);
 }
@@ -650,10 +672,11 @@ export function nextDay(original: Game): Game {
         "sale",
       );
   }
+  advanceDevelopment(g, funded);
   if (g.day % 7 === 0)
     log(
       g,
-      `Bilan hebdomadaire : ${number(population(g))} poissons ; ${number(g.stats.feedUsed, 1)} kg d’aliments distribués depuis la reprise ; ${g.stats.mortality} mortalités cumulées.`,
+      `Bilan hebdomadaire : ${number(population(g))} poissons ; ${number(g.stats.feedUsed, 1)} kg d’aliments distribués depuis le début ; ${g.stats.mortality} mortalités cumulées.`,
     );
   g.history.push({ day: g.day, money: g.money });
   g.history = g.history.slice(-90);
@@ -707,6 +730,7 @@ export const OBJECTIVES = [
   },
 ];
 export type Action =
+  | DevelopmentAction
   | { type: "feed" | "clean" | "upgrade" | "harvest" | "build"; pondId: number }
   | { type: "stock"; pondId: number; species: SpeciesId; count: number }
   | { type: "food"; pack: number }
@@ -734,23 +758,44 @@ export function act(original: Game, a: Action): ActionResult {
     log(g, message, kind);
     return { game: g, message, ok: true };
   };
+  const developmentResult = developmentAction(g, a);
+  if (developmentResult)
+    return developmentResult.ok
+      ? success(
+          developmentResult.message,
+          [
+            "survey",
+            "asset",
+            "build",
+            "stock",
+            "food",
+            "harvest",
+            "process",
+            "dispatch",
+          ].includes(a.type)
+            ? "purchase"
+            : "info",
+        )
+      : fail(developmentResult.message);
+  // Development actions have been handled above; this narrows the remaining union.
+  if (
+    [
+      "survey",
+      "plan",
+      "asset",
+      "contract",
+      "cancelContract",
+      "process",
+      "dispatch",
+    ].includes(a.type)
+  )
+    return fail("Action indisponible.");
   if (a.type === "mode") {
     g.mode = a.mode;
     return success(
       a.mode === "expert"
         ? "Mode expert : primes monétaires et aide de reprise désactivées."
         : "Mode pédagogique : conseils et aides explicitement identifiées.",
-    );
-  }
-  if (a.type === "food") {
-    const pack = FOOD_PACKS[a.pack];
-    if (!pack) return fail("Conditionnement inconnu.");
-    if (g.money < pack.cost) return fail("Trésorerie insuffisante.");
-    spend(g, pack.cost);
-    g.food = round(g.food + pack.kg, 3);
-    return success(
-      `${pack.kg} kg d’aliments au stock · ${euro(pack.cost)}.`,
-      "purchase",
     );
   }
   if (a.type === "claim") {
@@ -774,31 +819,29 @@ export function act(original: Game, a: Action): ActionResult {
         "Aide pédagogique disponible sous 1 000 €, une fois tous les 90 jours.",
       );
     g.money += 5000;
-    g.food += 100;
+    g.food += Math.max(
+      0,
+      Math.min(
+        100,
+        (g.development.assets.warehouse ? 2000 : 100) -
+          g.food -
+          g.development.orders
+            .filter((o) => o.kind === "feed")
+            .reduce((n, o) => n + o.amount, 0) -
+          g.ponds.reduce((n, p) => n + p.feedToday, 0),
+      ),
+    );
     g.lastAidDay = g.day;
     return success(
-      "Aide pédagogique exceptionnelle : 5 000 € et 100 kg d’aliments. Ce dispositif n’est pas une subvention réelle.",
+      "Aide pédagogique exceptionnelle : 5 000 € et jusqu’à 100 kg d’aliments selon la place disponible. Ce dispositif n’est pas une subvention réelle.",
     );
   }
+  if (!("pondId" in a)) return fail("Action indisponible.");
   const p = g.ponds.find((x) => x.id === a.pondId);
   if (!p) return fail("Bassin introuvable.");
-  if (a.type === "build") {
-    if (p.built || p.constructionDays)
-      return fail("Ce bassin est construit ou en chantier.");
-    if (g.ponds.some((x) => x.id < p.id && !x.built))
-      return fail("Mettez d’abord le bassin précédent en service.");
-    const cost = CONSTRUCTION_COST[p.id - 1];
-    if (g.money < cost) return fail("Trésorerie insuffisante.");
-    spend(g, cost);
-    p.constructionDays = CONSTRUCTION_DAYS[p.id - 1];
-    g.xp += 30;
-    return success(
-      `${p.name} : chantier lancé, ${p.constructionDays} jours de travaux et mise en service · ${euro(cost)}.`,
-      "purchase",
-    );
-  }
   if (!p.built) return fail("Le bassin doit être mis en service.");
   if (a.type === "autoFeed") {
+    if (a.enabled && !p.autoFeed && p.count) g.stats.fed++;
     p.autoFeed = a.enabled;
     return success(
       `${p.name} : distribution automatique ${a.enabled ? "activée" : "désactivée"}. Le stock sera consommé au passage des journées.`,
@@ -817,46 +860,6 @@ export function act(original: Game, a: Action): ActionResult {
     p.rationMultiplier = a.value;
     return success(
       `${p.name} : ration cible à ${number(a.value * 100)} % de la recommandation.`,
-    );
-  }
-  if (a.type === "stock") {
-    if (p.count) return fail("Ce bassin contient déjà un lot.");
-    if (p.fallowDays)
-      return fail(`Respectez encore ${p.fallowDays} jours de vide sanitaire.`);
-    if (!Object.hasOwn(SPECIES, a.species)) return fail("Espèce inconnue.");
-    if (!compatible(p, a.species))
-      return fail(
-        `${SPECIES[a.species].name} : installation incompatible. Choisissez ${facilityName({ ...p, facility: SPECIES[a.species].facility }).toLowerCase()}.`,
-      );
-    if (
-      !Number.isInteger(a.count) ||
-      a.count < 1 ||
-      a.count > p.capacity ||
-      (a.count * SPECIES[a.species].harvestWeight) / p.volume > p.maxDensity
-    )
-      return fail("Ce lot dépasserait la capacité en biomasse à la récolte.");
-    const cost = round(a.count * SPECIES[a.species].seedPrice);
-    if (g.money < cost) return fail("Trésorerie insuffisante.");
-    spend(g, cost);
-    Object.assign(p, {
-      species: a.species,
-      count: a.count,
-      weight: SPECIES[a.species].initialWeight,
-      health: 100,
-      age: 0,
-      quarantineDays: 14,
-      fastingDays: 0,
-      totalFeed: 0,
-      totalGain: 0,
-      feedToday: 0,
-      lastFeed: 0,
-      lastGrowth: 0,
-      satiety: 0,
-    });
-    g.xp += 5;
-    return success(
-      `${p.name} : ${a.count} juvéniles introduits après acclimatation. Observation du lot pendant 14 jours · ${euro(cost)}.`,
-      "purchase",
     );
   }
   if (a.type === "upgrade") {
@@ -904,40 +907,7 @@ export function act(original: Game, a: Action): ActionResult {
       `${p.name} : ration de ${number(feed, 2)} kg programmée, distribuée sur 24 h.`,
     );
   }
-  if (!harvestReady(p))
-    return fail(
-      p.quarantineDays
-        ? `Lot en observation pendant encore ${p.quarantineDays} jours.`
-        : `Calibre minimum : ${SPECIES[p.species].harvestWeight * 1000} g par poisson.`,
-    );
-  if (p.health < 60)
-    return fail(
-      "État du lot préoccupant : stabilisez les conditions et faites contrôler le lot avant commercialisation.",
-    );
-  const kg = biomass(p),
-    value = harvestValue(p, g.day);
-  g.money = round(g.money + value);
-  g.stats.soldKg = round(g.stats.soldKg + kg);
-  g.stats.sales++;
-  g.stats.income = round(g.stats.income + value);
-  g.xp += 25;
-  // A scheduled ration is still in the hopper: return it when cancelling the batch for sale.
-  g.food = round(g.food + p.feedToday, 3);
-  g.stats.feedUsed = round(g.stats.feedUsed - p.feedToday, 3);
-  Object.assign(p, {
-    count: 0,
-    species: null,
-    weight: 0,
-    health: 100,
-    feedToday: 0,
-    satiety: 0,
-    autoFeed: false,
-    fallowDays: 7,
-  });
-  return success(
-    `${p.name} : ${number(kg, 1)} kg vendus pour ${euro(value)}. Nettoyage et vide sanitaire : 7 jours.`,
-    "sale",
-  );
+  return fail("Action indisponible.");
 }
 
 /** Validates before normalizing. The original V1 browser key is never overwritten. */
@@ -957,7 +927,7 @@ export function parseSave(raw: string): Game {
   };
   if (
     !obj(value) ||
-    (value.version !== 1 && value.version !== 2) ||
+    ![1, 2, 3].includes(value.version as number) ||
     !int(value.day, 1, 1e6) ||
     !num(value.money) ||
     !num(value.food) ||
@@ -967,6 +937,7 @@ export function parseSave(raw: string): Game {
   )
     return fail();
   const legacy = value.version === 1;
+  const v3 = value.version === 3;
   if (!legacy && value.mode !== "guided" && value.mode !== "expert")
     return fail();
   if (
@@ -1055,8 +1026,8 @@ export function parseSave(raw: string): Game {
         (!p.built || p.species === null || p.weight === 0))
     )
       return fail();
-    if (i < 2 && !p.built) return fail();
-    if (i > 0 && p.built && !value.ponds[i - 1].built) return fail();
+    if (!v3 && i < 2 && !p.built) return fail();
+    if (!v3 && i > 0 && p.built && !value.ponds[i - 1].built) return fail();
     if (!p.built && (p.count !== 0 || p.upgrade !== 0)) return fail();
     const normalized = {
       ...base.ponds[i],
@@ -1064,6 +1035,7 @@ export function parseSave(raw: string): Game {
       built: p.built,
       count: p.count as number,
       species: p.species as SpeciesId | null,
+      plannedSpecies: (v3 ? p.plannedSpecies : p.species) as SpeciesId | null,
       weight: p.weight as number,
       health: p.health as number,
       water: p.water as number,
@@ -1173,6 +1145,15 @@ export function parseSave(raw: string): Game {
       ] as const)
         (normalized as unknown as Record<string, unknown>)[k] = p[k];
     }
+    if (
+      v3 &&
+      normalized.plannedSpecies !== null &&
+      (!Object.hasOwn(SPECIES, normalized.plannedSpecies) ||
+        !compatible(normalized, normalized.plannedSpecies))
+    )
+      return fail();
+    if (v3 && normalized.constructionDays && !normalized.plannedSpecies)
+      return fail();
     parsedPonds.push(normalized);
   }
   const s = value.stats as Record<string, number>;
@@ -1182,7 +1163,10 @@ export function parseSave(raw: string): Game {
   )
     return fail();
   const g: Game = {
-    version: 2,
+    version: 3,
+    development: v3
+      ? parseDevelopment(value.development, parsedPonds, value.day as number)
+      : initialDevelopment(true),
     mode: legacy ? "guided" : (value.mode as Game["mode"]),
     day: value.day as number,
     money: value.money as number,
@@ -1205,10 +1189,93 @@ export function parseSave(raw: string): Game {
     claimed: [...value.claimed] as string[],
     history: value.history.map((h) => ({ day: h.day, money: h.money })),
   };
-  if (legacy)
+  if (
+    v3 &&
+    !g.development.migrated &&
+    g.ponds
+      .filter((p) => p.facility !== "earth" && (p.built || p.constructionDays))
+      .reduce((n, p) => n + p.flow, 0) >
+      24 + 1e-6
+  )
+    return fail();
+  if (!v3)
     log(
       g,
-      "Migration vers le modèle biologique V2 : lots et trésorerie conservés, unités d’eau converties. L’ancienne sauvegarde reste disponible sous sa clé V1. Les installations incompatibles ont été adaptées.",
+      "Migration V3 : lots, trésorerie et progression conservés. Magasin et chambre froide intégrés aux bâtiments existants. Les anciennes sauvegardes restent conservées. Pour découvrir le départ sur terrain vide, choisissez « Nouvelle partie » dans les paramètres.",
     );
   return g;
+}
+
+/** Calendar acceleration never skips daily biology or incoming/outgoing deliveries. */
+export function advanceGuided(original: Game, requested = 14) {
+  let game = original;
+  let reason = "";
+  for (let i = 0; i < Math.max(1, Math.min(14, Math.floor(requested))); i++) {
+    const before = game;
+    game = nextDay(game);
+    const d = game.development,
+      old = before.development;
+    if (!old.surveyed && d.surveyed)
+      reason = "Les résultats de l’analyse sont disponibles.";
+    else if (old.orders.length !== d.orders.length)
+      reason = "Une livraison est arrivée : vérifiez la réception.";
+    else if (
+      old.works.length !== d.works.length ||
+      game.ponds.some((p, j) => p.built && !before.ponds[j].built)
+    )
+      reason = "Un chantier est terminé.";
+    else if (d.paid > old.paid) reason = "Un règlement client a été reçu.";
+    else if (
+      d.shipments.some((s, j) => s.delivered && !old.shipments[j]?.delivered)
+    )
+      reason = "Une livraison client a été acceptée.";
+    else if (d.wasteKg > old.wasteKg)
+      reason =
+        "Un lot a été retiré de la vente : consultez le journal pour comprendre la perte.";
+    else if (d.contracts.length < old.contracts.length)
+      reason =
+        "Une réservation client a expiré : choisissez un nouveau débouché.";
+    else if (d.batches.length)
+      reason =
+        "Un lot frais attend votre décision : préparez-le ou expédiez-le.";
+    else if (
+      game.ponds.some(
+        (p, j) => harvestReady(p) && !harvestReady(before.ponds[j]),
+      )
+    )
+      reason = "Un lot a atteint son calibre de récolte.";
+    else if (
+      game.ponds.some(
+        (p, j) =>
+          p.species &&
+          p.count &&
+          p.weight >= SPECIES[p.species].harvestWeight * 0.8 &&
+          before.ponds[j].weight < SPECIES[p.species].harvestWeight * 0.8,
+      )
+    )
+      reason = "Vous pouvez maintenant réserver un client pour votre lot.";
+    else if (
+      game.ponds.some(
+        (p) =>
+          p.count &&
+          p.species &&
+          (p.oxygen < SPECIES[p.species].minOxygen ||
+            pondAmmonia(p) > SPECIES[p.species].ammoniaLimit ||
+            p.health < 60),
+      )
+    )
+      reason = "Les conditions d’élevage demandent votre attention.";
+    else if (game.ponds.some((p) => p.count && !p.autoFeed && !p.feedToday))
+      reason = "Activez la distribution quotidienne ou programmez une ration.";
+    else if (
+      game.food < game.ponds.reduce((n, p) => n + feedNeeded(p), 0) * 4 &&
+      !d.orders.some((o) => o.kind === "feed")
+    )
+      reason =
+        "Il reste moins de quatre jours d’aliments : anticipez la prochaine commande.";
+    else if (game.money < dailyCost(game) * 7)
+      reason = "Votre trésorerie couvre moins d’une semaine de charges.";
+    if (reason) break;
+  }
+  return { game, reason, elapsed: game.day - original.day };
 }

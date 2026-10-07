@@ -1,3 +1,4 @@
+import { operatingGame as initialGame } from "./test-fixtures";
 import { describe, expect, it } from "vitest";
 import {
   act,
@@ -7,8 +8,6 @@ import {
   dailyCost,
   feedNeeded,
   growthFactor,
-  harvestValue,
-  initialGame,
   nextDay,
   oxygenSaturation,
   parseSave,
@@ -236,10 +235,15 @@ describe("gestion, délais et économie", () => {
     expect(
       act(built, { type: "stock", pondId: 3, species: "carp", count: 100 }).ok,
     ).toBe(false);
-    expect(
-      act(built, { type: "stock", pondId: 3, species: "trout", count: 100 })
-        .game.ponds[2].quarantineDays,
-    ).toBe(14);
+    const ordered = act(built, {
+      type: "stock",
+      pondId: 3,
+      species: "trout",
+      count: 100,
+    });
+    expect(ordered.ok).toBe(true);
+    expect(ordered.game.ponds[2].count).toBe(0);
+    expect(advance(ordered.game, 4).ponds[2].quarantineDays).toBe(14);
   });
   it("refuse des lots invalides et dimensionne la capacité à la récolte", () => {
     const g = initialGame();
@@ -261,12 +265,17 @@ describe("gestion, délais et économie", () => {
     g.ponds[0].health = 50;
     expect(act(g, { type: "harvest", pondId: 1 }).ok).toBe(false);
   });
-  it("vend un lot, restitue la ration réservée et impose le vide sanitaire", () => {
-    const g = mature(),
+  it("met la récolte au froid, restitue la ration réservée et impose le vide sanitaire", () => {
+    const g = act(mature(), {
+        type: "contract",
+        pondId: 1,
+        buyer: "cooperative",
+      }).game,
       fed = act(g, { type: "feed", pondId: 1 }).game,
       sale = act(fed, { type: "harvest", pondId: 1 }).game;
-    expect(sale.money).toBe(g.money + harvestValue(g.ponds[0], g.day));
-    expect(sale.stats.soldKg).toBe(540);
+    expect(sale.money).toBe(g.money - 540 * 0.25);
+    expect(sale.development.batches[0].kg).toBe(540);
+    expect(sale.stats.soldKg).toBe(0);
     expect(sale.food).toBe(g.food);
     expect(sale.stats.feedUsed).toBe(0);
     expect(sale.ponds[0].fallowDays).toBe(7);
@@ -325,7 +334,7 @@ describe("persistance et stabilité", () => {
     const v = legacy();
     v.ponds[1].species = "trout";
     const g = parseSave(JSON.stringify(v));
-    expect(g.version).toBe(2);
+    expect(g.version).toBe(3);
     expect(g.money).toBe(v.money);
     expect(g.ponds[1].count).toBe(30);
     expect(g.ponds[1].facility).toBe("raceway");
@@ -333,7 +342,7 @@ describe("persistance et stabilité", () => {
     expect(g.ponds[1].oxygen).toBeCloseTo(oxygenSaturation(13.5) * 0.9);
     expect(parseSave(JSON.stringify(g))).toEqual(g);
   });
-  it("accepte les parties V2 et ignore les champs inconnus", () => {
+  it("accepte les parties V3 et ignore les champs inconnus", () => {
     const g = act(initialGame(), { type: "feed", pondId: 1 }).game;
     expect(parseSave(JSON.stringify({ ...g, extra: "ignored" }))).toEqual(g);
   });

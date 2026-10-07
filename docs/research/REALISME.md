@@ -1,4 +1,4 @@
-# Recherche, hypothèses et limites du modèle V2
+# Recherche, hypothèses et limites — modèle biologique V2, progression V3
 
 État au **7 octobre 2026**. Ce registre accompagne [le prompt de refonte](../PROMPT-REALISME.md). Le projet est un jeu pédagogique, sans validation terrain par un pisciculteur. Les sources scientifiques ci-dessous ont effectivement été lues ; elles ne valident pas à elles seules une conduite d’élevage.
 
@@ -26,7 +26,9 @@ Les requêtes directes ont renvoyé **HTTP 403 via le proxy réseau de l’envir
 
 Le brouillon de configuration cloud ajoute `www.fao.org`, `fao.org`, `openknowledge.fao.org` et `edis.ifas.ufl.edu` aux domaines réseau, en conservant les réglages existants. Il nécessite publication dans les paramètres de l’environnement ; cela ne déploie pas le jeu. Une fois l’accès effectif, confronter les profils d’espèces, tables d’alimentation, densités, biosécurité et cycles aux documents métier. Aucun entretien, visite de ferme ou relevé d’exploitation n’a eu lieu.
 
-## Traduction dans le jeu
+## Modèle biologique conservé et scénario historique V2
+
+**Les dotations de départ et coûts V2 ci-dessous sont conservés comme historique. Les règles actuelles d’implantation, de travail et de logistique sont décrites dans l’extension V3 en fin de document.**
 
 Le joueur reprend une petite exploitation française fictive : 1 200 truites de 380 g en bassin de 60 m³ alimenté par une source, 300 carpes de 780 g dans un étang de 600 m³, 48 000 € de trésorerie et 500 kg d’aliment. Les lots ont déjà 180 jours de suivi à la reprise. Un troisième bassin de 90 m³ et une serre avec circuit recirculé de 40 m³ peuvent être construits. Cette combinaison est un scénario pédagogique multi-espèces, pas la reproduction documentée d’une ferme particulière.
 
@@ -86,9 +88,9 @@ L’absence de trésorerie suspend les équipements actifs et le chauffage dans 
 
 Les tests couvrent les unités, les bilans de renouvellement, la conservation de l’aliment, la croissance bornée par le FCR, l’hypoxie, la maturation du biofiltre, l’hivernage, les délais et la persistance. Les scénarios de calibration à faible charge produisent environ 154 jours pour 50 → 450 g de truite et 207 jours pour 30 → 650 g de tilapia, et 529 jours sur deux saisons de croissance pour une carpe de 100 g à 1 kg ; **résultats du moteur**, pas observations expérimentales. Le parcours navigateur vérifie commandes, sauvegardes, 3D, repli sans WebGL, mobile et accessibilité automatisée.
 
-Pour revendiquer une fidélité métier avancée, il reste à consulter les documents actuellement bloqués, confronter les paramètres à des données de lots et faire relire la conduite d’élevage par un professionnel. Le modèle omet encore tri/calibrage, dispersion individuelle, reproduction, maladies, traitements, chaîne du froid, O₂ d’entrée mesuré, hydraulique longitudinale, nitrates/nitrites, CO₂, alcalinité, sédiments, effluents et production naturelle d’étang.
+Pour revendiquer une fidélité métier avancée, il reste à consulter les documents actuellement bloqués, confronter les paramètres à des données de lots et faire relire la conduite d’élevage par un professionnel. Le modèle omet encore tri/calibrage, dispersion individuelle, reproduction, maladies, traitements, microbiologie du froid, O₂ d’entrée mesuré, hydraulique longitudinale, nitrates/nitrites, CO₂, alcalinité, sédiments, effluents et production naturelle d’étang.
 
-### Résultat de vérification de cette livraison
+### Résultat de vérification de la livraison V2 (historique)
 
 - Installation reproductible : `npm ci --cache /tmp/les-etangs-npm-cache --no-audit --no-fund`, réussie.
 - Moteur : **27 tests Vitest réussis**.
@@ -96,3 +98,29 @@ Pour revendiquer une fidélité métier avancée, il reste à consulter les docu
 - Production : `npm run build` réussi ; images locales, chargement du module de visite, ration, croissance, sauvegarde et restauration vérifiés sur le serveur de production. Vite signale la taille du module Three.js différé (environ 622 Ko avant compression, 161 Ko gzip).
 - Inspection visuelle : vues ferme/bâtiments/bassin, trois espèces, interface ordinateur et mobile. Les modèles 3D restent visiblement simplifiés ; les illustrations d’ambiance et d’identification apportent le rendu photographique.
 - Instructions d’installation/démarrage enregistrées dans le brouillon cloud ; activation réseau et publication restent à effectuer depuis les paramètres de l’environnement.
+
+
+## Extension V3 : implantation, logistique et nage
+
+La V3 conserve les équations biologiques ci-dessus. Les éléments suivants sont **des hypothèses de scénario** ajoutées pour matérialiser les décisions du joueur ; ils ne proviennent pas d’une nouvelle enquête de terrain et ne constituent ni des devis ni un référentiel sanitaire.
+
+- Nouvelle partie : 60 000 €, aucun bassin construit, aucun poisson/aliment. Étude d’eau : 240 €, réponse en 2 jours. Source partagée de 24 L/s pour les bassins courants et l’appoint du circuit recirculé ; l’étang dispose d’un faible apport de surface séparé.
+- Bassins de source : 8 000 €/14 j pour 60 m³, 12 000 €/14 j pour 90 m³. Étang de 600 m³ : 9 000 €/21 j. RAS de 40 m³ : 28 000 €/45 j, chauffage et maturation initiale du biofiltre inclus.
+- Travail à temps partiel : 18 €/jour au premier bassin puis 10 €/bassin supplémentaire. Aucun salaire pendant le seul projet non aménagé. Ce budget remplace les 55 €/jour forfaitaires de V2 ; la rémunération complète de l’exploitant et le financement ne sont pas modélisés. Les petits lots d’apprentissage peuvent être déficitaires.
+- Aliments : 2 jours, 18 € de transport par commande, formulations adaptées agrégées dans un stock commun. Capacité de l’abri 100 kg ; magasin 2 000 kg, 2 600 €/7 j. La capacité inclut les commandes en route et les rations déjà réservées.
+- Juvéniles : 4 jours, 90 € de transport vivant par commande ; observation de 14 jours à réception. La commande réserve le bassin et nécessite les premières rations disponibles ou en cours d’acheminement. Les transports sont déterministes, sans aléa sanitaire.
+- Chambre froide : 4 800 €/10 j, 1 500 kg à température supposée de 0–2 °C, consommation 12 kWh/j. Le scénario retire les invendus au début du troisième jour après récolte ; une livraison doit arriver strictement avant cette limite. Il ne calcule pas la croissance bactérienne. Des charges non financées interrompent le froid et retirent le stock de la vente.
+- Récolte/glaçage/caisses : 0,25 €/kg. Les récoltes sont fractionnées automatiquement par nombre entier de poissons lorsque le stock froid ou le volume du client le nécessite. La ration réservée est restituée au prorata des poissons retirés ; le reste du lot poursuit sa croissance.
+- Atelier : 6 500 €/14 j, 2 kWh/j de veille. Préparation de poissons éviscérés : 1 jour, 0,55 €/kg brut, rendement de masse vendable de 85 %. Les 15 % de coproduits sont journalisés ; ils ne deviennent ni aliment ni produit vendu. La préparation ne prolonge pas la date de conservation.
+- Réservation client à partir de 80 % du calibre, prix fixé sur le marché du jour, livraison dans les 30 jours. Coopérative : jusqu’à 1 500 kg entiers, transport 95 € + 0,16 €/kg, règlement 7 jours après réception. Poissonneries : jusqu’à 800 kg préparés, prix ×1,5, transport 45 € + 0,30 €/kg, règlement à 3 jours. Transport frigorifique payé au départ, réception après 1 jour, froid du transporteur supposé maintenu.
+- La croissance n’est pas accélérée biologiquement. L’avance guidée plafonnée à 14 jours itère tous les jours et s’arrête aux besoins d’intervention. L’horloge en mode expert laisse le joueur gérer ses alertes.
+- Les poissons 3D sont des agents de présentation, indépendants des comptes biologiques. Vitesse et virage sont lissés, parois anticipées, voisinage évité, cohésion faible. Truite, carpe et tilapia ont des vitesses et regroupements distincts. Une onde continue s’amplifie vers la queue et suit l’effort de nage. Ce comportement vise une lecture naturelle, sans prétendre à une validation éthologique.
+
+Les tests couvrent le parcours jusqu’au règlement, les capacités/références de stock et contrats, les récoltes partielles, la péremption, la rupture du froid, la migration V1/V2 et les limites géométriques de nage. Le guide intégré signale les simplifications.
+
+### Vérification de la V3
+
+- 45 tests Vitest réussis, dont le cycle de création jusqu’au paiement, les récoltes partielles avec conservation de masse et d’aliments, les pertes de froid et cinq minutes de nage simulée pour chacune des trois espèces.
+- 8 parcours Chromium validés : 3D et amélioration d’un bassin, import/export, migrations V1 et V2, horloge, repli sans WebGL, mobile/accessibilité et premier cycle entièrement joué par l’interface. La dernière passe générale a validé 7 parcours ; le parcours mobile a ensuite réussi après correction de la superposition de la carte. Le parcours 3D a également été relancé avec succès après vérification de la conservation des trajectoires lors d’une amélioration.
+- Build TypeScript/Vite réussi avec le préfixe GitHub Pages `/projet-pisciculture/`. Vérification sur le build de production : chemins d’images corrects, deux captures de nage distinctes, amélioration sans erreur JavaScript.
+- Édition autonome V3 reconstruite (9,3 Mo), démarrage et progression vérifiés avec tous les chargements externes bloqués.

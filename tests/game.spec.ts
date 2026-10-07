@@ -1,14 +1,26 @@
 import { expect, test } from "@playwright/test";
+import { operatingGame as initialGame } from "../src/test-fixtures";
 import AxeBuilder from "@axe-core/playwright";
-import { initialGame, STORAGE_KEY, LEGACY_STORAGE_KEY } from "../src/game";
+import {
+  STORAGE_KEY,
+  LEGACY_STORAGE_KEY,
+  V2_STORAGE_KEY,
+  type Game,
+} from "../src/game";
 
 test("3D : ferme, bassin, bâtiments et identification des trois espèces", async ({
   page,
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
+  const seed = initialGame();
+  await page.addInitScript(
+    ({ key, seed }) => localStorage.setItem(key, JSON.stringify(seed)),
+    { key: STORAGE_KEY, seed },
+  );
   await page.goto("/");
-  await expect(page.getByAltText(/Vue d’ambiance de la ferme/)).toBeVisible();
+  await page.getByRole("button", { name: "Mes bassins", exact: true }).click();
+  await expect(page.locator(".scene-site-plan")).toBeVisible();
   await page
     .getByRole("button", { name: "Explorer en 3D", exact: true })
     .click();
@@ -18,7 +30,13 @@ test("3D : ferme, bassin, bâtiments et identification des trois espèces", asyn
   });
   await page
     .getByTestId("farm-scene")
-    .screenshot({ path: "/tmp/les-etangs-v2-farm.png" });
+    .screenshot({ path: "/tmp/les-etangs-v3-farm.png" });
+  await page
+    .getByRole("button", { name: "Améliorer ce bassin", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Installer l’équipement", exact: true })
+    .click();
   for (const [label, view] of [
     ["Bâtiments", "buildings"],
     ["Le bassin", "pond"],
@@ -27,7 +45,7 @@ test("3D : ferme, bassin, bâtiments et identification des trois espèces", asyn
     await expect(canvas).toHaveAttribute("data-view", view);
     await page
       .getByTestId("farm-scene")
-      .screenshot({ path: `/tmp/les-etangs-v2-${view}.png` });
+      .screenshot({ path: `/tmp/les-etangs-v3-${view}.png` });
   }
   await page
     .getByRole("button", { name: "Observer sous l’eau", exact: true })
@@ -48,117 +66,15 @@ test("3D : ferme, bassin, bâtiments et identification des trois espèces", asyn
     await expect(page.locator(".fish-observation")).toContainText(trait);
     await page
       .getByTestId("farm-scene")
-      .screenshot({ path: `/tmp/les-etangs-v2-${id}.png` });
+      .screenshot({ path: `/tmp/les-etangs-v3-${id}.png` });
   }
   await page.getByRole("button", { name: "Marché", exact: true }).click();
   await page
     .getByRole("navigation", { name: "Navigation principale" })
     .getByRole("button", { name: "Mes bassins", exact: true })
     .click();
-  await expect(page.getByAltText(/Vue d’ambiance de la ferme/)).toBeVisible();
+  await expect(page.locator(".scene-site-plan")).toBeVisible();
   expect(errors).toEqual([]);
-});
-
-test("gestion : ration, mesures, récolte, vide sanitaire et nouveau lot", async ({
-  page,
-}) => {
-  const seed = initialGame();
-  seed.ponds[0].weight = 0.449;
-  await page.addInitScript(
-    ({ key, seed }) => {
-      if (!localStorage.getItem(key))
-        localStorage.setItem(key, JSON.stringify(seed));
-    },
-    { key: STORAGE_KEY, seed },
-  );
-  await page.goto("/");
-  await page.getByRole("switch", { name: "Distribution automatique" }).click();
-  await page.getByRole("button", { name: /Programmer la ration/ }).click();
-  await expect(
-    page.getByRole("button", { name: /Ration programmée/ }),
-  ).toBeDisabled();
-  await page.getByLabel("Débit d’eau neuve").selectOption("12");
-  await page.getByRole("button", { name: "Jour suivant", exact: true }).click();
-  await expect(page.getByTestId("day")).toHaveText("Jour 2");
-  await page.getByRole("button", { name: /Vendre la récolte/ }).click();
-  await page
-    .getByRole("button", { name: "Confirmer la vente", exact: true })
-    .click();
-  await expect(
-    page.getByRole("button", { name: /Vide sanitaire · 7 jours/ }),
-  ).toBeDisabled();
-  for (let i = 0; i < 7; i++)
-    await page
-      .getByRole("button", { name: "Jour suivant", exact: true })
-      .click();
-  await page
-    .getByRole("button", { name: "Introduire des alevins", exact: true })
-    .click();
-  await page.getByLabel("Nombre d’alevins").fill("100");
-  await page
-    .getByRole("button", { name: "Introduire 100 alevins", exact: true })
-    .click();
-  await expect(page.locator(".water-panel")).toContainText("14 jours");
-  const state = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key)!),
-    STORAGE_KEY,
-  );
-  expect(state.ponds[0].count).toBe(100);
-  expect(state.ponds[0].weight).toBe(0.05);
-  expect(state.stats.sales).toBe(1);
-  await page.reload();
-  await expect(page.getByTestId("day")).toHaveText("Jour 9");
-  await expect(
-    page.getByRole("button", { name: "Lancer la simulation" }),
-  ).toBeVisible();
-  expect(
-    await page.evaluate(
-      (key) => JSON.parse(localStorage.getItem(key)!),
-      STORAGE_KEY,
-    ),
-  ).toEqual(state);
-});
-
-test("construction différée et navigation au clavier", async ({ page }) => {
-  await page.goto("/");
-  await page
-    .getByRole("button", { name: "Améliorer ce bassin", exact: true })
-    .click();
-  await page
-    .getByRole("button", { name: "Installer l’équipement", exact: true })
-    .click();
-  await page
-    .getByRole("button", { name: "Sélectionner Le Pré neuf", exact: true })
-    .focus();
-  await page.keyboard.press("Enter");
-  await expect(
-    page.getByRole("heading", { name: "Le Pré neuf", exact: true }),
-  ).toBeVisible();
-  await page
-    .getByRole("button", { name: "Aménager le bassin", exact: true })
-    .click();
-  await page.getByRole("button", { name: /Aménager pour/ }).click();
-  await expect(
-    page.getByRole("button", { name: /Chantier · encore/ }),
-  ).toBeDisabled();
-  const state = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key)!),
-    STORAGE_KEY,
-  );
-  expect(state.ponds[2].constructionDays).toBe(14);
-  expect(state.ponds[2].built).toBe(false);
-  await page
-    .getByRole("button", { name: "Voir les objectifs", exact: true })
-    .click();
-  await page.getByRole("button", { name: "Réclamer", exact: true }).click();
-  await page.keyboard.press("Escape");
-  await expect(page.getByRole("dialog")).not.toBeVisible();
-  await page.getByRole("button", { name: "Guide", exact: true }).click();
-  await expect(
-    page.getByRole("heading", {
-      name: "Des mois, pas des minutes biologiques",
-    }),
-  ).toBeVisible();
 });
 
 test("import, export, mode expert et protection de sauvegarde corrompue", async ({
@@ -243,7 +159,7 @@ test("migration automatique V1 conserve le fichier original", async ({
     (key) => JSON.parse(localStorage.getItem(key)!),
     STORAGE_KEY,
   );
-  expect(migrated.version).toBe(2);
+  expect(migrated.version).toBe(3);
   expect(migrated.ponds[0].count).toBe(30);
   expect(migrated.ponds[0].oxygen).toBeGreaterThan(8);
   expect(migrated.ponds[0].oxygen).toBeLessThan(12);
@@ -271,7 +187,7 @@ test("horloge : vitesse ×60, fenêtre de gestion et pause", async ({ page }) =>
   await page.clock.fastForward(210);
   await expect(page.getByTestId("day")).toHaveText("Jour 2");
   await page
-    .getByRole("button", { name: "Voir les objectifs", exact: true })
+    .getByRole("button", { name: "Paramètres & sauvegarde", exact: true })
     .click();
   await page.clock.fastForward(1000);
   await page.keyboard.press("Escape");
@@ -300,7 +216,13 @@ test("sans WebGL : la carte et la gestion restent disponibles", async ({
       return Reflect.apply(original, this, [type, ...args]);
     } as typeof original;
   });
+  const seed = initialGame();
+  await page.addInitScript(
+    ({ key, seed }) => localStorage.setItem(key, JSON.stringify(seed)),
+    { key: STORAGE_KEY, seed },
+  );
   await page.goto("/");
+  await page.getByRole("button", { name: "Mes bassins", exact: true }).click();
   await page
     .getByRole("button", { name: "Explorer en 3D", exact: true })
     .click();
@@ -317,7 +239,14 @@ test("sans WebGL : la carte et la gestion restent disponibles", async ({
 
 test("mobile et accessibilité des pages principales", async ({ page }) => {
   await page.goto("/");
-  for (const name of ["Mes bassins", "Marché", "Journal", "Guide"]) {
+  for (const name of [
+    "Mon projet",
+    "Logistique",
+    "Mes bassins",
+    "Marché",
+    "Journal",
+    "Guide",
+  ]) {
     await page
       .getByRole("navigation", { name: "Navigation principale" })
       .getByRole("button", { name, exact: true })
@@ -344,7 +273,14 @@ test("mobile et accessibilité des pages principales", async ({ page }) => {
   ).toEqual([]);
   await page.keyboard.press("Escape");
   await page.setViewportSize({ width: 360, height: 800 });
-  for (const name of ["Mes bassins", "Marché", "Journal", "Guide"]) {
+  for (const name of [
+    "Mon projet",
+    "Logistique",
+    "Mes bassins",
+    "Marché",
+    "Journal",
+    "Guide",
+  ]) {
     await page
       .getByRole("navigation", { name: "Navigation principale" })
       .getByRole("button", { name, exact: true })
@@ -363,9 +299,130 @@ test("mobile et accessibilité des pages principales", async ({ page }) => {
         page.getByRole("heading", { name: "La Roselière", exact: true }),
       ).toBeVisible();
       await page.screenshot({
-        path: "/tmp/les-etangs-v2-mobile.png",
+        path: "/tmp/les-etangs-v3-mobile.png",
         fullPage: true,
       });
     }
   }
+});
+
+test("nouvelle partie guidée : terrain vide jusqu’au premier règlement, uniquement par les commandes du jeu", async ({
+  page,
+}) => {
+  test.setTimeout(120000);
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  const current = async (): Promise<Game> =>
+    page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), STORAGE_KEY);
+  const step = () => page.getByTestId("next-task").getByRole("button");
+  await page.goto("/");
+  await expect(
+    page.getByRole("heading", { name: "Tout commence par l’eau" }),
+  ).toBeVisible();
+  expect((await current()).ponds.every((p) => !p.built && !p.count)).toBe(true);
+  await step().click(); // Analysis order.
+  await step().click(); // Receive analysis, day 3.
+  await page
+    .getByRole("button", {
+      name: "Choisir truite arc-en-ciel · Les Saules",
+      exact: true,
+    })
+    .click();
+  await step().click(); // Build.
+  await step().click(); // Fourteen-day construction.
+  await expect(page.getByTestId("day")).toHaveText("Jour 17");
+  await step().click(); // Warehouse.
+  await step().click(); // Seven-day works.
+  await step().click(); // Open supply chain.
+  await page
+    .getByRole("button", { name: "Commander 100 kg", exact: true })
+    .click();
+  expect((await current()).food).toBe(0);
+  await step().click(); // Receive food.
+  await step().click(); // Juvenile order dialog.
+  await page.getByLabel("Nombre d’alevins").fill("1000");
+  await page
+    .getByRole("button", { name: /Commander 1.?000 juvéniles/ })
+    .click();
+  expect((await current()).ponds[0].count).toBe(0);
+  await step().click(); // Four-day transport.
+  expect((await current()).ponds[0].quarantineDays).toBe(14);
+  await step().click(); // Automatic feeder.
+  expect((await current()).ponds[0].autoFeed).toBe(true);
+  expect(
+    (
+      await new AxeBuilder({ page })
+        .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+        .analyze()
+    ).violations,
+  ).toEqual([]);
+  await page.screenshot({
+    path: "/tmp/les-etangs-v3-logistics.png",
+    fullPage: true,
+  });
+  let iterations = 0;
+  while ((await current()).development.paid === 0 && iterations++ < 90) {
+    const state = await current(),
+      title = await page
+        .getByTestId("next-task")
+        .getByRole("heading")
+        .innerText();
+    if (state.development.batches.length) {
+      await page.getByRole("button", { name: /^Expédier le lot/ }).click();
+    } else if (title.includes("Anticipez la rupture")) {
+      await step().click();
+      await page
+        .getByRole("button", { name: "Commander 100 kg", exact: true })
+        .click();
+    } else if (title.includes("Trouvez un client")) {
+      await step().click();
+      await page
+        .getByRole("button", {
+          name: "Réserver Les Saules · Coopérative régionale",
+          exact: true,
+        })
+        .click();
+    } else if (title.includes("prêt à récolter")) {
+      await step().click();
+      await page
+        .getByRole("button", { name: "Récolter Les Saules", exact: true })
+        .click();
+    } else {
+      await step().click();
+    }
+  }
+  const state = await current();
+  expect(state.development.paid).toBe(1);
+  expect(state.stats.soldKg).toBeGreaterThanOrEqual(450);
+  expect(state.stats.mortality).toBe(0);
+  expect(state.day).toBeGreaterThan(130);
+  expect(state.money).toBeGreaterThan(1000);
+  await page.reload();
+  expect(await current()).toEqual(state);
+  expect(errors).toEqual([]);
+});
+
+test("migration V2 préserve la partie et propose explicitement le nouveau départ", async ({
+  page,
+}) => {
+  const seed = initialGame();
+  const raw = JSON.stringify({ ...seed, version: 2, development: undefined });
+  await page.addInitScript(({ key, raw }) => localStorage.setItem(key, raw), {
+    key: V2_STORAGE_KEY,
+    raw,
+  });
+  await page.goto("/");
+  await expect(
+    page.getByText("Votre ancienne exploitation est conservée."),
+  ).toBeVisible();
+  const state = await page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key)!),
+    STORAGE_KEY,
+  );
+  expect(state.version).toBe(3);
+  expect(state.ponds[0].count).toBe(1200);
+  expect(state.money).toBe(48000);
+  expect(
+    await page.evaluate((key) => localStorage.getItem(key), V2_STORAGE_KEY),
+  ).toBe(raw);
 });

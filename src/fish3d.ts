@@ -151,8 +151,23 @@ export function createFish(species: SpeciesId, detailed = true) {
     const lower = profilePoints[Math.max(0, next - 1)],
       upper = profilePoints[Math.max(0, next)];
     const blend = (u - lower[0]) / Math.max(0.001, upper[0] - lower[0]);
-    const eased = blend * blend * (3 - 2 * blend);
-    const profile = lower[1] + (upper[1] - lower[1]) * eased;
+    // Cubic Hermite slopes stay continuous through the body profile control points.
+    const left = profilePoints[Math.max(0, next - 2)],
+      right = profilePoints[Math.min(profilePoints.length - 1, next + 1)];
+    const span = upper[0] - lower[0];
+    const m0 =
+      ((upper[1] - left[1]) / Math.max(0.001, upper[0] - left[0])) * span;
+    const m1 =
+      ((right[1] - lower[1]) / Math.max(0.001, right[0] - lower[0])) * span;
+    const t2 = blend * blend,
+      t3 = t2 * blend;
+    const profile = Math.max(
+      0.02,
+      (2 * t3 - 3 * t2 + 1) * lower[1] +
+        (t3 - 2 * t2 + blend) * m0 +
+        (-2 * t3 + 3 * t2) * upper[1] +
+        (t3 - t2) * m1,
+    );
     for (let j = 0; j <= rings; j++) {
       const angle = (j / rings) * Math.PI * 2;
       vertices.push(
@@ -400,14 +415,86 @@ export function createFish(species: SpeciesId, detailed = true) {
     mouth.position.set(-1.06, -0.02, 0);
     group.add(mouth);
   }
-  group.userData = { tail, pectorals, species };
+  // Store immutable coordinates in fish space for a continuous body/fin wave.
+  // Eyes and the snout stay rigid; each fin uses the same displacement as its attachment.
+  group.updateMatrixWorld(true);
+  const surfaces: SwimSurface[] = [];
+  group.traverse((node) => {
+    if (!(node instanceof T.Mesh || node instanceof T.Line)) return;
+    const geometry = node.geometry as T.BufferGeometry;
+    const attr = geometry.getAttribute("position") as T.BufferAttribute;
+    if (!attr) return;
+    const original = new Float32Array(attr.array),
+      xs = new Float32Array(attr.count);
+    const point = new T.Vector3();
+    let movable = false;
+    for (let i = 0; i < attr.count; i++) {
+      point.fromBufferAttribute(attr, i).applyMatrix4(node.matrixWorld);
+      xs[i] = point.x;
+      if (point.x > -0.6) movable = true;
+    }
+    if (!movable) return;
+    const inverse = node.matrixWorld.clone().invert();
+    const direction = new T.Vector3(0, 0, 1)
+      .applyMatrix4(inverse)
+      .sub(new T.Vector3().applyMatrix4(inverse));
+    const normals =
+      node === body
+        ? new Float32Array(geometry.getAttribute("normal").array)
+        : null;
+    attr.setUsage(T.DynamicDrawUsage);
+    surfaces.push({ geometry, original, xs, direction, normals });
+  });
+  group.userData = { surfaces, species };
   return group;
 }
-export function animateFish(fish: T.Group, time: number, strength = 1) {
-  const tail = fish.userData.tail as T.Group;
-  tail.rotation.y = Math.sin(time * 5) * 0.25 * strength;
-  for (const [i, f] of (fish.userData.pectorals as T.Group[]).entries())
-    f.rotation.z = Math.sin(time * 3 + i) * 0.1;
+interface SwimSurface {
+  geometry: T.BufferGeometry;
+  original: Float32Array;
+  xs: Float32Array;
+  direction: T.Vector3;
+  normals: Float32Array | null;
+}
+export function animateFish(
+  fish: T.Group,
+  phase: number,
+  effort = 0.65,
+  turn = 0,
+) {
+  const amplitude = 0.025 + Math.min(1.4, effort) * 0.09;
+  for (const surface of fish.userData.surfaces as SwimSurface[]) {
+    const { geometry, original, xs, direction, normals } = surface;
+    const attr = geometry.getAttribute("position") as T.BufferAttribute;
+    const normal = geometry.getAttribute("normal") as
+      | T.BufferAttribute
+      | undefined;
+    for (let i = 0; i < xs.length; i++) {
+      const u = Math.max(0, (xs[i] + 0.6) / 1.85);
+      const angle = phase - u * 5.6;
+      const wave = amplitude * u * u * Math.sin(angle) + turn * 0.045 * u * u;
+      const at = i * 3;
+      attr.setXYZ(
+        i,
+        original[at] + direction.x * wave,
+        original[at + 1] + direction.y * wave,
+        original[at + 2] + direction.z * wave,
+      );
+      if (normals && normal) {
+        const slope =
+          (amplitude *
+            (2 * u * Math.sin(angle) - 5.6 * u * u * Math.cos(angle)) +
+            turn * 0.09 * u) /
+          1.85;
+        const nx = normals[at] - slope * normals[at + 2],
+          ny = normals[at + 1],
+          nz = normals[at + 2];
+        const length = Math.hypot(nx, ny, nz) || 1;
+        normal.setXYZ(i, nx / length, ny / length, nz / length);
+      }
+    }
+    attr.needsUpdate = true;
+    if (normals && normal) normal.needsUpdate = true;
+  }
 }
 export function clearFishTextures() {
   for (const t of cache.values()) t.dispose();

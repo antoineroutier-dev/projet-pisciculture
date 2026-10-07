@@ -13,6 +13,7 @@ import {
   Warehouse,
 } from "lucide-react";
 import FarmMap from "./FarmMap";
+import { stepSchool, swimRotation } from "./swimming";
 import { animateFish, clearFishTextures, createFish } from "./fish3d";
 import { createFarm, disposeObject, POND_POSITIONS } from "./farm3d";
 import { SPECIES, number, type Pond, type SpeciesId } from "./game";
@@ -31,7 +32,7 @@ export default function FarmScene({
   day: number;
 }) {
   const [started, setStarted] = useState(false);
-  const [landscape, setLandscape] = useState(true);
+  const [landscape, setLandscape] = useState(false);
   const [notice, setNotice] = useState("");
   const [mode, setMode] = useState<SceneMode>("farm");
   const [species, setSpecies] = useState<SpeciesId>("trout");
@@ -157,7 +158,8 @@ export default function FarmScene({
       cameraKey = "",
       fishSpecies: SpeciesId = "trout";
     let frame = 0,
-      lastRender = 0;
+      lastRender = 0,
+      lastSwim = 0;
     const raycaster = new T.Raycaster(),
       pointer = new T.Vector2();
     let down = { x: 0, y: 0 };
@@ -234,6 +236,9 @@ export default function FarmScene({
       )
         return;
       needsRender = false;
+      const delta =
+        reduced || !lastSwim ? 0 : Math.min(0.1, (ms - lastSwim) * 0.001);
+      lastSwim = ms;
       const time = reduced ? 0 : ms * 0.001;
       const nextSignature = state.ponds
         .map((p) =>
@@ -248,9 +253,23 @@ export default function FarmScene({
         )
         .join("|");
       if (nextSignature !== signature) {
+        const swimmers = new globalThis.Map(
+          state.ponds.map((p) => [
+            p.id,
+            farm.fish.filter((f) => f.pondId === p.id).map((f) => f.swimmer),
+          ]),
+        );
         scene.remove(farm.root);
         disposeObject(farm.root);
         farm = createFarm(state.ponds);
+        for (const p of state.ponds) {
+          farm.fish
+            .filter((f) => f.pondId === p.id)
+            .forEach((f, i) => {
+              const previous = swimmers.get(p.id)?.[i];
+              if (previous?.species === f.swimmer.species) f.swimmer = previous;
+            });
+        }
         scene.add(farm.root);
         signature = nextSignature;
       }
@@ -312,27 +331,30 @@ export default function FarmScene({
               : "#397876",
         );
       }
-      for (const f of farm.fish) {
-        const p = state.ponds[f.pondId - 1];
+      for (const p of state.ponds) {
+        const members = farm.fish.filter((f) => f.pondId === p.id);
+        stepSchool(
+          members.map((f) => f.swimmer),
+          delta,
+          {
+            halfWidth: p.facility === "earth" ? 5.1 : 4.8,
+            halfDepth: p.facility === "earth" ? 2.9 : 1.75,
+          },
+          p.health / 100,
+        );
         const [x, z] = POND_POSITIONS[p.id - 1];
-        const t = time * (0.11 + (p.health / 100) * 0.055) + f.phase;
-        const width = p.facility === "earth" ? 4.9 : 4.7,
-          depth = p.facility === "earth" ? 2.9 : 1.8;
-        f.mesh.position.set(
-          x + Math.cos(t) * width,
-          0.41 + Math.sin(t * 2 + f.phase) * 0.035,
-          z + Math.sin(t) * depth,
-        );
-        f.mesh.rotation.y = Math.atan2(
-          -Math.cos(t) * depth,
-          Math.sin(t) * width,
-        );
-        f.mesh.scale.setScalar(0.17 + p.weight ** (1 / 3) * 0.14);
-        animateFish(f.mesh, time + f.phase, p.health / 100);
+        for (const f of members) {
+          const swim = f.swimmer;
+          f.mesh.position.set(x + swim.x, swim.y, z + swim.z);
+          f.mesh.rotation.y = swimRotation(swim.heading);
+          f.mesh.rotation.z = -swim.turn * 0.025;
+          f.mesh.scale.setScalar(0.17 + p.weight ** (1 / 3) * 0.14);
+          animateFish(f.mesh, swim.phase, swim.effort, swim.turn);
+        }
       }
       if (specimen.visible) {
         specimen.position.y = 1.7 + Math.sin(time * 0.8) * 0.03;
-        animateFish(specimen, time);
+        animateFish(specimen, time * 5.5, 0.55);
       }
       controls.update();
       renderer.render(scene, camera);
@@ -421,10 +443,17 @@ export default function FarmScene({
           </button>
         </div>
       </div>
-      <div
-        className={`scene-canvas ${error ? "has-error" : ""} ${showPlate ? "showing-plate" : ""}`}
-        ref={host}
-      />
+      <div className="scene-viewport">
+        <div
+          className={`scene-canvas ${error ? "has-error" : ""} ${showPlate ? "showing-plate" : ""}`}
+          ref={host}
+        />
+        {!started && !landscape && mode === "farm" && (
+          <div className="scene-site-plan">
+            <FarmMap ponds={ponds} selected={selected} select={select} />
+          </div>
+        )}
+      </div>
       {error && (
         <div className="scene-fallback">
           <p role="status">{error}</p>
@@ -522,11 +551,13 @@ export default function FarmScene({
                 aria-pressed={landscape}
                 onClick={() => {
                   setStarted(true);
-                  setLandscape(!landscape);
+                  setLandscape(started ? !landscape : false);
                 }}
               >
                 <Camera size={14} />
-                {landscape ? "Explorer en 3D" : "Vue paysagère"}
+                {!started || landscape
+                  ? "Explorer en 3D"
+                  : "Illustration d’ambiance"}
               </button>
             )}
             <span
@@ -541,7 +572,13 @@ export default function FarmScene({
                 display: landscape && mode === "farm" ? "none" : undefined,
               }}
               aria-pressed={clearWater}
-              onClick={() => setClearWater(!clearWater)}
+              disabled={!selectedPond.count}
+              onClick={() => {
+                setStarted(true);
+                setLandscape(false);
+                setMode("pond");
+                setClearWater(!clearWater);
+              }}
             >
               <Eye size={14} />
               {clearWater ? "Vue pédagogique" : "Observer sous l’eau"}
@@ -576,11 +613,13 @@ export default function FarmScene({
       <div className="scene-caption">
         {landscape && mode === "farm"
           ? "Illustration d’ambiance générée · consultez la 3D pour voir les travaux et l’état actuel de la ferme."
-          : mode === "fish"
-            ? "Modèle anatomique original et illustration générée : repères visuels, pas une mesure scientifique."
-            : clearWater
-              ? "Observation pédagogique : transparence de l’eau accentuée. Les poissons visibles sont un échantillon du lot."
-              : "Rendu 3D en temps réel · poissons à échelle indicative · échantillon visuel du lot."}
+          : !started
+            ? "Plan du terrain : les emplacements grisés ne sont pas aménagés. Ouvrez la 3D pour visiter."
+            : mode === "fish"
+              ? "Modèle anatomique original et illustration générée : repères visuels, pas une mesure scientifique."
+              : clearWater
+                ? "Observation pédagogique : transparence de l’eau accentuée. Les poissons visibles sont un échantillon du lot."
+                : "Rendu 3D en temps réel · poissons à échelle indicative · échantillon visuel du lot."}
       </div>
     </div>
   );

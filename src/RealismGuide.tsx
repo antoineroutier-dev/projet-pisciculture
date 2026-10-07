@@ -14,9 +14,19 @@ import {
 export default function RealismGuide() {
   const sections = [
     {
+      icon: <BookOpen />,
+      title: "Votre première décision : faire analyser l’eau",
+      text: "Ouvrez Mon projet et suivez la prochaine action. Le laboratoire répond après 2 jours, puis vous choisissez une filière adaptée au site. Lancez le chantier et préparez le magasin d’aliments. L’écloserie livre les juvéniles en 4 jours ; le fabricant livre les aliments en 2 jours. Commandez avant d’en avoir besoin.",
+    },
+    {
+      icon: <Landmark />,
+      title: "Une récolte n’est pas encore une vente payée",
+      text: "À 80 % du calibre commercial, réservez un client pour les 30 prochains jours. Une chambre froide opérationnelle est obligatoire. Récoltez au calibre et expédiez rapidement : le stock froid se conserve 3 jours dans ce scénario. La coopérative prend les poissons entiers et règle 7 jours après livraison. Les poissonneries demandent un atelier : 1 jour de préparation, 85 % de masse vendable, puis paiement à 3 jours. Le transport prend 1 jour. Les lots périmés deviennent des pertes.",
+    },
+    {
       icon: <Clock3 />,
       title: "Des mois, pas des minutes biologiques",
-      text: "Une journée de jeu contient 24 pas horaires de calcul de l’eau. La croissance de 50 g à la taille de vente prend des mois. Les vitesses ×1, ×3, ×12 et ×60 accélèrent seulement l’attente. Les lots de départ ont déjà 180 jours de suivi. Il n’y a pas de progression hors ligne.",
+      text: "Une journée de jeu contient 24 pas horaires de calcul de l’eau. La croissance de 50 g à la taille de vente prend des mois. Les vitesses ×1, ×3, ×12 et ×60 accélèrent seulement l’attente. Vous démarrez sans bassin aménagé. L’avance guidée s’arrête aux réceptions, aux risques et aux étapes de vente. Il n’y a pas de progression hors ligne.",
     },
     {
       icon: <Thermometer />,
@@ -41,17 +51,17 @@ export default function RealismGuide() {
     {
       icon: <Fish />,
       title: "Suivre les lots et respecter les délais",
-      text: "Les nouveaux juvéniles sont considérés acclimatés à la livraison puis observés pendant 14 jours. Cette observation dans le bassin ne remplace pas une véritable quarantaine isolée. Après récolte, le jeu réserve 7 jours au nettoyage et au vide sanitaire. Le bassin 3 demande 14 jours de chantier ; la serre, 45 jours avec mise en service.",
+      text: "Les nouveaux juvéniles sont considérés acclimatés à la livraison puis observés pendant 14 jours. Cette observation dans le bassin ne remplace pas une véritable quarantaine isolée. Après récolte, le jeu réserve 7 jours au nettoyage et au vide sanitaire. Les bassins de source demandent 14 jours de chantier, l’étang 21 jours et la serre 45 jours avec mise en service.",
     },
     {
       icon: <Landmark />,
       title: "Une vraie contrainte de budget",
-      text: "Le bilan distingue 55 €/jour de travail, 2,50 €/bassin/jour d’entretien, l’électricité à 0,22 €/kWh et une redevance simplifiée d’eau. Chauffage et pompes pèsent sur les coûts. Ces prix, investissements et salaires sont des hypothèses de scénario, pas des devis ou cours réels. Les petites primes sont des aides pédagogiques ; le mode expert les supprime.",
+      text: "Le bilan distingue 18 €/jour de travail partiel dès le premier bassin, puis 10 €/bassin supplémentaire, 2,50 €/bassin/jour d’entretien, l’électricité à 0,22 €/kWh et une redevance simplifiée d’eau. Chauffage et pompes pèsent sur les coûts. Ces prix, investissements et salaires sont des hypothèses de scénario, pas des devis ou cours réels. Les petites primes sont des aides pédagogiques ; le mode expert les supprime.",
     },
     {
       icon: <Eye />,
       title: "Observer les espèces",
-      text: "La truite a une bande rosée, des points noirs et une nageoire adipeuse. La carpe porte de grandes écailles bronze et des barbillons. Le tilapia a une dorsale épineuse et une queue striée. La vue paysagère est une illustration d’ambiance générée ; la visite 3D montre l’état actuel des bassins. La vue Poissons permet de tourner les modèles et de consulter une planche artistique réaliste. Les poissons de la ferme sont un échantillon visuel ; le mode observation accentue la transparence de l’eau.",
+      text: "La truite a une bande rosée, des points noirs et une nageoire adipeuse. La carpe porte de grandes écailles bronze et des barbillons. Le tilapia a une dorsale épineuse et une queue striée. La carte représente les parcelles encore vides. L’illustration d’ambiance montre une ferme achevée ; la visite 3D montre l’état actuel des bassins. La vue Poissons permet de tourner les modèles et de consulter une planche artistique réaliste. Les poissons de la ferme sont un échantillon visuel ; le mode observation accentue la transparence de l’eau.",
     },
   ];
   return (
@@ -59,7 +69,7 @@ export default function RealismGuide() {
       <div className="guide-intro">
         <BookOpen size={30} />
         <div>
-          <span className="eyebrow">LE CARNET DE TERRAIN · MODÈLE V2</span>
+          <span className="eyebrow">LE CARNET DE TERRAIN · MODÈLE V3</span>
           <h2>Comprendre avant d’intervenir.</h2>
           <p>
             Des mesures concrètes, des délais biologiques et des décisions
@@ -114,8 +124,9 @@ export default function RealismGuide() {
         <p className="simulation-note">
           <Info size={17} /> Les maladies, le tri de tailles, la reproduction,
           les autorisations de prélèvement, les effets des effluents sur le
-          milieu, la chaîne du froid et la TVA ne sont pas simulés. Ce modèle
-          pédagogique n’est pas un outil de dimensionnement professionnel.
+          milieu et la TVA ne sont pas simulés. La chaîne du froid et la
+          préparation sont simplifiées. Ce modèle pédagogique n’est pas un outil
+          de dimensionnement professionnel.
         </p>
       </section>
     </div>

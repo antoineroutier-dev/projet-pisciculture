@@ -1,5 +1,6 @@
 import * as T from "three";
 import { type Pond } from "./game";
+import { createSwimmer, type Swimmer } from "./swimming";
 import { createFish } from "./fish3d";
 
 export const POND_POSITIONS: [number, number][] = [
@@ -11,7 +12,7 @@ export const POND_POSITIONS: [number, number][] = [
 export type FishInstance = {
   mesh: T.Group;
   pondId: number;
-  phase: number;
+  swimmer: Swimmer;
   scale: number;
 };
 export type FarmObjects = {
@@ -595,7 +596,15 @@ export function createFarm(ponds: Pond[]): FarmObjects {
             z + (r() - 0.5) * (d - 1.2),
           );
           root.add(f);
-          fish.push({ mesh: f, pondId: p.id, phase: r() * Math.PI * 2, scale });
+          fish.push({
+            mesh: f,
+            pondId: p.id,
+            swimmer: createSwimmer(i + p.id * 13, p.species, {
+              halfWidth: p.facility === "earth" ? 5.1 : 4.8,
+              halfDepth: p.facility === "earth" ? 2.9 : 1.75,
+            }),
+            scale,
+          });
         }
     }
     const hit = new T.Mesh(
