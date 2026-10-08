@@ -1,3 +1,4 @@
+import { t, displayText } from "../i18n";
 import { useRef, useState } from "react";
 import { Button } from "../ui/Button";
 import { Slider, Toggle } from "../ui/Primitives";
@@ -22,23 +23,21 @@ export function ControlsSettings({ runtime }: { runtime: Runtime }) {
   return (
     <div className="controls-settings">
       <Toggle
-        label="Manette"
+        label={t("m_f55edac610")}
         checked={p.controller}
         onChange={(controller) => change((p) => ({ ...p, controller }))}
-        description="A : activer · B : retour · Start : pause. Croix : naviguer ou régler · LB/RB : changer de zone."
+        description={t("m_85eef45967")}
       />
       <p role="status">
-        {gamepad.connected
-          ? `Manette connectée : ${gamepad.name}`
-          : "Aucune manette standard détectée. Appuyez sur un bouton de votre manette pour la connecter."}
+        {displayText(
+          gamepad.connected
+            ? t("m_6253fef7df", gamepad.name)
+            : t("m_0220945ab0"),
+        )}
       </p>
-      <p className="hint">
-        Stick gauche : déplacer la caméra · stick droit : tourner · gâchettes :
-        zoomer. Le son et le plein écran peuvent demander un premier clic ou une
-        touche du clavier, selon le navigateur.
-      </p>
+      <p className="hint">{t("m_8d145d223d")}</p>
       <Slider
-        label="Sensibilité de caméra"
+        label={t("m_c943f8166b")}
         value={p.sensitivity}
         min={25}
         max={200}
@@ -46,19 +45,15 @@ export function ControlsSettings({ runtime }: { runtime: Runtime }) {
         unit=" %"
         onChange={(sensitivity) => change((p) => ({ ...p, sensitivity }))}
       />
-      <h3>Raccourcis clavier</h3>
-      <p className="hint">
-        Échap ferme un panneau ou ouvre le menu pause. Tab et les flèches
-        conservent leur rôle dans les menus. Les raccourcis sont suspendus
-        pendant la saisie.
-      </p>
+      <h3>{t("m_6d0857349d")}</h3>
+      <p className="hint">{t("m_4799ebbb12")}</p>
       {recording && (
         <div
           className="binding-record"
           tabIndex={0}
           ref={(e) => e?.focus()}
           role="group"
-          aria-label="Enregistrer un raccourci"
+          aria-label={t("m_17e51249a6")}
           onKeyDown={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -82,9 +77,11 @@ export function ControlsSettings({ runtime }: { runtime: Runtime }) {
           }}
         >
           <strong>
-            {CONTROL_ACTIONS.find((a) => a.id === recording)!.label}
+            {displayText(
+              CONTROL_ACTIONS.find((a) => a.id === recording)!.label,
+            )}
           </strong>
-          <p>Appuyez sur le nouveau raccourci. Échap annule.</p>
+          <p>{t("m_5d7648bfa4")}</p>
           <Button
             tone="secondary"
             onClick={() => {
@@ -92,26 +89,26 @@ export function ControlsSettings({ runtime }: { runtime: Runtime }) {
               finish();
             }}
           >
-            Annuler la réassignation
+            {t("m_f0c5d9e4b0")}
           </Button>
         </div>
       )}
-      {error && <p role="alert">{error}</p>}
+      {displayText(error && <p role="alert">{displayText(error)}</p>)}
       <div className="binding-list">
         {CONTROL_ACTIONS.map((a) => (
           <div key={a.id}>
-            <span>{a.label}</span>
+            <span>{displayText(a.label)}</span>
             <Button
               size="small"
               tone="secondary"
-              aria-label={`Réassigner : ${a.label}`}
+              aria-label={displayText(t("m_93b926290a", a.label))}
               onClick={(e) => {
                 opener.current = e.currentTarget;
                 setError("");
                 setRecording(a.id);
               }}
             >
-              <kbd>{bindingLabel(p.bindings[a.id])}</kbd>
+              <kbd>{displayText(bindingLabel(p.bindings[a.id]))}</kbd>
             </Button>
           </div>
         ))}
@@ -124,7 +121,7 @@ export function ControlsSettings({ runtime }: { runtime: Runtime }) {
           setRecording(null);
         }}
       >
-        Rétablir les raccourcis
+        {t("m_fde7c9d66b")}
       </Button>
     </div>
   );

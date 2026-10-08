@@ -1,13 +1,22 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { setLocale, type Locale } from "../i18n";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import {
   DEFAULT_BINDINGS,
   parseBindings,
   type Bindings,
 } from "../controls/bindings";
-export const PREFERENCES_KEY = "les-etangs-ui-v2";
+export const PREFERENCES_KEY = "les-etangs-ui-v3";
+export const V2_PREFERENCES_KEY = "les-etangs-ui-v2";
 export const V1_PREFERENCES_KEY = "les-etangs-ui-v1";
 export type Preferences = {
-  version: 2;
+  version: 3;
+  locale: Locale;
   scale: number;
   motion: "system" | "reduce";
   patterns: boolean;
@@ -20,7 +29,8 @@ export type Preferences = {
   bindings: Bindings;
 };
 export const DEFAULT_PREFERENCES: Preferences = {
-  version: 2,
+  version: 3,
+  locale: "fr",
   scale: 100,
   motion: "system",
   patterns: false,
@@ -40,7 +50,8 @@ export function parsePreferences(raw: string | null): Preferences {
   try {
     const v = JSON.parse(raw || "{}");
     return {
-      version: 2,
+      version: 3,
+      locale: v?.locale === "en" ? "en" : "fr",
       scale: bounded(v?.scale, 80, 150, 100),
       motion: v?.motion === "reduce" ? "reduce" : "system",
       patterns: v?.patterns === true,
@@ -64,12 +75,14 @@ export function usePreferences() {
     try {
       return parsePreferences(
         localStorage.getItem(PREFERENCES_KEY) ??
+          localStorage.getItem(V2_PREFERENCES_KEY) ??
           localStorage.getItem(V1_PREFERENCES_KEY),
       );
     } catch {
       return parsePreferences(null);
     }
   });
+  useLayoutEffect(() => setLocale(preferences.locale), [preferences.locale]);
   useEffect(() => {
     document.documentElement.style.fontSize = `${preferences.scale}%`;
     document.documentElement.dataset.motion = preferences.motion;

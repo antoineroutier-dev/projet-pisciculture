@@ -1,3 +1,4 @@
+import { t, displayText } from "../i18n";
 import { useControlPreferences } from "../state/preferences";
 import { bindingLabel } from "../controls/bindings";
 import { useEffect, useState } from "react";
@@ -32,36 +33,36 @@ export function TimeControls({ clock }: { clock: GameClock }) {
   return (
     <div
       className="hud-clock"
-      aria-label="Contrôle du temps"
+      aria-label={t("m_1a7144746f")}
       data-seeking={clock.seeking}
       data-active={clock.active}
     >
-      <div
-        className="time-speeds"
-        role="group"
-        aria-label="Vitesse de simulation"
-      >
+      <div className="time-speeds" role="group" aria-label={t("m_a7f0b5adde")}>
         {CLOCK_SPEEDS.map((speed, i) => (
           <button
             key={speed}
-            aria-label={speed ? `Vitesse ×${speed}` : "Mettre en pause"}
+            aria-label={displayText(
+              speed ? t("m_578f5f381a", speed) : t("m_42dd586c06"),
+            )}
             aria-pressed={!clock.seeking && clock.speed === speed}
-            title={`${speed ? `Vitesse ×${speed}` : "Pause"} · ${bindingLabel(shortcuts[i])}`}
+            title={displayText(
+              `${speed ? t("m_578f5f381a", speed) : t("m_858e4ba7a2")} · ${bindingLabel(shortcuts[i])}`,
+            )}
             aria-keyshortcuts={shortcuts[i]}
             onClick={() => clock.choose(speed)}
           >
-            {speed ? `×${speed}` : <Pause size={16} />}
+            {displayText(speed ? `×${speed}` : <Pause size={16} />)}
           </button>
         ))}
       </div>
       <button
         onClick={() => (clock.seeking ? clock.pause() : clock.seek())}
-        aria-label={
-          clock.seeking ? "Interrompre l’avance" : "Jusqu’au prochain événement"
-        }
-        title={
-          clock.seeking ? "Interrompre l’avance" : "Jusqu’au prochain événement"
-        }
+        aria-label={displayText(
+          clock.seeking ? t("m_58e9c55625") : t("m_c4b9af66ba"),
+        )}
+        title={displayText(
+          clock.seeking ? t("m_58e9c55625") : t("m_c4b9af66ba"),
+        )}
         aria-pressed={clock.seeking}
       >
         {clock.seeking ? <Square size={16} /> : <FastForward size={16} />}
@@ -69,14 +70,14 @@ export function TimeControls({ clock }: { clock: GameClock }) {
       <button
         className="next-day-control"
         onClick={clock.step}
-        aria-label="Jour suivant"
-        title="Jour suivant"
+        aria-label={t("m_b683efc4f9")}
+        title={t("m_b683efc4f9")}
       >
         <svg
           className="day-progress"
           viewBox="0 0 28 28"
           role="progressbar"
-          aria-label="Progression de la journée"
+          aria-label={t("m_dce635c705")}
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={Math.round(progress * 100)}
@@ -93,11 +94,13 @@ export function TimeControls({ clock }: { clock: GameClock }) {
         <SkipForward size={14} />
       </button>
       <span className="sr-only" role="status">
-        {clock.seeking
-          ? "Avance vers le prochain événement"
-          : clock.active
-            ? `Simulation à vitesse ×${clock.speed}`
-            : "Simulation en pause"}
+        {displayText(
+          clock.seeking
+            ? t("m_0342fea919")
+            : clock.active
+              ? t("m_6f6135b588", clock.speed)
+              : t("m_40536d87c8"),
+        )}
       </span>
     </div>
   );

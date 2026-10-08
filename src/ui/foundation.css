@@ -480,3 +480,9 @@ html[data-motion="reduce"] *::after {
 html[data-motion="reduce"] button:not(:disabled):active {
   transform: none;
 }
+
+/* Six settings tabs keep balanced rows in both languages. */
+.ui-tabs > [role="tablist"]:has(> [role="tab"]:nth-child(6)) {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}

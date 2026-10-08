@@ -1,6 +1,7 @@
+import { number } from "./ui/format";
+import { t, displayText } from "./i18n";
 import { useLayoutEffect, useRef, useState } from "react";
-import { Pond, pondStatus, number } from "./game";
-
+import { Pond, pondStatus } from "./game";
 const trees = [
   [75, 170, 24],
   [107, 188, 18],
@@ -70,7 +71,7 @@ export default function FarmMap({
         className="farm-map"
         viewBox="0 0 900 520"
         role="group"
-        aria-label="Carte interactive de votre exploitation"
+        aria-label={t("m_7ed98736a0")}
       >
         <defs>
           <pattern
@@ -232,7 +233,21 @@ export default function FarmMap({
               role="button"
               tabIndex={0}
               data-pond-id={pond.id}
-              aria-label={`Bassin ${pond.id}, ${pond.name}, ${status.label}${pond.count ? `, ${number(pond.count)} poissons de ${number(pond.weight * 1000)} g` : ""}`}
+              aria-label={displayText(
+                t(
+                  "m_2e96c455db",
+                  pond.id,
+                  pond.name,
+                  status.label,
+                  pond.count
+                    ? t(
+                        "m_7694db4628",
+                        number(pond.count),
+                        number(pond.weight * 1000),
+                      )
+                    : "",
+                ),
+              )}
               aria-pressed={active}
               onClick={() => select(pond.id)}
               onKeyDown={(e) => {
@@ -432,7 +447,7 @@ export default function FarmMap({
             top: offsetY + (positions[i][1] + (pond.built ? -72 : 32)) * scale,
           }}
         >
-          {pond.name}
+          {displayText(pond.name)}
         </span>
       ))}
     </div>

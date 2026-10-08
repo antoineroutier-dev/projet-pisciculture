@@ -1,3 +1,4 @@
+import { t, displayText } from "../i18n";
 import { Button } from "../ui/Button";
 export function PauseMenu({
   resume,
@@ -18,30 +19,30 @@ export function PauseMenu({
 }) {
   return (
     <>
-      {" "}
-      {busy && <p role="status">Capture et enregistrement…</p>}
+      {displayText(" ")}
+      {busy && <p role="status">{t("m_29fb0de31b")}</p>}
       <nav
         className="pause-menu"
-        aria-label="Menu pause"
+        aria-label={t("m_df641fc301")}
         inert={busy || undefined}
       >
         <Button tone="primary" onClick={resume}>
-          Reprendre
+          {t("m_ddd913203f")}
         </Button>
         <Button tone="secondary" onClick={save}>
-          Sauvegarder
+          {t("m_400cdf4c41")}
         </Button>
         <Button tone="secondary" onClick={load}>
-          Charger
+          {t("m_fd351654f4")}
         </Button>
         <Button tone="secondary" onClick={settings}>
-          Paramètres
+          {t("m_01923df7a4")}
         </Button>
         <Button tone="secondary" onClick={guide}>
-          Guide
+          {t("m_8dd65d0952")}
         </Button>
         <Button tone="secondary" onClick={title}>
-          Retour au menu
+          {t("m_54d9ebda3f")}
         </Button>
       </nav>
     </>

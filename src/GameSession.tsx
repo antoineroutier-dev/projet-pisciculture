@@ -1,3 +1,5 @@
+import { number } from "./ui/format";
+import { t, displayText } from "./i18n";
 import { matchControl } from "./controls/bindings";
 import { interruptingEvents } from "./controls/interruptions";
 import { SettingsPanel } from "./panels/SettingsPanel";
@@ -87,7 +89,6 @@ import {
   compatible,
   facilityName,
   initialGame,
-  number,
   OBJECTIVES,
   SPECIES,
   UPGRADE_COST,
@@ -96,7 +97,6 @@ import {
   type Pond,
   type SpeciesId,
 } from "./game";
-
 type ModalKind =
   | "stock"
   | "survey"
@@ -142,17 +142,15 @@ function StockForm({
       }}
     >
       <p className="modal-intro">
-        Commandez un lot pour {pond.name}. Livraison et acclimatation dans 4
-        jours, puis observation pendant 14 jours. Prévoyez les aliments avant
-        l’arrivée.
+        {t("m_bf9b2fedcd") + " "}
+        {displayText(pond.name)}
+        {t("m_724e777807")}
       </p>
       <div className="species-options">
         {Object.values(SPECIES).map((s) => (
           <Button
             tone="secondary"
-            disabledReason={
-              "Cette espèce demande une autre installation. Consultez Construire pour choisir une filière compatible."
-            }
+            disabledReason={displayText(t("m_aa36d93053"))}
             key={s.id}
             type="button"
             className={`species-option ${s.id === species ? "active" : ""}`}
@@ -162,11 +160,17 @@ function StockForm({
           >
             <SpeciesPortrait species={s.id} />
             <span>
-              <strong>{s.name}</strong>
+              <strong>{displayText(s.name)}</strong>
               <small>
-                {!compatible(pond, s.id)
-                  ? "Installation incompatible"
-                  : `${formatUnitPrice(s.seedPrice)} / alevin · ${s.temperature.join("–")} °C`}
+                {displayText(
+                  !compatible(pond, s.id)
+                    ? t("m_d390553a96")
+                    : t(
+                        "m_be0fc52023",
+                        formatUnitPrice(s.seedPrice),
+                        s.temperature.join("–"),
+                      ),
+                )}
               </small>
             </span>
             {!compatible(pond, s.id) ? (
@@ -178,13 +182,17 @@ function StockForm({
         ))}
       </div>
       <label className="field-label" htmlFor="fish-count">
-        Nombre d’alevins{" "}
-        <span>Limite au calibre de vente : {pond.capacity}</span>
+        {t("m_ef31f61cf8")}
+        {displayText(" ")}
+        <span>
+          {t("m_a742ad9a02") + " "}
+          {number(pond.capacity, 2)}
+        </span>
       </label>
       <div className="quantity-input">
         <button
           type="button"
-          aria-label="Retirer 10 alevins"
+          aria-label={t("m_36d152b93f")}
           onClick={() => setCount(Math.max(1, count - 10))}
         >
           <Minus size={16} />
@@ -200,33 +208,40 @@ function StockForm({
         />
         <button
           type="button"
-          aria-label="Ajouter 10 alevins"
+          aria-label={t("m_fd13e98b61")}
           onClick={() => setCount(Math.min(pond.capacity, count + 10))}
         >
           <Plus size={16} />
         </button>
       </div>
       <p className="hint">
-        La capacité est calculée à la biomasse de récolte. {pond.volume} m³ ·{" "}
-        {facilityName(pond)}. Le nouveau lot est suivi en observation pendant 14
-        jours.
+        {t("m_244cd2a189") + " "}
+        {number(pond.volume, 2)}
+        {" " + t("m_26d7364bf2")}
+        {displayText(" ")}
+        {displayText(facilityName(pond))}
+        {t("m_62903a1ccb")}
       </p>
       <div className="checkout-line">
-        <span>Coût du lot + transport vivant ({euro(STOCK_FREIGHT)})</span>
-        <strong>{euro(cost)}</strong>
+        <span>
+          {t("m_86541fbd1a")}
+          {displayText(euro(STOCK_FREIGHT))})
+        </span>
+        <strong>{displayText(euro(cost))}</strong>
       </div>
       <Button
         tone="primary"
-        disabledReason={formatEngineText(stockAvailability.reason)}
+        disabledReason={displayText(formatEngineText(stockAvailability.reason))}
         type="submit"
         className="button primary full"
         disabled={stockAvailability.disabled}
       >
-        Commander {number(count)} juvéniles <ArrowRight size={17} />
+        {t("m_16af7be312") + " "}
+        {displayText(number(count))}
+        {" " + t("m_0f9f22aa5a") + " "}
+        <ArrowRight size={17} />
       </Button>
-      {cost > game.money && (
-        <p className="inline-error">Trésorerie insuffisante.</p>
-      )}
+      {cost > game.money && <p className="inline-error">{t("m_906113fb44")}</p>}
     </form>
   );
 }
@@ -304,7 +319,11 @@ export default function GameSession({
     before: Game,
     after: Game,
     reason = "",
-    action: Action | { type: "day" } = { type: "day" },
+    action:
+      | Action
+      | {
+          type: "day";
+        } = { type: "day" },
     seeking = false,
   ) {
     const updated = recordLedger(currentLedger.current, before, after, action);
@@ -329,7 +348,7 @@ export default function GameSession({
       incoming.splice(milestone + 1, 0, {
         id: `${after.day}:report-${paid ? "paid" : "harvest"}-${after.development.paid}`,
         kind: "event",
-        title: paid ? "Bilan du cycle payé" : "Bilan provisoire",
+        title: paid ? t("m_a747213ca3") : t("m_f9193a0081"),
         text: "",
         illustration: paid ? "payment" : "harvest",
         report: {
@@ -368,8 +387,8 @@ export default function GameSession({
         {
           id: `${before.day}:nothing-scheduled`,
           kind: "event",
-          title: "Préparez votre prochaine étape",
-          text: "Aucune livraison ni activité n’est en cours. Choisissez une action pour développer votre ferme.",
+          title: t("m_848161ae5e"),
+          text: t("m_7f236585e2"),
           illustration: "water",
           task: nextTask(before),
         },
@@ -383,7 +402,7 @@ export default function GameSession({
       result.game,
       { type: "day" },
       true,
-      result.reason || "Une journée écoulée.",
+      result.reason || t("m_6b8e168000"),
       audio.play,
       started,
       pending,
@@ -565,7 +584,7 @@ export default function GameSession({
       `les-etangs-jour-${value.game.day}.json`,
     );
     audio.play("confirm");
-    setNotice({ text: "Votre copie de sauvegarde a été exportée.", ok: true });
+    setNotice({ text: t("m_98dcd1bdad"), ok: true });
   }
   function restore(restoredSave: Save) {
     const restored = restoredSave.game;
@@ -583,7 +602,7 @@ export default function GameSession({
     clock.pause();
     setSelected(1);
     close();
-    setNotice({ text: `Partie restaurée au jour ${restored.day}.`, ok: true });
+    setNotice({ text: t("m_7a030163b5", restored.day), ok: true });
   }
   async function leave() {
     clock.pause();
@@ -598,8 +617,7 @@ export default function GameSession({
   async function importSave(file?: File) {
     if (!file) return;
     try {
-      if (file.size > 2_000_000)
-        throw new Error("Ce fichier est trop volumineux.");
+      if (file.size > 2000000) throw new Error(t("m_bf4a999543"));
       const restoredSave = parseSavedGame(await file.text());
       restore(restoredSave);
     } catch (error) {
@@ -607,7 +625,7 @@ export default function GameSession({
       setNotice({
         text:
           error instanceof SyntaxError
-            ? "Ce fichier n’est pas un JSON valide. La partie actuelle est conservée."
+            ? t("m_6c8da3bdea")
             : (error as Error).message,
         ok: false,
       });
@@ -621,12 +639,12 @@ export default function GameSession({
         inert={modal || activeEvent || saves.busy ? true : undefined}
         data-panel={panel ?? "none"}
       >
-        <h1 className="sr-only">Les Étangs — votre exploitation</h1>
-        <main className="game-world" aria-label="Le terrain">
+        <h1 className="sr-only">{t("m_cb387b669a")}</h1>
+        <main className="game-world" aria-label={t("m_9fd6579f5e")}>
           <Suspense
             fallback={
               <div className="world-loading" role="status">
-                Préparation du terrain…
+                {t("m_55ae92620d")}
               </div>
             }
           >
@@ -763,7 +781,7 @@ export default function GameSession({
       {notice && !modal && !activeEvent && (
         <Toast
           feedbackId={notice.feedbackId}
-          text={formatEngineText(notice.text)}
+          text={displayText(formatEngineText(notice.text))}
           ok={notice.ok}
           close={() => setNotice(null)}
         />
@@ -773,32 +791,32 @@ export default function GameSession({
           key={modal}
           className={modal === "save" || modal === "load" ? "save-dialog" : ""}
           close={close}
-          title={
+          title={displayText(
             modal === "stock"
-              ? "Commander des juvéniles"
+              ? t("m_df22c1f8f7")
               : modal === "survey"
-                ? "Votre analyse de l’eau"
+                ? t("m_0265afabb4")
                 : modal === "upgrade"
-                  ? "Équiper le bassin"
+                  ? t("m_3dc218e77e")
                   : modal === "objectives"
-                    ? "Objectifs du domaine"
+                    ? t("m_c435e6a608")
                     : modal === "pause"
-                      ? "Partie en pause"
+                      ? t("m_066abc0005")
                       : modal === "save"
-                        ? "Sauvegarder une partie"
+                        ? t("m_73195e944d")
                         : modal === "load"
-                          ? "Charger une partie"
+                          ? t("m_3e961df87c")
                           : modal === "leave"
-                            ? "Conserver votre partie"
-                            : "Votre partie, bien au chaud"
-          }
+                            ? t("m_bd3034cf05")
+                            : t("m_89ec71f965"),
+          )}
         >
           <DialogFeedback />
           {notice && (
             <Toast
               inline
               feedbackId={notice.feedbackId}
-              text={formatEngineText(notice.text)}
+              text={displayText(formatEngineText(notice.text))}
               ok={notice.ok}
               close={() => setNotice(null)}
             />
@@ -820,7 +838,7 @@ export default function GameSession({
                   navigate("project");
                 }}
               >
-                Choisir une parcelle
+                {t("m_733c097b01")}
               </Button>
             </>
           )}
@@ -834,30 +852,27 @@ export default function GameSession({
                 )}
               </div>
               <h3 className="center">
-                {pond.upgrade === 0
-                  ? "Un aérateur pour mieux respirer"
-                  : "Un filtre biologique pour une eau saine"}
+                {displayText(
+                  pond.upgrade === 0 ? t("m_fb0fe7875e") : t("m_743a02b8e0"),
+                )}
               </h3>
               <p className="modal-intro">
-                {pond.upgrade === 0
-                  ? "L’aérateur augmente les échanges avec l’air. Son efficacité dépend de la saturation en oxygène, donc de la température et de la demande du lot."
-                  : "La biofiltration convertit l’azote ammoniacal et consomme de l’oxygène. Le filtre monte progressivement en charge pendant 30 jours : ne suralimentez pas le lot."}
+                {displayText(
+                  pond.upgrade === 0 ? t("m_0169562881") : t("m_0119a8888f"),
+                )}
               </p>
               <div className="checkout-line">
-                <span>Installation</span>
-                <strong>{euro(UPGRADE_COST[pond.upgrade] || 0)}</strong>
+                <span>{t("m_c3fc54aa53")}</span>
+                <strong>
+                  {displayText(euro(UPGRADE_COST[pond.upgrade] || 0))}
+                </strong>
               </div>
-              <p className="hint">
-                Ce niveau d’équipement consomme 3,6 kWh/jour supplémentaires,
-                soit 0,79 €/jour au tarif du scénario.
-              </p>
+              <p className="hint">{t("m_e403385ce2")}</p>
               <Button
                 tone="primary"
-                disabledReason={
-                  pond.upgrade >= 2
-                    ? "Le bassin possède déjà tous les équipements."
-                    : "Trésorerie insuffisante pour cet équipement."
-                }
+                disabledReason={displayText(
+                  pond.upgrade >= 2 ? t("m_86fbc44b28") : t("m_a693b2f061"),
+                )}
                 className="button primary full"
                 disabled={
                   pond.upgrade >= 2 || game.money < UPGRADE_COST[pond.upgrade]
@@ -866,17 +881,18 @@ export default function GameSession({
                   perform({ type: "upgrade", pondId: pond.id }, true)
                 }
               >
-                Installer l’équipement <ArrowRight size={17} />
+                {t("m_418c218915") + " "}
+                <ArrowRight size={17} />
               </Button>
               {game.money < UPGRADE_COST[pond.upgrade] && (
-                <p className="inline-error">Trésorerie insuffisante.</p>
+                <p className="inline-error">{t("m_906113fb44")}</p>
               )}
             </>
           )}
           {modal === "objectives" && (
             <>
               {game.development.paid > 0 && <OperatingGoals game={game} />}
-              <h3>Étapes d’apprentissage</h3>
+              <h3>{t("m_feb531085c")}</h3>
               <div className="objectives-list">
                 {OBJECTIVES.map((o) => {
                   const claimed = game.claimed.includes(o.id);
@@ -890,10 +906,13 @@ export default function GameSession({
                         {claimed ? <Check size={20} /> : <Award size={20} />}
                       </span>
                       <div>
-                        <h3>{o.title}</h3>
-                        <p>{o.description}</p>
+                        <h3>{displayText(o.title)}</h3>
+                        <p>{displayText(o.description)}</p>
                         {game.mode === "guided" && (
-                          <small>{euro(o.reward)} d’aide pédagogique</small>
+                          <small>
+                            {displayText(euro(o.reward))}
+                            {" " + t("m_fc66840d23")}
+                          </small>
                         )}
                         {!claimed && !ready && (
                           <div className="objective-progress">
@@ -906,18 +925,23 @@ export default function GameSession({
                         )}
                       </div>
                       {claimed ? (
-                        <span className="claimed-label">Accompli</span>
+                        <span className="claimed-label">
+                          {t("m_4fae8e572e")}
+                        </span>
                       ) : ready ? (
                         <button
                           className="button primary"
                           onClick={() => perform({ type: "claim", id: o.id })}
                         >
-                          Réclamer
+                          {t("m_7b2692b661")}
                         </button>
                       ) : (
                         <span className="objective-count">
-                          {number(Math.min(o.target, o.progress(game)), 1)} /{" "}
-                          {o.target}
+                          {displayText(
+                            number(Math.min(o.target, o.progress(game)), 1),
+                          )}{" "}
+                          /{displayText(" ")}
+                          {number(o.target, 2)}
                         </span>
                       )}
                     </article>
@@ -950,13 +974,11 @@ export default function GameSession({
           )}
           {modal === "leave" && (
             <div className="pause-menu">
-              <p>
-                La partie reste ouverte tant que vous ne quittez pas ce menu.
-              </p>
-              <Button onClick={exportSave}>Exporter ma partie</Button>
-              <Button onClick={close}>Revenir au jeu</Button>
+              <p>{t("m_4f3178878c")}</p>
+              <Button onClick={exportSave}>{t("m_6e634f953d")}</Button>
+              <Button onClick={close}>{t("m_db787a0d33")}</Button>
               <Button tone="danger" onClick={onTitle}>
-                Quitter sans enregistrer
+                {t("m_163a80644a")}
               </Button>
             </div>
           )}
@@ -966,24 +988,23 @@ export default function GameSession({
               mode={game.mode}
               changeMode={(mode) => perform({ type: "mode", mode })}
             >
-              <p className="modal-intro">
-                Votre partie est enregistrée dans ce navigateur. Gardez une
-                copie pour la retrouver sur un autre appareil.
-              </p>
+              <p className="modal-intro">{t("m_cb7677e5f6")}</p>
               <div className="settings-summary">
                 <span>
-                  <Sprout size={18} /> Jour {game.day}
+                  <Sprout size={18} />
+                  {" " + t("m_3eb0f64015") + " "}
+                  {number(game.day, 2)}
                 </span>
-                <strong>{euro(game.money)}</strong>
+                <strong>{displayText(euro(game.money))}</strong>
               </div>
               <Button onClick={() => setModal("save")}>
-                Emplacements de sauvegarde
+                {t("m_492380fb67")}
               </Button>
               <button className="settings-action" onClick={exportSave}>
                 <ArrowDownToLine size={20} />
                 <span>
-                  <strong>Exporter ma partie</strong>
-                  <small>Télécharger une copie au format JSON</small>
+                  <strong>{t("m_6e634f953d")}</strong>
+                  <small>{t("m_bb4cab3894")}</small>
                 </span>
                 <ArrowUpRight size={17} />
               </button>
@@ -993,10 +1014,8 @@ export default function GameSession({
               >
                 <Upload size={20} />
                 <span>
-                  <strong>Importer une sauvegarde</strong>
-                  <small>
-                    Remplace la partie actuelle après validation du fichier
-                  </small>
+                  <strong>{t("m_da243ce47e")}</strong>
+                  <small>{t("m_7fdf4c4fb2")}</small>
                 </span>
                 <ArrowUpRight size={17} />
               </button>
@@ -1005,24 +1024,20 @@ export default function GameSession({
                 type="file"
                 accept=".json,application/json"
                 hidden
-                aria-label="Fichier de sauvegarde"
+                aria-label={t("m_00dde4de80")}
                 onChange={(e) => void importSave(e.target.files?.[0])}
               />
               <div className="settings-danger">
                 {resetConfirm ? (
                   <>
-                    <p>
-                      Recommencer effacera la partie enregistrée dans ce
-                      navigateur. Exportez-la d’abord si vous souhaitez la
-                      garder.
-                    </p>
+                    <p>{t("m_40b1b7b11e")}</p>
                     <div className="button-row">
                       <button
                         className="button outline"
                         onClick={() => setResetConfirm(false)}
                       >
                         <ArrowLeft size={15} />
-                        Annuler
+                        {t("m_46ad3916f6")}
                       </button>
                       <button
                         className="button danger"
@@ -1045,12 +1060,12 @@ export default function GameSession({
                           setWorldMode("farm");
                           close();
                           setNotice({
-                            text: "Une nouvelle aventure commence aux Étangs.",
+                            text: t("m_47bb8fc3e5"),
                             ok: true,
                           });
                         }}
                       >
-                        Recommencer maintenant
+                        {t("m_d5fc234353")}
                       </button>
                     </div>
                   </>
@@ -1061,16 +1076,16 @@ export default function GameSession({
                   >
                     <RotateCcw size={20} />
                     <span>
-                      <strong>Nouvelle partie</strong>
-                      <small>Repartir du terrain vide avec 60 000 €</small>
+                      <strong>{t("m_c1f44907f3")}</strong>
+                      <small>{t("m_c6f93394db")}</small>
                     </span>
                     <ChevronRight size={17} />
                   </button>
                 )}
               </div>
               <p className="settings-note">
-                <LockKeyhole size={13} /> Solo, sans compte. Vos données restent
-                sur votre appareil.
+                <LockKeyhole size={13} />
+                {" " + t("m_066480abf3")}
               </p>
             </SettingsPanel>
           )}

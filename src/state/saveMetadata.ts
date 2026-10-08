@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 /** Presentation metadata only. Biological Game V3 and financial Ledger V1 stay unchanged. */
 export type SaveMetadata = {
   playedMs: number;
@@ -15,9 +16,7 @@ export const initialMetadata = (
 });
 export function parseMetadata(value: unknown): SaveMetadata {
   const fail = () => {
-    throw Error(
-      "Les informations de cette sauvegarde sont incompatibles. La partie actuelle est conservée.",
-    );
+    throw Error(t("m_5ef1dc0e51"));
   };
   if (!value || typeof value !== "object" || Array.isArray(value))
     return fail();
@@ -41,7 +40,7 @@ export function parseMetadata(value: unknown): SaveMetadata {
   if (
     v.thumbnail !== null &&
     (typeof v.thumbnail !== "string" ||
-      v.thumbnail.length > 180_000 ||
+      v.thumbnail.length > 180000 ||
       !/^data:image\/(?:webp|png|jpeg);base64,[A-Za-z0-9+/]+={0,2}$/.test(
         v.thumbnail,
       ))
@@ -54,7 +53,6 @@ export function parseMetadata(value: unknown): SaveMetadata {
     thumbnail: v.thumbnail as string | null,
   };
 }
-
 /** Accumulate real visible session time, including paused planning, never offline/title time. */
 export class VisiblePlaytime {
   private accumulated: number;
@@ -82,11 +80,9 @@ export function playtimeLabel(meta: SaveMetadata) {
     hours = Math.floor(minutes / 60);
   const current =
     minutes < 1
-      ? "Moins d’une minute"
+      ? t("m_c1b43749e5")
       : hours
-        ? `${hours} h ${minutes % 60} min`
-        : `${minutes} min`;
-  return meta.priorPlaytimeUnknown
-    ? `${current} depuis l’import · durée antérieure inconnue`
-    : current;
+        ? t("m_379c310d14", hours, minutes % 60)
+        : t("m_96d15cf84b", minutes);
+  return meta.priorPlaytimeUnknown ? t("m_93c4a6c824", current) : current;
 }

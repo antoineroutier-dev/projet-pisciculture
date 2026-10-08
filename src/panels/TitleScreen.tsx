@@ -1,3 +1,4 @@
+import { t, displayText } from "../i18n";
 import { lazy, Suspense, useCallback, useState } from "react";
 import { Fish, Play, Sprout, FolderOpen, Settings2, Heart } from "lucide-react";
 import { Dialog } from "../ui/Dialog";
@@ -60,109 +61,108 @@ export function TitleScreen({
             />
           </Suspense>
         </div>
-        <section className="title-card" aria-label="Menu principal">
+        <section className="title-card" aria-label={t("m_4546ae0b01")}>
           <Fish size={32} aria-hidden="true" />
-          <p className="title-eyebrow">
-            Un domaine. Une source. Tout à construire.
-          </p>
-          <h1>Les Étangs</h1>
-          <p className="title-tagline">
-            Faites grandir votre pisciculture, de la première goutte à la
-            dernière livraison.
-          </p>
-          <nav className="title-actions" aria-label="Démarrer une partie">
+          <p className="title-eyebrow">{t("m_c1ab32f5fa")}</p>
+          <h1>{t("m_65c11c7dae")}</h1>
+          <p className="title-tagline">{t("m_facdc658f9")}</p>
+          <nav className="title-actions" aria-label={t("m_867c73dbd4")}>
             <Button
               tone="primary"
               disabled={!automatic.save}
-              disabledReason={
-                automatic.error ||
-                "Commencez une nouvelle partie ou chargez une sauvegarde."
-              }
+              disabledReason={displayText(automatic.error || t("m_b707b01aa9"))}
               onClick={() => start(automatic.save!)}
             >
               <Play size={18} />
-              Continuer
+              {t("m_3bc3807f22")}
             </Button>
             <Button tone="secondary" onClick={() => setModal("new")}>
               <Sprout size={18} />
-              Nouvelle partie
+              {t("m_c1f44907f3")}
             </Button>
             <Button tone="secondary" onClick={() => setModal("load")}>
               <FolderOpen size={18} />
-              Charger une partie
+              {t("m_3e961df87c")}
             </Button>
             <Button tone="secondary" onClick={() => setModal("settings")}>
               <Settings2 size={18} />
-              Paramètres
+              {t("m_01923df7a4")}
             </Button>
             <Button tone="secondary" onClick={() => setModal("credits")}>
               <Heart size={18} />
-              Crédits
+              {t("m_f008a259cf")}
             </Button>
           </nav>
           {automatic.save && (
             <details className="title-last-save">
-              <summary>Dernière exploitation · jour {game.day}</summary>
+              <summary>
+                {t("m_bb4317c6c1") + " "}
+                {game.day}
+              </summary>
               <SaveSummary value={automatic.save} />
             </details>
           )}
-          {automatic.error && (
-            <div className="title-recovery">
-              <p role="alert">{automatic.error}</p>
-              <p className="hint">
-                Mode préféré :{" "}
-                {runtime.preferences.defaultMode === "guided"
-                  ? "avec aides pédagogiques"
-                  : "expert"}
-                . Vous pouvez choisir l’autre mode ci-dessous.
-              </p>
-              {automatic.raw !== null && (
-                <Button
-                  onClick={() =>
-                    downloadSave(automatic.raw!, "les-etangs-recuperation.json")
-                  }
-                >
-                  Exporter le fichier original
-                </Button>
-              )}
-            </div>
+          {displayText(
+            automatic.error && (
+              <div className="title-recovery">
+                <p role="alert">{displayText(automatic.error)}</p>
+                <p className="hint">
+                  {t("m_5d9a3be73a")}
+                  {displayText(" ")}
+                  {displayText(
+                    runtime.preferences.defaultMode === "guided"
+                      ? t("m_3873b9a965")
+                      : "expert",
+                  )}
+                  {t("m_e20447700b")}
+                </p>
+                {automatic.raw !== null && (
+                  <Button
+                    onClick={() =>
+                      downloadSave(
+                        automatic.raw!,
+                        "les-etangs-recuperation.json",
+                      )
+                    }
+                  >
+                    {t("m_f5b745425c")}
+                  </Button>
+                )}
+              </div>
+            ),
           )}
-          <small>Solo · hors ligne · sauvegardes sur cet appareil</small>
+          <small>{t("m_ee2ba3db8d")}</small>
         </section>
       </main>
       {modal && (
         <Dialog
           key={modal}
-          title={
+          title={displayText(
             {
-              new: "Commencer une exploitation",
-              load: "Charger une partie",
-              settings: "Paramètres",
-              credits: "Crédits",
-            }[modal]
-          }
+              new: t("m_c6b7da6cef"),
+              load: t("m_3e961df87c"),
+              settings: t("m_01923df7a4"),
+              credits: t("m_f008a259cf"),
+            }[modal],
+          )}
           close={close}
           className={modal === "load" ? "save-dialog" : ""}
         >
           {modal === "new" && (
             <div className="new-game-options">
-              <p>
-                Vous disposez d’un terrain inexploité et de 60 000 €. Analysez
-                votre eau avant de choisir une filière.
-              </p>
+              <p>{t("m_8392615bc7")}</p>
               <p className="hint">
-                Mode préféré :{" "}
-                {runtime.preferences.defaultMode === "guided"
-                  ? "avec aides pédagogiques"
-                  : "expert"}
-                . Vous pouvez choisir l’autre mode ci-dessous.
+                {t("m_5d9a3be73a")}
+                {displayText(" ")}
+                {displayText(
+                  runtime.preferences.defaultMode === "guided"
+                    ? t("m_3873b9a965")
+                    : "expert",
+                )}
+                {t("m_e20447700b")}
               </p>
               {automatic.raw !== null && (
-                <p className="inline-error">
-                  La sauvegarde automatique sera remplacée. Les trois
-                  emplacements manuels sont conservés. Vous pouvez d’abord
-                  charger et exporter votre partie.
-                </p>
+                <p className="inline-error">{t("m_a55119d87c")}</p>
               )}
               <Button
                 tone={
@@ -172,11 +172,9 @@ export function TitleScreen({
                 }
                 onClick={() => start(newSave("guided"))}
               >
-                Commencer avec les aides pédagogiques
+                {t("m_fd225077c9")}
               </Button>
-              <p className="hint">
-                Conseils et aides financières aux étapes d’apprentissage.
-              </p>
+              <p className="hint">{t("m_b71e9b39df")}</p>
               <Button
                 tone={
                   runtime.preferences.defaultMode === "expert"
@@ -185,11 +183,9 @@ export function TitleScreen({
                 }
                 onClick={() => start(newSave("expert"))}
               >
-                Commencer en mode expert
+                {t("m_9e47e27085")}
               </Button>
-              <p className="hint">
-                Les mêmes règles biologiques, sans aides économiques.
-              </p>
+              <p className="hint">{t("m_04f2b9ebb7")}</p>
             </div>
           )}
           {modal === "load" && <SaveSlots load={start} />}

@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import { parseSave, type Game } from "../game";
 import {
   initialMetadata,
@@ -23,9 +24,7 @@ export type Save = {
   metadata: SaveMetadata;
 };
 const bad = () => {
-  throw Error(
-    "Le registre financier de cette sauvegarde est incompatible ou incohérent. La partie actuelle est conservée.",
-  );
+  throw Error(t("m_1e93ecfa02"));
 };
 const obj = (v: unknown): Record<string, unknown> => {
   if (!v || typeof v !== "object" || Array.isArray(v)) return bad();
@@ -187,13 +186,13 @@ export function parseLedger(raw: unknown, game: Game): Ledger {
   };
 }
 export function parseSavedGame(raw: string): Save {
-  if (new TextEncoder().encode(raw).byteLength > 2_000_000)
-    throw Error("Ce fichier est trop volumineux.");
+  if (new TextEncoder().encode(raw).byteLength > 2000000)
+    throw Error(t("m_bf4a999543"));
   let value: unknown;
   try {
     value = JSON.parse(raw);
   } catch {
-    throw new SyntaxError("Ce fichier n’est pas un JSON valide.");
+    throw new SyntaxError(t("m_216ed30953"));
   }
   if (
     value &&

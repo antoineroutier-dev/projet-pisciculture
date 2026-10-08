@@ -1,5 +1,6 @@
+import { number } from "../ui/format";
+import { t, displayText } from "../i18n";
 import { ArrowRight, CircleHelp } from "lucide-react";
-import { number } from "../game";
 import { BUYERS, type Buyer } from "../development";
 import { Dialog } from "../ui/Dialog";
 import { Button } from "../ui/Button";
@@ -24,98 +25,118 @@ export function CycleDetails({ report }: { report: ReportData }) {
   return (
     <div className="cycle-details" data-testid="cycle-details">
       <p className="report-scope">
-        {formatDate(p.startDay)} → {formatDate(p.endDay)} · Dépenses de toute la
-        ferme entre règlements.
+        {displayText(formatDate(p.startDay))} →{" "}
+        {displayText(formatDate(p.endDay))}
+        {" " + t("m_c29a033779")}
       </p>
       {provisional && pending > 0 && (
         <p className="report-callout">
-          Les recettes attendues des lots au froid ({euro(pending / 100)}) ne
-          sont pas encore encaissées.
+          {t("m_f75725cd46")}
+          {displayText(euro(pending / 100))}
+          {t("m_4886d5a63e")}
         </p>
       )}
       {p.incomplete && (
         <p className="report-callout">
           <CircleHelp size={18} />
-          Historique partiel : seules les opérations observées depuis l’import
-          sont détaillées. Ce solde ne représente pas la marge complète du
-          cycle.
+          {t("m_fdeabeee73")}
         </p>
       )}
       <dl className="report-totals">
         <div>
-          <dt>Recettes encaissées</dt>
-          <dd data-report="income">{euro(p.income / 100, true)}</dd>
+          <dt>{t("m_d8cee1b504")}</dt>
+          <dd data-report="income">
+            {displayText(euro(p.income / 100, true))}
+          </dd>
         </div>
         <div>
           <dt>
-            {p.incomplete ? "Solde observé" : "Solde après investissements"}
+            {displayText(p.incomplete ? t("m_2dd26bd79b") : t("m_9f7c9ce30f"))}
           </dt>
-          <dd data-report="balance">{euro(balance / 100, true)}</dd>
+          <dd data-report="balance">
+            {displayText(euro(balance / 100, true))}
+          </dd>
         </div>
         <div>
-          <dt>Marge de trésorerie / kg payé</dt>
+          <dt>{t("m_8ce35ba03c")}</dt>
           <dd data-report="per-kg">
-            {p.kg > 0 && !p.incomplete
-              ? euro(balance / 100 / p.kg, true)
-              : "Indisponible"}
+            {displayText(
+              p.kg > 0 && !p.incomplete
+                ? euro(balance / 100 / p.kg, true)
+                : t("m_dae75cff3b"),
+            )}
           </dd>
         </div>
       </dl>
       <p>
-        {p.costs.investment > 0
-          ? `Les investissements de ${euro(p.costs.investment / 100)} servent plusieurs cycles. `
-          : ""}
-        Hors investissements identifiés :{" "}
-        <strong>{euro(operatingBalance(p) / 100, true)}</strong>.{" "}
-        {balance < 0 ? "Le déficit reste inclus dans ce bilan." : ""}
+        {displayText(
+          p.costs.investment > 0
+            ? t("m_4c08fbae4d", euro(p.costs.investment / 100)) + " "
+            : "",
+        )}
+        {t("m_3a32d30284")}
+        {displayText(" ")}
+        <strong>{displayText(euro(operatingBalance(p) / 100, true))}</strong>.
+        {displayText(" ")}
+        {displayText(balance < 0 ? t("m_f7ae495dda") : "")}
       </p>
       <p className="hint">
-        {comparison === null
-          ? "Comparaison par kg indisponible : deux périodes complètes et payées sont nécessaires."
-          : `${comparison >= 0 ? "+" : ""}${euro(comparison, true)}/kg par rapport à la période précédente.`}
+        {displayText(
+          comparison === null
+            ? t("m_5a83ff3432")
+            : t(
+                "m_6b0cac5cc9",
+                comparison >= 0 ? "+" : "",
+                euro(comparison, true),
+              ),
+        )}
       </p>
       <details className="report-breakdown">
-        <summary>Coûts par poste et règlements</summary>
+        <summary>{t("m_d487a1283c")}</summary>
         <table>
-          <caption>Dépenses effectivement débitées · euros</caption>
+          <caption>{t("m_fc710a4338")}</caption>
           <tbody>
             {costKeys.map((key) => (
               <tr key={key}>
-                <th scope="row">{COST_LABELS[key]}</th>
-                <td data-cost={key}>{euro(p.costs[key] / 100, true)}</td>
+                <th scope="row">{displayText(COST_LABELS[key])}</th>
+                <td data-cost={key}>
+                  {displayText(euro(p.costs[key] / 100, true))}
+                </td>
               </tr>
             ))}
             <tr>
-              <th scope="row">Aides et primes, hors recettes</th>
-              <td>{euro(p.aid / 100, true)}</td>
+              <th scope="row">{t("m_9c74dedb36")}</th>
+              <td>{displayText(euro(p.aid / 100, true))}</td>
             </tr>
           </tbody>
         </table>
         {"payments" in p &&
           (p as Cycle).payments.map((payment) => (
             <p key={payment.id}>
-              Facture #{payment.id} ·{" "}
-              {BUYERS[payment.buyer as Buyer]?.name ?? payment.buyer} ·{" "}
-              {number(payment.kg, 1)} kg · {euro(payment.value / 100, true)}
+              {t("m_70203f0e71")}
+              {payment.id} ·{displayText(" ")}
+              {displayText(
+                BUYERS[payment.buyer as Buyer]?.name ?? payment.buyer,
+              )}{" "}
+              ·{displayText(" ")}
+              {displayText(number(payment.kg, 1))}
+              {" " + t("m_3fb505e73c") + " "}
+              {displayText(euro(payment.value / 100, true))}
             </p>
           ))}
-        <p className="hint">
-          Trésorerie de jeu, sans valorisation des stocks ni amortissement. Les
-          coûts concernent l’exploitation entière ; ils ne sont pas attribués
-          artificiellement à un bassin. Les dépenses historiques ou partielles
-          sans ventilation du moteur restent « Non ventilé ».
-        </p>
+        <p className="hint">{t("m_79d3f06a76")}</p>
       </details>
       <details className="report-advice">
-        <summary>Trois pistes pour la suite</summary>
+        <summary>{t("m_734734d83a")}</summary>
         <ol>
           {cycleAdvice(p).map((advice, i) => (
-            <li key={i}>{formatEngineText(advice)}</li>
+            <li key={i}>{displayText(formatEngineText(advice))}</li>
           ))}
         </ol>
         <p className="hint">
-          Mesures de production observées depuis le{" "}
-          {formatDate(p.metricsStartDay)}.
+          {t("m_cafe449a1a")}
+          {displayText(" ")}
+          {displayText(formatDate(p.metricsStartDay))}.
         </p>
       </details>
     </div>
@@ -133,11 +154,9 @@ export function CycleReport({
   return (
     <Dialog
       className="cycle-dialog"
-      title={
-        report.provisional
-          ? "Votre première récolte · bilan provisoire"
-          : "Bilan du cycle payé"
-      }
+      title={displayText(
+        report.provisional ? t("m_30cd044d38") : t("m_a747213ca3"),
+      )}
       close={close}
     >
       <section
@@ -147,11 +166,11 @@ export function CycleReport({
         <CycleDetails report={report} />
         <div className="event-actions">
           <Button tone="secondary" onClick={finances}>
-            Voir les finances
+            {t("m_2fc58c1af9")}
             <ArrowRight size={16} />
           </Button>
           <Button tone="primary" onClick={close}>
-            Continuer
+            {t("m_3bc3807f22")}
           </Button>
         </div>
       </section>

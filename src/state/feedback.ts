@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import { flushSync } from "react-dom";
 import { nextTask } from "../development";
 import type { Action, Game } from "../game";
@@ -13,13 +14,21 @@ export type Feedback = {
   pondId?: number;
   money: number;
   food: number;
-  point: { x: number; y: number };
+  point: {
+    x: number;
+    y: number;
+  };
 };
 let serial = 0,
   events: Feedback[] = [];
 const listeners = new Set<() => void>();
 const timers = new Map<number, ReturnType<typeof setTimeout>>();
-let project: ((pondId: number) => { x: number; y: number } | null) | undefined;
+let project:
+  | ((pondId: number) => {
+      x: number;
+      y: number;
+    } | null)
+  | undefined;
 export function registerFeedbackProjector(fn: NonNullable<typeof project>) {
   project = fn;
   return () => {
@@ -72,7 +81,11 @@ export function feedbackPhase(
 export function requestFeedback(
   before: Game,
   after: Game,
-  action: Action | { type: "day" | "advance" },
+  action:
+    | Action
+    | {
+        type: "day" | "advance";
+      },
   ok: boolean,
   message: string,
   play: (s: Sound) => boolean,
@@ -155,17 +168,19 @@ export function dismissFeedback(id: number) {
   events = events.filter((e) => e.id !== id);
   listeners.forEach((fn) => fn());
 }
-
 export function clearFeedback() {
   timers.forEach(clearTimeout);
   timers.clear();
   events = [];
   listeners.forEach((fn) => fn());
 }
-
 export function beginFeedback(
   game: Game,
-  action: Action | { type: "day" | "advance" },
+  action:
+    | Action
+    | {
+        type: "day" | "advance";
+      },
   play: (s: Sound) => boolean,
   started = performance.now(),
 ) {
@@ -174,7 +189,7 @@ export function beginFeedback(
     game,
     action,
     true,
-    "Action en cours…",
+    t("m_dce6e40c25"),
     play,
     started,
     undefined,

@@ -1,3 +1,4 @@
+import { t, displayText } from "../i18n";
 import { Slider } from "../ui/Primitives";
 import { Button } from "../ui/Button";
 import type { Volumes, Sound } from "./mixer";
@@ -12,22 +13,19 @@ export function AudioSettings({
 }) {
   return (
     <div className="audio-settings">
-      <p>
-        Le son démarre à votre premier geste et se suspend quand cet onglet est
-        masqué.
-      </p>
+      <p>{t("m_1eb3cbc109")}</p>
       {(
         [
-          ["master", "Volume général"],
-          ["music", "Musique"],
-          ["ambience", "Ambiance"],
-          ["effects", "Effets"],
-          ["ui", "Interface"],
+          ["master", t("m_14e7a11f9b")],
+          ["music", t("m_5ef9328572")],
+          ["ambience", t("m_fc1215b56a")],
+          ["effects", t("m_e5b006b786")],
+          ["ui", t("m_c26b3ed4ce")],
         ] as const
       ).map(([bus, label]) => (
         <Slider
           key={bus}
-          label={label}
+          label={displayText(label)}
           value={volumes[bus]}
           min={0}
           max={100}
@@ -37,10 +35,10 @@ export function AudioSettings({
         />
       ))}
       <Button tone="secondary" onClick={() => play("celebrate")}>
-        Écouter un exemple
+        {t("m_b4e9866006")}
       </Button>
       {typeof AudioContext === "undefined" && (
-        <p role="status">Le son n’est pas disponible dans ce navigateur.</p>
+        <p role="status">{t("m_bc112b64f0")}</p>
       )}
     </div>
   );

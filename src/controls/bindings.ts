@@ -1,21 +1,124 @@
+import { t } from "../i18n";
 export const CONTROL_ACTIONS = [
-  { id: "project", label: "Construire", key: "Alt+C" },
-  { id: "ponds", label: "Bassins", key: "Alt+B" },
-  { id: "logistics", label: "Logistique", key: "Alt+L" },
-  { id: "finance", label: "Finances", key: "Alt+F" },
-  { id: "journal", label: "Journal", key: "Alt+J" },
-  { id: "guide", label: "Guide", key: "Alt+G" },
-  { id: "toggle", label: "Pause / reprendre", key: "Space" },
-  { id: "pause", label: "Mettre en pause", key: "1" },
-  { id: "speed1", label: "Vitesse ×1", key: "2" },
-  { id: "speed2", label: "Vitesse ×2", key: "3" },
-  { id: "speed4", label: "Vitesse ×4", key: "4" },
-  { id: "speed8", label: "Vitesse ×8", key: "5" },
-  { id: "left", label: "Tourner à gauche", key: "Q" },
-  { id: "right", label: "Tourner à droite", key: "E" },
-  { id: "zoomIn", label: "Rapprocher", key: "+" },
-  { id: "zoomOut", label: "Éloigner", key: "-" },
-  { id: "reset", label: "Recentrer la caméra", key: "R" },
+  {
+    id: "project",
+    get label() {
+      return t("m_81a8b56e69");
+    },
+    key: "Alt+C",
+  },
+  {
+    id: "ponds",
+    get label() {
+      return t("m_753eaba445");
+    },
+    key: "Alt+B",
+  },
+  {
+    id: "logistics",
+    get label() {
+      return t("m_e68fd7eca1");
+    },
+    key: "Alt+L",
+  },
+  {
+    id: "finance",
+    get label() {
+      return t("m_614e14f791");
+    },
+    key: "Alt+F",
+  },
+  {
+    id: "journal",
+    get label() {
+      return t("m_43b7c75d56");
+    },
+    key: "Alt+J",
+  },
+  {
+    id: "guide",
+    get label() {
+      return t("m_8dd65d0952");
+    },
+    key: "Alt+G",
+  },
+  {
+    id: "toggle",
+    get label() {
+      return t("m_b6e9156456");
+    },
+    key: "Space",
+  },
+  {
+    id: "pause",
+    get label() {
+      return t("m_42dd586c06");
+    },
+    key: "1",
+  },
+  {
+    id: "speed1",
+    get label() {
+      return t("m_66efc5b45b");
+    },
+    key: "2",
+  },
+  {
+    id: "speed2",
+    get label() {
+      return t("m_6f0764c86d");
+    },
+    key: "3",
+  },
+  {
+    id: "speed4",
+    get label() {
+      return t("m_02d704f0a0");
+    },
+    key: "4",
+  },
+  {
+    id: "speed8",
+    get label() {
+      return t("m_1ed4192dbb");
+    },
+    key: "5",
+  },
+  {
+    id: "left",
+    get label() {
+      return t("m_e121ef9fe0");
+    },
+    key: "Q",
+  },
+  {
+    id: "right",
+    get label() {
+      return t("m_207264ea07");
+    },
+    key: "E",
+  },
+  {
+    id: "zoomIn",
+    get label() {
+      return t("m_00ed213948");
+    },
+    key: "+",
+  },
+  {
+    id: "zoomOut",
+    get label() {
+      return t("m_fa06cdd64d");
+    },
+    key: "-",
+  },
+  {
+    id: "reset",
+    get label() {
+      return t("m_ca542c7082");
+    },
+    key: "R",
+  },
 ] as const;
 export type ControlAction = (typeof CONTROL_ACTIONS)[number]["id"];
 export type Bindings = Record<ControlAction, string>;
@@ -49,12 +152,11 @@ export function bindingError(
   value: string,
 ): string {
   const key = normalizeBinding(value);
-  if (!key)
-    return "Choisissez une lettre, un chiffre, Espace, + ou −, avec Alt si besoin. Les touches de navigation restent réservées.";
+  if (!key) return t("m_b20080f926");
   const other = CONTROL_ACTIONS.find(
     (a) => a.id !== action && bindings[a.id] === key,
   );
-  return other ? `Ce raccourci sert déjà à « ${other.label} ».` : "";
+  return other ? t("m_835acfa8a7", other.label) : "";
 }
 export function parseBindings(input: unknown): Bindings {
   if (!input || typeof input !== "object") return { ...DEFAULT_BINDINGS };
@@ -101,4 +203,5 @@ export function matchControl(
     return;
   return CONTROL_ACTIONS.find((a) => bindings[a.id] === key)?.id;
 }
-export const bindingLabel = (value: string) => value.replace("Space", "Espace");
+export const bindingLabel = (value: string) =>
+  value.replace("Space", t("controls.space"));

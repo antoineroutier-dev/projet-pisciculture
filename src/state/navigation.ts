@@ -1,15 +1,50 @@
+import { t } from "../i18n";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
-
 export const PANELS = [
-  { id: "project", label: "Construire", key: "C" },
-  { id: "ponds", label: "Bassins", key: "B" },
-  { id: "logistics", label: "Logistique", key: "L" },
-  { id: "finance", label: "Finances", key: "F" },
-  { id: "journal", label: "Journal", key: "J" },
-  { id: "guide", label: "Guide", key: "G" },
+  {
+    id: "project",
+    get label() {
+      return t("m_81a8b56e69");
+    },
+    key: "C",
+  },
+  {
+    id: "ponds",
+    get label() {
+      return t("m_753eaba445");
+    },
+    key: "B",
+  },
+  {
+    id: "logistics",
+    get label() {
+      return t("m_e68fd7eca1");
+    },
+    key: "L",
+  },
+  {
+    id: "finance",
+    get label() {
+      return t("m_614e14f791");
+    },
+    key: "F",
+  },
+  {
+    id: "journal",
+    get label() {
+      return t("m_43b7c75d56");
+    },
+    key: "J",
+  },
+  {
+    id: "guide",
+    get label() {
+      return t("m_8dd65d0952");
+    },
+    key: "G",
+  },
 ] as const;
 export type PanelId = (typeof PANELS)[number]["id"];
-
 /** Presentation state only: never persisted in the biological save. */
 export function usePanelNavigation() {
   const [panel, setPanel] = useState<PanelId | null>(null);

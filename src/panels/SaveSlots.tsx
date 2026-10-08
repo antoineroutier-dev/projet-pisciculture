@@ -1,3 +1,4 @@
+import { t, displayText, localeTag } from "../i18n";
 import { useRef, useState } from "react";
 import { ImageOff, Download, Upload, Save as SaveIcon } from "lucide-react";
 import { Button } from "../ui/Button";
@@ -11,35 +12,38 @@ import {
   type SlotId,
 } from "../state/saveSlots";
 export const slotName = (id: SlotId) =>
-  id === "auto" ? "Automatique" : `Emplacement ${id}`;
+  id === "auto" ? t("m_89bd8db002") : t("m_e596a6b51a", id);
 export function SaveSummary({ value }: { value: Save }) {
   return (
     <div className="save-summary">
       {value.metadata.thumbnail ? (
-        <img
-          src={value.metadata.thumbnail}
-          alt="Vue récente de cette exploitation"
-        />
+        <img src={value.metadata.thumbnail} alt={t("m_cbe67127ce")} />
       ) : (
         <span className="save-no-preview">
           <ImageOff size={24} />
-          Aperçu indisponible
+          {t("m_2fe0746573")}
         </span>
       )}
       <div>
         <strong>
-          Jour {value.game.day} · {formatDate(value.game.day)}
+          {t("m_3eb0f64015") + " "}
+          {value.game.day} · {displayText(formatDate(value.game.day))}
         </strong>
-        <span>{formatMoney(value.game.money)}</span>
-        <small>{playtimeLabel(value.metadata)}</small>
-        {value.metadata.savedAt && (
-          <small>
-            Enregistré le{" "}
-            {new Intl.DateTimeFormat("fr-FR", {
-              dateStyle: "short",
-              timeStyle: "short",
-            }).format(new Date(value.metadata.savedAt))}
-          </small>
+        <span>{displayText(formatMoney(value.game.money))}</span>
+        <small>{displayText(playtimeLabel(value.metadata))}</small>
+        {displayText(
+          value.metadata.savedAt && (
+            <small>
+              {t("m_5202941072")}
+              {displayText(" ")}
+              {displayText(
+                new Intl.DateTimeFormat(localeTag(), {
+                  dateStyle: "short",
+                  timeStyle: "short",
+                }).format(new Date(value.metadata.savedAt)),
+              )}
+            </small>
+          ),
         )}
       </div>
     </div>
@@ -65,15 +69,15 @@ export function SaveSlots({
   const file = useRef<HTMLInputElement>(null);
   async function write(id: 1 | 2 | 3) {
     setBusy(true);
-    setNotice({ text: "Capture et enregistrement…", ok: true });
+    setNotice({ text: t("m_29fb0de31b"), ok: true });
     try {
       await save!(id);
       setSlots(browserSlots());
       setConfirm(null);
-      setNotice({ text: `${slotName(id)} enregistré.`, ok: true });
+      setNotice({ text: t("m_1af3d72b53", slotName(id)), ok: true });
     } catch {
       setNotice({
-        text: "Cet emplacement n’a pas pu être enregistré. Exportez une copie JSON.",
+        text: t("m_784f33dc06"),
         ok: false,
       });
     } finally {
@@ -83,8 +87,7 @@ export function SaveSlots({
   async function importFile(value?: File) {
     if (!value) return;
     try {
-      if (value.size > 2_000_000)
-        throw Error("Ce fichier est trop volumineux.");
+      if (value.size > 2000000) throw Error(t("m_bf4a999543"));
       load(parseSavedGame(await value.text()));
     } catch (error) {
       setNotice({ text: (error as Error).message, ok: false });
@@ -93,48 +96,47 @@ export function SaveSlots({
   }
   return (
     <div className="save-slots" aria-busy={busy}>
-      <p className="hint">
-        Trois emplacements manuels et une sauvegarde automatique, sur cet
-        appareil.
-      </p>
-      {notice.text && (
-        <p role={notice.ok ? "status" : "alert"}>{notice.text}</p>
+      <p className="hint">{t("m_08d88d3c46")}</p>
+      {displayText(
+        notice.text && (
+          <p role={notice.ok ? "status" : "alert"}>
+            {displayText(notice.text)}
+          </p>
+        ),
       )}
       {confirm ? (
-        <section
-          className="save-confirm"
-          aria-label="Confirmer le remplacement"
-        >
-          <h3>Remplacer {slotName(confirm.id).toLowerCase()} ?</h3>
+        <section className="save-confirm" aria-label={t("m_bcc972e05a")}>
+          <h3>
+            {t("m_2eb5329254") + " "}
+            {displayText(slotName(confirm.id).toLowerCase())} ?
+          </h3>
           {confirm.save ? (
             <SaveSummary value={confirm.save} />
           ) : (
-            <p>
-              Le fichier existant est illisible. Exportez-le avant de le
-              remplacer.
-            </p>
+            <p>{t("m_6bdb69e413")}</p>
           )}
           {current && (
             <p>
-              Nouvelle copie : jour {current.game.day} ·{" "}
-              {formatMoney(current.game.money)}.
+              {t("m_c25882a6f4") + " "}
+              {current.game.day} ·{displayText(" ")}
+              {displayText(formatMoney(current.game.money))}.
             </p>
           )}
           <div className="button-row">
             <Button
               disabled={busy}
-              disabledReason="L’enregistrement est en cours."
+              disabledReason={t("m_fa6a49dd28")}
               onClick={() => setConfirm(null)}
             >
-              Annuler
+              {t("m_46ad3916f6")}
             </Button>
             <Button
               tone="danger"
               disabled={busy}
-              disabledReason="L’enregistrement est en cours."
+              disabledReason={t("m_fa6a49dd28")}
               onClick={() => void write(confirm.id as 1 | 2 | 3)}
             >
-              Remplacer cet emplacement
+              {t("m_8a40ac89ec")}
             </Button>
           </div>
         </section>
@@ -142,28 +144,27 @@ export function SaveSlots({
         <div className="save-grid">
           {slots.map((slot) => (
             <article className="save-slot" key={slot.id} data-slot={slot.id}>
-              <h3>{slotName(slot.id)}</h3>
+              <h3>{displayText(slotName(slot.id))}</h3>
               {slot.save ? (
                 <SaveSummary value={slot.save} />
               ) : (
-                <p>{slot.error || "Emplacement vide"}</p>
+                <p>{displayText(slot.error || t("m_e0b8d59a1b"))}</p>
               )}
               <div className="button-row">
                 <Button
                   disabled={!slot.save || busy}
-                  disabledReason={
-                    busy
-                      ? "L’enregistrement est en cours."
-                      : slot.error || "Aucune partie enregistrée ici."
-                  }
+                  disabledReason={displayText(
+                    busy ? t("m_fa6a49dd28") : slot.error || t("m_ad2cc22589"),
+                  )}
                   onClick={() => load(slot.save!)}
                 >
-                  Charger {slotName(slot.id).toLowerCase()}
+                  {t("m_fd351654f4") + " "}
+                  {displayText(slotName(slot.id).toLowerCase())}
                 </Button>
                 {save && slot.id !== "auto" && (
                   <Button
                     disabled={busy}
-                    disabledReason="L’enregistrement est en cours."
+                    disabledReason={t("m_fa6a49dd28")}
                     onClick={() =>
                       slot.raw !== null
                         ? setConfirm(slot)
@@ -171,36 +172,38 @@ export function SaveSlots({
                     }
                   >
                     <SaveIcon size={16} />
-                    Sauvegarder ici
+                    {t("m_f9d3012783")}
                   </Button>
                 )}
               </div>
-              {slot.error && slot.raw !== null && (
-                <Button
-                  onClick={() =>
-                    downloadSave(
-                      slot.raw!,
-                      `les-etangs-recuperation-${slot.id}.json`,
-                    )
-                  }
-                >
-                  Exporter le fichier original
-                </Button>
+              {displayText(
+                slot.error && slot.raw !== null && (
+                  <Button
+                    onClick={() =>
+                      downloadSave(
+                        slot.raw!,
+                        `les-etangs-recuperation-${slot.id}.json`,
+                      )
+                    }
+                  >
+                    {t("m_f5b745425c")}
+                  </Button>
+                ),
               )}
             </article>
           ))}
         </div>
       )}
       <details className="save-advanced">
-        <summary>Options avancées · JSON</summary>
+        <summary>{t("m_dcec126e9a")}</summary>
         <div className="button-row">
           <Button
             onClick={() => file.current?.click()}
             disabled={busy}
-            disabledReason="L’enregistrement est en cours."
+            disabledReason={t("m_fa6a49dd28")}
           >
             <Upload size={16} />
-            Importer une sauvegarde
+            {t("m_da243ce47e")}
           </Button>
           {current && (
             <Button
@@ -219,7 +222,7 @@ export function SaveSlots({
               }
             >
               <Download size={16} />
-              Exporter ma partie
+              {t("m_6e634f953d")}
             </Button>
           )}
         </div>
@@ -228,7 +231,7 @@ export function SaveSlots({
           hidden
           type="file"
           accept=".json,application/json"
-          aria-label="Fichier de sauvegarde"
+          aria-label={t("m_00dde4de80")}
           onChange={(e) => void importFile(e.target.files?.[0])}
         />
       </details>

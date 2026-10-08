@@ -1,3 +1,4 @@
+import { t, displayText } from "../i18n";
 import { feedbackStore, feedbackPhase } from "../state/feedback";
 import { InlineFeedback } from "../world/FeedbackLayer";
 import {
@@ -12,7 +13,6 @@ import {
 import { AlertTriangle, Check, Clock3, X } from "lucide-react";
 import { Button } from "./Button";
 import { plural } from "./format";
-
 export function IconButton({
   label,
   children,
@@ -26,10 +26,10 @@ export function IconButton({
       {...props}
       type="button"
       className={`ui-icon-button ${props.className || ""}`}
-      aria-label={label}
-      title={props.title || label}
+      aria-label={displayText(label)}
+      title={displayText(props.title || label)}
     >
-      {children}
+      {displayText(children)}
     </button>
   );
 }
@@ -61,26 +61,30 @@ export function Drawer({
     >
       <header className="management-heading">
         <h2 id="panel-heading" ref={heading} tabIndex={-1}>
-          {title}
+          {displayText(title)}
         </h2>
         <InlineFeedback />
         <IconButton
           onClick={close}
-          label="Fermer le panneau"
-          title="Fermer · Échap"
+          label={t("m_0b696f2640")}
+          title={t("m_343dee0304")}
         >
           <X size={20} />
         </IconButton>
       </header>
-      {summary && <div className="ui-drawer-summary">{summary}</div>}
+      {displayText(
+        summary && (
+          <div className="ui-drawer-summary">{displayText(summary)}</div>
+        ),
+      )}
       <div
         className="management-content"
         ref={content}
         tabIndex={0}
         role="region"
-        aria-label="Contenu du panneau"
+        aria-label={t("m_cb3917a506")}
       >
-        {children}
+        {displayText(children)}
       </div>
     </section>
   );
@@ -93,7 +97,10 @@ export function Tabs<T extends string>({
   children,
 }: {
   label: string;
-  items: readonly { id: T; label: string }[];
+  items: readonly {
+    id: T;
+    label: string;
+  }[];
   value: T;
   onChange: (id: T) => void;
   children: ReactNode;
@@ -103,7 +110,7 @@ export function Tabs<T extends string>({
     <div className="ui-tabs">
       <div
         role="tablist"
-        aria-label={label}
+        aria-label={displayText(label)}
         onKeyDown={(e) => {
           const i = items.findIndex((x) => x.id === value);
           let next = i;
@@ -130,7 +137,7 @@ export function Tabs<T extends string>({
             tabIndex={value === item.id ? 0 : -1}
             onClick={() => onChange(item.id)}
           >
-            {item.label}
+            {displayText(item.label)}
           </button>
         ))}
       </div>
@@ -140,7 +147,7 @@ export function Tabs<T extends string>({
         aria-labelledby={`${id}-${value}`}
         tabIndex={0}
       >
-        {children}
+        {displayText(children)}
       </div>
     </div>
   );
@@ -176,8 +183,8 @@ export function Toast({
       role="status"
     >
       {ok ? <Check size={18} /> : <AlertTriangle size={18} />}
-      <span>{text}</span>
-      <IconButton label="Fermer la notification" onClick={close}>
+      <span>{displayText(text)}</span>
+      <IconButton label={t("m_3ed122ecf9")} onClick={close}>
         <X size={16} />
       </IconButton>
     </div>
@@ -193,13 +200,13 @@ export function Stepper({
   label: string;
 }) {
   return (
-    <ol className="ui-stepper" aria-label={label}>
+    <ol className="ui-stepper" aria-label={displayText(label)}>
       {steps.map((s, i) => (
         <li key={s} aria-current={i === current ? "step" : undefined}>
           <span aria-hidden="true">
             {i < current ? <Check size={14} /> : i + 1}
           </span>
-          {s}
+          {displayText(s)}
         </li>
       ))}
     </ol>
@@ -212,7 +219,7 @@ export function Card({
 }: HTMLAttributes<HTMLElement>) {
   return (
     <article {...props} className={`ui-card ${className}`}>
-      {children}
+      {displayText(children)}
     </article>
   );
 }
@@ -230,7 +237,7 @@ export function Badge({
       ) : tone === "success" ? (
         <Check size={14} />
       ) : null}
-      {children}
+      {displayText(children)}
     </span>
   );
 }
@@ -254,11 +261,11 @@ export function Gauge({
     <div className={`ui-gauge tone-${tone} ${circular ? "circular" : ""}`}>
       <div
         role="meter"
-        aria-label={label}
+        aria-label={displayText(label)}
         aria-valuemin={0}
         aria-valuemax={max}
         aria-valuenow={Number(Math.max(0, Math.min(max, value)).toFixed(6))}
-        aria-valuetext={caption}
+        aria-valuetext={displayText(caption)}
       >
         {circular ? (
           <svg viewBox="0 0 40 40" aria-hidden="true">
@@ -276,8 +283,9 @@ export function Gauge({
         )}
       </div>
       <span>
-        {tone === "success" ? <Check size={14} /> : <AlertTriangle size={14} />}{" "}
-        {caption}
+        {tone === "success" ? <Check size={14} /> : <AlertTriangle size={14} />}
+        {displayText(" ")}
+        {displayText(caption)}
       </span>
     </div>
   );
@@ -307,7 +315,7 @@ export function Sparkline({
       className="ui-sparkline"
       viewBox="0 0 200 40"
       role="img"
-      aria-label={label}
+      aria-label={displayText(label)}
     >
       {points
         .split(" ")
@@ -336,7 +344,12 @@ export function CountdownChip({
   return (
     <span className="ui-countdown">
       <Clock3 size={14} />
-      {label} · {days <= 0 ? "aujourd’hui" : `${days} ${plural(days, "jour")}`}
+      {displayText(label)} ·{" "}
+      {displayText(
+        days <= 0
+          ? "aujourd’hui"
+          : `${days} ${plural(days, t("m_b5977b836b"), t("m_5cd11d34bc"))}`,
+      )}
     </span>
   );
 }
@@ -353,9 +366,9 @@ export function ResourcePill({
 }) {
   return (
     <div className="ui-resource">
-      <span>{label}</span>
-      <strong data-testid={testId}>{value}</strong>
-      <small>{detail}</small>
+      <span>{displayText(label)}</span>
+      <strong data-testid={testId}>{displayText(value)}</strong>
+      <small>{displayText(detail)}</small>
     </div>
   );
 }
@@ -367,12 +380,15 @@ export function SegmentedControl<T extends string>({
 }: {
   label: string;
   value: T;
-  options: readonly { value: T; label: string }[];
+  options: readonly {
+    value: T;
+    label: string;
+  }[];
   onChange: (value: T) => void;
 }) {
   return (
     <fieldset className="ui-segmented">
-      <legend>{label}</legend>
+      <legend>{displayText(label)}</legend>
       <div>
         {options.map((o) => (
           <label key={o.value}>
@@ -383,7 +399,7 @@ export function SegmentedControl<T extends string>({
               checked={value === o.value}
               onChange={() => onChange(o.value)}
             />
-            <span>{o.label}</span>
+            <span>{displayText(o.label)}</span>
           </label>
         ))}
       </div>
@@ -411,10 +427,10 @@ export function Slider({
   return (
     <div className="ui-slider">
       <label htmlFor={id}>
-        {label}
+        {displayText(label)}
         <output htmlFor={id}>
           {value}
-          {unit}
+          {displayText(unit)}
         </output>
       </label>
       <input
@@ -444,18 +460,20 @@ export function Toggle({
   return (
     <div className="ui-toggle">
       <span>
-        <strong>{label}</strong>
-        {description && <small id={id}>{description}</small>}
+        <strong>{displayText(label)}</strong>
+        {displayText(
+          description && <small id={id}>{displayText(description)}</small>,
+        )}
       </span>
       <Button
         tone="secondary"
         role="switch"
-        aria-label={label}
+        aria-label={displayText(label)}
         aria-checked={checked}
         aria-describedby={description ? id : undefined}
         onClick={() => onChange(!checked)}
       >
-        {checked ? "Activé" : "Désactivé"}
+        {displayText(checked ? t("m_df16db5ac6") : t("m_da60ff35b2"))}
       </Button>
     </div>
   );

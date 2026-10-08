@@ -1,3 +1,4 @@
+import { t, displayText } from "../i18n";
 import { Check, AlertTriangle, Construction } from "lucide-react";
 import { pondStatus, SPECIES, type Pond } from "../game";
 export function WorldLabels({
@@ -10,16 +11,16 @@ export function WorldLabels({
   select: (id: number) => void;
 }) {
   return (
-    <div className="world-labels" role="group" aria-label="Bassins dans le monde">
+    <div className="world-labels" role="group" aria-label={t("m_02236fe79f")}>
       {ponds.map((p) => {
         const status = pondStatus(p),
           ratio = p.species
             ? Math.min(1, p.weight / SPECIES[p.species].harvestWeight)
             : 0;
         const label = p.constructionDays
-          ? `Chantier · ${p.constructionDays} j`
+          ? t("m_e08b150453", p.constructionDays)
           : !p.built
-            ? "Parcelle disponible"
+            ? t("m_33c8c5c24c")
             : status.label;
         return (
           <button
@@ -32,7 +33,9 @@ export function WorldLabels({
             tabIndex={-1}
             aria-hidden="true"
             onClick={() => select(p.id)}
-            aria-label={`${p.name} · ${label}${p.count ? ` · calibre ${Math.round(ratio * 100)} %` : ""}`}
+            aria-label={displayText(
+              `${p.name} · ${label}${p.count ? " " + t("m_5426c68842", Math.round(ratio * 100)) : ""}`,
+            )}
           >
             <span className="world-label-heading">
               {!p.built ? (
@@ -42,9 +45,9 @@ export function WorldLabels({
               ) : (
                 <Check size={16} />
               )}
-              <strong>{p.name}</strong>
+              <strong>{displayText(p.name)}</strong>
             </span>
-            <span>{label}</span>
+            <span>{displayText(label)}</span>
             {p.count > 0 && (
               <span className="world-calibre">
                 <svg
@@ -63,7 +66,8 @@ export function WorldLabels({
                     transform="rotate(-90 12 12)"
                   />
                 </svg>
-                Calibre {Math.round(ratio * 100)} %
+                {t("m_1aef9304a8") + " "}
+                {Math.round(ratio * 100)} %
               </span>
             )}
           </button>

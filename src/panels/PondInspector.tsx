@@ -1,10 +1,11 @@
+import { number } from "../ui/format";
+import { t, displayText } from "../i18n";
 import { Droplets, Package, Wind, Check, AlertTriangle } from "lucide-react";
 import {
   biomass,
   cleaningCost,
   feedNeeded,
   harvestReady,
-  number,
   pondStatus,
   SPECIES,
   UPGRADE_COST,
@@ -13,7 +14,7 @@ import {
   type Action,
 } from "../game";
 import { BUYERS } from "../development";
-import {SpeciesPortrait} from "../world/SpeciesPortrait";
+import { SpeciesPortrait } from "../world/SpeciesPortrait";
 import { Button } from "../ui/Button";
 import { ScientificHelp } from "../ui/ScientificHelp";
 import { Tooltip } from "../ui/Tooltip";
@@ -37,41 +38,45 @@ import type { PanelId } from "../state/navigation";
 import { ConstructionCard } from "./ConstructionPanel";
 export function VitalSummary({ pond }: { pond: Pond }) {
   return (
-    <div
-      className="vital-summary"
-      aria-label="Mesures vitales toujours visibles"
-    >
+    <div className="vital-summary" aria-label={t("m_12d8a6b454")}>
       {pondVitals(pond).map((v) => (
         <Tooltip
           key={v.key}
-          text={`${v.label} : ${v.state}. ${v.threshold}. ${v.help}`}
+          text={displayText(
+            `${v.label} : ${v.state}. ${v.threshold}. ${v.help}`,
+          )}
         >
           {(id) => (
             <button
               data-vital={v.key}
               className={`tone-${v.tone}`}
-              aria-label={`${v.label} : ${number(v.value, v.digits)} ${v.unit} · ${v.state}`}
+              aria-label={displayText(
+                `${v.label} : ${number(v.value, v.digits)} ${v.unit} · ${v.state}`,
+              )}
               aria-describedby={id}
             >
               <span>
-                {
+                {displayText(
                   {
-                    temperature: "Temp.",
+                    temperature: t("m_007955c071"),
                     oxygen: "O₂",
-                    ammonia: "NH₃-N",
-                    density: "Densité",
-                  }[v.key]
-                }
+                    ammonia: t("m_209a5a0f11"),
+                    density: t("m_8bb667816b"),
+                  }[v.key],
+                )}
               </span>
-              <strong>{number(v.value, v.digits)}</strong>
-              <small>{v.unit}</small>
+              <strong>{displayText(number(v.value, v.digits))}</strong>
+              <small>{displayText(v.unit)}</small>
               <span className="vital-state">
                 {v.tone === "success" ? (
                   <Check size={12} />
                 ) : (
                   <AlertTriangle size={12} />
-                )}{" "}
-                {v.tone === "warning" ? "À suivre" : v.state}
+                )}
+                {displayText(" ")}
+                {displayText(
+                  v.tone === "warning" ? t("m_7e898e80c3") : v.state,
+                )}
               </span>
             </button>
           )}
@@ -112,15 +117,18 @@ export function PondInspector({
     contract &&
     game.development.batches.find((b) => b.contractId === contract.id);
   const incoming = game.development.orders.find((o) => o.pondId === p.id);
-  let primary: { label: string; action?: Action; open?: () => void } | null =
-    null;
+  let primary: {
+    label: string;
+    action?: Action;
+    open?: () => void;
+  } | null = null;
   if (p.built) {
     if (batch)
       primary = {
         label:
           BUYERS[contract!.buyer].processed && !batch.processed
-            ? "Préparer le lot"
-            : "Expédier le lot",
+            ? t("m_30462743f1")
+            : t("m_6e77c9a8d9"),
         action: {
           type:
             BUYERS[contract!.buyer].processed && !batch.processed
@@ -130,20 +138,20 @@ export function PondInspector({
         },
       };
     else if (!p.count && !incoming && !p.fallowDays)
-      primary = { label: "Commander des juvéniles", open: stock };
+      primary = { label: t("m_df22c1f8f7"), open: stock };
     else if (p.count && !p.autoFeed)
       primary = {
-        label: "Activer la distribution",
+        label: t("m_08c1248403"),
         action: { type: "autoFeed", pondId: p.id, enabled: true },
       };
     else if (contract && harvestReady(p))
       primary = {
-        label: `Récolter ${p.name}`,
+        label: t("m_3a5f4050e3", p.name),
         action: { type: "harvest", pondId: p.id },
       };
     else if (s && !contract && p.weight >= s.harvestWeight * 0.8)
       primary = {
-        label: "Réserver un client",
+        label: t("m_4c3f90b546"),
         open: () => navigate("logistics"),
       };
   }
@@ -151,20 +159,17 @@ export function PondInspector({
     ? availability(game, primary.action)
     : { disabled: false, reason: "" };
   return (
-    <section
-      className="pond-inspector"
-      aria-label="Gestion du bassin sélectionné"
-    >
+    <section className="pond-inspector" aria-label={t("m_8a273bda81")}>
       <label className="pond-selector">
-        Bassin sélectionné
+        {t("m_fe893f1ecd")}
         <select
-          aria-label="Bassin sélectionné"
+          aria-label={t("m_fe893f1ecd")}
           value={p.id}
           onChange={(e) => select(Number(e.target.value))}
         >
           {game.ponds.map((p) => (
             <option key={p.id} value={p.id}>
-              {p.name} · {pondStatus(p).label}
+              {displayText(p.name)} · {displayText(pondStatus(p).label)}
             </option>
           ))}
         </select>
@@ -180,7 +185,7 @@ export function PondInspector({
         <>
           <header className="inspector-title">
             <div>
-              <h3>{p.name}</h3>
+              <h3>{displayText(p.name)}</h3>
               <Badge
                 tone={
                   status.tone === "danger"
@@ -192,47 +197,49 @@ export function PondInspector({
                         : "neutral"
                 }
               >
-                {status.label}
+                {displayText(status.label)}
               </Badge>
             </div>
             {s && <SpeciesPortrait species={s.id} />}
           </header>
           {s && (
             <>
-              <p className="inspector-species">{s.name}</p>
+              <p className="inspector-species">{displayText(s.name)}</p>
               <div className="pond-numbers">
                 <div>
-                  <strong>{number(p.count)}</strong>
-                  <span>poissons</span>
+                  <strong>{displayText(number(p.count))}</strong>
+                  <span>{t("m_b466bdc0f0")}</span>
                 </div>
                 <div>
                   <strong>
-                    {number(p.weight * 1000)} <small>g</small>
+                    {displayText(number(p.weight * 1000))}{" "}
+                    <small>{t("m_cd0aa98561")}</small>
                   </strong>
-                  <span>poids moyen</span>
+                  <span>{t("m_599d1411de")}</span>
                 </div>
                 <div>
                   <strong>
-                    {number(biomass(p), 1)} <small>kg</small>
+                    {displayText(number(biomass(p), 1))}{" "}
+                    <small>{t("m_131ed73429")}</small>
                   </strong>
-                  <span>biomasse</span>
+                  <span>{t("m_613f9e96e0")}</span>
                 </div>
               </div>
             </>
           )}
           <div
             className="water-grid inspector-vitals"
-            aria-label="Mesures vitales du bassin"
+            aria-label={t("m_e57f3fb8a7")}
           >
             {pondVitals(p).map((v) => (
               <div key={v.key} data-vital-detail={v.key}>
                 <div className="vital-label">
-                  <strong>{v.label}</strong>
-                  <Tooltip text={v.help}>
+                  <strong>{displayText(v.label)}</strong>
+                  <Tooltip text={displayText(v.help)}>
                     {(id) => (
                       <button
                         className="vital-help"
-                        aria-label={`Comprendre : ${v.label}`}
+                        aria-label={displayText(t("m_0b51688308", v.label))}
                         aria-describedby={id}
                       >
                         ?
@@ -243,63 +250,83 @@ export function PondInspector({
                 <Gauge
                   value={v.value}
                   max={v.max}
-                  label={v.label}
+                  label={displayText(v.label)}
                   tone={v.tone}
-                  caption={v.state}
+                  caption={displayText(v.state)}
                 />
-                <small>{v.threshold}</small>
+                <small>{displayText(v.threshold)}</small>
                 <Sparkline
                   values={readings.map((r) => r[v.key])}
                   positions={readings.map((r) => r.day)}
                   domain={[Math.max(1, game.day - 13), game.day]}
-                  label={`${v.label} : ${readings.length} ${plural(readings.length, "relevé")} ${plural(readings.length, "observé")} sur les 14 derniers jours`}
+                  label={displayText(
+                    t(
+                      "m_3dc55fb04c",
+                      v.label,
+                      readings.length,
+                      plural(
+                        readings.length,
+                        t("m_2327660f4e"),
+                        t("m_ad322cd874"),
+                      ),
+                      plural(
+                        readings.length,
+                        t("m_009ad8b977"),
+                        t("m_b35a16c22e"),
+                      ),
+                    ),
+                  )}
                 />
               </div>
             ))}
           </div>
           <small className="readings-note">
-            {readings.length} relevé{readings.length > 1 ? "s" : ""} en mémoire
-            · 14 derniers jours · réinitialisés au chargement.
+            {readings.length}
+            {" " + t("m_2327660f4e")}
+            {displayText(readings.length > 1 ? "s" : "")}
+            {" " + t("m_8f74fb72bd")}
           </small>
           {primary && (
             <Button
               className="full inspector-primary"
               data-testid="pond-action"
               disabled={guard.disabled}
-              disabledReason={formatEngineText(guard.reason)}
+              disabledReason={displayText(formatEngineText(guard.reason))}
               onClick={() =>
                 primary.action ? perform(primary.action) : primary.open?.()
               }
             >
-              {primary.label}
+              {displayText(primary.label)}
             </Button>
           )}
           {incoming && (
             <CountdownChip
-              label="Juvéniles attendus"
+              label={t("m_49f0688d64")}
               days={incoming.due - game.day}
             />
           )}
           {p.fallowDays > 0 && (
-            <CountdownChip label="Fin du vide sanitaire" days={p.fallowDays} />
+            <CountdownChip label={t("m_b4b1512942")} days={p.fallowDays} />
           )}
           {s && (
             <Gauge
               circular
-              label="Calibre commercial"
+              label={t("m_d547b57028")}
               value={p.weight}
               max={s.harvestWeight}
-              caption={`${Math.min(100, Math.floor((p.weight / s.harvestWeight) * 100))} % · ${days === null ? "estimation indisponible" : days === 0 ? "calibre atteint" : `environ ${days} jours au rythme d’hier`}`}
+              caption={displayText(
+                `${Math.min(100, Math.floor((p.weight / s.harvestWeight) * 100))} % · ${days === null ? t("m_a7ca60a23d") : days === 0 ? t("m_55dbf28739") : t("m_59ebd35bfe", days)}`,
+              )}
               tone={harvestReady(p) ? "success" : "warning"}
             />
           )}
           <Tabs
-            label="Détails du bassin"
+            label={t("m_0ddd948734")}
             items={[
-              { id: "water", label: "Eau" },
-              { id: "feed", label: "Alimentation" },
-              { id: "equipment", label: "Équipement" },
-              { id: "history", label: "Historique" },
+              { id: "water", label: t("m_4fde2b7a7c") },
+              { id: "feed", label: t("m_2690c742f6") },
+              { id: "equipment", label: t("m_885e3d11a2") },
+              { id: "history", label: t("m_865df3324a") },
             ]}
             value={tab}
             onChange={setTab}
@@ -321,28 +348,32 @@ export function PondInspector({
                           <Wind size={18} />
                         ) : (
                           <Droplets size={18} />
-                        )}{" "}
-                        {level === 0
-                          ? "Aération mécanique"
-                          : "Filtration biologique"}
+                        )}
+                        {displayText(" ")}
+                        {displayText(
+                          level === 0 ? t("m_a3f695f9e1") : t("m_a257960721"),
+                        )}
                       </h3>
                       <p>
-                        {level === 0
-                          ? "Augmente les échanges d’oxygène avec l’air."
-                          : "Transforme l’azote ammoniacal ; maturation sur 30 jours."}
+                        {displayText(
+                          level === 0 ? t("m_48ede68764") : t("m_f989384acd"),
+                        )}
                       </p>
                       <p>
-                        {formatMoney(UPGRADE_COST[level])} · +3,6 kWh/j ·{" "}
-                        {formatMoney(3.6 * 0.22, true)}/j
+                        {displayText(formatMoney(UPGRADE_COST[level]))}
+                        {" " + t("m_74ed284761")}
+                        {displayText(" ")}
+                        {displayText(formatMoney(3.6 * 0.22, true))}
+                        {t("m_d1597015c9")}
                       </p>
                       {done ? (
-                        <Badge tone="success">En service</Badge>
+                        <Badge tone="success">{t("m_22134a6ad3")}</Badge>
                       ) : p.upgrade === level ? (
                         <Button tone="secondary" onClick={upgrade}>
-                          Améliorer ce bassin
+                          {t("m_c652a7394f")}
                         </Button>
                       ) : (
-                        <Badge>Installez d’abord l’aération</Badge>
+                        <Badge>{t("m_e784fd5451")}</Badge>
                       )}
                     </Card>
                   );
@@ -351,17 +382,20 @@ export function PondInspector({
             )}
             {tab === "history" && (
               <div className="pond-history">
-                <p>Historique du bassin · événements du journal</p>
+                <p>{t("m_af7f5b4521")}</p>
                 {game.logs
                   .filter((l) => l.text.includes(p.name))
                   .map((l, i) => (
                     <article key={`${l.day}-${i}`}>
-                      <small>Jour {l.day}</small>
-                      <p>{formatEngineText(l.text)}</p>
+                      <small>
+                        {t("m_3eb0f64015") + " "}
+                        {l.day}
+                      </small>
+                      <p>{displayText(formatEngineText(l.text))}</p>
                     </article>
                   ))}
                 {!game.logs.some((l) => l.text.includes(p.name)) && (
-                  <p>Aucun événement conservé pour ce bassin.</p>
+                  <p>{t("m_505fd22529")}</p>
                 )}
               </div>
             )}
@@ -390,16 +424,21 @@ function WaterSettings({
   return (
     <div className="water-settings">
       <p className="hint">
-        pH {number(p.pH, 1)} · azote ammoniacal total (TAN) {number(p.tan, 3)}{" "}
-        mg N/L <ScientificHelp term="tan" pond={p} />
+        {t("m_d18eae6d1e") + " "}
+        {displayText(number(p.pH, 1))}
+        {" " + t("m_44078ecf14") + " "}
+        {displayText(number(p.tan, 3))}
+        {displayText(" ")}
+        {t("m_64997fc9bc") + " "}
+        <ScientificHelp term="tan" pond={p} />
       </p>
       <div className="field-help">
-        <label htmlFor={`flow-${p.id}`}>Débit d’eau neuve</label>
+        <label htmlFor={`flow-${p.id}`}>{t("m_e7231673c9")}</label>
         <ScientificHelp term="flow" pond={p} />
       </div>
       <select
         id={`flow-${p.id}`}
-        aria-label="Débit d’eau neuve"
+        aria-label={t("m_e7231673c9")}
         value={p.flow}
         onChange={(e) =>
           perform({
@@ -413,28 +452,24 @@ function WaterSettings({
           .sort((a, b) => a - b)
           .map((v) => (
             <option key={v} value={v}>
-              {number(v, 2)} L/s
+              {displayText(number(v, 2))}
+              {" " + t("m_728f66214d")}
             </option>
           ))}
       </select>
       <Button
         tone="secondary"
         disabled={guard.disabled}
-        disabledReason={formatEngineText(guard.reason)}
+        disabledReason={displayText(formatEngineText(guard.reason))}
         onClick={() => perform({ type: "clean", pondId: p.id })}
       >
         <Droplets size={16} />
-        Entretenir & renouveler · {formatMoney(cleaningCost(p))}
+        {t("m_89bd0bb586") + " "}
+        {displayText(formatMoney(cleaningCost(p)))}
       </Button>
-      <p className="hint">
-        Retire les boues et renouvelle 30 % de l’eau. Vérifiez ensuite oxygène
-        et NH₃-N.
-      </p>
+      <p className="hint">{t("m_9edd497734")}</p>
       {p.upgrade >= 2 && p.filterAge < 30 && (
-        <CountdownChip
-          label="Maturation du biofiltre"
-          days={30 - p.filterAge}
-        />
+        <CountdownChip label={t("m_283c696552")} days={30 - p.filterAge} />
       )}
     </div>
   );
@@ -452,17 +487,17 @@ function FeedingSettings({
   return (
     <div className="feeding-settings">
       <Toggle
-        label="Distribution automatique"
+        label={t("m_97dcab4f48")}
         checked={p.autoFeed}
-        description={`${number(feedNeeded(p), 2)} kg prévus par jour`}
+        description={displayText(t("m_e8ebe00646", number(feedNeeded(p), 2)))}
         onChange={(enabled) =>
           perform({ type: "autoFeed", pondId: p.id, enabled })
         }
       />
       <label>
-        Ration cible
+        {t("m_71e480363e")}
         <select
-          aria-label="Ration cible"
+          aria-label={t("m_71e480363e")}
           value={p.rationMultiplier}
           onChange={(e) =>
             perform({
@@ -474,7 +509,7 @@ function FeedingSettings({
         >
           {[0.5, 0.75, 1, 1.25, 1.5].map((v) => (
             <option key={v} value={v}>
-              {v * 100} % {v === 1 ? "· recommandée" : ""}
+              {v * 100} % {displayText(v === 1 ? t("m_3d7016f2c5") : "")}
             </option>
           ))}
         </select>
@@ -482,22 +517,27 @@ function FeedingSettings({
       {!p.autoFeed && p.count > 0 && (
         <Button
           disabled={guard.disabled}
-          disabledReason={formatEngineText(guard.reason)}
+          disabledReason={displayText(formatEngineText(guard.reason))}
           onClick={() => perform({ type: "feed", pondId: p.id })}
         >
           <Package size={16} />
-          {p.feedToday > 0 ? "Ration programmée" : "Programmer la ration"}
+          {displayText(p.feedToday > 0 ? t("m_65c0c8742f") : t("m_50d09e5470"))}
         </Button>
       )}
       <p className="hint">
-        Hier : {number(p.lastFeed, 2)} kg distribués · FCR du lot{" "}
-        {p.totalGain > 0.001
-          ? number(p.totalFeed / p.totalGain, 2)
-          : "indisponible"}
+        {t("m_28eebb4e06") + " "}
+        {displayText(number(p.lastFeed, 2))}
+        {" " + t("m_4af95b5bde")}
+        {displayText(" ")}
+        {displayText(
+          p.totalGain > 0.001
+            ? number(p.totalFeed / p.totalGain, 2)
+            : t("status.unavailable"),
+        )}
         . <ScientificHelp term="fcr" pond={p} />
       </p>
       {p.quarantineDays > 0 && (
-        <CountdownChip label="Fin de l’observation" days={p.quarantineDays} />
+        <CountdownChip label={t("m_e1bee53914")} days={p.quarantineDays} />
       )}
     </div>
   );

@@ -1,3 +1,4 @@
+import { t, displayText } from "../i18n";
 import {
   Building2,
   Fish,
@@ -32,7 +33,7 @@ export function EventCard({
     water: Droplets,
   }[event.illustration];
   return (
-    <Dialog title={event.title} close={close}>
+    <Dialog title={displayText(event.title)} close={close}>
       <DialogFeedback />
       <div
         className={`event-card event-${event.kind}`}
@@ -59,23 +60,27 @@ export function EventCard({
           <Icon size={48} />
         </div>
         <p className="event-kind">
-          {event.kind === "celebration"
-            ? "Une nouvelle étape pour votre ferme"
-            : event.kind === "alert"
-              ? "Simulation arrêtée · à traiter maintenant"
-              : "Simulation arrêtée"}
+          {displayText(
+            event.kind === "celebration"
+              ? t("m_4af9fa9c28")
+              : event.kind === "alert"
+                ? t("m_5bdd8ca0d4")
+                : t("m_48e13afba5"),
+          )}
         </p>
-        <p>{event.text}</p>
+        <p>{displayText(event.text)}</p>
         <div className="event-actions">
           {(event.action || (event.task && !event.task.wait)) && (
             <Button tone="primary" onClick={act}>
-              {event.actionLabel || formatEngineText(event.task!.label)}
+              {displayText(
+                event.actionLabel || formatEngineText(event.task!.label),
+              )}
               <ArrowRight size={16} />
             </Button>
           )}
           {event.pondId && event.task?.target !== "ponds" && (
             <Button tone="secondary" onClick={inspect}>
-              Voir le bassin
+              {t("m_154ef6e97d")}
             </Button>
           )}
           <Button
@@ -86,7 +91,7 @@ export function EventCard({
             }
             onClick={close}
           >
-            Continuer
+            {t("m_3bc3807f22")}
           </Button>
         </div>
       </div>

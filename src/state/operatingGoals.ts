@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import { nextTask, type Task } from "../development";
 import type { Game } from "../game";
 export function operatingGoals(game: Game) {
@@ -7,20 +8,20 @@ export function operatingGoals(game: Game) {
   return [
     {
       id: "diversify",
-      title: "Deux filières en service",
-      text: "Ouvrez une deuxième filière adaptée à son eau.",
+      title: t("m_f4ca7b51cc"),
+      text: t("m_bf891aef79"),
       progress: species.size,
       target: 2,
-      unit: "filières",
+      unit: t("m_0be1da4ab4"),
       done: species.size >= 2,
     },
     {
       id: "volume",
-      title: "Commercialiser 5 tonnes",
-      text: "Développez les ventes tout en surveillant les charges et les pertes.",
+      title: t("m_c20f7bc937"),
+      text: t("m_17a5d3d44e"),
       progress: game.stats.soldKg,
       target: 5000,
-      unit: "kg",
+      unit: t("m_131ed73429"),
       done: game.stats.soldKg >= 5000,
     },
   ];
@@ -39,18 +40,18 @@ export function presentationTask(game: Game): Task {
   if (!diversify.done && parcel)
     return {
       stage: 8,
-      title: "Diversifiez votre exploitation",
-      text: `${diversify.progress} filière en service sur 2 visées. Choisissez une autre eau, puis une autre espèce.`,
-      label: "Choisir une autre filière",
+      title: t("m_cf37d16c9b"),
+      text: t("m_026cd509be", diversify.progress),
+      label: t("m_6f6dff6cad"),
       target: "project",
       pondId: parcel.id,
     };
   if (!volume.done)
     return {
       stage: 8,
-      title: "Cap sur 5 tonnes vendues",
-      text: `${Math.round(game.stats.soldKg)} kg commercialisés. Préparez les prochains lots et leurs débouchés.`,
-      label: "Gérer les lots",
+      title: t("m_f5d4e7f8c9"),
+      text: t("m_59b927a6af", Math.round(game.stats.soldKg)),
+      label: t("m_a1e269ecd9"),
       target: "ponds",
       pondId:
         game.ponds.find((p) => p.count)?.id ??
@@ -59,9 +60,9 @@ export function presentationTask(game: Game): Task {
     };
   return {
     stage: 8,
-    title: "Un domaine bien établi",
-    text: "Poursuivez les cycles en maîtrisant les coûts et les pertes au froid.",
-    label: "Gérer les lots",
+    title: t("m_525fc6587c"),
+    text: t("m_e17178c9ae"),
+    label: t("m_a1e269ecd9"),
     target: "ponds",
     pondId: game.ponds.find((p) => p.count)?.id ?? 1,
   };

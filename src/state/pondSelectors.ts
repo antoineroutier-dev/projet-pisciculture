@@ -1,6 +1,7 @@
+import { number } from "../ui/format";
+import { t } from "../i18n";
 import {
   act,
-  number,
   density,
   pondAmmonia,
   SPECIES,
@@ -9,7 +10,6 @@ import {
   type Game,
   type Pond,
 } from "../game";
-
 /** Ask the pure engine about a command without applying its returned state. */
 export function availability(game: Game, action: Action) {
   const result = act(game, action);
@@ -74,28 +74,28 @@ export function pondVitals(p: Pond): Vital[] {
         : "success";
   const state = (tone: Vital["tone"]) =>
     tone === "danger"
-      ? "Critique"
+      ? t("m_0197946cc3")
       : tone === "warning"
-        ? "À surveiller"
-        : "Bon";
+        ? t("m_1a9a292c78")
+        : t("m_8c2bab1a74");
   return [
     {
       key: "temperature",
-      label: "Température de l’eau",
+      label: t("m_c7f2fe3809"),
       value: p.temperature,
       max: 40,
-      unit: "°C",
+      unit: t("m_11c4350690"),
       digits: 1,
       tone: temperature,
-      state: temp === 0 ? "Croissance nulle" : state(temperature),
+      state: temp === 0 ? t("m_c3d0528d46") : state(temperature),
       threshold: s
-        ? `${s.temperature.join("–")} °C préférés`
-        : "Espèce non choisie",
-      help: "L’eau conditionne la croissance. Hors de la plage préférée, elle ralentit ; une croissance nulle en eau froide ne signifie pas, à elle seule, que le lot est malade.",
+        ? t("m_2e2110c2e6", s.temperature.join("–"))
+        : t("m_a0ef5a8254"),
+      help: t("m_3e514ed9a3"),
     },
     {
       key: "oxygen",
-      label: "Oxygène dissous",
+      label: t("m_a3665d89fe"),
       value: p.oxygen,
       max: 15,
       unit: "mg/L",
@@ -103,13 +103,13 @@ export function pondVitals(p: Pond): Vital[] {
       tone: oxygen,
       state: state(oxygen),
       threshold: s
-        ? `Bon ≥ ${s.minOxygen} · critique ≤ ${s.criticalOxygen}`
-        : "Concentration dissoute",
-      help: "Sous le minimum de l’espèce, vérifiez débit et aération, puis réduisez la ration. Le seuil critique bloque la croissance liée à l’oxygène.",
+        ? t("m_8cc4f7a329", s.minOxygen, s.criticalOxygen)
+        : t("m_4240b79ac0"),
+      help: t("m_2478826e61"),
     },
     {
       key: "ammonia",
-      label: "Ammoniac · NH₃-N",
+      label: t("m_5b5bbd1bc0"),
       value: nh3,
       max: s ? s.ammoniaLimit * 2 : 0.1,
       unit: "mg/L",
@@ -117,21 +117,29 @@ export function pondVitals(p: Pond): Vital[] {
       tone: ammonia,
       state: state(ammonia),
       threshold: s
-        ? `Attention > ${number(s.ammoniaLimit / 2, 3)} · critique > ${number(s.ammoniaLimit, 3)}`
-        : "Fraction non ionisée",
-      help: "Fraction toxique de l’azote ammoniacal, calculée avec le pH et la température. Réduisez les apports et vérifiez renouvellement et filtration.",
+        ? t(
+            "m_ceb6b6bf4e",
+            number(s.ammoniaLimit / 2, 3),
+            number(s.ammoniaLimit, 3),
+          )
+        : t("m_a46a1b309d"),
+      help: t("m_a3c7e22f5e"),
     },
     {
       key: "density",
-      label: "Densité d’élevage",
+      label: t("m_88f2fce145"),
       value: d,
       max: p.maxDensity * 1.2,
       unit: "kg/m³",
       digits: 2,
       tone: crowding,
       state: state(crowding),
-      threshold: `Attention > ${number(p.maxDensity * 0.8, 2)} · limite ${number(p.maxDensity, 2)}`,
-      help: "Biomasse divisée par le volume. La marge de surveillance commence à 80 % de la densité maximale ; prévoyez les collectes avant saturation.",
+      threshold: t(
+        "m_a473c30005",
+        number(p.maxDensity * 0.8, 2),
+        number(p.maxDensity, 2),
+      ),
+      help: t("m_2d9c4477cf"),
     },
   ];
 }

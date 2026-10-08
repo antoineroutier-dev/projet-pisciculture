@@ -1,3 +1,5 @@
+import { number, simDate } from "../ui/format";
+import { t, displayText } from "../i18n";
 import { useControlPreferences } from "../state/preferences";
 import { bindingLabel } from "../controls/bindings";
 import { TimeControls } from "./TimeControls";
@@ -21,11 +23,10 @@ import {
   CloudSun,
 } from "lucide-react";
 import { dailyFeed, nextTask, STAGES, type Task } from "../development";
-import { number, simDate, weather, pondStatus, type Game } from "../game";
+import { weather, pondStatus, type Game } from "../game";
 import { formatMoney, formatEngineText, plural } from "../ui/format";
 import { presentationTask } from "../state/operatingGoals";
 import { PANELS, type PanelId } from "../state/navigation";
-
 export function GameHud({
   game,
   saved,
@@ -58,35 +59,42 @@ export function GameHud({
     (nextTask(game).urgent && !pondWarnings ? 1 : 0) +
     (storageError ? 1 : 0);
   return (
-    <header className="game-hud" aria-label="Ressources et temps">
-      <div className="hud-date" title={`Jour ${game.day}`}>
+    <header className="game-hud" aria-label={t("m_3e9656402b")}>
+      <div
+        className="hud-date"
+        title={displayText(t("m_b7f2057e90", game.day))}
+      >
         <strong data-testid="day" data-day={game.day}>
-          {simDate(game.day)}
+          {displayText(simDate(game.day))}
         </strong>
         <span>
           <CloudSun size={15} />
-          {today.season} · {today.label} · {number(today.temperature, 1)} °C
+          {displayText(today.season)} · {displayText(today.label)} ·{" "}
+          {displayText(number(today.temperature, 1))}
+          {" " + t("m_11c4350690")}
         </span>
       </div>
-      <div className="hud-resources" aria-label="Ressources">
+      <div className="hud-resources" aria-label={t("m_f15c129752")}>
         <ResourcePill
-          label="Trésorerie"
+          label={t("m_5a430676b9")}
           value={<AnimatedNumber value={game.money} format={formatMoney} />}
           testId="money"
           detail={
-            <span title="Variation depuis le dernier relevé quotidien">
-              {trend > 0 ? "+" : ""}
-              {formatMoney(trend)} / jour
+            <span title={t("m_1d69c4d15f")}>
+              {displayText(trend > 0 ? "+" : "")}
+              {displayText(formatMoney(trend))}
+              {" " + t("m_94581a0c2d")}
             </span>
           }
         />
         <ResourcePill
           label={
             <>
-              Aliments{" "}
+              {t("m_4b5169ce38")}
+              {displayText(" ")}
               {days !== null && (
                 <meter
-                  aria-label="Autonomie des aliments, réserve cible de 7 jours"
+                  aria-label={t("m_52eba72114")}
                   min={0}
                   max={7}
                   value={Math.min(7, days)}
@@ -100,19 +108,25 @@ export function GameHud({
               format={(v) => `${number(v, 1)} kg`}
             />
           }
-          detail={
+          detail={displayText(
             days === null
-              ? "Aucun lot à nourrir"
-              : `${days} j d’autonomie${days < 3 ? " · à commander" : ""}`
-          }
+              ? t("m_dbd5715c3a")
+              : t(
+                  "m_36c9097c36",
+                  days,
+                  days < 3 ? " " + t("m_f31ef1c21c") : "",
+                ),
+          )}
         />
       </div>
       <TimeControls clock={clock} />
       <div className="hud-utilities">
         <button
           onClick={alerts}
-          aria-label={`${warnings} alerte${warnings === 1 ? "" : "s"} · ouvrir le journal`}
-          title="Ouvrir le journal"
+          aria-label={displayText(
+            t("m_ea75113d04", warnings, warnings === 1 ? "" : "s"),
+          )}
+          title={t("m_d4835f3e66")}
         >
           <AlertTriangle size={18} />
           <span>{warnings}</span>
@@ -120,12 +134,10 @@ export function GameHud({
         <button
           className="hud-save"
           onClick={settings}
-          aria-label={
-            saved && !storageError
-              ? "Partie sauvegardée · sauvegardes"
-              : "Sauvegarde à vérifier"
-          }
-          title={storageError || "Partie sauvegardée"}
+          aria-label={displayText(
+            saved && !storageError ? t("m_521c414b23") : t("m_7d8db4d5d0"),
+          )}
+          title={displayText(storageError || t("m_31fcec6516"))}
         >
           {saved && !storageError ? (
             <CheckCheck
@@ -139,29 +151,30 @@ export function GameHud({
         </button>
         <button
           onClick={settings}
-          aria-label="Paramètres & sauvegarde"
-          title="Paramètres"
+          aria-label={t("m_422fef3b9b")}
+          title={t("m_01923df7a4")}
         >
           <Settings2 size={20} />
         </button>
         <button
           data-command="pause-menu"
           onClick={menu}
-          aria-label="Menu pause"
-          title="Menu · Échap"
+          aria-label={t("m_df641fc301")}
+          title={t("m_41622199a0")}
         >
           <Menu size={20} />
         </button>
       </div>
-      {storageError && (
-        <div className="hud-storage-error" role="alert">
-          {storageError}
-        </div>
+      {displayText(
+        storageError && (
+          <div className="hud-storage-error" role="alert">
+            {displayText(storageError)}
+          </div>
+        ),
       )}
     </header>
   );
 }
-
 export function GoalHud({
   game,
   follow,
@@ -186,33 +199,35 @@ export function GoalHud({
   return (
     <section
       className={`goal-hud ${task.urgent ? "goal-urgent" : ""}`}
-      aria-label="Votre prochaine action"
+      aria-label={t("m_75fc18b1d1")}
       data-testid="next-task"
     >
       <div className="goal-heading">
         <span>
-          {task.urgent
-            ? "À traiter maintenant"
-            : game.development.paid
-              ? "Votre exploitation continue"
-              : `Premier cycle · ${task.stage + 1}/9`}
+          {displayText(
+            task.urgent
+              ? t("m_954ebd41a5")
+              : game.development.paid
+                ? t("m_7ac2ddbdc7")
+                : t("m_b79c180dfa", task.stage + 1),
+          )}
         </span>
         <button
-          aria-label="Voir les objectifs"
+          aria-label={t("m_bd4e3ff34f")}
           onClick={objectives}
-          title="Objectifs et récompenses"
+          title={t("m_3e7bd2801d")}
         >
           <Award size={18} />
         </button>
       </div>
-      <h2>{task.title}</h2>
-      <span className="goal-description">{description}</span>
+      <h2>{displayText(task.title)}</h2>
+      <span className="goal-description">{displayText(description)}</span>
       <button
         className="button primary goal-action"
         data-testid="task-action"
         onClick={() => follow(task)}
       >
-        {formatEngineText(task.label)}
+        {displayText(formatEngineText(task.label))}
         <ArrowRight size={16} />
       </button>
       {aids && (
@@ -222,13 +237,15 @@ export function GoalHud({
           aria-controls="goal-details"
           onClick={() => setExpanded((v) => !v)}
         >
-          {game.development.paid
-            ? expanded
-              ? "Masquer les conseils"
-              : "Conseils d’exploitation"
-            : expanded
-              ? "Masquer le parcours"
-              : "Parcours et conseils"}
+          {displayText(
+            game.development.paid
+              ? expanded
+                ? t("m_a846999d44")
+                : t("m_5a0fe6efc6")
+              : expanded
+                ? t("m_a99b976cda")
+                : t("m_c9ea7e6276"),
+          )}
         </button>
       )}
       {aids && expanded && (
@@ -237,19 +254,35 @@ export function GoalHud({
           id="goal-details"
           tabIndex={0}
           role="region"
-          aria-label="Parcours et conseils"
+          aria-label={t("m_c9ea7e6276")}
         >
-          <p>{text}</p>
+          <p>{displayText(text)}</p>
           {game.development.paid > 0 ? (
             <p>
-              {game.development.paid} {plural(game.development.paid, "cycle")}{" "}
-              {plural(game.development.paid, "réglé")} ·{" "}
-              {number(game.stats.soldKg, 1)} kg commercialisés.
+              {game.development.paid}{" "}
+              {displayText(
+                plural(
+                  game.development.paid,
+                  t("m_c501935a6b"),
+                  t("m_443ff9977e"),
+                ),
+              )}
+              {displayText(" ")}
+              {displayText(
+                plural(
+                  game.development.paid,
+                  t("m_02d77164f0"),
+                  t("m_97fb0d0819"),
+                ),
+              )}{" "}
+              ·{displayText(" ")}
+              {displayText(number(game.stats.soldKg, 1))}
+              {" " + t("m_fa7d57ee76")}
             </p>
           ) : (
             <Stepper
-              label="Parcours du premier cycle"
-              steps={STAGES}
+              label={t("m_f5b5b74d68")}
+              steps={displayText(STAGES)}
               current={task.stage}
             />
           )}
@@ -270,30 +303,26 @@ export function Dock({
 }) {
   const { bindings } = useControlPreferences();
   return (
-    <nav className="game-dock" aria-label="Gestion de l’exploitation">
+    <nav className="game-dock" aria-label={t("m_9a4fc7b78c")}>
       {PANELS.map((p, i) => {
         const Icon = icons[i];
         return (
           <button
             key={p.id}
             data-panel={p.id}
-            aria-label={p.label}
+            aria-label={displayText(p.label)}
             aria-expanded={active === p.id}
             aria-controls={active === p.id ? "management-panel" : undefined}
             aria-keyshortcuts={bindings[p.id]}
             onClick={() => open(p.id)}
           >
             <Icon size={20} />
-            <span>{p.label}</span>
-            <kbd>{bindingLabel(bindings[p.id])}</kbd>
+            <span>{displayText(p.label)}</span>
+            <kbd>{displayText(bindingLabel(bindings[p.id]))}</kbd>
           </button>
         );
       })}
-      {gamepad && (
-        <span className="pad-hints">
-          A · activer　B · retour　LB/RB · zones　Start · pause
-        </span>
-      )}
+      {gamepad && <span className="pad-hints">{t("m_1b18bfa095")}</span>}
     </nav>
   );
 }

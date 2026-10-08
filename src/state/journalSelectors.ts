@@ -1,3 +1,4 @@
+import { localeTag } from "../i18n";
 import type { Game } from "../game";
 import { cashHistory } from "./financeSelectors";
 export type JournalType =
@@ -41,7 +42,7 @@ export function journalMonths(game: Game, type: JournalType, pond: string) {
       key = date.toISOString().slice(0, 7);
     const group = groups.get(key) ?? {
       key,
-      label: new Intl.DateTimeFormat("fr-FR", {
+      label: new Intl.DateTimeFormat(localeTag(), {
         month: "long",
         year: "numeric",
         timeZone: "UTC",

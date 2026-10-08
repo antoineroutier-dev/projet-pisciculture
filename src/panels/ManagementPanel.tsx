@@ -1,3 +1,4 @@
+import { displayText } from "../i18n";
 import type { ReactNode } from "react";
 import { PANELS, type PanelId } from "../state/navigation";
 import { Drawer } from "../ui/Primitives";
@@ -15,11 +16,11 @@ export function ManagementPanel({
   return (
     <Drawer
       id={id}
-      title={PANELS.find((p) => p.id === id)!.label}
+      title={displayText(PANELS.find((p) => p.id === id)!.label)}
       close={close}
       summary={summary}
     >
-      {children}
+      {displayText(children)}
     </Drawer>
   );
 }

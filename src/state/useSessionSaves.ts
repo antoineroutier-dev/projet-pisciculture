@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Game } from "../game";
 import type { Ledger } from "./ledger";
@@ -5,7 +6,6 @@ import { VisiblePlaytime, type SaveMetadata } from "./saveMetadata";
 import { SAVE_KEY, serializeSave, type Save } from "./saves";
 import { slotKey } from "./saveSlots";
 import { captureWorld } from "../world/snapshots";
-
 export function useSessionSaves(
   game: Game,
   ledger: Ledger,
@@ -48,11 +48,11 @@ export function useSessionSaves(
     [],
   );
   const writeAutomatic = useCallback(() => {
-    if (!alive.current) throw Error("Cette session est fermée.");
+    if (!alive.current) throw Error(t("m_aa578972fd"));
     const value = snapshot();
     try {
       if (localStorage.getItem(SAVE_KEY) !== expectedRaw.current)
-        throw Error("Une autre version a été enregistrée.");
+        throw Error(t("m_8e56c50b73"));
       const raw = serializeSave(
         value.game,
         value.ledger,
@@ -67,12 +67,8 @@ export function useSessionSaves(
       return value;
     } catch {
       setSaved(false);
-      setError(
-        "La sauvegarde automatique est indisponible. Exportez votre partie depuis les paramètres pour la conserver.",
-      );
-      throw Error(
-        "L’enregistrement a échoué. Exportez une copie JSON pour conserver votre partie.",
-      );
+      setError(t("m_7de7f69b89"));
+      throw Error(t("m_ed3ebdb168"));
     }
   }, [snapshot]);
   const flush = useCallback(() => {
@@ -155,7 +151,7 @@ export function useSessionSaves(
       setBusy(true);
       try {
         await preview();
-        if (!alive.current) throw Error("Cette session est fermée.");
+        if (!alive.current) throw Error(t("m_aa578972fd"));
         const value = snapshot();
         localStorage.setItem(
           slotKey(id),

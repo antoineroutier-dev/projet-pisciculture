@@ -1,3 +1,4 @@
+import { t, displayText, useLocale } from "./i18n";
 import { disposeRenderCaches } from "./world/renderCaches";
 import { registerSceneSnapshots } from "./world/snapshots";
 import { Button } from "./ui/Button";
@@ -65,6 +66,7 @@ export default function FarmScene({
   reset: number;
   clock: Pick<GameClock, "active" | "phase" | "seeking">;
 }) {
+  const locale = useLocale();
   const [error, setError] = useState("");
   const [ready, setReady] = useState(false);
   const host = useRef<HTMLDivElement>(null);
@@ -120,9 +122,7 @@ export default function FarmScene({
         powerPreference: "high-performance",
       });
     } catch {
-      setError(
-        "La 3D n’est pas disponible dans ce navigateur. La carte de gestion reste utilisable.",
-      );
+      setError(t("m_eba7171035"));
       return;
     }
     renderer.setPixelRatio(
@@ -133,10 +133,7 @@ export default function FarmScene({
     renderer.toneMapping = T.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 0.94;
     renderer.outputColorSpace = T.SRGBColorSpace;
-    renderer.domElement.setAttribute(
-      "aria-label",
-      "Vue 3D de l’exploitation. Utilisez les boutons pour sélectionner une vue ou un bassin.",
-    );
+    renderer.domElement.setAttribute("aria-label", t("m_1a5af6074a"));
     renderer.domElement.setAttribute("role", "img");
     renderer.domElement.dataset.engine = "three-webgl";
     container.appendChild(renderer.domElement);
@@ -360,9 +357,7 @@ export default function FarmScene({
     const contextLost = (e: Event) => {
       e.preventDefault();
       active = false;
-      setError(
-        "Le contexte graphique a été interrompu. La carte de secours permet de continuer la partie.",
-      );
+      setError(t("m_1223712dee"));
     };
     renderer.domElement.addEventListener("pointerdown", onDown);
     renderer.domElement.addEventListener("pointerup", onUp);
@@ -610,6 +605,11 @@ export default function FarmScene({
       renderer.domElement.remove();
     };
   }, [error]);
+  useEffect(() => {
+    host.current
+      ?.querySelector("canvas")
+      ?.setAttribute("aria-label", t("m_1a5af6074a"));
+  }, [locale, ready]);
   return (
     <div
       className="world-scene"
@@ -624,29 +624,32 @@ export default function FarmScene({
           selected={target?.kind === "pond" ? target.id : null}
         />
       )}
-      {error && (
-        <div className="world-fallback">
-          <p role="status">
-            Carte de secours · la 3D est indisponible.{" "}
-            <Button
-              className="retry-renderer"
-              size="small"
-              autoFocus={recovering.current}
-              onClick={() => {
-                recovering.current = true;
-                setReady(false);
-                setError("");
-              }}
-            >
-              Réessayer la 3D
-            </Button>
-          </p>
-          <FarmMap ponds={ponds} selected={selected} select={select} />
-        </div>
+      {displayText(
+        error && (
+          <div className="world-fallback">
+            <p role="status">
+              {t("m_700e2d455f")}
+              {displayText(" ")}
+              <Button
+                className="retry-renderer"
+                size="small"
+                autoFocus={recovering.current}
+                onClick={() => {
+                  recovering.current = true;
+                  setReady(false);
+                  setError("");
+                }}
+              >
+                {t("m_3a1117c870")}
+              </Button>
+            </p>
+            <FarmMap ponds={ponds} selected={selected} select={select} />
+          </div>
+        ),
       )}
       {!ready && !error && (
         <div className="world-loading" role="status">
-          Préparation du terrain…
+          {t("m_55ae92620d")}
         </div>
       )}
     </div>

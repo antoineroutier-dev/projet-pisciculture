@@ -1,6 +1,6 @@
+import { t, displayText } from "../i18n";
 import { useEffect, useId, useRef, type ReactNode } from "react";
 import { X } from "lucide-react";
-
 export function Dialog({
   title,
   children,
@@ -89,16 +89,16 @@ export function Dialog({
         tabIndex={-1}
       >
         <div className="modal-heading">
-          <h2 id={titleId}>{title}</h2>
+          <h2 id={titleId}>{displayText(title)}</h2>
           <button
             className="icon-button"
             onClick={close}
-            aria-label="Fermer la fenêtre"
+            aria-label={t("m_53d7fef884")}
           >
             <X size={20} />
           </button>
         </div>
-        {children}
+        {displayText(children)}
       </div>
     </div>
   );

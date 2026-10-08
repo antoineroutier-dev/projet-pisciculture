@@ -1,7 +1,8 @@
+import { number } from "../ui/format";
+import { t } from "../i18n";
 import {
   OBJECTIVES,
   SPECIES,
-  number,
   pondAmmonia,
   type Action,
   type Game,
@@ -70,16 +71,16 @@ export function gameEvents(
   if (completedAsset && !built && firstWork)
     add(
       "celebration",
-      "Votre premier bâtiment est prêt",
-      `Mise en service : ${ASSETS[completedAsset].name}.`,
+      t("m_6a2b81f9ba"),
+      t("m_b1530ef40d", ASSETS[completedAsset].name),
       "build",
       "first-build",
     );
   if (built && firstWork)
     add(
       "celebration",
-      "Votre premier bassin est prêt",
-      `Le bassin ${built.name} est en service. Préparez les aliments avant de commander vos poissons.`,
+      t("m_fa2a1b3c5d"),
+      t("m_3deeb936ae", built.name),
       "build",
       "first-build",
       { pondId: built.id },
@@ -94,8 +95,8 @@ export function gameEvents(
   )
     add(
       "celebration",
-      "Votre premier lot est arrivé",
-      `Les premiers poissons sont arrivés dans le bassin ${received.name}. Leur période d’observation commence.`,
+      t("m_15c31e5444"),
+      t("m_d37c5d8a21", received.name),
       "fish",
       "first-fish",
       { pondId: received.id },
@@ -107,8 +108,8 @@ export function gameEvents(
   )
     add(
       "celebration",
-      "Votre première récolte",
-      "Le lot est au froid. Respectez sa date limite et préparez son départ vers le client.",
+      t("m_51ed9fbc92"),
+      t("m_6227c62fe2"),
       "harvest",
       "first-harvest",
     );
@@ -119,8 +120,8 @@ export function gameEvents(
   )
     add(
       "celebration",
-      "Votre premier règlement",
-      "Le client a réglé sa facture. Retrouvez les recettes et charges dans Finances.",
+      t("m_6ae234f578"),
+      t("m_36318507c9"),
       "payment",
       "first-paid",
     );
@@ -132,13 +133,13 @@ export function gameEvents(
     )
       add(
         "celebration",
-        "Objectif atteint",
+        t("m_8e11f9ae38"),
         o.title,
         "award",
         `objective-${o.id}`,
         {
           action: { type: "claim", id: o.id },
-          actionLabel: "Recevoir la récompense",
+          actionLabel: t("m_722720b03f"),
         },
       );
   // The illustrated analysis result is already shown by WaterSurvey.
@@ -154,14 +155,20 @@ export function gameEvents(
       : undefined;
     const detail =
       task.urgent && pond?.species
-        ? `${pond.name} : O₂ ${number(pond.oxygen, 1)} mg/L (minimum ${number(SPECIES[pond.species].minOxygen, 1)}) ; NH₃-N ${number(pondAmmonia(pond), 3)} mg/L (limite ${number(SPECIES[pond.species].ammoniaLimit, 3)}) ; santé ${number(pond.health)} %.`
+        ? t(
+            "m_e5152c9fd2",
+            pond.name,
+            number(pond.oxygen, 1),
+            number(SPECIES[pond.species].minOxygen, 1),
+            number(pondAmmonia(pond), 3),
+            number(SPECIES[pond.species].ammoniaLimit, 3),
+            number(pond.health),
+          )
         : task.text;
     if (!redundant || task.urgent)
       add(
         task.urgent ? "alert" : "event",
-        task.urgent
-          ? "Votre attention est nécessaire"
-          : "Une étape à prendre en main",
+        task.urgent ? t("m_e5c81b0a95") : t("m_c9c2ac308e"),
         formatEngineText(reason) +
           (task.urgent ? ` ${formatEngineText(detail)}` : ""),
         "water",

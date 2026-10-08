@@ -1,3 +1,4 @@
+import { t, displayText } from "../i18n";
 import { useState } from "react";
 import {
   BookOpen,
@@ -23,48 +24,49 @@ export function JournalPanel({ game }: { game: Game }) {
     <div className="journal-panel">
       <div className="journal-controls">
         <div>
-          <label htmlFor="journal-type">Type d’événement</label>
+          <label htmlFor="journal-type">{t("m_32769cddb4")}</label>
           <select
             id="journal-type"
             value={type}
             onChange={(e) => setType(e.target.value as JournalType)}
           >
-            <option value="all">Tous les événements</option>
-            <option value="purchase">Achats et travaux</option>
-            <option value="sale">Ventes et objectifs</option>
-            <option value="warning">À surveiller</option>
-            <option value="info">Informations</option>
-            <option value="weekly">Bilans hebdomadaires</option>
+            <option value="all">{t("m_3a2305cd01")}</option>
+            <option value="purchase">{t("m_5e373397fe")}</option>
+            <option value="sale">{t("m_297c3eb2cf")}</option>
+            <option value="warning">{t("m_1a9a292c78")}</option>
+            <option value="info">{t("m_412be0b9cd")}</option>
+            <option value="weekly">{t("m_29524fdb4f")}</option>
           </select>
         </div>
         <div>
-          <label htmlFor="journal-pond">Bassin du journal</label>
+          <label htmlFor="journal-pond">{t("m_677213497f")}</label>
           <select
             id="journal-pond"
             value={pond}
             onChange={(e) => setPond(e.target.value)}
           >
-            <option value="all">Toute l’exploitation</option>
+            <option value="all">{t("m_4e449b80eb")}</option>
             {game.ponds.map((p) => (
               <option key={p.id} value={String(p.id)}>
-                {p.name}
+                {displayText(p.name)}
               </option>
             ))}
-            <option value="farm">Sans bassin identifié</option>
+            <option value="farm">{t("m_f3177afc4d")}</option>
           </select>
         </div>
       </div>
       <small>
-        {count} {plural(count, "événement")} · les 120 plus récents sont
-        conservés.
+        {count}{" "}
+        {displayText(plural(count, t("m_f5c40e7d9e"), t("m_a0374a88dd")))}
+        {" " + t("m_8a61427beb")}
       </small>
       {months.map((month) => (
         <section
           key={month.key}
           className="journal-month"
-          aria-label={month.label}
+          aria-label={displayText(month.label)}
         >
-          <h3>{month.label}</h3>
+          <h3>{displayText(month.label)}</h3>
           {month.entries.map(({ id, log, pondIds, weekly, history }) => {
             const Icon =
               log.kind === "warning"
@@ -88,27 +90,49 @@ export function JournalPanel({ game }: { game: Game }) {
                         .toISOString()
                         .slice(0, 10)}
                     >
-                      {formatDate(log.day)}
+                      {displayText(formatDate(log.day))}
                     </time>
                     <strong>
-                      {weekly
-                        ? "Bilan de la semaine"
-                        : journalSummary(formatEngineText(log.text))}
+                      {displayText(
+                        weekly
+                          ? t("m_f6d1df4f88")
+                          : journalSummary(formatEngineText(log.text)),
+                      )}
                     </strong>
                   </span>
                   {weekly && history.length > 0 && (
                     <Sparkline
                       values={history.map((h) => h.money)}
-                      label={`Trésorerie : ${history.length} ${plural(history.length, "relevé")}`}
+                      label={displayText(
+                        t(
+                          "m_fa6721881b",
+                          history.length,
+                          plural(
+                            history.length,
+                            t("m_2327660f4e"),
+                            t("m_ad322cd874"),
+                          ),
+                        ),
+                      )}
                     />
                   )}
                 </summary>
-                <p>{formatEngineText(log.text)}</p>
+                <p>{displayText(formatEngineText(log.text))}</p>
                 {weekly && (
                   <small>
-                    {history.length
-                      ? `${history.length} ${plural(history.length, "relevé")} de trésorerie sur cette semaine.`
-                      : "Les relevés de trésorerie de cette semaine ne sont plus disponibles."}
+                    {displayText(
+                      history.length
+                        ? t(
+                            "m_125f7a7303",
+                            history.length,
+                            plural(
+                              history.length,
+                              t("m_2327660f4e"),
+                              t("m_ad322cd874"),
+                            ),
+                          )
+                        : t("m_5b23bcc95b"),
+                    )}
                   </small>
                 )}
               </details>
@@ -119,7 +143,7 @@ export function JournalPanel({ game }: { game: Game }) {
       {!count && (
         <div className="journal-empty">
           <BookOpen size={28} />
-          <p>Aucun événement pour ces filtres.</p>
+          <p>{t("m_8cb5bb92de")}</p>
         </div>
       )}
     </div>

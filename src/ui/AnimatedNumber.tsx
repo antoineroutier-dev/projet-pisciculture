@@ -1,3 +1,4 @@
+import { displayText } from "../i18n";
 import { useEffect, useRef, useState } from "react";
 export function AnimatedNumber({
   value,
@@ -48,8 +49,8 @@ export function AnimatedNumber({
   }, [value]);
   return (
     <span className={pulse ? "resource-pulse" : ""}>
-      <span aria-hidden="true">{format(shown)}</span>
-      <span className="sr-only">{format(value)}</span>
+      <span aria-hidden="true">{displayText(format(shown))}</span>
+      <span className="sr-only">{displayText(format(value))}</span>
     </span>
   );
 }

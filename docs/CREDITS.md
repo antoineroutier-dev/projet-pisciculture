@@ -46,3 +46,5 @@ Lot 4c : contours de sélection, anneaux de calibre, étiquettes, notifications 
 Lot 5a : écran titre, menus et composants de sauvegarde originaux. Vignettes produites directement par le rendu local ; aucune image téléchargée. Les licences Inter/Fraunces (OFL), Lucide (ISC), Three.js et React (MIT) sont consultables intégralement depuis les crédits du titre, y compris dans le portable.
 
 Lot 5b : navigation à la manette, contrôles réassignables et motifs de jauges réalisés dans le dépôt. Aucun modèle, police, image ou son tiers ajouté. Les invites de boutons sont du texte, dessiné avec les polices locales existantes.
+
+Lot 5c : catalogues français et anglais, traductions et adaptateur d’affichage originaux du projet Les Étangs (`src/i18n/`), 08/10/2026. Aucun service distant ni ressource tierce ajoutée. Les notices des licences gardent leur texte original.

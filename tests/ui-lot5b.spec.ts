@@ -110,7 +110,7 @@ for (const [width, height] of [
       PREFERENCES_KEY,
     );
     expect(prefs).toMatchObject({
-      version: 2,
+      version: 3,
       patterns: true,
       aids: false,
       defaultSpeed: 4,
@@ -150,7 +150,7 @@ test("5b : la pause courante peut être désactivée, une avance explicite reste
       localStorage.setItem(save, JSON.stringify(game));
       localStorage.setItem(
         prefs,
-        JSON.stringify({ version: 2, autoPause: false, motion: "reduce" }),
+        JSON.stringify({ version: 3, autoPause: false, motion: "reduce" }),
       );
     },
     { save: SAVE_KEY, prefs: PREFERENCES_KEY, game: order.game },

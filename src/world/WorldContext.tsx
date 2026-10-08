@@ -1,3 +1,4 @@
+import { t, displayText, localeTag } from "../i18n";
 import { X, Warehouse, Truck } from "lucide-react";
 import { ASSETS } from "../development";
 import type { Game } from "../game";
@@ -18,34 +19,38 @@ export function WorldContext({
     ? game.development.works.find((w) => w.asset === asset)
     : null;
   return (
-    <section className="world-context" aria-label="Élément sélectionné">
+    <section className="world-context" aria-label={t("m_76e9c5e57a")}>
       <header>
         {asset ? <Warehouse size={20} /> : <Truck size={20} />}
         <strong>
-          {asset
-            ? ASSETS[asset].name
-            : target.kind === "truck"
-              ? target.cargo === "cold"
-                ? "Transport frigorifique"
-                : target.cargo === "living"
-                  ? "Transport de poissons vivants"
-                  : "Livraison d’aliments"
-              : ""}
+          {displayText(
+            asset
+              ? ASSETS[asset].name
+              : target.kind === "truck"
+                ? target.cargo === "cold"
+                  ? t("m_16b6ed9c8e")
+                  : target.cargo === "living"
+                    ? t("m_79032f1395")
+                    : t("m_cc6bdaa0ce")
+                : "",
+          )}
         </strong>
-        <IconButton label="Fermer le détail de l’élément" onClick={close}>
+        <IconButton label={t("m_65119490ac")} onClick={close}>
           <X size={16} />
         </IconButton>
       </header>
       <p>
-        {asset
-          ? game.development.assets[asset]
-            ? "En service"
-            : work
-              ? `Travaux · ${Math.max(0, work.due - game.day)} j restants`
-              : "À construire"
-          : target.kind === "truck"
-            ? `${target.amount.toLocaleString("fr-FR", { maximumFractionDigits: 1 })} ${target.cargo === "living" ? "poissons reçus" : target.cargo === "feed" ? "kg reçus" : "kg confiés au transporteur"}`
-            : ""}
+        {displayText(
+          asset
+            ? game.development.assets[asset]
+              ? t("m_22134a6ad3")
+              : work
+                ? t("m_0afaf5c1a9", Math.max(0, work.due - game.day))
+                : t("m_883db3c943")
+            : target.kind === "truck"
+              ? `${target.amount.toLocaleString(localeTag(), { maximumFractionDigits: 1 })} ${target.cargo === "living" ? t("m_45abdf76b9") : target.cargo === "feed" ? t("m_0156549a0f") : t("m_1fda7d74aa")}`
+              : "",
+        )}
       </p>
     </section>
   );

@@ -1,3 +1,4 @@
+import { t, displayText } from "../i18n";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/Button";
 export async function toggleFullscreen() {
@@ -19,16 +20,12 @@ export function FullscreenSetting() {
         aria-pressed={active}
         onClick={() => {
           setError("");
-          void toggleFullscreen().catch(() =>
-            setError(
-              "Le navigateur demande un clic ou une touche du clavier pour autoriser le plein écran.",
-            ),
-          );
+          void toggleFullscreen().catch(() => setError(t("m_39714d2baf")));
         }}
       >
-        {active ? "Quitter le plein écran" : "Passer en plein écran"}
+        {displayText(active ? t("m_3645da6272") : t("m_418c5a79d4"))}
       </Button>
-      {error && <p role="status">{error}</p>}
+      {displayText(error && <p role="status">{displayText(error)}</p>)}
     </div>
   );
 }

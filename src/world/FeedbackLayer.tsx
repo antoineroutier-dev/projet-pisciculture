@@ -1,3 +1,5 @@
+import { number } from "../ui/format";
+import { t, displayText } from "../i18n";
 import {
   useEffect,
   useLayoutEffect,
@@ -5,7 +7,6 @@ import {
   useSyncExternalStore,
 } from "react";
 import { Check, AlertTriangle, Clock3 } from "lucide-react";
-import { number } from "../game";
 import { formatMoney } from "../ui/format";
 import {
   feedbackPhase,
@@ -84,23 +85,26 @@ function Delta({
           <strong
             className={event.money < 0 ? "delta-negative" : "delta-positive"}
           >
-            {event.money > 0 ? "+" : ""}
-            {formatMoney(event.money)}
+            {displayText(event.money > 0 ? "+" : "")}
+            {displayText(formatMoney(event.money))}
           </strong>
         )}
         {hasFood && (
           <strong>
-            {event.food > 0 ? "+" : ""}
-            {number(event.food, 1)} kg
+            {displayText(event.food > 0 ? "+" : "")}
+            {displayText(number(event.food, 1))}
+            {" " + t("m_131ed73429")}
           </strong>
         )}
         {!hasMoney && !hasFood && (
           <strong>
-            {event.pending
-              ? "En cours…"
-              : event.ok
-                ? "Action effectuée"
-                : "À vérifier"}
+            {displayText(
+              event.pending
+                ? t("m_2e64da4c8a")
+                : event.ok
+                  ? t("m_d540f1101a")
+                  : t("m_03a088312d"),
+            )}
           </strong>
         )}
       </span>
@@ -126,7 +130,9 @@ export function FeedbackLayer({ panelOpen }: { panelOpen: boolean }) {
   return (
     <div className="feedback-layer">
       <span className="sr-only" role="status">
-        {events.at(-1)?.action === "day" ? events.at(-1)?.message : ""}
+        {displayText(
+          events.at(-1)?.action === "day" ? events.at(-1)?.message : "",
+        )}
       </span>
       {!(mobile && panelOpen) &&
         events.map((event) => (
@@ -135,7 +141,6 @@ export function FeedbackLayer({ panelOpen }: { panelOpen: boolean }) {
     </div>
   );
 }
-
 export function DialogFeedback() {
   const event = useSyncExternalStore(
     feedbackStore.subscribe,

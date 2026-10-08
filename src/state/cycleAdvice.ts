@@ -1,3 +1,4 @@
+import { t, localeTag } from "../i18n";
 import { operatingBalance, periodBalance, type Period } from "./ledger";
 import { formatMoney, formatKg } from "../ui/format";
 /** Advice uses observed totals only; no inferred feed waste or fictitious batch accounting. */
@@ -5,20 +6,40 @@ export function cycleAdvice(p: Period): string[] {
   const fixed = p.costs.labour + p.costs.maintenance;
   const first =
     p.costs.investment > 0
-      ? `${formatMoney(p.costs.investment / 100)} d’investissements équipent aussi les prochains lots. Hors investissements identifiés, le solde observé est de ${formatMoney(operatingBalance(p) / 100)}.`
+      ? t(
+          "m_29293be4c2",
+          formatMoney(p.costs.investment / 100),
+          formatMoney(operatingBalance(p) / 100),
+        )
       : p.kg > 0
-        ? `${formatMoney(fixed / 100)} de travail et d’entretien identifiés, soit ${formatMoney(fixed / 100 / p.kg, true)}/kg payé. Comparez ce coût avant d’augmenter la production dans les limites de l’eau.`
-        : "Aucun kilogramme payé sur cette période. Réservez un client avant la récolte et suivez la date de règlement.";
+        ? t(
+            "m_71c19a4bd9",
+            formatMoney(fixed / 100),
+            formatMoney(fixed / 100 / p.kg, true),
+          )
+        : t("m_7c999d25b1");
   const second =
     p.gainKg > 0 && p.feedKg >= 0
-      ? `${formatKg(p.feedKg)} d’aliments utilisés pour ${formatKg(p.gainKg)} de gain observé (ratio ${(p.feedKg / p.gainKg).toLocaleString("fr-FR", { maximumFractionDigits: 2 })}). Vérifiez ration et oxygène avant d’augmenter l’alimentation.`
-      : "Le gain et les aliments observés ne permettent pas encore de calculer un ratio fiable. Suivez le FCR du lot dans Alimentation.";
+      ? t(
+          "m_3d55d098b9",
+          formatKg(p.feedKg),
+          formatKg(p.gainKg),
+          (p.feedKg / p.gainKg).toLocaleString(localeTag(), {
+            maximumFractionDigits: 2,
+          }),
+        )
+      : t("m_ecab0a2e15");
   const third =
     p.wasteKg > 0
-      ? `${formatKg(p.wasteKg)} perdus au froid. Expédiez plus tôt et préparez les débouchés avant de récolter.`
+      ? t("m_c61e528d30", formatKg(p.wasteKg))
       : p.dispatchCount > 0
-        ? `Aucune perte au froid observée. Expédition après ${(p.dispatchDays / p.dispatchCount).toLocaleString("fr-FR", { maximumFractionDigits: 1 })} jour(s) en moyenne : conservez ce suivi des délais.`
-        : "Aucune expédition observée sur cette période. Prévoyez la chambre froide et le transport avant la récolte.";
+        ? t(
+            "m_c23b9ea92c",
+            (p.dispatchDays / p.dispatchCount).toLocaleString(localeTag(), {
+              maximumFractionDigits: 1,
+            }),
+          )
+        : t("m_6ff480c627");
   return [first, second, third];
 }
 export function cycleComparison(p: Period, previous?: Period) {

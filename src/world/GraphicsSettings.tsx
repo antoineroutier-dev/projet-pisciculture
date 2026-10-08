@@ -1,3 +1,4 @@
+import { t, displayText } from "../i18n";
 import { QUALITY, type Graphics, type Quality } from "./quality";
 import { Toggle } from "../ui/Primitives";
 export function GraphicsSettings({
@@ -12,30 +13,28 @@ export function GraphicsSettings({
   return (
     <>
       <label className="field-label">
-        Qualité graphique
+        {t("m_90f7272b4b")}
         <select
-          aria-label="Qualité graphique"
+          aria-label={t("m_90f7272b4b")}
           value={value.quality}
           onChange={(e) =>
             change({ ...value, quality: e.target.value as Quality | "auto" })
           }
         >
           <option value="auto">
-            Automatique{actual ? ` · ${QUALITY[actual].label}` : ""}
+            {t("m_89bd8db002")}
+            {displayText(actual ? ` · ${QUALITY[actual].label}` : "")}
           </option>
           {Object.entries(QUALITY).map(([id, q]) => (
             <option key={id} value={id}>
-              {q.label}
+              {displayText(q.label)}
             </option>
           ))}
         </select>
       </label>
-      <p className="hint">
-        Bas réduit les ombres et la végétation. Élevé et Ultra ajoutent le
-        lissage de l’image ; Ultra affine aussi ses bords et sa lumière.
-      </p>
+      <p className="hint">{t("m_ca62d6006c")}</p>
       <Toggle
-        label="Étiquettes dans le monde"
+        label={t("m_3c88d23226")}
         checked={value.labels}
         onChange={(labels) => change({ ...value, labels })}
       />

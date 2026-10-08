@@ -1,3 +1,4 @@
+import { t, displayText } from "../i18n";
 import { useEffect, useState } from "react";
 import { AlertTriangle, Truck, Hammer, X } from "lucide-react";
 import type { Game } from "../game";
@@ -45,14 +46,14 @@ export function NotificationStack({
   const visible = [...criticalNotices(game), ...recent].slice(0, 3);
   if (!visible.length) return null;
   return (
-    <aside className="notification-stack" aria-label="Notifications du terrain">
+    <aside className="notification-stack" aria-label={t("m_004f63ad9e")}>
       <ol>
         {visible.map((n) => (
           <li key={n.id} data-kind={n.kind}>
             <button
               className="notification-target"
               onClick={() => (n.target ? inspect(n.target) : journal())}
-              title={n.text}
+              title={displayText(n.text)}
             >
               {n.kind === "critical" ? (
                 <AlertTriangle size={18} />
@@ -61,12 +62,12 @@ export function NotificationStack({
               ) : (
                 <Hammer size={18} />
               )}
-              <span>{n.text}</span>
+              <span>{displayText(n.text)}</span>
             </button>
             {n.kind !== "critical" && (
               <button
                 className="notification-close"
-                aria-label={`Fermer : ${n.text}`}
+                aria-label={displayText(t("m_0e136b5ec4", n.text))}
                 onClick={() =>
                   setRecent((old) => old.filter((v) => v.id !== n.id))
                 }

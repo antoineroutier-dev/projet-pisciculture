@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 export type Quality = "low" | "medium" | "high" | "ultra";
 export type Graphics = {
   version: 1;
@@ -7,7 +8,9 @@ export type Graphics = {
 export const GRAPHICS_KEY = "les-etangs-graphics-v1";
 export const QUALITY = {
   low: {
-    label: "Bas",
+    get label() {
+      return t("m_5bd34386f0");
+    },
     ratio: 0.75,
     shadow: 0,
     trees: 16,
@@ -17,7 +20,9 @@ export const QUALITY = {
     fps: 30,
   },
   medium: {
-    label: "Moyen",
+    get label() {
+      return t("m_28eca2c0e2");
+    },
     ratio: 1,
     shadow: 512,
     trees: 28,
@@ -27,7 +32,9 @@ export const QUALITY = {
     fps: 60,
   },
   high: {
-    label: "Élevé",
+    get label() {
+      return t("m_fee2b9ad30");
+    },
     ratio: 1.5,
     shadow: 1024,
     trees: 44,
@@ -37,7 +44,9 @@ export const QUALITY = {
     fps: 60,
   },
   ultra: {
-    label: "Ultra",
+    get label() {
+      return t("m_ac364e1afd");
+    },
     ratio: 2,
     shadow: 2048,
     trees: 56,

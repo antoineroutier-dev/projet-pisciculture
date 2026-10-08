@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import {
   STORAGE_KEY,
   V2_STORAGE_KEY,
@@ -43,10 +44,7 @@ export function readSlot(id: SlotId, storage: StorageReader): Slot {
       key,
       raw,
       save: null,
-      error:
-        raw === null
-          ? "Le stockage est indisponible. Importez ou exportez une copie JSON pour conserver votre partie."
-          : "La sauvegarde ne peut pas être lue. Elle est conservée ; vous pouvez exporter son fichier original.",
+      error: raw === null ? t("m_06bef13cb9") : t("m_55c5ff7a3d"),
     };
   }
 }

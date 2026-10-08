@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import { pondStatus, type Game } from "../game";
 import { nextTask, ASSETS } from "../development";
 import type { LifeEvent } from "./lifeSelectors";
@@ -14,7 +15,7 @@ export function criticalNotices(game: Game): WorldNotice[] {
     .filter((p) => pondStatus(p).tone === "danger")
     .map((p) => ({
       id: `water:${p.id}`,
-      text: `${p.name} · qualité d’eau critique`,
+      text: t("m_8219352f7c", p.name),
       kind: "critical",
       target: { kind: "pond", id: p.id },
     }));
@@ -31,7 +32,7 @@ export function criticalNotices(game: Game): WorldNotice[] {
     list.push({
       id: "more-critical",
       kind: "critical",
-      text: `${rest.length} autres bassins en alerte`,
+      text: t("m_ad57513631", rest.length),
       target: rest[0].target,
     });
   }
@@ -44,10 +45,10 @@ export function lifeNotice(event: LifeEvent, now: number): WorldNotice | null {
       id: `truck:${event.cargo}:${event.id}`,
       text:
         event.cargo === "feed"
-          ? `Aliments reçus · ${event.amount} kg`
+          ? t("m_42724496de", event.amount)
           : event.cargo === "living"
-            ? `Poissons reçus · ${event.amount}`
-            : `Transport au départ · ${Math.round(event.amount)} kg`,
+            ? t("m_ff82e1824b", event.amount)
+            : t("m_8f60152775", Math.round(event.amount)),
       kind: "truck",
       target: { ...event, kind: "truck" },
       until: now + 16000,
@@ -56,8 +57,8 @@ export function lifeNotice(event: LifeEvent, now: number): WorldNotice | null {
     id: `ready:${event.pondId || event.asset}`,
     kind: "work",
     text: event.pondId
-      ? `Bassin ${event.pondId} · travaux terminés`
-      : `${ASSETS[event.asset!].name} · prêt`,
+      ? t("m_3fe3c477ee", event.pondId)
+      : t("m_40d9fc39eb", ASSETS[event.asset!].name),
     target: event.pondId
       ? { kind: "pond", id: event.pondId }
       : { kind: "asset", id: event.asset! },

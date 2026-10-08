@@ -1,3 +1,4 @@
+import { t, displayText } from "../i18n";
 import type { Game } from "../game";
 import { cashHistory, cashDomain } from "../state/financeSelectors";
 import { formatMoney, formatDate, plural } from "./format";
@@ -6,7 +7,10 @@ export function CashChart({
   projection,
 }: {
   game: Game;
-  projection?: { day: number; money: number }[];
+  projection?: {
+    day: number;
+    money: number;
+  }[];
 }) {
   const series = projection || cashHistory(game),
     { low, high } = cashDomain(series.map((h) => h.money));
@@ -21,15 +25,23 @@ export function CashChart({
     <div className="cash-chart-block">
       <figure
         className="cash-chart"
-        aria-label={`Trésorerie : ${formatMoney(first.money)} le ${formatDate(first.day)}, ${formatMoney(last.money)} le ${formatDate(last.day)}`}
+        aria-label={displayText(
+          t(
+            "m_27d5d0661b",
+            formatMoney(first.money),
+            formatDate(first.day),
+            formatMoney(last.money),
+            formatDate(last.day),
+          ),
+        )}
       >
         <figcaption>
-          {projection ? "Projection à 90 jours · euros" : "Trésorerie · euros"}
+          {displayText(projection ? t("m_f710c8a343") : t("m_d935c349d3"))}
         </figcaption>
         <div className="cash-plot">
           <div className="cash-y" aria-hidden="true">
             {[high, (low + high) / 2, low].map((v) => (
-              <span key={v}>{formatMoney(v)}</span>
+              <span key={v}>{displayText(formatMoney(v))}</span>
             ))}
           </div>
           <svg
@@ -49,32 +61,36 @@ export function CashChart({
             ))}
           </svg>
           <div className="cash-x" aria-hidden="true">
-            <span>{formatDate(first.day)}</span>
-            {last.day !== first.day && <span>{formatDate(last.day)}</span>}
+            <span>{displayText(formatDate(first.day))}</span>
+            {last.day !== first.day && (
+              <span>{displayText(formatDate(last.day))}</span>
+            )}
           </div>
         </div>
       </figure>
       <details className="chart-data">
         <summary>
-          Voir les {series.length} {plural(series.length, "relevé")}
+          {t("m_e687f8e807") + " "}
+          {series.length}{" "}
+          {displayText(
+            plural(series.length, t("m_2327660f4e"), t("m_ad322cd874")),
+          )}
         </summary>
         <table>
           <caption>
-            {projection
-              ? "Prévision à charges constantes, factures expédiées incluses"
-              : "Relevés disponibles · dernière valeur actualisée après vos actions"}
+            {displayText(projection ? t("m_62f4c9ae4e") : t("m_54b40481c4"))}
           </caption>
           <thead>
             <tr>
-              <th scope="col">Date</th>
-              <th scope="col">Trésorerie</th>
+              <th scope="col">{t("m_99c40ab405")}</th>
+              <th scope="col">{t("m_5a430676b9")}</th>
             </tr>
           </thead>
           <tbody>
             {[...series].reverse().map((h) => (
               <tr key={h.day}>
-                <th scope="row">{formatDate(h.day)}</th>
-                <td>{formatMoney(h.money)}</td>
+                <th scope="row">{displayText(formatDate(h.day))}</th>
+                <td>{displayText(formatMoney(h.money))}</td>
               </tr>
             ))}
           </tbody>

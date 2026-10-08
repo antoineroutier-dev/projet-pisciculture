@@ -1,3 +1,4 @@
+import { t, displayText } from "../i18n";
 import { useState, type ReactNode } from "react";
 import { AudioSettings } from "../audio/AudioSettings";
 import { GraphicsSettings } from "../world/GraphicsSettings";
@@ -21,133 +22,139 @@ export function SettingsPanel({
   const [tab, setTab] = useState(children ? "save" : "display");
   return (
     <Tabs
-      label="Paramètres"
+      label={t("m_01923df7a4")}
       items={[
-        ...(children ? [{ id: "save", label: "Partie" }] : []),
-        { id: "display", label: "Affichage" },
-        { id: "audio", label: "Audio" },
-        { id: "game", label: "Jeu" },
-        { id: "controls", label: "Contrôles" },
-        { id: "language", label: "Langue" },
+        ...(children ? [{ id: "save", label: t("m_ca372574e6") }] : []),
+        { id: "display", label: t("m_18b23488e9") },
+        { id: "audio", label: t("m_bc1b88907d") },
+        { id: "game", label: t("m_01f23a6765") },
+        { id: "controls", label: t("m_1c077a3908") },
+        { id: "language", label: t("m_5f6baab4db") },
       ]}
       value={tab}
       onChange={setTab}
     >
-      {tab === "save" ? (
-        children
-      ) : tab === "audio" ? (
-        <AudioSettings
-          volumes={audio.volumes}
-          change={audio.change}
-          play={audio.play}
-        />
-      ) : tab === "controls" ? (
-        <ControlsSettings runtime={runtime} />
-      ) : tab === "language" ? (
-        <label className="field-label">
-          Langue
-          <select aria-label="Langue" value="fr" onChange={() => {}}>
-            <option value="fr">Français</option>
-          </select>
-        </label>
-      ) : tab === "game" ? (
-        <div className="game-settings">
-          <label className="field-label">
-            {changeMode ? "Mode de gestion" : "Mode des nouvelles parties"}
-            <select
-              aria-label={
-                changeMode ? "Mode de gestion" : "Mode des nouvelles parties"
-              }
-              value={mode || preferences.defaultMode}
-              onChange={(e) => {
-                const m = e.target.value as "guided" | "expert";
-                changeMode?.(m);
-                setPreferences((p) => ({ ...p, defaultMode: m }));
-              }}
-            >
-              <option value="guided">Réaliste avec aides pédagogiques</option>
-              <option value="expert">Expert · sans aides économiques</option>
-            </select>
-          </label>
-          <p className="hint">
-            Les deux modes utilisent les mêmes lois biologiques. Les aides
-            monétaires sont désactivées en mode expert.
-          </p>
-          <Toggle
-            label="Pauses automatiques"
-            checked={preferences.autoPause}
-            onChange={(autoPause) =>
-              setPreferences((p) => ({ ...p, autoPause }))
-            }
-            description="Arrêter le temps aux étapes courantes. Les urgences, l’analyse de l’eau, les premiers jalons, les bilans et l’avance jusqu’à un événement restent des arrêts obligatoires."
+      {displayText(
+        tab === "save" ? (
+          children
+        ) : tab === "audio" ? (
+          <AudioSettings
+            volumes={audio.volumes}
+            change={audio.change}
+            play={audio.play}
           />
-          <Toggle
-            label="Aides pédagogiques"
-            checked={preferences.aids}
-            onChange={(aids) => setPreferences((p) => ({ ...p, aids }))}
-            description="Afficher les conseils détaillés du parcours. L’objectif, les alertes et les raisons d’indisponibilité restent visibles."
-          />
+        ) : tab === "controls" ? (
+          <ControlsSettings runtime={runtime} />
+        ) : tab === "language" ? (
           <label className="field-label">
-            Vitesse de reprise
+            {t("m_5f6baab4db")}
             <select
-              aria-label="Vitesse de reprise"
-              value={preferences.defaultSpeed}
+              aria-label={t("m_5f6baab4db")}
+              value={preferences.locale}
               onChange={(e) =>
                 setPreferences((p) => ({
                   ...p,
-                  defaultSpeed: Number(e.target.value) as 1 | 2 | 4 | 8,
+                  locale: e.target.value === "en" ? "en" : "fr",
                 }))
               }
             >
-              {[1, 2, 4, 8].map((v) => (
-                <option key={v} value={v}>
-                  ×{v}
-                </option>
-              ))}
+              <option value="fr">{t("m_e495d53b96")}</option>
+              <option value="en">{t("language.english")}</option>
             </select>
           </label>
-          <p className="hint">
-            Une nouvelle partie commence en pause. Ce réglage choisit la vitesse
-            de reprise ; les boutons du HUD restent utilisables à tout moment.
-          </p>
-        </div>
-      ) : (
-        <div className="display-settings">
-          <FullscreenSetting />
-          <GraphicsSettings
-            value={graphics}
-            change={setGraphics}
-            actual={actual}
-          />
-          <Slider
-            label="Échelle de l’interface"
-            value={preferences.scale}
-            min={80}
-            max={150}
-            step={5}
-            unit=" %"
-            onChange={(scale) => setPreferences((p) => ({ ...p, scale }))}
-          />
-          <SegmentedControl
-            label="Mouvement"
-            value={preferences.motion}
-            options={[
-              { value: "system", label: "Selon le système" },
-              { value: "reduce", label: "Réduit" },
-            ]}
-            onChange={(motion) => setPreferences((p) => ({ ...p, motion }))}
-          />
-          <Toggle
-            label="Motifs daltoniens"
-            checked={preferences.patterns}
-            onChange={(patterns) => setPreferences((p) => ({ ...p, patterns }))}
-            description="Ajouter des motifs distincts aux jauges ; les valeurs, icônes et seuils écrits restent visibles."
-          />
-          <p>
-            Les légendes restent à 12 px minimum. Le mouvement réduit fige les
-            animations décoratives ; la simulation continue au rythme choisi.
-          </p>
-        </div>
+        ) : tab === "game" ? (
+          <div className="game-settings">
+            <label className="field-label">
+              {displayText(changeMode ? t("m_ef6de78a04") : t("m_2d025b7ccc"))}
+              <select
+                aria-label={displayText(
+                  changeMode ? t("m_ef6de78a04") : t("m_2d025b7ccc"),
+                )}
+                value={mode || preferences.defaultMode}
+                onChange={(e) => {
+                  const m = e.target.value as "guided" | "expert";
+                  changeMode?.(m);
+                  setPreferences((p) => ({ ...p, defaultMode: m }));
+                }}
+              >
+                <option value="guided">{t("m_ae6b977817")}</option>
+                <option value="expert">{t("m_afd4ff946d")}</option>
+              </select>
+            </label>
+            <p className="hint">{t("m_ba504900d8")}</p>
+            <Toggle
+              label={t("m_92172a86d0")}
+              checked={preferences.autoPause}
+              onChange={(autoPause) =>
+                setPreferences((p) => ({ ...p, autoPause }))
+              }
+              description={t("m_a898071035")}
+            />
+            <Toggle
+              label={t("m_2aff043335")}
+              checked={preferences.aids}
+              onChange={(aids) => setPreferences((p) => ({ ...p, aids }))}
+              description={t("m_f96c24fc66")}
+            />
+            <label className="field-label">
+              {t("m_d1033457cf")}
+              <select
+                aria-label={t("m_d1033457cf")}
+                value={preferences.defaultSpeed}
+                onChange={(e) =>
+                  setPreferences((p) => ({
+                    ...p,
+                    defaultSpeed: Number(e.target.value) as 1 | 2 | 4 | 8,
+                  }))
+                }
+              >
+                {[1, 2, 4, 8].map((v) => (
+                  <option key={v} value={v}>
+                    {t("m_8db71ed28b")}
+                    {v}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <p className="hint">{t("m_56adb232a3")}</p>
+          </div>
+        ) : (
+          <div className="display-settings">
+            <FullscreenSetting />
+            <GraphicsSettings
+              value={graphics}
+              change={setGraphics}
+              actual={actual}
+            />
+            <Slider
+              label={t("m_6423d38457")}
+              value={preferences.scale}
+              min={80}
+              max={150}
+              step={5}
+              unit=" %"
+              onChange={(scale) => setPreferences((p) => ({ ...p, scale }))}
+            />
+            <SegmentedControl
+              label={t("m_b00eb07649")}
+              value={preferences.motion}
+              options={[
+                { value: "system", label: t("m_adcb2233fa") },
+                { value: "reduce", label: t("m_52b52f10d1") },
+              ]}
+              onChange={(motion) => setPreferences((p) => ({ ...p, motion }))}
+            />
+            <Toggle
+              label={t("m_dc176a7fd4")}
+              checked={preferences.patterns}
+              onChange={(patterns) =>
+                setPreferences((p) => ({ ...p, patterns }))
+              }
+              description={t("m_d0d3ac1540")}
+            />
+            <p>{t("m_1c4f19b824")}</p>
+          </div>
+        ),
       )}
     </Tabs>
   );

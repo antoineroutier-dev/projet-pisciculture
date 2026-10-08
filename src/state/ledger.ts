@@ -1,3 +1,4 @@
+import { t } from "../i18n";
 import {
   costBreakdown,
   dailyCost,
@@ -7,17 +8,39 @@ import {
 } from "../game";
 import { FEED_FREIGHT, STOCK_FREIGHT } from "../development";
 export const COST_LABELS = {
-  seed: "Juvéniles",
-  feed: "Aliments",
-  labour: "Travail",
-  energy: "Énergie",
-  water: "Eau",
-  transport: "Transport",
-  investment: "Investissements",
-  maintenance: "Entretien",
-  preparation: "Récolte et préparation",
-  survey: "Étude de l’eau",
-  unknown: "Non ventilé",
+  get seed() {
+    return t("m_6ea5679d86");
+  },
+  get feed() {
+    return t("m_4b5169ce38");
+  },
+  get labour() {
+    return t("m_a3c61c353f");
+  },
+  get energy() {
+    return t("m_1389e1b878");
+  },
+  get water() {
+    return t("m_4fde2b7a7c");
+  },
+  get transport() {
+    return t("m_aaead4abf5");
+  },
+  get investment() {
+    return t("m_42de4520dd");
+  },
+  get maintenance() {
+    return t("m_247a047336");
+  },
+  get preparation() {
+    return t("m_63d35001b2");
+  },
+  get survey() {
+    return t("m_b0a50cff85");
+  },
+  get unknown() {
+    return t("m_1beef3bdc9");
+  },
 } as const;
 export type Cost = keyof typeof COST_LABELS;
 export type Costs = Record<Cost, number>;
@@ -47,9 +70,16 @@ export type Period = {
 };
 export type Cycle = Period & {
   id: number;
-  payments: { id: number; kg: number; value: number; buyer: string }[];
+  payments: {
+    id: number;
+    kg: number;
+    value: number;
+    buyer: string;
+  }[];
 };
-export type Month = Period & { month: string };
+export type Month = Period & {
+  month: string;
+};
 export type Ledger = {
   version: 1;
   startDay: number;
@@ -106,7 +136,11 @@ export function initialLedger(game: Game): Ledger {
 export function expenseCategories(
   before: Game,
   after: Game,
-  action: Action | { type: "day" },
+  action:
+    | Action
+    | {
+        type: "day";
+      },
 ): Costs {
   const costs = emptyCosts(),
     debit = cents(after.stats.expenses) - cents(before.stats.expenses);
@@ -133,8 +167,7 @@ export function expenseCategories(
   else if (action.type === "clean") costs.maintenance = debit;
   else if (action.type === "survey") costs.survey = debit;
   costs.unknown = debit - sumCosts(costs);
-  if (costKeys.some((k) => costs[k] < 0))
-    throw Error("Ventilation incohérente avec la dépense du moteur.");
+  if (costKeys.some((k) => costs[k] < 0)) throw Error(t("m_6367b7125e"));
   return costs;
 }
 export const monthKey = (day: number) =>
@@ -144,15 +177,19 @@ export function recordLedger(
   ledger: Ledger,
   before: Game,
   after: Game,
-  action: Action | { type: "day" },
+  action:
+    | Action
+    | {
+        type: "day";
+      },
 ): Ledger {
   if (
     ledger.lastDay !== before.day ||
     sumCosts(ledger.cumulativeCosts) !== cents(before.stats.expenses)
   )
-    throw Error("Le registre doit correspondre à l’état avant la commande.");
+    throw Error(t("m_b7761f32fb"));
   if (after.day < before.day || after.day > before.day + 1)
-    throw Error("Le registre attend une commande ou une seule journée.");
+    throw Error(t("m_3b5afec5bf"));
   const costs = expenseCategories(before, after, action),
     debit = sumCosts(costs);
   const income = cents(after.stats.income) - cents(before.stats.income);
@@ -223,7 +260,7 @@ export function recordLedger(
     next.current = emptyPeriod(after.day);
   }
   if (sumCosts(next.cumulativeCosts) !== cents(after.stats.expenses))
-    throw Error("Le registre ne concorde pas avec les dépenses cumulées.");
+    throw Error(t("m_25cf35c3d3"));
   return next;
 }
 /** Cash already spent on orders/construction is never subtracted a second time. */
