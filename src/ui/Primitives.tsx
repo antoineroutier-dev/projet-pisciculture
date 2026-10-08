@@ -39,12 +39,14 @@ export function Drawer({
   close,
   children,
   summary,
+  icon,
 }: {
   id: string;
   title: string;
   close: () => void;
   children: ReactNode;
   summary?: ReactNode;
+  icon?: ReactNode;
 }) {
   const heading = useRef<HTMLHeadingElement>(null),
     content = useRef<HTMLDivElement>(null);
@@ -61,6 +63,11 @@ export function Drawer({
     >
       <header className="management-heading">
         <h2 id="panel-heading" ref={heading} tabIndex={-1}>
+          {icon && (
+            <Medallion tint="money" size="normal">
+              {icon}
+            </Medallion>
+          )}
           {displayText(title)}
         </h2>
         <InlineFeedback />

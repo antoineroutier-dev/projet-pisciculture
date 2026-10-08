@@ -795,7 +795,7 @@ body,
 }
 
 /* World controls rise above the dock when the centred dock would reach them. */
-@media (max-width: 1240px) and (min-width: 681px) {
+@media (max-width: 1479px) and (min-width: 681px) {
   .world-controls {
     bottom: var(--dock-top);
   }

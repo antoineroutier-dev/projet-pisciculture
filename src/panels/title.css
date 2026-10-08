@@ -2,9 +2,9 @@
   position: fixed;
   inset: 0;
   overflow: auto;
-  background: var(--paint-sky);
+  background: var(--surface);
   isolation: isolate;
-  padding: clamp(24px, 5vw, 80px);
+  padding: clamp(24px, 6vw, 96px);
   display: flex;
   align-items: safe center;
 }
@@ -18,31 +18,65 @@
   height: 100%;
   width: 100%;
 }
+/* Cinematic scrim: deep on the menu side, open over the landscape. */
 .title-screen:before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--surface) 85%, transparent),
-    transparent 90%
-  );
+  background: var(--gradient-vignette), var(--gradient-title);
   pointer-events: none;
 }
 .title-card {
-  width: min(440px, 100%);
-  padding: 24px;
-  background: var(--surface-glass);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-panel);
+  width: min(430px, 100%);
+  padding: 8px 0;
+  color: var(--ink);
+}
+.title-emblem {
+  display: inline-grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  color: var(--on-primary);
+  background: var(--gradient-primary);
+  box-shadow:
+    inset 0 1px 0 var(--edge-light),
+    0 0 0 4px var(--surface),
+    0 0 0 5px var(--border-strong),
+    0 8px 24px var(--shade-deep);
 }
 .title-card h1 {
   font-family: var(--font-display);
   font-size: var(--text-logo);
-  line-height: 1.1;
-  margin: 12px 0 16px;
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  margin: 10px 0 14px;
+  background: var(--gradient-logo);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 6px 18px var(--shade-deep));
+}
+.title-ornament {
+  display: block;
+  width: 180px;
+  height: 2px;
+  margin-bottom: 18px;
+  background: var(--gradient-brass-line);
+  position: relative;
+}
+.title-ornament::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  background: var(--primary);
+  transform: translate(-50%, -50%) rotate(45deg);
+  box-shadow: 0 0 10px var(--glow-gold-strong);
 }
 .title-eyebrow,
 .title-card > small {
@@ -50,11 +84,18 @@
   color: var(--ink-muted);
 }
 .title-eyebrow {
-  margin-top: 12px;
+  margin-top: 18px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--primary);
 }
 .title-tagline {
-  line-height: 1.65;
-  margin-bottom: 24px;
+  line-height: 1.6;
+  margin-bottom: 28px;
+  font-size: var(--text-lg);
+  color: var(--ink-soft);
+  max-width: 26em;
 }
 .title-actions,
 .pause-menu,
@@ -66,14 +107,33 @@
 .pause-menu .ui-button {
   justify-content: flex-start;
   width: 100%;
-  min-height: 44px;
+  min-height: 50px;
+  padding-inline: 18px;
+  font-size: var(--text-body);
+}
+.title-actions .ui-button-secondary,
+.pause-menu .ui-button-secondary {
+  background: var(--surface-glass);
+  backdrop-filter: var(--blur-glass);
+}
+.title-actions .ui-button:hover:not(:disabled),
+.pause-menu .ui-button:hover:not(:disabled) {
+  transform: translateX(4px);
+}
+.title-actions .ui-button svg,
+.pause-menu .ui-button svg {
+  color: var(--primary);
+}
+.title-actions .ui-button-primary svg {
+  color: var(--on-primary);
 }
 .title-actions > .ui-tooltip-anchor {
   width: 100%;
 }
 .title-card > small {
   display: block;
-  margin-top: 24px;
+  margin-top: 28px;
+  letter-spacing: 0.02em;
 }
 .title-last-save,
 .title-recovery {
@@ -101,7 +161,12 @@
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 16px;
-  background: var(--surface);
+  background: var(--surface-raised);
+  box-shadow: var(--inner-sheen);
+  transition: border-color var(--duration-fast) var(--ease);
+}
+.save-slot:hover {
+  border-color: var(--border-strong);
 }
 .save-slot h3,
 .save-confirm h3 {
@@ -117,10 +182,11 @@
 .save-no-preview {
   width: 100%;
   aspect-ratio: 16/9;
-  object-fit: contain;
+  object-fit: cover;
   max-height: 150px;
-  border-radius: 8px;
-  background: var(--surface-muted);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--border);
 }
 .save-summary > div {
   display: grid;
@@ -167,7 +233,10 @@
     align-items: flex-start;
   }
   .title-card {
-    padding: 20px;
+    padding: 0;
+  }
+  .title-screen:before {
+    background: var(--gradient-vignette), var(--gradient-title-mobile);
   }
   .title-card h1 {
     font-size: var(--text-logo-mobile);

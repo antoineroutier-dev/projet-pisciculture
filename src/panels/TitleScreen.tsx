@@ -63,9 +63,12 @@ export function TitleScreen({
           </Suspense>
         </div>
         <section className="title-card" aria-label={t("m_4546ae0b01")}>
-          <Fish size={32} aria-hidden="true" />
+          <span className="title-emblem" aria-hidden="true">
+            <Fish size={30} />
+          </span>
           <p className="title-eyebrow">{t("m_c1ab32f5fa")}</p>
           <h1>{t("m_65c11c7dae")}</h1>
+          <span className="title-ornament" aria-hidden="true" />
           <p className="title-tagline">{t("m_facdc658f9")}</p>
           <nav className="title-actions" aria-label={t("m_867c73dbd4")}>
             <Button

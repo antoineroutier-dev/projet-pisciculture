@@ -26,17 +26,36 @@ export function Tooltip({
   const leaveTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
+  const intentTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
   const show = () => {
     clearTimeout(leaveTimer.current);
+    clearTimeout(intentTimer.current);
     setOpen(true);
+  };
+  // Hover opens only after the pointer actually moves and rests on the trigger,
+  // so a panel appearing under a still cursor never covers what lies below.
+  const intend = () => {
+    clearTimeout(leaveTimer.current);
+    if (open) return;
+    clearTimeout(intentTimer.current);
+    intentTimer.current = setTimeout(() => setOpen(true), 280);
   };
   const leave = () => {
     clearTimeout(leaveTimer.current);
+    clearTimeout(intentTimer.current);
     leaveTimer.current = setTimeout(() => {
       if (!trigger.current?.contains(document.activeElement)) setOpen(false);
     }, 120);
   };
-  useEffect(() => () => clearTimeout(leaveTimer.current), []);
+  useEffect(
+    () => () => {
+      clearTimeout(leaveTimer.current);
+      clearTimeout(intentTimer.current);
+    },
+    [],
+  );
   const [position, setPosition] = useState({ left: 12, top: 12 });
   useLayoutEffect(() => {
     if (!open) return;
@@ -75,7 +94,7 @@ export function Tooltip({
       tabIndex={focusable ? 0 : undefined}
       role={focusable ? "group" : undefined}
       aria-label={displayText(focusable ? text : undefined)}
-      onMouseEnter={show}
+      onPointerMove={intend}
       onMouseLeave={leave}
       onFocus={show}
       onBlur={leave}

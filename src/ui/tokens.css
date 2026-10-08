@@ -107,6 +107,18 @@
     #07110e55 58%,
     transparent 80%
   );
+  --gradient-logo: linear-gradient(
+    180deg,
+    #fff3d6 0%,
+    #f3cd7c 55%,
+    #d9a446 100%
+  );
+  --gradient-title-mobile: linear-gradient(
+    180deg,
+    #07110ef2 0%,
+    #07110ed9 55%,
+    #07110e99 100%
+  );
   --gradient-vignette: radial-gradient(
     ellipse at 50% 45%,
     transparent 55%,
@@ -179,7 +191,7 @@
   --paint-mortar: #302e231f;
   --paint-wood-grain: #322b1e27;
   --paint-sky: #bcd3e0;
-  --paint-specimen-background: #d9e2da;
+  --paint-specimen-background: #2a4440;
   --paint-sky-light: #d4e6f5;
   --paint-ground-light: #6b6a3e;
   --paint-sun: #fff0d6;
