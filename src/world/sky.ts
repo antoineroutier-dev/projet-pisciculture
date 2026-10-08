@@ -137,6 +137,8 @@ export function createSky(scene: T.Scene) {
     },
     dispose() {
       scene.remove(root);
+      // Every sprite (clouds, chimney smoke) shares Three's quad; free its GPU buffers too.
+      clouds[0]?.geometry.dispose();
       dome.geometry.dispose();
       (dome.material as T.Material).dispose();
       cloudMaterial.dispose();
