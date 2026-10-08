@@ -4,6 +4,7 @@
   background: var(--surface);
   font-synthesis: none;
   font-weight: 400;
+  -webkit-font-smoothing: antialiased;
 }
 * {
   box-sizing: border-box;
@@ -14,6 +15,8 @@ body {
   font-size: var(--text-body);
   line-height: 1.5;
   font-variant-numeric: tabular-nums;
+  background: var(--surface);
+  color: var(--ink);
 }
 h1,
 h2,
@@ -25,7 +28,8 @@ h1,
 h2 {
   font-family: var(--font-display);
   font-weight: 600;
-  line-height: 1.25;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
 }
 h2 {
   font-size: var(--text-xl);
@@ -43,6 +47,9 @@ sup {
 a {
   color: var(--primary);
   text-underline-offset: 3px;
+}
+a:hover {
+  color: var(--primary-hover);
 }
 svg {
   flex-shrink: 0;
@@ -72,16 +79,50 @@ textarea {
   min-width: 0;
   max-width: 100%;
   color: var(--ink);
-  background: var(--surface-raised);
+  background-color: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 8px 12px;
   min-height: 40px;
   accent-color: var(--primary);
+  box-shadow: inset 0 2px 4px var(--shade-inset);
+  transition:
+    border-color var(--duration-fast) var(--ease),
+    background-color var(--duration-fast) var(--ease);
+}
+input:hover,
+select:hover,
+textarea:hover {
+  border-color: var(--border-strong);
+}
+select {
+  appearance: none;
+  padding-inline-end: 36px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--primary) 50%),
+    linear-gradient(135deg, var(--primary) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) 50%,
+    calc(100% - 13px) 50%;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  text-overflow: ellipsis;
+}
+select option {
+  background: var(--surface-raised);
+  color: var(--ink);
 }
 input[type="range"] {
   padding: 0;
   width: 100%;
+  box-shadow: none;
+  background: transparent;
+  border: 0;
+}
+input[type="checkbox"],
+input[type="radio"] {
+  box-shadow: none;
 }
 button,
 a,
@@ -106,9 +147,16 @@ summary {
   font-size: var(--text-small);
   padding-block: 8px;
 }
+summary::marker {
+  color: var(--primary);
+}
 ::selection {
-  background: var(--accent);
-  color: var(--ink);
+  background: var(--primary);
+  color: var(--on-primary);
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
 }
 .full {
   width: 100%;
@@ -134,12 +182,16 @@ summary {
 .eyebrow {
   display: block;
   font-size: var(--text-caption);
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--ink-muted);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary);
 }
+
+/* Buttons: brass primary with relief, glass secondary, quiet and danger. */
 .button,
 .ui-button {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -149,31 +201,49 @@ summary {
   border: 1px solid transparent;
   border-radius: var(--radius);
   font: 600 var(--text-small) / 1.4 var(--font-ui);
+  letter-spacing: 0.01em;
   text-align: center;
   white-space: normal;
   transition:
     background var(--duration-fast) var(--ease),
-    transform var(--duration-fast) var(--ease);
+    border-color var(--duration-fast) var(--ease),
+    box-shadow var(--duration-fast) var(--ease),
+    transform var(--duration-fast) var(--ease),
+    filter var(--duration-fast) var(--ease);
 }
 .button.primary,
 .ui-button-primary {
-  background: var(--primary);
+  background: var(--gradient-primary);
   color: var(--on-primary);
+  border-color: var(--primary-deep);
+  box-shadow:
+    inset 0 1px 0 var(--edge-light),
+    inset 0 -2px 0 var(--edge-dark),
+    0 3px 10px var(--shade-drop);
+  text-shadow: 0 1px 0 var(--edge-light-soft);
 }
 .button.primary:hover:not(:disabled),
 .ui-button-primary:hover:not(:disabled) {
-  background: var(--primary-hover);
+  background: var(--gradient-primary-hover);
+  box-shadow:
+    inset 0 1px 0 var(--edge-light),
+    inset 0 -2px 0 var(--edge-dark),
+    0 4px 16px var(--shade-deep),
+    0 0 16px var(--glow-gold);
+  transform: translateY(-1px);
 }
 .button.outline,
 .ui-button-secondary {
-  background: var(--surface-raised);
-  color: var(--primary);
+  background: var(--surface-muted);
+  color: var(--ink);
   border-color: var(--border);
+  box-shadow: var(--inner-sheen), var(--shadow-1);
 }
 .button.outline:hover:not(:disabled),
 .ui-button-secondary:hover:not(:disabled),
 .ui-button-quiet:hover:not(:disabled) {
-  background: var(--surface-muted);
+  background: var(--surface-hover);
+  border-color: var(--border-strong);
 }
 .ui-button-quiet {
   background: transparent;
@@ -181,8 +251,12 @@ summary {
 }
 .button.danger,
 .ui-button-danger {
-  background: var(--danger);
+  background: var(--gradient-danger);
   color: var(--on-primary);
+  border-color: var(--danger);
+  box-shadow:
+    inset 0 1px 0 var(--edge-light),
+    0 3px 10px var(--shade-drop);
 }
 .ui-button-small {
   min-height: 36px;
@@ -190,9 +264,12 @@ summary {
 }
 .button:disabled,
 .ui-button:disabled {
-  background: var(--surface-muted);
+  background: var(--disabled-surface);
   color: var(--disabled-ink);
-  border-color: var(--border);
+  border-color: var(--border-faint);
+  box-shadow: none;
+  text-shadow: none;
+  filter: saturate(0.6);
 }
 button:not(:disabled):active {
   transform: translateY(1px);
@@ -201,6 +278,7 @@ button:not(:disabled):active {
   border: 1px solid currentColor;
   padding-inline: 4px;
   border-radius: 4px;
+  opacity: 0.85;
 }
 .ui-icon-button,
 .icon-button {
@@ -211,10 +289,23 @@ button:not(:disabled):active {
   min-height: 40px;
   padding: 8px;
   border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--surface-raised);
+  border-radius: var(--radius-sm);
+  background: var(--surface-muted);
   color: var(--ink);
+  box-shadow: var(--inner-sheen);
+  transition:
+    background var(--duration-fast) var(--ease),
+    border-color var(--duration-fast) var(--ease),
+    color var(--duration-fast) var(--ease);
 }
+.ui-icon-button:hover,
+.icon-button:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-strong);
+  color: var(--primary-hover);
+}
+
+/* Tooltips read like parchment notes pinned over the dark interface. */
 .ui-tooltip-anchor {
   display: inline-flex;
   max-width: 100%;
@@ -231,22 +322,24 @@ button:not(:disabled):active {
   position: fixed;
   z-index: 200;
   width: max-content;
-  max-width: min(280px, calc(100vw - 24px));
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--primary);
-  color: var(--on-primary);
-  box-shadow: var(--shadow-panel);
+  max-width: min(300px, calc(100vw - 24px));
+  padding: 10px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-glass-strong);
+  color: var(--ink);
+  box-shadow: var(--shadow-3);
   font-size: var(--text-small);
   line-height: 1.5;
   pointer-events: auto;
+  backdrop-filter: var(--blur-glass);
 }
 .ui-card {
   padding: 16px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface-raised);
+  box-shadow: var(--inner-sheen);
 }
 .ui-badge,
 .pill,
@@ -256,11 +349,17 @@ button:not(:disabled):active {
   gap: 4px;
   font-size: var(--text-caption);
   font-weight: 600;
-  padding: 4px 8px;
+  padding: 3px 10px;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-pill);
   background: var(--surface-muted);
   color: var(--ink);
+}
+.ui-badge.tone-success,
+.ui-badge.tone-warning,
+.ui-badge.tone-danger {
+  border-color: currentColor;
+  background: color-mix(in srgb, currentColor 14%, var(--surface));
 }
 .tone-success {
   --gauge-color: var(--success);
@@ -279,15 +378,22 @@ button:not(:disabled):active {
   font-size: var(--text-caption);
 }
 .ui-gauge :is([role="meter"], [role="progressbar"]) {
-  height: 6px;
-  border-radius: 8px;
-  background: var(--surface-muted);
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: inset 0 1px 2px var(--shade-deep);
   overflow: hidden;
 }
 .ui-gauge :is([role="meter"], [role="progressbar"]) > span {
   display: block;
   height: 100%;
-  background: var(--gauge-color);
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--gauge-color) 65%, var(--surface)),
+    var(--gauge-color)
+  );
+  box-shadow: 0 0 10px color-mix(in srgb, var(--gauge-color) 50%, transparent);
 }
 .ui-gauge > span {
   display: block;
@@ -302,17 +408,23 @@ button:not(:disabled):active {
   width: 56px;
   height: 56px;
   background: transparent;
+  box-shadow: none;
   flex-shrink: 0;
+  overflow: visible;
 }
 .ui-gauge.circular circle {
   fill: none;
-  stroke: var(--border);
-  stroke-width: 3;
+  stroke: var(--surface-hover);
+  stroke-width: 4;
 }
 .ui-gauge.circular circle + circle {
   stroke: var(--gauge-color);
+  stroke-linecap: round;
   transform: rotate(-90deg);
   transform-origin: center;
+  filter: drop-shadow(
+    0 0 4px color-mix(in srgb, var(--gauge-color) 60%, transparent)
+  );
 }
 .ui-sparkline {
   width: 100%;
@@ -334,6 +446,7 @@ button:not(:disabled):active {
   gap: 8px;
   font-size: var(--text-small);
   padding: 4px;
+  color: var(--ink-muted);
 }
 .ui-stepper li > span {
   width: 24px;
@@ -342,28 +455,45 @@ button:not(:disabled):active {
 .ui-stepper [aria-current="step"] {
   border-inline-start: 3px solid var(--primary);
   font-weight: 700;
+  color: var(--ink);
 }
+
+/* Tabs: brass-underlined capsules on a recessed rail. */
 .ui-tabs [role="tablist"] {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
   padding: 4px;
-  background: var(--surface-muted);
+  background: var(--surface);
+  border: 1px solid var(--border-faint);
   border-radius: var(--radius);
+  box-shadow: inset 0 2px 6px var(--shade-drop);
   margin-bottom: 16px;
 }
 .ui-tabs [role="tab"] {
   flex: 1;
   padding: 8px 12px;
   min-height: 40px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 1px solid transparent;
   background: transparent;
+  color: var(--ink-muted);
+  font-weight: 600;
+  transition:
+    background var(--duration-fast) var(--ease),
+    color var(--duration-fast) var(--ease);
+}
+.ui-tabs [role="tab"]:hover {
   color: var(--ink);
+  background: var(--surface-muted);
 }
 .ui-tabs [role="tab"][aria-selected="true"] {
-  background: var(--primary);
-  color: var(--on-primary);
+  background: var(--surface-hover);
+  color: var(--primary-hover);
+  border-color: var(--border-strong);
+  box-shadow:
+    var(--inner-sheen),
+    0 2px 8px var(--shade-inset);
 }
 .ui-tabs [role="tabpanel"] {
   border-radius: 4px;
@@ -387,17 +517,23 @@ button:not(:disabled):active {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px;
+  padding: 8px 12px;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-raised);
   cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease);
+}
+.ui-segmented label:hover {
+  border-color: var(--border-strong);
 }
 .ui-segmented input {
   min-height: auto;
 }
 .ui-segmented label:has(:checked) {
-  background: var(--surface-muted);
+  background: var(--surface-hover);
   border-color: var(--primary);
+  color: var(--primary-hover);
 }
 .ui-slider label {
   display: flex;
@@ -431,11 +567,13 @@ button:not(:disabled):active {
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  border: 1px solid var(--success);
+  border: 1px solid var(--border);
+  border-inline-start: 4px solid var(--success);
   border-radius: var(--radius);
-  background: var(--surface-raised);
+  background: var(--surface-glass-strong);
   color: var(--ink);
-  box-shadow: var(--shadow-panel);
+  box-shadow: var(--shadow-3);
+  backdrop-filter: var(--blur-glass);
 }
 .toast > span {
   min-width: 0;
@@ -445,7 +583,7 @@ button:not(:disabled):active {
   flex-shrink: 0;
 }
 .toast.error {
-  border-color: var(--danger);
+  border-inline-start-color: var(--danger);
 }
 .toast > svg {
   color: var(--success);

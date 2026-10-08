@@ -1,22 +1,40 @@
+/* « Étang profond » : dark glass interface that lets the golden-hour world shine. */
 :root {
-  --scrim: #172b3680;
-  --surface: #f6f5ee;
-  --surface-raised: #fffef8;
-  --surface-muted: #e9ece3;
-  --surface-glass: #fffef8ed;
-  --ink: #243d33;
-  --ink-muted: #526356;
-  --primary: #234f40;
-  --primary-hover: #183b30;
-  --on-primary: #fffef8;
-  --water: #1d6676;
-  --accent: #b8d576;
-  --warning: #795015;
-  --danger: #963e31;
-  --success: #2b6343;
-  --focus: #005fb8;
-  --border: #cbd3c3;
-  --disabled-ink: #59665a;
+  color-scheme: dark;
+  --scrim: #050d0bcc;
+  --surface: #0f1d1a;
+  --surface-raised: #182b26;
+  --surface-muted: #213833;
+  --surface-hover: #2a443d;
+  --surface-glass: #0e1f1be8;
+  --surface-glass-strong: #0c1a17f5;
+  --surface-sheen: #f4eedb0d;
+  --ink: #f4eedb;
+  --ink-muted: #c3bea9;
+  --ink-soft: #e3dcc6;
+  --primary: #e2b55c;
+  --primary-hover: #f0c773;
+  --primary-deep: #b9862f;
+  --on-primary: #1f1708;
+  --water: #6fd0cf;
+  --accent: #a8d672;
+  --warning: #f2b552;
+  --danger: #ff8f78;
+  --success: #8fd47e;
+  --focus: #8ad8ff;
+  --border: #f4eedb24;
+  --border-strong: #e2b55c70;
+  --border-faint: #f4eedb14;
+  --disabled-ink: #b0ad9a;
+  --disabled-surface: #213833;
+  /* Resource medallions: icon tint over a translucent disc of the same hue. */
+  --tint-money: #f0c773;
+  --tint-feed: #e8a35a;
+  --tint-water: #6fd0cf;
+  --tint-fish: #9fd8c2;
+  --tint-alert: #ff8f78;
+  --tint-time: #c9b8ff;
+  --tint-season: #a8d672;
   --font-ui: "Inter", system-ui, sans-serif;
   --font-display: "Fraunces", Georgia, serif;
   /* A physical floor also protects captions at the future 80% UI scale. */
@@ -27,20 +45,86 @@
   --text-xl: max(18px, 1.5rem);
   --text-title: max(18px, 2rem);
   --text-display: max(18px, 2.75rem);
-  --text-logo: clamp(36px, 5vw, 4rem);
-  --text-logo-mobile: max(36px, 2.625rem);
+  --text-hud: max(18px, 1.375rem);
+  --text-logo: clamp(44px, 6.4vw, 5.5rem);
+  --text-logo-mobile: max(40px, 2.875rem);
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
   --space-4: 1rem;
   --space-6: 1.5rem;
   --space-8: 2rem;
+  --radius-sm: 8px;
   --radius: 12px;
-  --shadow-panel: 0 8px 32px color-mix(in srgb, var(--ink) 12%, transparent);
+  --radius-lg: 18px;
+  --radius-pill: 999px;
+  --blur-glass: blur(14px) saturate(1.25);
+  --shadow-1: 0 1px 2px #0006, 0 2px 8px #0004;
+  --shadow-2: 0 6px 18px #0007, 0 1px 3px #0005;
+  --shadow-3: 0 18px 48px #000a, 0 4px 12px #0006;
+  --shadow-panel: var(--shadow-2);
+  --inner-sheen: inset 0 1px 0 #f4eedb1a;
+  --glow-primary: 0 0 0 1px #e2b55c99, 0 0 18px #e2b55c55;
+  --glow-focus: 0 0 0 2px #0f1d1a, 0 0 0 5px #8ad8ff;
+  --gradient-panel: linear-gradient(
+    180deg,
+    #1a302ad9 0%,
+    #0e1f1bf0 42%,
+    #0b1815f5 100%
+  );
+  --gradient-plate: linear-gradient(180deg, #1c332ce8, #0e1f1bf0);
+  --gradient-primary: linear-gradient(
+    180deg,
+    #f3cd7c 0%,
+    #e2b55c 48%,
+    #c9963f 100%
+  );
+  --gradient-primary-hover: linear-gradient(
+    180deg,
+    #f8da94 0%,
+    #edc26c 48%,
+    #d4a24a 100%
+  );
+  --gradient-danger: linear-gradient(
+    180deg,
+    #ffab98 0%,
+    #ff8f78 55%,
+    #e8725c 100%
+  );
+  --gradient-brass-line: linear-gradient(
+    90deg,
+    transparent,
+    #e2b55c99 18%,
+    #f3cd7c 50%,
+    #e2b55c99 82%,
+    transparent
+  );
+  --gradient-water: linear-gradient(180deg, #1d4b4c, #12302f);
+  --gradient-title: linear-gradient(
+    90deg,
+    #07110ef2 0%,
+    #07110ecc 30%,
+    #07110e55 58%,
+    transparent 80%
+  );
+  --gradient-vignette: radial-gradient(
+    ellipse at 50% 45%,
+    transparent 55%,
+    #0207058c 100%
+  );
+  --edge-light: #ffffff66;
+  --edge-light-soft: #ffffff40;
+  --edge-dark: #00000026;
+  --shade-inset: #00000059;
+  --shade-deep: #00000080;
+  --shade-drop: #00000066;
+  --glow-gold: #e2b55c55;
+  --glow-gold-strong: #e2b55c99;
   --duration-fast: 120ms;
   --duration-normal: 200ms;
   --duration-slow: 320ms;
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-out-back: cubic-bezier(0.34, 1.4, 0.64, 1);
 }
 @media (prefers-reduced-motion: reduce) {
   :root {

@@ -361,22 +361,51 @@ export function CountdownChip({
     </span>
   );
 }
+/** Decorative icon disc tinted by resource family; the text beside it carries the meaning. */
+export function Medallion({
+  tint,
+  children,
+  size = "normal",
+}: {
+  tint: "money" | "feed" | "water" | "fish" | "alert" | "time" | "season";
+  children: ReactNode;
+  size?: "small" | "normal" | "large";
+}) {
+  return (
+    <span
+      className={`ui-medallion ui-medallion-${size}`}
+      data-tint={tint}
+      aria-hidden="true"
+    >
+      {children}
+    </span>
+  );
+}
 export function ResourcePill({
   label,
   value,
   detail,
   testId,
+  icon,
+  tint = "money",
+  tone,
 }: {
   label: ReactNode;
   value: ReactNode;
   detail: ReactNode;
   testId?: string;
+  icon?: ReactNode;
+  tint?: Parameters<typeof Medallion>[0]["tint"];
+  tone?: "success" | "warning" | "danger";
 }) {
   return (
-    <div className="ui-resource">
-      <span>{displayText(label)}</span>
-      <strong data-testid={testId}>{displayText(value)}</strong>
-      <small>{displayText(detail)}</small>
+    <div className="ui-resource" data-tone={tone}>
+      {icon && <Medallion tint={tint}>{icon}</Medallion>}
+      <span className="ui-resource-text">
+        <span>{displayText(label)}</span>
+        <strong data-testid={testId}>{displayText(value)}</strong>
+        <small>{displayText(detail)}</small>
+      </span>
     </div>
   );
 }
