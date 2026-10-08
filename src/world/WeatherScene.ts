@@ -4,6 +4,22 @@ import { paint } from "./palette";
 import { disposeObject, type FarmObjects } from "../farm3d";
 import type { FarmState } from "./artSelectors";
 import type { GameClock } from "../state/useGameClock";
+import { createSky } from "./sky";
+import { wind, windStrength } from "./vegetation";
+import { waterUniforms } from "./water";
+
+const DEG = Math.PI / 180;
+/** Stylised sun path: never zenithal, so even noon keeps long readable shadows. */
+export function sunDirection(hour: number, target = new T.Vector3()) {
+  const elevation = (9 + 34 * Math.sin(hour * Math.PI)) * DEG,
+    azimuth = (205 - 120 * hour) * DEG;
+  return target.set(
+    Math.cos(elevation) * Math.cos(azimuth),
+    Math.sin(elevation),
+    Math.cos(elevation) * Math.sin(azimuth),
+  );
+}
+
 /** Decorative weather observes the engine and the existing UI clock. */
 export function createWeather(
   scene: T.Scene,
@@ -14,26 +30,7 @@ export function createWeather(
   const root = new T.Group();
   root.name = "weather";
   scene.add(root);
-  const cloudMaterial = new T.MeshBasicMaterial({
-    color: paint("cloud"),
-    transparent: true,
-    opacity: 0.45,
-    depthWrite: false,
-  });
-  const cloudGeometry = new T.IcosahedronGeometry(1, 1),
-    clouds = new T.InstancedMesh(cloudGeometry, cloudMaterial, 24),
-    dummy = new T.Object3D();
-  for (let i = 0; i < 24; i++) {
-    dummy.position.set(
-      Math.sin(Math.floor(i / 3) * 3.713) * 42 + ((i % 3) - 1) * 3.2,
-      17 + (Math.floor(i / 3) % 3) * 1.7,
-      Math.cos(Math.floor(i / 3) * 2.317) * 36,
-    );
-    dummy.scale.set(5 + (i % 3), 1.5, 3);
-    dummy.updateMatrix();
-    clouds.setMatrixAt(i, dummy.matrix);
-  }
-  root.add(clouds);
+  const dome = createSky(scene);
   const rainPositions = new Float32Array(240 * 6),
     rainGeometry = new T.BufferGeometry();
   rainGeometry.setAttribute(
@@ -51,24 +48,60 @@ export function createWeather(
   );
   rain.frustumCulled = false;
   root.add(rain);
-  const foliage = farm.root.getObjectByName("foliage") as T.InstancedMesh;
-  const baseMatrices = Array.from(
-    { length: foliage.instanceMatrix.count },
-    (_, i) => {
-      const m = new T.Matrix4();
-      foliage.getMatrixAt(i, m);
-      return m;
-    },
+  // A small flock wheeling over the farm; hidden when motion is reduced.
+  const birdMaterial = new T.MeshBasicMaterial({
+      color: paint("bird"),
+      side: T.DoubleSide,
+      fog: true,
+    }),
+    wingGeometry = new T.BufferGeometry();
+  wingGeometry.setAttribute(
+    "position",
+    new T.Float32BufferAttribute([0, 0, -0.18, 0, 0, 0.22, 0.95, 0.05, 0], 3),
   );
-  const windMatrix = new T.Matrix4();
+  const birds = new T.Group();
+  birds.name = "birds";
+  for (let i = 0; i < 7; i++) {
+    const bird = new T.Group();
+    for (const side of [-1, 1]) {
+      const wing = new T.Mesh(wingGeometry, birdMaterial);
+      wing.scale.x = side;
+      wing.userData.side = side;
+      bird.add(wing);
+    }
+    bird.userData.offset = i;
+    birds.add(bird);
+  }
+  root.add(birds);
+  let glass: T.MeshStandardMaterial | undefined;
   const ice = new Map<number, T.Mesh>();
-  let season: Season | undefined,
-    seasonKey = "",
+  let seasonKey = "",
     hour = 0.5,
     previousDay = 0;
-  const daylight = new T.Color(paint("sky")),
-    night = new T.Color(paint("night-sky")),
-    rainy = new T.Color(paint("rain-sky"));
+  const colors = {
+    zenith: new T.Color(paint("sky-zenith")),
+    horizon: new T.Color(paint("sky-horizon")),
+    dusk: new T.Color(paint("sky-dusk")),
+    night: new T.Color(paint("night-sky")),
+    rainZenith: new T.Color(paint("rain-sky")),
+    rainHorizon: new T.Color(paint("rain-horizon")),
+    sun: new T.Color(paint("sun")),
+    sunset: new T.Color(paint("sunset")),
+    hemiSky: new T.Color(paint("sky-light")),
+    hemiGround: new T.Color(paint("ground-light")),
+    cloud: new T.Color(paint("cloud")),
+    cloudRain: new T.Color(paint("cloud-rain")),
+  };
+  const state = {
+    sun: new T.Vector3(),
+    zenith: new T.Color(),
+    horizon: new T.Color(),
+    sunColor: new T.Color(),
+    cloudTint: new T.Color(),
+    cloudOpacity: 1,
+    clouds: 8,
+    drift: 0,
+  };
   function update(
     game: FarmState,
     clock: Pick<GameClock, "active" | "phase">,
@@ -77,29 +110,28 @@ export function createWeather(
     cameraDistance: number,
     rainCount = 240,
     presentationHour?: number,
+    camera?: T.Camera,
   ) {
-    for (let i = 0; i < foliage.count; i++) {
-      windMatrix.copy(baseMatrices[i]);
-      if (!reduced)
-        windMatrix.elements[12] += Math.sin(ms * 0.0009 + i * 0.71) * 0.07;
-      foliage.setMatrixAt(i, windMatrix);
-    }
-    foliage.instanceMatrix.needsUpdate = true;
+    wind.value = reduced ? 0 : ms * 0.001;
+    windStrength.value = reduced ? 0 : 1;
     const w = sceneWeather(game.day),
       key = `${w.season}:${w.frost}:${[...farm.ponds.values()].map((p) => p.group.uuid).join(":")}`;
     if (key !== seasonKey) {
-      season = w.season;
+      const season: Season = w.season;
       seasonKey = key;
       for (const [object, prefix] of [
         ["terrain", "ground"],
         ["foliage", "foliage"],
         ["meadow", "ground"],
+        ["bushes", "foliage"],
       ]) {
         const mesh = farm.root.getObjectByName(object) as
           | T.Mesh<T.BufferGeometry, T.MeshStandardMaterial>
           | undefined;
         if (mesh) mesh.material.color.set(paint(`${prefix}-${season}`));
       }
+      const flowers = farm.root.getObjectByName("flowers");
+      if (flowers) flowers.visible = season === "spring" || season === "summer";
       farm.root.traverse((o) => {
         if (o instanceof T.Mesh) {
           for (const m of Array.isArray(o.material) ? o.material : [o.material])
@@ -127,22 +159,51 @@ export function createWeather(
     // Reduced motion uses stable daytime lighting, including while seeking.
     if (reduced) hour = 0.5;
     if (presentationHour !== undefined) hour = presentationHour;
-    const light = Math.max(0.18, Math.sin(hour * Math.PI));
-    sun.intensity = (0.5 + light * 2.2) * (w.rainy ? 0.72 : 1);
-    sky.intensity = 0.7 + light * 0.4;
-    sun.position.set(Math.cos(hour * Math.PI) * 45, 15 + light * 40, 25);
-    sun.color.set(paint(hour < 0.2 || hour > 0.8 ? "sunset" : "sun"));
-    const background = night.clone().lerp(w.rainy ? rainy : daylight, light);
-    if (farm.root.visible) scene.background = background;
+    sunDirection(hour, state.sun);
+    const light = Math.max(0.12, Math.sin(hour * Math.PI)),
+      golden = 1 - T.MathUtils.smoothstep(state.sun.y, 0.16, 0.5),
+      rainy = w.rainy ? 1 : 0;
+    sun.position.copy(state.sun).multiplyScalar(80);
+    sun.target.position.set(0, 0, 0);
+    sun.intensity = (0.5 + light * 2.3) * (rainy ? 0.55 : 1);
+    sun.color.copy(colors.sun).lerp(colors.sunset, golden * 0.85);
+    sky.intensity = (0.62 + light * 0.5) * (rainy ? 1.1 : 1);
+    sky.color.copy(colors.hemiSky);
+    sky.groundColor.copy(colors.hemiGround);
+    state.sunColor.copy(sun.color);
+    state.zenith
+      .copy(colors.night)
+      .lerp(rainy ? colors.rainZenith : colors.zenith, Math.min(1, light * 2));
+    state.horizon
+      .copy(colors.night)
+      .lerp(
+        rainy ? colors.rainHorizon : colors.horizon,
+        Math.min(1, light * 1.9),
+      )
+      .lerp(colors.dusk, rainy ? 0 : golden * 0.6);
+    state.cloudTint
+      .copy(rainy ? colors.cloudRain : colors.cloud)
+      .lerp(colors.sunset, rainy ? 0 : golden * 0.5)
+      .multiplyScalar(0.55 + light * 0.45);
+    state.cloudOpacity = rainy ? 0.95 : w.label === "Éclaircies" ? 0.9 : 0.75;
+    state.clouds = rainy ? 14 : w.label === "Éclaircies" ? 11 : 7;
+    state.drift = reduced ? 0 : ms * 0.0000035;
+    waterUniforms.uTime.value = reduced ? 0 : ms * 0.001;
+    waterUniforms.uSunDir.value.copy(state.sun);
+    waterUniforms.uSunColor.value
+      .copy(sun.color)
+      .multiplyScalar(Math.min(1.2, sun.intensity / 2.4));
+    waterUniforms.uSkyZenith.value.copy(state.zenith);
+    waterUniforms.uSkyHorizon.value.copy(state.horizon);
+    if (farm.root.visible) scene.background = state.horizon;
+    if (camera) dome.update(state, camera);
+    dome.root.visible = farm.root.visible;
     if (scene.fog instanceof T.Fog) {
-      scene.fog.color.copy(background);
-      scene.fog.near = Math.max(55, cameraDistance + (w.rainy ? 10 : 35));
-      scene.fog.far = scene.fog.near + (w.rainy ? 85 : 130);
+      scene.fog.color.copy(state.horizon);
+      scene.fog.near = Math.max(60, cameraDistance + (rainy ? 12 : 40));
+      scene.fog.far = scene.fog.near + (rainy ? 120 : 210);
     }
     root.visible = farm.root.visible;
-    clouds.visible = w.rainy || w.label === "Éclaircies";
-    cloudMaterial.opacity = w.rainy ? 0.43 : 0.22;
-    clouds.position.x = reduced ? 0 : Math.sin(ms * 0.000015) * 8;
     rain.visible = w.rainy;
     rainGeometry.setDrawRange(0, rainCount * 2);
     if (w.rainy) {
@@ -188,6 +249,45 @@ export function createWeather(
       root.add(mesh);
       ice.set(id, mesh);
     }
+    // Warm windows as the light fades.
+    if (!glass)
+      farm.root.traverse((o) => {
+        if (
+          o instanceof T.Mesh &&
+          o.material instanceof T.MeshStandardMaterial &&
+          o.material.name === "window-glass"
+        )
+          glass = o.material;
+      });
+    if (glass)
+      glass.emissiveIntensity =
+        Math.max(0, 1 - light * 1.6) * 1.4 + rainy * 0.25;
+    for (const smoke of farm.root.getObjectsByProperty("name", "smoke"))
+      smoke.children.forEach((puff, i) => {
+        const t = reduced
+          ? puff.userData.phase
+          : (ms * 0.00022 + puff.userData.phase) % 1;
+        puff.position.set(t * 1.6, t * 4.2, -t * 0.6);
+        // Puffs swell then thin out as they rise.
+        puff.scale.setScalar((0.5 + t * 1.9) * (t > 0.82 ? (1 - t) / 0.18 : 1));
+        puff.visible = !rainy || i < 3;
+      });
+    birds.visible = !reduced && !rainy && farm.root.visible;
+    if (birds.visible)
+      birds.children.forEach((bird) => {
+        const k = bird.userData.offset,
+          angle = ms * 0.00012 + k * 0.32,
+          radius = 30 + (k % 3) * 2.5;
+        bird.position.set(
+          Math.cos(angle) * radius - 4,
+          24 + Math.sin(ms * 0.0007 + k) * 0.8 + (k % 2) * 1.5,
+          Math.sin(angle) * radius - 6,
+        );
+        bird.rotation.y = -angle;
+        const flap = Math.sin(ms * 0.012 + k * 1.7) * 0.55;
+        for (const wing of bird.children)
+          wing.rotation.z = flap * wing.userData.side;
+      });
     for (const excavator of farm.root.getObjectsByProperty("name", "excavator"))
       excavator.rotation.y = reduced ? 0 : Math.sin(ms * 0.0007) * 0.22;
     previousDay = game.day;
@@ -208,6 +308,7 @@ export function createWeather(
         disposeObject(mesh);
       }
       ice.clear();
+      dome.dispose();
       scene.remove(root);
       disposeObject(root);
     },

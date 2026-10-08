@@ -12,7 +12,10 @@ import {
   type FarmState,
 } from "./world/artSelectors";
 import type { Asset } from "./development";
-type WaterMesh = T.Mesh<T.BufferGeometry, T.MeshPhysicalMaterial>;
+import { createTerrain } from "./world/terrain";
+import { createVegetation, planTrees, plotMeadow } from "./world/vegetation";
+import { waterMaterial } from "./world/water";
+type WaterMesh = T.Mesh<T.BufferGeometry, T.MeshStandardMaterial>;
 
 export const POND_POSITIONS: [number, number][] = [
   [-9, -1],
@@ -49,18 +52,29 @@ function seeded(seed: number) {
     return n / 4294967296;
   };
 }
-function surface(kind: "stone" | "wood" | "roof" | "ground" | "gravel") {
+type Surface =
+  | "stone"
+  | "wood"
+  | "roof"
+  | "tile"
+  | "planks"
+  | "panel"
+  | "corrugated"
+  | "render";
+/** Procedural, hand-painted material sheets; every colour comes from the world palette. */
+function surface(kind: Surface) {
   const c = document.createElement("canvas");
   c.width = c.height = 512;
   const ctx = c.getContext("2d")!;
   const r = seeded(52);
+  const family = (name: string) => [
+    paint(`${name}-mid`),
+    paint(name),
+    paint(`${name}-shadow`),
+    paint(`${name}-light`),
+  ];
   const palette = {
-    stone: [
-      paint("stone-mid"),
-      paint("stone"),
-      paint("stone-shadow"),
-      paint("stone-light"),
-    ],
+    stone: family("stone"),
     wood: [
       paint("wood-shadow"),
       paint("wood-mid"),
@@ -73,18 +87,11 @@ function surface(kind: "stone" | "wood" | "roof" | "ground" | "gravel") {
       paint("roof-light"),
       paint("roof-dark"),
     ],
-    ground: [
-      paint("grass"),
-      paint("grass-shadow"),
-      paint("grass-light"),
-      paint("grass-dark"),
-    ],
-    gravel: [
-      paint("gravel"),
-      paint("gravel-shadow"),
-      paint("gravel-light"),
-      paint("gravel-dark"),
-    ],
+    tile: family("tile"),
+    planks: family("barn"),
+    panel: family("panel"),
+    corrugated: family("metal-sheet"),
+    render: family("render"),
   }[kind];
   ctx.fillStyle = palette[0];
   ctx.fillRect(0, 0, 512, 512);
@@ -108,7 +115,21 @@ function surface(kind: "stone" | "wood" | "roof" | "ground" | "gravel") {
           (kind === "roof" ? 40 : 70) - 4,
         );
       }
-  if (kind === "wood")
+  if (kind === "tile")
+    // Overlapping barrel tiles: rounded tops with a shaded lower lip.
+    for (let y = 0; y < 512; y += 32)
+      for (let x = -32; x < 512; x += 32) {
+        const xx = x + (Math.floor(y / 32) % 2) * 16;
+        ctx.fillStyle = palette[Math.floor(r() * 4)];
+        ctx.beginPath();
+        ctx.roundRect(xx + 1, y, 30, 34, [14, 14, 4, 4]);
+        ctx.fill();
+        ctx.fillStyle = paint("tile-dark");
+        ctx.globalAlpha = 0.45;
+        ctx.fillRect(xx + 2, y + 27, 28, 5);
+        ctx.globalAlpha = 1;
+      }
+  if (kind === "wood" || kind === "planks")
     for (let i = 0; i < 18; i++) {
       ctx.fillStyle = palette[Math.floor(r() * 4)];
       ctx.fillRect(i * 30, 0, 28, 512);
@@ -121,15 +142,69 @@ function surface(kind: "stone" | "wood" | "roof" | "ground" | "gravel") {
         ctx.stroke();
       }
     }
+  if (kind === "panel" || kind === "corrugated")
+    for (let x = 0; x < 512; x += kind === "panel" ? 64 : 16) {
+      const step = kind === "panel" ? 64 : 16;
+      const g = ctx.createLinearGradient(x, 0, x + step, 0);
+      g.addColorStop(0, palette[2]);
+      g.addColorStop(0.35, palette[3]);
+      g.addColorStop(0.7, palette[1]);
+      g.addColorStop(1, palette[2]);
+      ctx.fillStyle = g;
+      ctx.fillRect(x, 0, step, 512);
+    }
+  if (kind === "render")
+    for (let i = 0; i < 260; i++) {
+      const x = r() * 512,
+        y = r() * 512,
+        radius = 20 + r() * 60;
+      const g = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      g.addColorStop(0, palette[Math.floor(r() * 4)]);
+      g.addColorStop(1, `${palette[1]}00`);
+      ctx.fillStyle = g;
+      ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+    }
   for (let i = 0; i < 5500; i++) {
     ctx.fillStyle = i % 2 ? paint("grain-light") : paint("grain-shadow");
-    const size = kind === "gravel" ? 1 + r() * 5 : 1 + r() * 2;
+    const size = 1 + r() * 2;
     ctx.fillRect(r() * 512, r() * 512, size, size);
   }
   const tex = new T.CanvasTexture(c);
   tex.wrapS = tex.wrapT = T.RepeatWrapping;
   tex.colorSpace = T.SRGBColorSpace;
   tex.anisotropy = 4;
+  return tex;
+}
+/** A soft round puff for chimney smoke. */
+function smokeTexture() {
+  const c = document.createElement("canvas");
+  c.width = c.height = 64;
+  const ctx = c.getContext("2d")!;
+  const g = ctx.createRadialGradient(32, 32, 2, 32, 32, 32);
+  const white = paint("cloud");
+  g.addColorStop(0, white);
+  g.addColorStop(0.5, `${white}88`);
+  g.addColorStop(1, `${white}00`);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, 64, 64);
+  const tex = new T.CanvasTexture(c);
+  tex.colorSpace = T.SRGBColorSpace;
+  return tex;
+}
+/** Soft radial darkening laid under buildings and ponds, so they sit on the ground at every quality. */
+function contactTexture() {
+  const c = document.createElement("canvas");
+  c.width = c.height = 128;
+  const ctx = c.getContext("2d")!;
+  const g = ctx.createRadialGradient(64, 64, 10, 64, 64, 64);
+  const shade = paint("ground-shade");
+  g.addColorStop(0, shade);
+  g.addColorStop(0.55, `${shade}aa`);
+  g.addColorStop(1, `${shade}00`);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, 128, 128);
+  const tex = new T.CanvasTexture(c);
+  tex.colorSpace = T.SRGBColorSpace;
   return tex;
 }
 export function waterNormal() {
@@ -258,6 +333,59 @@ function roof(
   parent.add(mesh);
   return mesh;
 }
+type BuildingStyle = "house" | "barn" | "cold" | "workshop";
+type Materials = Record<string, T.Material>;
+function windowBay(
+  g: T.Group,
+  xx: number,
+  y: number,
+  front: number,
+  materials: Materials,
+  shutters: boolean,
+  width = 1.2,
+) {
+  box(g, [width + 0.3, 1.45, 0.2], [xx, y, front + 0.07], materials.trim);
+  box(g, [width, 1.17, 0.09], [xx, y + 0.02, front + 0.19], materials.glass);
+  box(g, [0.055, 1.18, 0.07], [xx, y + 0.02, front + 0.25], materials.trim);
+  box(
+    g,
+    [width + 0.03, 0.05, 0.07],
+    [xx, y + 0.02, front + 0.25],
+    materials.trim,
+  );
+  if (shutters)
+    for (const s of [-1, 1])
+      box(
+        g,
+        [0.3, 1.4, 0.11],
+        [xx + s * (width / 2 + 0.31), y, front + 0.1],
+        materials.greenwood,
+      );
+  box(
+    g,
+    [width + 0.45, 0.15, 0.4],
+    [xx, y - 0.82, front + 0.18],
+    materials.trim,
+  );
+}
+function flowerBox(
+  g: T.Group,
+  xx: number,
+  y: number,
+  front: number,
+  materials: Materials,
+) {
+  box(g, [1.3, 0.28, 0.32], [xx, y, front + 0.35], materials.darkwood);
+  for (let i = 0; i < 5; i++) {
+    const bloom = new T.Mesh(
+      new T.IcosahedronGeometry(0.13, 0),
+      i % 2 ? materials.bloomA : materials.bloomB,
+    );
+    bloom.position.set(xx - 0.5 + i * 0.25, y + 0.22, front + 0.38);
+    g.add(bloom);
+  }
+}
+/** Four distinct farm buildings: tiled farmhouse, timber barn, insulated cold room, rendered workshop. */
 function building(
   parent: T.Group,
   x: number,
@@ -265,88 +393,181 @@ function building(
   w: number,
   d: number,
   rotation: number,
-  materials: Record<string, T.MeshStandardMaterial>,
-  barn = false,
+  materials: Materials,
+  style: BuildingStyle = "house",
 ) {
   const g = new T.Group();
   g.position.set(x, 0, z);
   g.rotation.y = rotation;
   parent.add(g);
+  const wallH = style === "barn" ? 4.3 : style === "cold" ? 3.3 : 3.6,
+    front = d / 2,
+    walls = {
+      house: materials.stone,
+      barn: materials.planks,
+      cold: materials.panel,
+      workshop: materials.render,
+    }[style],
+    roofMaterial = {
+      house: materials.tile,
+      barn: materials.corrugated,
+      cold: materials.coldroof,
+      workshop: materials.roof,
+    }[style],
+    pitch = { house: 2.3, barn: 2.8, cold: 0.75, workshop: 1.9 }[style];
+  const shadow = new T.Mesh(
+    new T.PlaneGeometry(w + 5, d + 5),
+    materials.contact,
+  );
+  shadow.rotation.x = -Math.PI / 2;
+  shadow.position.set(0.6, 0.012, 0.5);
+  shadow.renderOrder = -1;
+  g.add(shadow);
   box(g, [w + 0.4, 0.4, d + 0.4], [0, 0.05, 0], materials.concrete);
-  box(g, [w, 3.8, d], [0, 2, 0], materials.stone);
-  if (barn) box(g, [w - 0.12, 2.5, d + 0.02], [0, 2.4, 0], materials.wood);
-  roof(g, w + 0.8, d + 0.8, 2, 3.85, materials.roof);
-  // Gable timber framing, eaves, gutters, downpipes.
-  box(g, [w + 0.8, 0.15, 0.18], [0, 3.8, d / 2 + 0.26], materials.darkwood);
+  if (style === "barn" || style === "workshop")
+    box(g, [w + 0.08, 0.75, d + 0.08], [0, 0.55, 0], materials.stone);
+  box(g, [w, wallH, d], [0, wallH / 2 + 0.2, 0], walls);
+  roof(g, w + 0.8, d + 0.9, pitch, wallH + 0.2, roofMaterial);
+  // Eaves, gutters and downpipes.
+  box(
+    g,
+    [w + 0.8, 0.15, 0.18],
+    [0, wallH + 0.15, front + 0.3],
+    materials.darkwood,
+  );
   for (const sign of [-1, 1]) {
     pipe(
       g,
-      new T.Vector3(sign * (w / 2 + 0.3), 3.82, -d / 2 - 0.3),
-      new T.Vector3(sign * (w / 2 + 0.3), 3.82, d / 2 + 0.3),
+      new T.Vector3(sign * (w / 2 + 0.3), wallH + 0.17, -front - 0.35),
+      new T.Vector3(sign * (w / 2 + 0.3), wallH + 0.17, front + 0.35),
       0.075,
       materials.metal,
     );
     pipe(
       g,
-      new T.Vector3(sign * (w / 2 + 0.2), 3.8, d / 2),
-      new T.Vector3(sign * (w / 2 + 0.2), 0.2, d / 2),
+      new T.Vector3(sign * (w / 2 + 0.2), wallH + 0.15, front),
+      new T.Vector3(sign * (w / 2 + 0.2), 0.2, front),
       0.06,
       materials.metal,
     );
   }
-  for (const xx of [-w * 0.31, w * 0.31]) {
-    box(g, [1.5, 1.45, 0.2], [xx, 2.45, d / 2 + 0.07], materials.trim);
-    box(g, [1.2, 1.17, 0.09], [xx, 2.47, d / 2 + 0.19], materials.glass);
-    box(g, [0.055, 1.18, 0.07], [xx, 2.47, d / 2 + 0.25], materials.trim);
-    box(g, [1.23, 0.05, 0.07], [xx, 2.47, d / 2 + 0.25], materials.trim);
-    for (const s of [-1, 1])
+  if (style === "house") {
+    for (const xx of [-w * 0.31, w * 0.31]) {
+      windowBay(g, xx, 2.35, front, materials, true);
+      flowerBox(g, xx, 1.5, front, materials);
+    }
+    box(g, [1.4, 2.5, 0.18], [0, 1.45, front + 0.12], materials.greenwood);
+    for (const sign of [-1, 1])
       box(
         g,
-        [0.3, 1.4, 0.11],
-        [xx + s * 0.91, 2.45, d / 2 + 0.1],
-        materials.greenwood,
+        [0.1, 2.62, 0.24],
+        [sign * 0.78, 1.42, front + 0.17],
+        materials.trim,
       );
-    box(g, [1.65, 0.15, 0.4], [xx, 1.63, d / 2 + 0.18], materials.trim);
-  }
-  box(
-    g,
-    [barn ? 2.3 : 1.4, 2.6, 0.18],
-    [0, 1.4, d / 2 + 0.12],
-    materials.greenwood,
-  );
-  for (const sign of [-1, 1]) {
+    box(g, [1.7, 0.13, 0.23], [0, 2.75, front + 0.16], materials.trim);
     box(
       g,
-      [0.1, 2.72, 0.24],
-      [sign * (barn ? 1.21 : 0.78), 1.42, d / 2 + 0.17],
-      materials.trim,
+      [0.75, 2.6, 0.75],
+      [-w * 0.3, wallH + 1.35, -d * 0.22],
+      materials.stone,
     );
-  }
-  box(
-    g,
-    [barn ? 2.6 : 1.7, 0.13, 0.23],
-    [0, 2.77, d / 2 + 0.16],
-    materials.trim,
-  );
-  box(g, [0.09, 2.45, 0.06], [0, 1.42, d / 2 + 0.25], materials.darkwood);
-  if (barn) {
-    for (const s of [-1, 1]) {
-      const beam = box(
-        g,
-        [0.06, 2.6, 0.055],
-        [s * 0.6, 1.4, d / 2 + 0.25],
-        materials.darkwood,
-      );
-      beam.rotation.z = s * 0.42;
+    box(
+      g,
+      [0.9, 0.16, 0.9],
+      [-w * 0.3, wallH + 2.7, -d * 0.22],
+      materials.tile,
+    );
+    const smoke = new T.Group();
+    smoke.name = "smoke";
+    smoke.position.set(-w * 0.3, wallH + 2.9, -d * 0.22);
+    for (let i = 0; i < 6; i++) {
+      const puff = new T.Sprite(materials.smoke as T.SpriteMaterial);
+      puff.userData.phase = i / 6;
+      smoke.add(puff);
     }
+    g.add(smoke);
+    // Porch with a weathered deck.
+    box(g, [w * 0.68, 0.12, 2.25], [0, 0.19, front + 1.25], materials.wood);
+    roof(g, w * 0.6, 2.5, 0.55, 3.05, materials.tile).position.z = front + 1.2;
+    for (const xx of [-w * 0.28, w * 0.28])
+      box(g, [0.16, 2.85, 0.16], [xx, 1.6, front + 2.22], materials.darkwood);
   }
-  box(g, [0.7, 2.2, 0.7], [-w * 0.3, 4.8, -d * 0.24], materials.stone);
-  box(g, [0.85, 0.16, 0.85], [-w * 0.3, 5.97, -d * 0.24], materials.roof);
-  // Porch and naturally weathered deck.
-  box(g, [w * 0.68, 0.12, 2.25], [0, 0.19, d / 2 + 1.25], materials.wood);
-  roof(g, w * 0.6, 2.5, 0.55, 3.05, materials.roof).position.z = d / 2 + 1.2;
-  for (const xx of [-w * 0.28, w * 0.28])
-    box(g, [0.16, 2.85, 0.16], [xx, 1.6, d / 2 + 2.22], materials.darkwood);
+  if (style === "barn") {
+    // Sliding doors with braced ledges, loft door in the gable.
+    box(g, [3.2, 3.2, 0.14], [0, 1.85, front + 0.08], materials.barnDoor);
+    for (const sign of [-1, 1]) {
+      const brace = box(
+        g,
+        [0.12, 3.6, 0.06],
+        [sign * 0.8, 1.85, front + 0.18],
+        materials.trim,
+      );
+      brace.rotation.z = sign * 0.45;
+      box(
+        g,
+        [1.55, 0.12, 0.06],
+        [sign * 0.8, 3.36, front + 0.18],
+        materials.trim,
+      );
+      box(
+        g,
+        [1.55, 0.12, 0.06],
+        [sign * 0.8, 0.34, front + 0.18],
+        materials.trim,
+      );
+      box(
+        g,
+        [0.12, 3.2, 0.06],
+        [sign * 1.55, 1.85, front + 0.18],
+        materials.trim,
+      );
+    }
+    box(g, [0.08, 3.2, 0.08], [0, 1.85, front + 0.2], materials.darkwood);
+    box(
+      g,
+      [0.18, 0.18, 3.6],
+      [0, 3.62, front + 0.3],
+      materials.metal,
+    ).rotation.y = Math.PI / 2;
+    box(
+      g,
+      [1.3, 1.1, 0.12],
+      [0, wallH + 1.0, front + 0.12],
+      materials.barnDoor,
+    );
+    box(g, [1.5, 0.12, 0.16], [0, wallH + 1.6, front + 0.14], materials.trim);
+    for (const sign of [-1, 1])
+      windowBay(g, sign * w * 0.37, 2.9, front, materials, false, 0.7);
+  }
+  if (style === "cold") {
+    box(g, [w + 0.02, 0.35, d + 0.02], [0, 2.4, 0], materials.trimBlue);
+    box(g, [1.45, 2.45, 0.14], [-1.6, 1.43, front + 0.08], materials.coldDoor);
+    box(g, [1.7, 0.16, 0.22], [-1.6, 2.75, front + 0.12], materials.trimBlue);
+    box(g, [2.2, 0.1, 1.2], [-1.6, 3.05, front + 0.6], materials.coldroof);
+    for (const xx of [-w * 0.25, w * 0.15])
+      box(g, [0.9, 0.35, 0.9], [xx, wallH + 0.75, 0], materials.metal);
+  }
+  if (style === "workshop") {
+    for (const xx of [-w * 0.33, 0, w * 0.33])
+      windowBay(g, xx, 2.3, front, materials, false, 1);
+    box(
+      g,
+      [1.3, 2.2, 0.16],
+      [w * 0.33, 1.3, front + 0.12],
+      materials.greenwood,
+    );
+    // Steel canopy over the preparation bench.
+    const canopy = box(
+      g,
+      [w * 0.55, 0.1, 1.8],
+      [-w * 0.15, 2.95, front + 1.1],
+      materials.metal,
+    );
+    canopy.rotation.x = 0.08;
+    for (const xx of [-w * 0.15 - w * 0.25, -w * 0.15 + w * 0.25])
+      box(g, [0.1, 2.8, 0.1], [xx, 1.5, front + 1.9], materials.metal);
+    box(g, [2.4, 0.9, 0.7], [-w * 0.15, 0.65, front + 1.1], materials.metal);
+  }
   return g;
 }
 function roundedRectangle(w: number, d: number, r: number) {
@@ -374,14 +595,32 @@ export function createFarm(initial: FarmState): FarmObjects {
   const stone = surface("stone"),
     wood = surface("wood"),
     slate = surface("roof"),
-    ground = surface("ground"),
-    gravel = surface("gravel");
-  for (const texture of [stone, wood, slate, ground, gravel])
-    texture.userData.shared = true;
+    tile = surface("tile"),
+    planks = surface("planks"),
+    panel = surface("panel"),
+    corrugated = surface("corrugated"),
+    render = surface("render"),
+    contact = contactTexture(),
+    puff = smokeTexture();
+  const sheets = [
+    stone,
+    wood,
+    slate,
+    tile,
+    planks,
+    panel,
+    corrugated,
+    render,
+    contact,
+    puff,
+  ];
+  for (const texture of sheets) texture.userData.shared = true;
   stone.repeat.set(2, 1);
   slate.repeat.set(2, 2);
-  ground.repeat.set(28, 28);
-  gravel.repeat.set(10, 2);
+  tile.repeat.set(2, 2);
+  planks.repeat.set(2, 1);
+  panel.repeat.set(2, 1);
+  corrugated.repeat.set(3, 2);
   const materials = {
     soil: new T.MeshStandardMaterial({ color: paint("soil"), roughness: 1 }),
     reed: new T.MeshStandardMaterial({ color: paint("reed"), roughness: 1 }),
@@ -416,45 +655,106 @@ export function createFarm(initial: FarmState): FarmObjects {
       roughness: 0.8,
     }),
     glass: new T.MeshStandardMaterial({
+      name: "window-glass",
       color: paint("glass"),
       metalness: 0.55,
       roughness: 0.16,
+      emissive: paint("window-glow"),
+      emissiveIntensity: 0,
+    }),
+    tile: new T.MeshStandardMaterial({
+      map: tile,
+      roughness: 0.82,
+      side: T.DoubleSide,
+    }),
+    planks: new T.MeshStandardMaterial({ map: planks, roughness: 0.88 }),
+    panel: new T.MeshStandardMaterial({ map: panel, roughness: 0.6 }),
+    corrugated: new T.MeshStandardMaterial({
+      map: corrugated,
+      roughness: 0.5,
+      metalness: 0.35,
+      side: T.DoubleSide,
+    }),
+    coldroof: new T.MeshStandardMaterial({
+      color: paint("panel-shadow"),
+      roughness: 0.55,
+      metalness: 0.2,
+      side: T.DoubleSide,
+    }),
+    render: new T.MeshStandardMaterial({ map: render, roughness: 0.95 }),
+    barnDoor: new T.MeshStandardMaterial({
+      map: planks,
+      color: paint("barn-door"),
+      roughness: 0.9,
+    }),
+    coldDoor: new T.MeshStandardMaterial({
+      color: paint("panel-light"),
+      roughness: 0.5,
+    }),
+    trimBlue: new T.MeshStandardMaterial({
+      color: paint("trim-blue"),
+      roughness: 0.6,
+    }),
+    bloomA: new T.MeshStandardMaterial({
+      color: paint("bloom-pink"),
+      roughness: 0.7,
+      flatShading: true,
+    }),
+    bloomB: new T.MeshStandardMaterial({
+      color: paint("bloom-white"),
+      roughness: 0.7,
+      flatShading: true,
+    }),
+    contact: new T.MeshBasicMaterial({
+      map: contact,
+      transparent: true,
+      opacity: 0.55,
+      depthWrite: false,
+      polygonOffset: true,
+      polygonOffsetFactor: -2,
+    }),
+    smoke: new T.SpriteMaterial({
+      map: puff,
+      color: paint("smoke"),
+      transparent: true,
+      opacity: 0.5,
+      depthWrite: false,
     }),
     metal: new T.MeshStandardMaterial({
       color: paint("metal"),
       metalness: 0.75,
       roughness: 0.35,
     }),
+    bed: new T.MeshStandardMaterial({
+      color: paint("pond-bed"),
+      roughness: 1,
+    }),
   };
   materials.reed.userData.seasonal = "reed";
-  const floor = new T.Mesh(
-    new T.PlaneGeometry(220, 180, 30, 30),
-    new T.MeshStandardMaterial({ map: ground, roughness: 1 }),
-  );
-  floor.name = "terrain";
-  floor.rotation.x = -Math.PI / 2;
-  floor.position.y = -0.12;
-  floor.receiveShadow = true;
-  root.add(floor);
-  const roadMat = new T.MeshStandardMaterial({ map: gravel, roughness: 0.94 });
-  box(root, [7, 0.1, 85], [0, -0.05, 12], roadMat);
-  box(root, [50, 0.08, 4], [0, -0.035, 5.5], roadMat);
-  box(root, [43, 0.08, 4], [0, -0.035, -8], roadMat);
-  building(root, -10, -17, 9, 6, 0, materials);
+  // Painted meadow with lanes and a hilly, wooded horizon.
+  const treePlan = planTrees();
+  const terrain = createTerrain(treePlan);
+  for (const texture of terrain.textures) texture.userData.shared = true;
+  root.add(terrain.mesh);
+  building(root, -10, -17, 9, 6, 0, materials, "house");
 
   // Water intake channel and headworks; stream is a real separate source in the scene.
   box(root, [64, 0.16, 2.4], [0, -0.01, -27], materials.concrete);
   const normal = waterNormal();
   const stream = new T.Mesh(
     new T.PlaneGeometry(65, 2.05),
-    new T.MeshPhysicalMaterial({
+    waterMaterial({
       color: paint("stream"),
-      roughness: 0.17,
-      metalness: 0.28,
-      normalMap: normal,
-      normalScale: new T.Vector2(0.18, 0.18),
+      shallow: paint("water-source-shallow"),
+      foam: paint("water-foam"),
+      half: [32.5, 1.02],
+      radius: 0,
+      opacity: 0.94,
+      flow: [1.8, 0.4],
+      foamWidth: 0.16,
     }),
   );
+  stream.name = "stream";
   stream.rotation.x = -Math.PI / 2;
   stream.position.set(0, 0.09, -27);
   root.add(stream);
@@ -513,6 +813,22 @@ export function createFarm(initial: FarmState): FarmObjects {
         [x - 2 + (i % 3), 0.36 + Math.floor(i / 3) * 0.3, z + d / 2 + 0.9],
         materials.trim,
       );
+    // Spoil heaps from the dig.
+    for (const [mx, mz, radius, height] of [
+      [x - w / 2 - 1.4, z - 1.2, 1.6, 1.3],
+      [x - w / 2 - 0.9, z + 1.4, 1.1, 0.9],
+      [x + w / 2 + 1.3, z - d / 2 + 0.8, 1.2, 1.0],
+    ]) {
+      const heap = new T.Mesh(
+        new T.ConeGeometry(radius, height, 9),
+        materials.soil,
+      );
+      heap.position.set(mx, height / 2 - 0.04, mz);
+      heap.scale.set(1, 1, 0.8);
+      heap.castShadow = true;
+      heap.receiveShadow = true;
+      parent.add(heap);
+    }
     const machine = new T.Group();
     machine.position.set(x + w / 2 - 1.3, 0.2, z + d / 2 - 1.1);
     parent.add(machine);
@@ -581,19 +897,7 @@ export function createFarm(initial: FarmState): FarmObjects {
           materials.trim,
         );
       if (p.constructionDays) entry.progress = earthworks(group, x, z, w, d);
-      else
-        for (let i = 0; i < 18; i++) {
-          const tuft = new T.Mesh(
-            new T.ConeGeometry(0.15, 0.6, 4),
-            materials.reed,
-          );
-          tuft.position.set(
-            x + (r() - 0.5) * (w - 1),
-            0.3,
-            z + (r() - 0.5) * (d - 1),
-          );
-          group.add(tuft);
-        }
+      else group.add(plotMeadow(x, z, w, d, 400 + p.id));
     } else {
       if (earth) {
         const bankShape = roundedRectangle(w + 1.8, d + 1.8, 1.8);
@@ -661,18 +965,30 @@ export function createFarm(initial: FarmState): FarmObjects {
       const geometry = earth
         ? new T.ShapeGeometry(roundedRectangle(w - 0.3, d - 0.3, 1.1), 10)
         : new T.PlaneGeometry(w - 0.3, d - 0.3, 8, 5);
+      // A dark bed gives the water depth instead of showing pale concrete or grass.
+      const bed = new T.Mesh(
+        earth
+          ? new T.ShapeGeometry(roundedRectangle(w - 0.3, d - 0.3, 1.1), 10)
+          : new T.PlaneGeometry(w - 0.3, d - 0.3),
+        materials.bed,
+      );
+      bed.rotation.x = -Math.PI / 2;
+      bed.position.set(x, earth ? 0.2 : 0.235, z);
+      bed.receiveShadow = true;
+      group.add(bed);
       const water = new T.Mesh(
         geometry,
-        new T.MeshPhysicalMaterial({
+        waterMaterial({
           color: paint(earth ? "water-earth" : "water-source"),
-          transparent: true,
+          shallow: paint(
+            earth ? "water-earth-shallow" : "water-source-shallow",
+          ),
+          foam: paint("water-foam"),
+          half: [(w - 0.3) / 2, (d - 0.3) / 2],
+          radius: earth ? 1.1 : 0.02,
           opacity: earth ? 0.92 : 0.64,
-          roughness: 0.32,
-          metalness: 0.08,
-          normalMap: normal,
-          normalScale: new T.Vector2(0.12, 0.1),
-          side: T.DoubleSide,
-          depthWrite: false,
+          flow: earth ? [0.25, 0.15] : [0.9, 0.3],
+          ripple: earth ? 0.7 : 1,
         }),
       );
       water.rotation.x = -Math.PI / 2;
@@ -877,7 +1193,16 @@ export function createFarm(initial: FarmState): FarmObjects {
           );
     }
     if (state.built) {
-      building(group, x, z, 8, 6, 0, materials, id !== "coldstore");
+      building(
+        group,
+        x,
+        z,
+        8,
+        6,
+        0,
+        materials,
+        id === "warehouse" ? "barn" : id === "coldstore" ? "cold" : "workshop",
+      );
       if (id === "warehouse") {
         const silo = new T.Mesh(
           new T.CylinderGeometry(0.85, 0.85, 3, 16),
@@ -995,110 +1320,8 @@ export function createFarm(initial: FarmState): FarmObjects {
     );
   }
   update(initial);
-  // Instanced trees keep draw calls bounded while retaining canopy variation.
-  const leafGeometry = new T.IcosahedronGeometry(1, 2);
-  const leafPos = leafGeometry.getAttribute("position");
-  for (let i = 0; i < leafPos.count; i++) {
-    const x = leafPos.getX(i),
-      y = leafPos.getY(i),
-      z = leafPos.getZ(i);
-    const f =
-      1 + 0.035 * Math.sin(x * 12 + y * 10) + 0.035 * Math.cos(z * 16 - x * 9);
-    leafPos.setXYZ(i, x * f, y * f, z * f);
-  }
-  leafGeometry.computeVertexNormals();
-  const leaves = new T.InstancedMesh(
-    leafGeometry,
-    new T.MeshStandardMaterial({
-      roughness: 1,
-      color: paint("fish-highlight"),
-    }),
-    280,
-  );
-  const trunks = new T.InstancedMesh(
-    new T.CylinderGeometry(0.11, 0.22, 3.8, 7),
-    materials.darkwood,
-    56,
-  );
-  const dummy = new T.Object3D();
-  for (let i = 0; i < 56; i++) {
-    const side = i % 4;
-    const x =
-      side === 0
-        ? -30 - r() * 14
-        : side === 1
-          ? 30 + r() * 17
-          : (r() - 0.5) * 90;
-    const z =
-      side === 2
-        ? -33 - r() * 18
-        : side === 3
-          ? 26 + r() * 18
-          : (r() - 0.5) * 75;
-    const h = 1 + r() * 0.8;
-    dummy.position.set(x, 1.7 * h, z);
-    dummy.rotation.set(0, 0, 0);
-    dummy.scale.set(1, h, 1);
-    dummy.updateMatrix();
-    trunks.setMatrixAt(i, dummy.matrix);
-    for (let j = 0; j < 5; j++) {
-      dummy.position.set(
-        x + (r() - 0.5) * 3,
-        3.5 * h + r() * 1.6,
-        z + (r() - 0.5) * 3,
-      );
-      dummy.scale.set(1.8 + r(), 1.5 + r() * 1.6, 1.8 + r());
-      dummy.rotation.set(r(), r(), r());
-      dummy.updateMatrix();
-      leaves.setMatrixAt(i * 5 + j, dummy.matrix);
-      leaves.setColorAt(
-        i * 5 + j,
-        new T.Color(paint("leaf")).multiplyScalar(0.85 + r() * 0.3),
-      );
-    }
-  }
-  leaves.name = "foliage";
-  leaves.castShadow = true;
-  leaves.receiveShadow = true;
-  trunks.name = "trunks";
-  trunks.castShadow = true;
-  root.add(leaves, trunks);
-  const grassGeo = new T.BufferGeometry();
-  grassGeo.setAttribute(
-    "position",
-    new T.Float32BufferAttribute(
-      [-0.025, 0, 0, 0.025, 0, 0, 0.015, 0.38, 0],
-      3,
-    ),
-  );
-  grassGeo.computeVertexNormals();
-  const grass = new T.InstancedMesh(
-    grassGeo,
-    new T.MeshStandardMaterial({
-      color: paint("meadow"),
-      side: T.DoubleSide,
-      roughness: 1,
-    }),
-    1800,
-  );
-  for (let i = 0; i < 1800; i++) {
-    let x = (r() - 0.5) * 66,
-      z = (r() - 0.5) * 65;
-    if (Math.abs(x) < 23 && z > -24 && z < 22) {
-      x = (r() > 0.5 ? 1 : -1) * (23 + r() * 10);
-    }
-    dummy.position.set(x, 0.02, z);
-    dummy.scale.setScalar(0.6 + r());
-    dummy.rotation.set(0, r() * 6.28, 0);
-    dummy.updateMatrix();
-    grass.setMatrixAt(i, dummy.matrix);
-    grass.setColorAt(
-      i,
-      new T.Color(paint("reed")).multiplyScalar(0.85 + r() * 0.3),
-    );
-  }
-  grass.name = "meadow";
-  root.add(grass);
+  // Instanced vegetation keeps draw calls bounded while filling the landscape.
+  const vegetation = createVegetation(root, treePlan);
   // Split-rail fencing with a gate across the front.
   for (const side of [-1, 1]) {
     for (let i = 0; i < 9; i++) {
@@ -1125,11 +1348,11 @@ export function createFarm(initial: FarmState): FarmObjects {
     ponds: pondGroups,
     assets: assetGroups,
     dispose() {
+      vegetation.dispose();
       disposeObject(root, sharedMaterials);
       normal.dispose();
       for (const m of sharedMaterials) m.dispose();
-      for (const texture of [stone, wood, slate, ground, gravel])
-        texture.dispose();
+      for (const texture of [...sheets, ...terrain.textures]) texture.dispose();
     },
   };
 }

@@ -99,13 +99,14 @@ export function createCameraRig(
         : s.introFlight
           ? 0.25 + Math.min(1, (ms - presentationStart) / 3000) * 0.65
           : 0.7 + Math.sin(ms * 0.00007) * 0.16;
-      controls.target.set(camera.aspect > 1 ? -8 : 0, 0, -3);
+      // A low, cinematic angle: the farm in the foreground, hills and sky behind.
+      controls.target.set(camera.aspect > 1 ? -10 : 0, 17, -8);
       camera.position
         .copy(controls.target)
         .add(
-          new T.Vector3(Math.sin(angle), 0.68, Math.cos(angle))
+          new T.Vector3(Math.sin(angle), 0.2, Math.cos(angle))
             .normalize()
-            .multiplyScalar(distance),
+            .multiplyScalar(distance * 0.92),
         );
       key = "presentation";
       controls.enabled = false;

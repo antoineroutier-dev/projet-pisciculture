@@ -24,7 +24,6 @@ import { registerFeedbackProjector } from "./state/feedback";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as T from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import FarmMap from "./FarmMap";
 import { stepSchool, swimRotation } from "./swimming";
 import { animateFish, clearFishTextures, createFish } from "./fish3d";
@@ -33,6 +32,31 @@ import { type Pond, type SpeciesId } from "./game";
 import { paint } from "./world/palette";
 import type { FarmState } from "./world/artSelectors";
 import type { SceneMode } from "./world/types";
+/** Gradient sphere used once to bake soft, sky-coloured environment light. */
+function skyEnvironment() {
+  const scene = new T.Scene();
+  const geometry = new T.SphereGeometry(10, 32, 16),
+    position = geometry.getAttribute("position"),
+    colors = new Float32Array(position.count * 3),
+    zenith = new T.Color(paint("sky-zenith")),
+    horizon = new T.Color(paint("sky-horizon")),
+    ground = new T.Color(paint("ground-light")),
+    c = new T.Color();
+  for (let i = 0; i < position.count; i++) {
+    const h = position.getY(i) / 10;
+    if (h >= 0) c.copy(horizon).lerp(zenith, Math.pow(h, 0.6));
+    else c.copy(horizon).lerp(ground, Math.min(1, -h * 3));
+    colors.set([c.r, c.g, c.b], i * 3);
+  }
+  geometry.setAttribute("color", new T.BufferAttribute(colors, 3));
+  scene.add(
+    new T.Mesh(
+      geometry,
+      new T.MeshBasicMaterial({ vertexColors: true, side: T.BackSide }),
+    ),
+  );
+  return scene;
+}
 export default function FarmScene({
   ponds,
   development,
@@ -149,8 +173,9 @@ export default function FarmScene({
     );
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = T.PCFShadowMap;
-    renderer.toneMapping = T.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 0.94;
+    // Neutral mapping keeps the painted palette's hues instead of ACES's yellow shift.
+    renderer.toneMapping = T.NeutralToneMapping;
+    renderer.toneMappingExposure = 1;
     renderer.outputColorSpace = T.SRGBColorSpace;
     renderer.domElement.setAttribute("aria-label", t("m_1a5af6074a"));
     renderer.domElement.setAttribute("role", "img");
@@ -193,31 +218,34 @@ export default function FarmScene({
     const sky = new T.HemisphereLight(
       paint("sky-light"),
       paint("ground-light"),
-      1.05,
+      1.2,
     );
     scene.add(sky);
-    const sun = new T.DirectionalLight(paint("sun"), 2.5);
-    sun.position.set(-30, 50, 25);
+    const sun = new T.DirectionalLight(paint("sun"), 3);
+    sun.position.set(-50, 55, 30);
     sun.castShadow = true;
     sun.shadow.mapSize.set(
       window.innerWidth < 700 ? 1024 : 2048,
       window.innerWidth < 700 ? 1024 : 2048,
     );
-    sun.shadow.camera.left = -48;
-    sun.shadow.camera.right = 48;
-    sun.shadow.camera.top = 48;
-    sun.shadow.camera.bottom = -48;
-    sun.shadow.camera.far = 140;
-    sun.shadow.normalBias = 0.035;
-    sun.shadow.bias = -0.00012;
+    sun.shadow.camera.left = -56;
+    sun.shadow.camera.right = 56;
+    sun.shadow.camera.top = 56;
+    sun.shadow.camera.bottom = -56;
+    sun.shadow.camera.near = 10;
+    sun.shadow.camera.far = 200;
+    sun.shadow.normalBias = 0.09;
+    sun.shadow.bias = -0.0004;
+    sun.shadow.intensity = 0.82;
     scene.add(sun);
+    // Sky-tinted image lighting: reflections pick up the horizon, not a grey studio.
     const pmrem = new T.PMREMGenerator(renderer);
-    const room = new RoomEnvironment();
-    const environment = pmrem.fromScene(room, 0.04);
+    const room = skyEnvironment();
+    const environment = pmrem.fromScene(room, 0.03);
     scene.environment = environment.texture;
-    scene.environmentIntensity = 0.45;
+    scene.environmentIntensity = 0.55;
     disposeRenderCaches(renderer, room);
-    room.dispose();
+    disposeObject(room);
     pmrem.dispose();
     const farm = createFarm(latest.current);
     const decorations = createRewards(farm.root);
@@ -536,7 +564,8 @@ export default function FarmScene({
         reduced,
         camera.position.distanceTo(controls.target),
         QUALITY[quality].rain,
-        state.presentation ? 0.82 : undefined,
+        state.presentation ? 0.16 : undefined,
+        camera,
       );
       renderer.domElement.dataset.weather = JSON.stringify(conditions);
       renderer.domElement.dataset.life = JSON.stringify(life.diagnostics());
