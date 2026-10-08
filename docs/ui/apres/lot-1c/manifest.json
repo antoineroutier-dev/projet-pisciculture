@@ -1,0 +1,137 @@
+{
+  "totalBytes": 1596990,
+  "captures": [
+    {
+      "file": "docs/ui/apres/lot-1c/1440-project.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 126382
+    },
+    {
+      "file": "docs/ui/apres/lot-1c/1440-ponds.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 120539
+    },
+    {
+      "file": "docs/ui/apres/lot-1c/1440-logistics.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 127094
+    },
+    {
+      "file": "docs/ui/apres/lot-1c/1440-finance.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 119243
+    },
+    {
+      "file": "docs/ui/apres/lot-1c/1440-journal.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 128959
+    },
+    {
+      "file": "docs/ui/apres/lot-1c/1440-guide.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 130537
+    },
+    {
+      "file": "docs/ui/apres/lot-1c/1440-settings-save.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 67101
+    },
+    {
+      "file": "docs/ui/apres/lot-1c/1440-settings-display.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 51775
+    },
+    {
+      "file": "docs/ui/apres/lot-1c/1440-settings-150.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 61192
+    },
+    {
+      "file": "docs/ui/apres/lot-1c/1440-ponds-150.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 132501
+    },
+    {
+      "file": "docs/ui/apres/lot-1c/1440-stock.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 70430
+    },
+    {
+      "file": "docs/ui/apres/lot-1c/390-project.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 45540
+    },
+    {
+      "file": "docs/ui/apres/lot-1c/390-ponds.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 43782
+    },
+    {
+      "file": "docs/ui/apres/lot-1c/390-logistics.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 44854
+    },
+    {
+      "file": "docs/ui/apres/lot-1c/390-finance.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 41175
+    },
+    {
+      "file": "docs/ui/apres/lot-1c/390-journal.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 46378
+    },
+    {
+      "file": "docs/ui/apres/lot-1c/390-guide.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 44329
+    },
+    {
+      "file": "docs/ui/apres/lot-1c/390-settings-save.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 41486
+    },
+    {
+      "file": "docs/ui/apres/lot-1c/390-settings-display.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 26808
+    },
+    {
+      "file": "docs/ui/apres/lot-1c/390-settings-150.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 35729
+    },
+    {
+      "file": "docs/ui/apres/lot-1c/390-ponds-150.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 51524
+    },
+    {
+      "file": "docs/ui/apres/lot-1c/390-stock.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 39632
+    }
+  ]
+}

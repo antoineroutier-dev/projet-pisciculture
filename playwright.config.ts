@@ -20,11 +20,14 @@ export default defineConfig({
         "--use-angle=swiftshader",
       ],
     },
-    trace: "retain-on-failure",
+    // Recording every intermediate 3D frame is expensive under SwiftShader.
+    // Keep failure screenshots by default; opt into full traces when investigating.
+    trace: process.env.UI_TRACE === "1" ? "retain-on-failure" : "off",
+    screenshot: "only-on-failure",
   },
   webServer: {
-    command: "npm run dev -- --port 4173 --strictPort",
+    command: "npm run build && npm run preview -- --port 4173 --strictPort",
     url: "http://127.0.0.1:4173",
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
   },
 });

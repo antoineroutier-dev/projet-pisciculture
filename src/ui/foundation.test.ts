@@ -1,17 +1,24 @@
 import { expect, it } from "vitest";
-import { readFileSync, readdirSync } from "node:fs";
-
-it("maintient les nouvelles couleurs dans les jetons et interdit les tailles px dispersées", () => {
-  const directory = new URL(".", import.meta.url);
-  const css = readdirSync(directory).filter(f => f.endsWith(".css"));
-  for (const name of css.filter(f => f !== "tokens.css")) {
-    const source = readFileSync(new URL(name, directory), "utf8");
-    expect(source, name).not.toMatch(/#[\da-f]{3,8}\b/i);
-    expect(source, name).not.toContain("!important");
+import { readFileSync, readdirSync, existsSync } from "node:fs";
+import path from "node:path";
+it("centralise la palette UI et supprime les trois feuilles concurrentes", () => {
+  const root = path.resolve("src");
+  function scan(dir: string) {
+    for (const file of readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, file.name);
+      if (file.isDirectory()) scan(full);
+      else if (file.name.endsWith(".css") && file.name !== "tokens.css") {
+        const source = readFileSync(full, "utf8");
+        expect(source, full).not.toMatch(/#[\da-f]{3,8}\b/i);
+        expect(source, full).not.toContain("!important");
+        expect(source, full).not.toMatch(/font-size:\s*\d+(?:\.\d+)?px/);
+      } else if (/\.tsx?$/.test(file.name) && !file.name.endsWith(".test.ts") && file.name !== "game.ts") {
+        // The three immutable species identity colors in game.ts are the only exception.
+        expect(readFileSync(full, "utf8"), full).not.toMatch(/#[\da-f]{3,8}\b/i);
+      }
+    }
   }
-  for (const name of ["styles.css", "realism.css", "progression.css"]) {
-    const source = readFileSync(new URL(`../${name}`, directory), "utf8");
-    expect(source, name).not.toMatch(/font-size:\s*\d+(?:\.\d+)?px/);
-    expect(source, name).not.toMatch(/font:[^;]*\d+(?:\.\d+)?px/);
-  }
+  scan(root);
+  for (const file of ["styles.css", "realism.css", "progression.css"])
+    expect(existsSync(path.join(root, file))).toBe(false);
 });

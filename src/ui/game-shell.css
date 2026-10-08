@@ -1,0 +1,672 @@
+/* Persistent world, HUD, dock and drawer placement. */
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.game-shell {
+  position: fixed;
+  inset: 0;
+  height: 100dvh;
+  isolation: isolate;
+  --hud-bottom: 104px;
+  --dock-top: 102px;
+}
+.game-shell .game-world {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  margin: 0;
+  max-width: none;
+}
+.world-scene,
+.world-canvas,
+.world-canvas > canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.world-canvas[hidden] {
+  display: none;
+}
+.world-fallback {
+  position: absolute;
+  inset: var(--hud-bottom) 0 var(--dock-top);
+}
+.world-fallback > p {
+  position: absolute;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface-raised);
+  color: var(--ink);
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  z-index: 1;
+  font-size: var(--text-small);
+  width: max-content;
+  max-width: 90%;
+  text-align: center;
+}
+.world-loading {
+  position: absolute;
+  inset: 40% 20%;
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+  background: var(--surface-raised);
+  border-radius: var(--radius);
+}
+.game-hud,
+.goal-hud,
+.game-dock,
+.world-controls,
+.management-panel,
+.fish-inspector {
+  background: var(--surface-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-panel);
+  color: var(--ink);
+}
+.game-hud {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 8px 16px;
+  z-index: 5;
+}
+.hud-date {
+  display: grid;
+  gap: 2px;
+}
+.hud-date strong {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.hud-date span {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+}
+.game-hud .hud-resources {
+  display: flex;
+  gap: 32px;
+}
+.game-hud .hud-resources > div {
+  display: grid;
+  gap: 0;
+}
+.game-hud .hud-resources strong {
+  color: var(--ink);
+  font-size: var(--text-lg);
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.game-hud .hud-resources > div > span,
+.game-hud .hud-resources > div > small {
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+  line-height: 1.3;
+}
+.hud-clock,
+.hud-utilities {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.game-hud button,
+.world-controls button,
+.goal-heading button,
+.management-heading button {
+  min-width: 40px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-raised);
+  color: var(--ink);
+  padding: 8px;
+  font-size: var(--text-small);
+}
+.game-hud button:hover,
+.world-controls button:hover {
+  background: var(--surface-muted);
+}
+.hud-storage-error {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: min(420px, 100%);
+  padding: 12px;
+  border: 2px solid var(--danger);
+  background: var(--surface-raised);
+  color: var(--danger);
+  font-size: var(--text-small);
+}
+.goal-hud {
+  position: absolute;
+  top: var(--hud-bottom);
+  left: 16px;
+  width: 308px;
+  padding: 12px 16px 8px;
+  z-index: 4;
+}
+.goal-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.goal-heading > span {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-muted);
+}
+.goal-heading button {
+  min-width: 32px;
+  min-height: 32px;
+  padding: 4px;
+  border: 0;
+  background: transparent;
+}
+.goal-hud h2 {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 4px 0 8px;
+}
+.goal-hud > .goal-description {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: var(--text-small);
+  line-height: 1.4;
+  margin: 0 0 12px;
+}
+.goal-hud .goal-action {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: var(--text-small);
+  text-align: left;
+}
+.goal-details-toggle {
+  display: block;
+  padding: 6px 0 0;
+  min-height: 28px;
+  border: 0;
+  background: transparent;
+  color: var(--primary);
+  text-decoration: underline;
+  font-size: var(--text-caption);
+}
+.goal-details {
+  max-height: calc(100dvh - 460px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 12px 4px;
+  font-size: var(--text-small);
+}
+.goal-details ol {
+  padding: 12px 0 0;
+  margin: 0;
+  list-style: none;
+}
+.goal-details li {
+  padding: 4px;
+}
+.goal-details [aria-current="step"] {
+  border-inline-start: 3px solid var(--primary);
+  font-weight: 700;
+}
+.goal-urgent {
+  border: 2px solid var(--danger);
+}
+.goal-urgent .goal-heading > span {
+  color: var(--danger);
+}
+.game-dock {
+  width: min(max(720px, 45rem), calc(100vw - 32px));
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 4px;
+  padding: 6px;
+}
+.game-dock button {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 8px;
+  row-gap: 0;
+  text-align: left;
+  min-width: 0;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink);
+  font-size: var(--text-small);
+}
+.game-dock svg {
+  grid-row: span 2;
+}
+.game-dock kbd {
+  font-family: var(--font-ui);
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+}
+.game-dock [aria-expanded="true"] {
+  background: var(--primary);
+  color: var(--on-primary);
+  border-color: var(--primary);
+}
+.game-dock [aria-expanded="true"] kbd {
+  color: var(--on-primary);
+}
+.game-dock button:hover {
+  outline: 1px solid var(--primary);
+}
+.world-controls {
+  position: absolute;
+  left: 16px;
+  bottom: var(--dock-top);
+  display: flex;
+  gap: 4px;
+  padding: 6px;
+  z-index: 2;
+}
+.world-controls select,
+.fish-inspector select,
+.pond-selector select {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px;
+  color: var(--ink);
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: var(--text-small);
+}
+.world-controls > p {
+  position: absolute;
+  bottom: 100%;
+  background: var(--surface-raised);
+  padding: 12px;
+  width: 100%;
+  border-radius: var(--radius);
+  font-size: var(--text-small);
+}
+.world-controls button[aria-pressed="true"] {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+.management-panel,
+.fish-inspector {
+  position: absolute;
+  top: var(--hud-bottom);
+  right: 16px;
+  bottom: var(--dock-top);
+  width: 412px;
+  z-index: 3;
+}
+.management-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.management-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-raised);
+}
+.management-heading h2 {
+  font-size: var(--text-xl);
+  font-weight: 600;
+}
+.management-content {
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 16px;
+  min-height: 0;
+  scrollbar-gutter: stable;
+}
+.management-content :is(button, a, input, select, summary, [tabindex]) {
+  scroll-margin-block: 16px;
+}
+.management-content .pond-selector {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 16px;
+  font-size: var(--text-small);
+}
+.management-content .market-prices {
+  margin-top: 16px;
+}
+.management-content .market-species {
+  margin-top: 16px;
+}
+.management-content .market-species-card .species-art {
+  position: relative;
+  height: 112px;
+  width: 100%;
+  margin: 0;
+}
+.fish-inspector {
+  padding: 16px;
+  bottom: auto;
+  max-height: calc(100dvh - var(--hud-bottom) - var(--dock-top));
+  overflow: auto;
+  font-size: var(--text-small);
+}
+.fish-inspector h2 {
+  font-size: var(--text-xl);
+  margin-top: 16px;
+}
+.fish-inspector label {
+  display: grid;
+  gap: 6px;
+}
+.fish-inspector p {
+  margin: 12px 0;
+}
+.fish-inspector details .fish-art {
+  width: 100%;
+}
+.toast {
+  left: 50%;
+  right: auto;
+  bottom: 104px;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: min(520px, calc(100vw - 32px));
+  z-index: 30;
+  font-size: var(--text-small);
+}
+@media (max-width: 1250px) and (min-width: 681px) {
+  .game-hud {
+    gap: 8px;
+    padding-inline: 12px;
+  }
+  .game-hud .hud-resources {
+    gap: 16px;
+  }
+  .hud-clock button {
+    gap: 4px;
+  }
+}
+@media (max-width: 680px) {
+  .game-shell {
+    --hud-bottom: 152px;
+    --dock-top: 116px;
+  }
+  .game-hud {
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    min-height: 136px;
+    padding: 8px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 6px 8px;
+  }
+  .hud-date strong {
+    font-size: var(--text-body);
+  }
+  .hud-date span {
+    gap: 4px;
+  }
+  .game-hud .hud-resources {
+    grid-row: 2;
+    grid-column: 1/-1;
+    gap: 24px;
+  }
+  .game-hud .hud-resources > div {
+    grid-template-columns: auto 1fr;
+    column-gap: 8px;
+    align-items: baseline;
+  }
+  .game-hud .hud-resources strong {
+    grid-row: 1 / span 2;
+    grid-column: 2;
+    font-size: var(--text-lg);
+  }
+  .game-hud .hud-resources small {
+    grid-column: 1/-1;
+  }
+  .hud-clock {
+    grid-row: 3;
+    grid-column: 1/-1;
+    justify-content: space-between;
+  }
+  .hud-clock button {
+    min-height: 32px;
+    padding: 4px 8px;
+    flex: 1;
+  }
+  .hud-utilities {
+    grid-row: 1;
+    grid-column: 2;
+    gap: 2px;
+  }
+  .hud-utilities button {
+    min-width: 32px;
+    min-height: 32px;
+    padding: 4px;
+  }
+  .hud-clock button:last-child {
+    flex: 1.4;
+    white-space: normal;
+  }
+  .goal-hud {
+    left: 8px;
+    right: 8px;
+    width: auto;
+    padding: 8px 12px 4px;
+  }
+  .goal-hud h2 {
+    font-size: var(--text-body);
+    margin: 0 0 4px;
+  }
+  .goal-hud > .goal-description {
+    font-size: var(--text-caption);
+    margin-bottom: 6px;
+  }
+  .goal-heading {
+    min-height: 28px;
+  }
+  .goal-heading button {
+    min-height: 28px;
+  }
+  .goal-details {
+    max-height: 180px;
+    background: var(--surface-raised);
+  }
+  .game-dock {
+    width: auto;
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+    transform: none;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2px;
+    padding: 4px;
+  }
+  .game-dock button {
+    min-width: 0;
+    min-height: 44px;
+    justify-content: center;
+    grid-template-columns: auto auto;
+    padding: 6px;
+    gap: 4px;
+  }
+  .game-dock button svg {
+    grid-row: auto;
+    width: 18px;
+  }
+  .game-dock kbd {
+    display: none;
+  }
+  .world-controls {
+    left: 8px;
+    padding: 4px;
+  }
+  .world-controls[data-mobile-hidden="true"] {
+    display: none;
+  }
+  .management-panel,
+  .fish-inspector {
+    top: var(--goal-bottom, 352px);
+    left: 8px;
+    right: 8px;
+    width: auto;
+    bottom: var(--dock-top);
+  }
+  .management-heading {
+    padding: 4px 12px;
+  }
+  .management-heading h2 {
+    font-size: var(--text-lg);
+  }
+  .management-heading button {
+    min-height: 36px;
+  }
+  .management-content {
+    padding: 12px;
+  }
+  .fish-inspector {
+    top: auto;
+    height: 180px;
+    max-height: none;
+    bottom: calc(var(--dock-top) + 64px);
+  }
+  .goal-hud:has(.goal-details) {
+    max-height: 240px;
+    overflow: auto;
+  }
+  .toast {
+    bottom: 116px;
+    padding: 12px;
+  }
+  .world-fallback {
+    inset: var(--goal-bottom, 352px) 8px 172px;
+  }
+  .world-fallback > p {
+    bottom: 0;
+    font-size: var(--text-caption);
+  }
+  .world-fallback .map-name {
+    padding: 3px 4px;
+  }
+}
+@media (max-height: 720px) and (min-width: 681px) {
+  .goal-details {
+    max-height: 160px;
+  }
+}
+
+.game-hud meter {
+  width: 36px;
+  height: 8px;
+  vertical-align: middle;
+  accent-color: var(--success);
+}
+.game-hud meter::-webkit-meter-bar {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+}
+.game-hud meter::-webkit-meter-optimum-value {
+  background: var(--success);
+}
+
+/* The same physical screen remains usable when text is enlarged. */
+html[data-scale="130"] .game-hud,
+html[data-scale="135"] .game-hud,
+html[data-scale="140"] .game-hud,
+html[data-scale="145"] .game-hud,
+html[data-scale="150"] .game-hud {
+  flex-wrap: wrap;
+}
+@media (max-width: 680px) {
+  .game-hud .hud-resources {
+    gap: 12px;
+    justify-content: space-between;
+  }
+  .game-hud .hud-resources > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .game-hud .hud-resources strong {
+    font-size: var(--text-lg);
+  }
+  .game-hud .hud-resources small {
+    max-width: 170px;
+  }
+  .goal-hud > .goal-description {
+    display: block;
+    font-size: var(--text-caption);
+  }
+  .game-dock button {
+    grid-template-columns: minmax(0, 1fr);
+    text-align: center;
+  }
+  .game-dock button svg {
+    display: none;
+  }
+  .goal-details {
+    max-height: 130px;
+  }
+  .management-panel {
+    min-height: 140px;
+  }
+  .hud-date strong {
+    white-space: normal;
+  }
+  .world-controls select {
+    max-width: 170px;
+  }
+}

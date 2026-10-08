@@ -1,0 +1,41 @@
+{
+  "totalBytes": 412794,
+  "captures": [
+    {
+      "file": "docs/ui/apres/lot-3a/1440-retour-analyse.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 115817
+    },
+    {
+      "file": "docs/ui/apres/lot-3a/1440-audio.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 52711
+    },
+    {
+      "file": "docs/ui/apres/lot-3a/1440-retour-bassin.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 129052
+    },
+    {
+      "file": "docs/ui/apres/lot-3a/390-retour-analyse.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 38610
+    },
+    {
+      "file": "docs/ui/apres/lot-3a/390-audio.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 28312
+    },
+    {
+      "file": "docs/ui/apres/lot-3a/390-retour-bassin.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 48292
+    }
+  ]
+}

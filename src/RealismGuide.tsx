@@ -1,3 +1,17 @@
+import { Button } from "./ui/Button";
+import { number } from "./ui/format";
+import { t, displayText } from "./i18n";
+import { useControlPreferences } from "./state/preferences";
+import { bindingLabel } from "./controls/bindings";
+import { Card, Tabs } from "./ui/Primitives";
+import { useState } from "react";
+import { SpeciesPortrait } from "./world/SpeciesPortrait";
+import { SPECIES } from "./game";
+import {
+  SCIENCE_TERMS,
+  scienceText,
+  type ScienceTerm,
+} from "./ui/ScientificHelp";
 import {
   BookOpen,
   Droplets,
@@ -11,124 +25,233 @@ import {
   Eye,
   Thermometer,
 } from "lucide-react";
-export default function RealismGuide() {
+export default function RealismGuide({
+  replayTutorial,
+  achievements,
+}: {
+  replayTutorial: () => void;
+  achievements: () => void;
+}) {
+  const { bindings } = useControlPreferences();
+  const [tab, setTab] = useState<"practice" | "species" | "water" | "model">(
+    "practice",
+  );
   const sections = [
     {
       icon: <BookOpen />,
-      title: "Votre première décision : faire analyser l’eau",
-      text: "Ouvrez Mon projet et suivez la prochaine action. Le laboratoire répond après 2 jours, puis vous choisissez une filière adaptée au site. Lancez le chantier et préparez le magasin d’aliments. L’écloserie livre les juvéniles en 4 jours ; le fabricant livre les aliments en 2 jours. Commandez avant d’en avoir besoin.",
+      title: t("m_5112d4a651"),
+      text: t("m_d7d099864d"),
     },
     {
       icon: <Landmark />,
-      title: "Une récolte n’est pas encore une vente payée",
-      text: "À 80 % du calibre commercial, réservez un client pour les 30 prochains jours. Une chambre froide opérationnelle est obligatoire. Récoltez au calibre et expédiez rapidement : le stock froid se conserve 3 jours dans ce scénario. La coopérative prend les poissons entiers et règle 7 jours après livraison. Les poissonneries demandent un atelier : 1 jour de préparation, 85 % de masse vendable, puis paiement à 3 jours. Le transport prend 1 jour. Les lots périmés deviennent des pertes.",
+      title: t("m_0c9e33b461"),
+      text: t("m_1e4759d9fa"),
     },
     {
       icon: <Clock3 />,
-      title: "Des mois, pas des minutes biologiques",
-      text: "Une journée de jeu contient 24 pas horaires de calcul de l’eau. La croissance de 50 g à la taille de vente prend des mois. Les vitesses ×1, ×3, ×12 et ×60 accélèrent seulement l’attente. Vous démarrez sans bassin aménagé. L’avance guidée s’arrête aux réceptions, aux risques et aux étapes de vente. Il n’y a pas de progression hors ligne.",
+      title: t("m_c37a9fbb22"),
+      text: t("m_917d62618d"),
     },
     {
       icon: <Thermometer />,
-      title: "À chaque espèce, son installation",
-      text: "La truite occupe les bassins alimentés par la source fraîche ; la carpe, l’étang de terre ; le tilapia, un circuit recirculé chauffé à 27 °C sous serre. Le jeu refuse les introductions incompatibles. La température de l’air n’est pas celle de l’eau : chaque installation possède une inertie thermique.",
+      title: t("m_c205c2a366"),
+      text: t("m_8b9759158f"),
     },
     {
       icon: <Package />,
-      title: "La ration devient de la biomasse",
-      text: "Programmer une ration réserve des aliments pour les prochaines 24 h. La recommandation dépend du poids, de l’espèce, de la température et de l’eau. La croissance provient de l’aliment consommé, divisé par un FCR nominal, puis limité par les conditions. La distribution automatique recalcule chaque journée. Les excédents deviennent une charge polluante.",
+      title: t("m_07866c7ebd"),
+      text: t("m_c6c50a2ddd"),
     },
     {
       icon: <Droplets />,
-      title: "Lire l’eau dans les bonnes unités",
-      text: "L’oxygène est exprimé en mg/L ; le débit en L/s ; la densité en kg/m³. TAN désigne l’azote ammoniacal total en mg N/L. NH₃-N désigne la fraction non ionisée, calculée avec le pH et la température : les deux mesures ne sont pas interchangeables. Le pH est supposé tamponné dans ce scénario.",
+      title: t("m_924e593b48"),
+      text: t("m_b6d976b815"),
     },
     {
       icon: <ShieldCheck />,
-      title: "Prévenir avant de corriger",
-      text: "Augmentez le débit et installez une aération si l’oxygène baisse. Un biofiltre met 30 jours à atteindre sa capacité simulée. Retirer les boues et renouveler 30 % de l’eau réduit la charge azotée mais ne guérit pas instantanément le lot. L’indice de santé n’est pas un diagnostic vétérinaire ; aucune maladie ni médicament n’est simulé.",
+      title: t("m_e341545f97"),
+      text: t("m_2d3cf29831"),
     },
     {
       icon: <Fish />,
-      title: "Suivre les lots et respecter les délais",
-      text: "Les nouveaux juvéniles sont considérés acclimatés à la livraison puis observés pendant 14 jours. Cette observation dans le bassin ne remplace pas une véritable quarantaine isolée. Après récolte, le jeu réserve 7 jours au nettoyage et au vide sanitaire. Les bassins de source demandent 14 jours de chantier, l’étang 21 jours et la serre 45 jours avec mise en service.",
+      title: t("m_223145f9e6"),
+      text: t("m_cca898ca68"),
     },
     {
       icon: <Landmark />,
-      title: "Une vraie contrainte de budget",
-      text: "Le bilan distingue 18 €/jour de travail partiel dès le premier bassin, puis 10 €/bassin supplémentaire, 2,50 €/bassin/jour d’entretien, l’électricité à 0,22 €/kWh et une redevance simplifiée d’eau. Chauffage et pompes pèsent sur les coûts. Ces prix, investissements et salaires sont des hypothèses de scénario, pas des devis ou cours réels. Les petites primes sont des aides pédagogiques ; le mode expert les supprime.",
+      title: t("m_deab627888"),
+      text: t("m_da1348360d"),
     },
     {
       icon: <Eye />,
-      title: "Observer les espèces",
-      text: "La truite a une bande rosée, des points noirs et une nageoire adipeuse. La carpe porte de grandes écailles bronze et des barbillons. Le tilapia a une dorsale épineuse et une queue striée. La carte représente les parcelles encore vides. L’illustration d’ambiance montre une ferme achevée ; la visite 3D montre l’état actuel des bassins. La vue Poissons permet de tourner les modèles et de consulter une planche artistique réaliste. Les poissons de la ferme sont un échantillon visuel ; le mode observation accentue la transparence de l’eau.",
+      title: t("m_a675889d4c"),
+      text: t("m_561ccecf96"),
     },
   ];
+  const article = (i: number) => (
+    <details className="guide-article" key={sections[i].title}>
+      <summary>
+        {sections[i].icon}
+        <span>{displayText(sections[i].title)}</span>
+      </summary>
+      <p>{displayText(sections[i].text)}</p>
+      {i === 2 && (
+        <p className="hint">
+          {displayText(bindingLabel(bindings.toggle))}
+          {" " + t("m_3bbb473b11")}
+          {displayText(" ")}
+          {displayText(
+            [
+              bindings.pause,
+              bindings.speed1,
+              bindings.speed2,
+              bindings.speed4,
+              bindings.speed8,
+            ]
+              .map(bindingLabel)
+              .join(" / "),
+          )}
+          {displayText(" ")}
+          {t("m_b50b2c0449")}
+        </p>
+      )}
+    </details>
+  );
   return (
     <div className="guide-content">
-      <div className="guide-intro">
-        <BookOpen size={30} />
-        <div>
-          <span className="eyebrow">LE CARNET DE TERRAIN · MODÈLE V3</span>
-          <h2>Comprendre avant d’intervenir.</h2>
-          <p>
-            Des mesures concrètes, des délais biologiques et des décisions
-            expliquées.
-          </p>
-        </div>
-      </div>
-      <div className="guide-grid">
-        {sections.map((s) => (
-          <article className="guide-card" key={s.title}>
-            <span className="guide-icon">{s.icon}</span>
-            <h3>{s.title}</h3>
-            <p>{s.text}</p>
-          </article>
-        ))}
-      </div>
-      <section className="research-card">
-        <span className="section-kicker">DOCUMENTATION & TRANSPARENCE</span>
-        <h2>Sur quoi repose la simulation ?</h2>
-        <p>
-          La documentation des logiciels scientifiques respirometry et marelac a
-          été consultée pour les unités d’oxygène, le renouvellement d’eau, la
-          dépendance thermique de la respiration et les formes de l’azote. Les
-          documents FAO de conduite d’élevage sont identifiés mais leur accès
-          réseau reste à débloquer. Les seuils d’élevage et les coefficients
-          économiques sont donc des hypothèses de scénario, à confirmer avec des
-          références métier et un pisciculteur.
-        </p>
-        <div className="research-links">
-          <a
-            href="https://github.com/cran/respirometry/blob/7bca952ba7792134d6c11c6afbe48185c69ce5da/R/flush_water.R"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Renouvellement d’eau <ExternalLink size={12} />
-          </a>
-          <a
-            href="https://github.com/cran/respirometry/blob/7bca952ba7792134d6c11c6afbe48185c69ce5da/R/Q10.R"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Température & respiration <ExternalLink size={12} />
-          </a>
-          <a
-            href="https://www.fao.org/4/i2125e/i2125e.pdf"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Manuel FAO · référence à consulter <ExternalLink size={12} />
-          </a>
-        </div>
-        <p className="simulation-note">
-          <Info size={17} /> Les maladies, le tri de tailles, la reproduction,
-          les autorisations de prélèvement, les effets des effluents sur le
-          milieu et la TVA ne sont pas simulés. La chaîne du froid et la
-          préparation sont simplifiées. Ce modèle pédagogique n’est pas un outil
-          de dimensionnement professionnel.
-        </p>
-      </section>
+      <Tabs
+        label={t("m_0a58715e11")}
+        value={tab}
+        onChange={setTab}
+        items={[
+          { id: "practice", label: t("m_460ad6a124") },
+          { id: "species", label: t("m_351f789647") },
+          { id: "water", label: t("m_3af905054f") },
+          { id: "model", label: t("m_37c07ac587") },
+        ]}
+      >
+        {tab === "practice" && (
+          <div className="guide-articles">
+            <div className="button-row">
+              <Button tone="secondary" onClick={replayTutorial}>
+                {t("tutorial.replay")}
+              </Button>
+              <Button tone="secondary" onClick={achievements}>
+                {t("achievements.title")}
+              </Button>
+            </div>
+            <svg
+              className="guide-illustration"
+              viewBox="0 0 320 90"
+              role="img"
+              aria-label={t("m_701862447b")}
+            >
+              <path
+                d="M0 75Q45 25 90 65T190 50T320 60V90H0Z"
+                fill="var(--surface-muted)"
+              />
+              <path
+                d="M10 60Q90 80 140 62T300 62"
+                stroke="var(--water)"
+                strokeWidth="6"
+                fill="none"
+              />
+              <path
+                d="M30 48V25H84V52M156 52V20H208V52M251 49V15H297V53"
+                fill="var(--surface-raised)"
+                stroke="var(--primary)"
+                strokeWidth="3"
+              />
+            </svg>
+            {[0, 1, 2, 6, 7, 8].map(article)}
+          </div>
+        )}
+        {tab === "species" && (
+          <div className="guide-articles">
+            {Object.values(SPECIES).map((s) => (
+              <Card className="guide-species" key={s.id}>
+                <SpeciesPortrait species={s.id} />
+                <h3>{displayText(s.name)}</h3>
+                <p>
+                  {displayText(
+                    s.id === "trout"
+                      ? t("m_e902fe7a25")
+                      : s.id === "carp"
+                        ? t("m_b2170e7736")
+                        : t("m_f63587739a"),
+                  )}
+                </p>
+                <small>
+                  {displayText(s.temperature.join("–"))}
+                  {" " + t("m_07b8d85717") + " "}
+                  {number(s.minOxygen, 2)}
+                  {" " + t("m_cf6796e24b") + " "}
+                  {displayText(number(s.fcr, 2))}
+                </small>
+              </Card>
+            ))}
+            {[3, 9].map(article)}
+          </div>
+        )}
+        {tab === "water" && (
+          <div className="guide-articles">
+            <p>{t("m_87dc76ff11")}</p>
+            {(Object.keys(SCIENCE_TERMS) as ScienceTerm[]).map((term) => (
+              <details className="guide-article" key={term}>
+                <summary>
+                  <Droplets size={20} />
+                  <span>{displayText(SCIENCE_TERMS[term].label)}</span>
+                </summary>
+                <p>{displayText(scienceText(term))}</p>
+              </details>
+            ))}
+            {[4, 5].map(article)}
+          </div>
+        )}
+        {tab === "model" && (
+          <>
+            <section className="research-card">
+              <span className="section-kicker">{t("m_cc7d18afc7")}</span>
+              <h2>{t("m_37c07ac587")}</h2>
+              <p>{t("m_24a722c373")}</p>
+              <p>{t("m_641c33eca3")}</p>
+              <p>{t("m_688934e082")}</p>
+              <p>{t("m_8e159b5e0a")}</p>
+              <div className="research-links">
+                <a
+                  href="https://github.com/cran/respirometry/blob/7bca952ba7792134d6c11c6afbe48185c69ce5da/R/flush_water.R"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {t("m_6c3fa61b4f") + " "}
+                  <ExternalLink size={12} />
+                </a>
+                <a
+                  href="https://github.com/cran/respirometry/blob/7bca952ba7792134d6c11c6afbe48185c69ce5da/R/Q10.R"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {t("m_83d6f4dd7d") + " "}
+                  <ExternalLink size={12} />
+                </a>
+                <a
+                  href="https://www.fao.org/4/i2125e/i2125e.pdf"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {t("m_7ac8c26de3") + " "}
+                  <ExternalLink size={12} />
+                </a>
+              </div>
+              <p className="simulation-note">
+                <Info size={17} />
+                {" " + t("m_faea88c62d")}
+              </p>
+            </section>
+            <p className="model-limit">{t("m_f23b0d2cdb")}</p>
+          </>
+        )}
+      </Tabs>
     </div>
   );
 }

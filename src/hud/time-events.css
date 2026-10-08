@@ -1,0 +1,123 @@
+.time-speeds {
+  display: flex;
+  gap: 2px;
+}
+.game-hud .hud-clock {
+  gap: 6px;
+}
+.game-hud .hud-clock button {
+  min-width: 36px;
+  min-height: 36px;
+  padding: 6px;
+  flex: none;
+}
+.hud-clock [aria-pressed="true"] {
+  background: var(--primary);
+  color: var(--on-primary);
+  border-color: var(--primary);
+}
+.game-hud .hud-clock [aria-pressed="true"]:hover {
+  background: var(--primary-hover);
+}
+.next-day-control {
+  position: relative;
+}
+.next-day-control > svg:last-of-type {
+  position: relative;
+}
+.day-progress {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  inset: 2px;
+  transform: rotate(-90deg);
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 2;
+}
+.day-progress circle:last-child {
+  stroke: var(--primary);
+}
+.event-illustration {
+  position: relative;
+  height: 128px;
+  border-radius: var(--radius);
+  background: var(--surface-muted);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  color: var(--primary);
+}
+.event-illustration > svg:first-child {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: var(--accent);
+}
+.event-illustration > svg:first-child path:nth-child(2) {
+  fill: none;
+  stroke: var(--water);
+  stroke-width: 4;
+}
+.event-illustration > svg:last-child {
+  position: relative;
+  filter: drop-shadow(0 2px 2px var(--surface));
+}
+.event-leaf {
+  fill: var(--warning);
+}
+.event-celebration .event-leaf {
+  animation: event-drift 1.4s ease-out both;
+}
+.event-kind {
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+  margin: 16px 0 8px;
+}
+.event-card > p:not(.event-kind) {
+  font-size: var(--text-body);
+  margin-bottom: 24px;
+}
+.event-alert .event-kind {
+  color: var(--danger);
+  font-weight: 600;
+}
+.event-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.event-actions button {
+  flex: 1;
+  min-width: 140px;
+}
+@keyframes event-drift {
+  from {
+    transform: translateY(-22px) rotate(0deg);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(18px) rotate(12deg);
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .event-celebration .event-leaf {
+    animation: none;
+  }
+}
+html[data-motion="reduce"] .event-celebration .event-leaf {
+  animation: none;
+}
+@media (max-width: 680px) {
+  .game-hud .hud-clock {
+    justify-content: space-between;
+  }
+  .time-speeds {
+    flex: 1;
+  }
+  .game-hud .time-speeds button {
+    flex: 1;
+  }
+}

@@ -1,0 +1,2344 @@
+{
+  "stats": {
+    "startTime": "2026-10-07T16:24:21.834Z",
+    "duration": 624042.1649999999,
+    "expected": 32,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "portableBytes": 4755521,
+  "captureBytes": 1596990,
+  "captureCount": 22,
+  "minimumFontPx": 12,
+  "typographyCombinations": 210,
+  "scaleCombinations": 36,
+  "minimumCanvasRatio": 1,
+  "minimumUnobscuredWorldRatioPanelsClosed": 0.76471142578125,
+  "records": [
+    {
+      "title": "3D : ferme, bassin, bâtiments et identification des trois espèces",
+      "status": "passed",
+      "durationMs": 41321,
+      "attachments": []
+    },
+    {
+      "title": "import, export, mode expert et protection de sauvegarde corrompue",
+      "status": "passed",
+      "durationMs": 6846,
+      "attachments": []
+    },
+    {
+      "title": "migration automatique V1 conserve le fichier original",
+      "status": "passed",
+      "durationMs": 1076,
+      "attachments": []
+    },
+    {
+      "title": "horloge : vitesse ×60, fenêtre de gestion et pause",
+      "status": "passed",
+      "durationMs": 2585,
+      "attachments": []
+    },
+    {
+      "title": "sans WebGL : la carte et la gestion restent disponibles",
+      "status": "passed",
+      "durationMs": 4415,
+      "attachments": []
+    },
+    {
+      "title": "mobile et accessibilité des pages principales",
+      "status": "passed",
+      "durationMs": 13898,
+      "attachments": []
+    },
+    {
+      "title": "nouvelle partie guidée : terrain vide jusqu’au premier règlement, uniquement par les commandes du jeu",
+      "status": "passed",
+      "durationMs": 20570,
+      "attachments": []
+    },
+    {
+      "title": "migration V2 préserve la partie et propose explicitement le nouveau départ",
+      "status": "passed",
+      "durationMs": 1561,
+      "attachments": []
+    },
+    {
+      "title": "1a : du terrain vide au paiement, uniquement au clavier en 1280×800",
+      "status": "passed",
+      "durationMs": 34696,
+      "attachments": [
+        {
+          "name": "keyboard-cycle",
+          "value": {
+            "day": 192,
+            "paid": 1,
+            "soldKg": 453.989,
+            "mortality": 0,
+            "money": 40075.78,
+            "pointerEvents": 0,
+            "iterations": 28
+          }
+        }
+      ]
+    },
+    {
+      "title": "lot 0 : HUD, portraits, ration et clavier à 1920×1080",
+      "status": "passed",
+      "durationMs": 6424,
+      "attachments": [
+        {
+          "name": "measurements",
+          "value": {
+            "width": 1920,
+            "height": 1080,
+            "axeViolations": 0,
+            "externalRequests": 0
+          }
+        }
+      ]
+    },
+    {
+      "title": "lot 0 : HUD, portraits, ration et clavier à 1440×900",
+      "status": "passed",
+      "durationMs": 4476,
+      "attachments": [
+        {
+          "name": "measurements",
+          "value": {
+            "width": 1440,
+            "height": 900,
+            "axeViolations": 0,
+            "externalRequests": 0
+          }
+        }
+      ]
+    },
+    {
+      "title": "lot 0 : HUD, portraits, ration et clavier à 1280×800",
+      "status": "passed",
+      "durationMs": 4139,
+      "attachments": [
+        {
+          "name": "measurements",
+          "value": {
+            "width": 1280,
+            "height": 800,
+            "axeViolations": 0,
+            "externalRequests": 0
+          }
+        }
+      ]
+    },
+    {
+      "title": "lot 0 : HUD, portraits, ration et clavier à 1280×720",
+      "status": "passed",
+      "durationMs": 4455,
+      "attachments": [
+        {
+          "name": "measurements",
+          "value": {
+            "width": 1280,
+            "height": 720,
+            "axeViolations": 0,
+            "externalRequests": 0
+          }
+        }
+      ]
+    },
+    {
+      "title": "lot 0 : HUD, portraits, ration et clavier à 390×844",
+      "status": "passed",
+      "durationMs": 3145,
+      "attachments": [
+        {
+          "name": "measurements",
+          "value": {
+            "width": 390,
+            "height": 844,
+            "axeViolations": 0,
+            "externalRequests": 0
+          }
+        }
+      ]
+    },
+    {
+      "title": "lot 0 : portable autonome, polices et portraits hors ligne, budget 15 Mo",
+      "status": "passed",
+      "durationMs": 26297,
+      "attachments": []
+    },
+    {
+      "title": "1a : typographie des sept étapes et six vues en 1920×1080",
+      "status": "passed",
+      "durationMs": 31732,
+      "attachments": [
+        {
+          "name": "font-measures",
+          "value": [
+            {
+              "state": "terrain-vide",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "chantier",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "chantier",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "chantier",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "chantier",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "chantier",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "chantier",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "elevage",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "elevage",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "elevage",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "elevage",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "elevage",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "elevage",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "expedition",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "expedition",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "expedition",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "expedition",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "expedition",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "expedition",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1920
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "1a : typographie des sept étapes et six vues en 1440×900",
+      "status": "passed",
+      "durationMs": 17282,
+      "attachments": [
+        {
+          "name": "font-measures",
+          "value": [
+            {
+              "state": "terrain-vide",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "chantier",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "chantier",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "chantier",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "chantier",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "chantier",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "chantier",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "elevage",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "elevage",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "elevage",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "elevage",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "elevage",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "elevage",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "expedition",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "expedition",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "expedition",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "expedition",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "expedition",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "expedition",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1440
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "1a : typographie des sept étapes et six vues en 1280×800",
+      "status": "passed",
+      "durationMs": 16919,
+      "attachments": [
+        {
+          "name": "font-measures",
+          "value": [
+            {
+              "state": "terrain-vide",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "chantier",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "chantier",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "chantier",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "chantier",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "chantier",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "chantier",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "elevage",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "elevage",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "elevage",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "elevage",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "elevage",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "elevage",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "expedition",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "expedition",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "expedition",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "expedition",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "expedition",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "expedition",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "1a : typographie des sept étapes et six vues en 1280×720",
+      "status": "passed",
+      "durationMs": 14899,
+      "attachments": [
+        {
+          "name": "font-measures",
+          "value": [
+            {
+              "state": "terrain-vide",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "chantier",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "chantier",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "chantier",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "chantier",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "chantier",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "chantier",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "elevage",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "elevage",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "elevage",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "elevage",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "elevage",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "elevage",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "expedition",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "expedition",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "expedition",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "expedition",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "expedition",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "expedition",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 1280
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "1a : typographie des sept étapes et six vues en 390×844",
+      "status": "passed",
+      "durationMs": 7989,
+      "attachments": [
+        {
+          "name": "font-measures",
+          "value": [
+            {
+              "state": "terrain-vide",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "terrain-vide",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "chantier",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "chantier",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "chantier",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "chantier",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "chantier",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "chantier",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "elevage",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "elevage",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "elevage",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "elevage",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "elevage",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "elevage",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "contrat-client",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "lot-au-froid",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "expedition",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "expedition",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "expedition",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "expedition",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "expedition",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "expedition",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Construire",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Bassins",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Logistique",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Finances",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Journal",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            },
+            {
+              "state": "cycle-paye",
+              "screen": "Guide",
+              "min": 12,
+              "tooSmall": [],
+              "width": 390
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "1a : axe, fontes et libellés de carte à 1440×900",
+      "status": "passed",
+      "durationMs": 11317,
+      "attachments": [
+        {
+          "name": "font-loading",
+          "value": [
+            {
+              "family": "Inter",
+              "loaded": true,
+              "checked": true
+            },
+            {
+              "family": "Fraunces",
+              "loaded": true,
+              "checked": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "1a : axe, fontes et libellés de carte à 390×844",
+      "status": "passed",
+      "durationMs": 12168,
+      "attachments": [
+        {
+          "name": "font-loading",
+          "value": [
+            {
+              "family": "Inter",
+              "loaded": true,
+              "checked": true
+            },
+            {
+              "family": "Fraunces",
+              "loaded": true,
+              "checked": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "1a : focus du dialogue et explication de désactivation au clavier",
+      "status": "passed",
+      "durationMs": 5416,
+      "attachments": []
+    },
+    {
+      "title": "1a : les fenêtres de gestion respectent le plancher de texte et axe",
+      "status": "passed",
+      "durationMs": 11236,
+      "attachments": []
+    },
+    {
+      "title": "1a : la réduction de mouvement et le plancher typographique résistent à 80 %",
+      "status": "passed",
+      "durationMs": 3660,
+      "attachments": []
+    },
+    {
+      "title": "1a : textes et superpositions des vues 3D sur PC et mobile",
+      "status": "passed",
+      "durationMs": 24884,
+      "attachments": []
+    },
+    {
+      "title": "1b : monde persistant, sept états et six panneaux en 1920×1080",
+      "status": "passed",
+      "durationMs": 83404,
+      "attachments": [
+        {
+          "name": "world-measures",
+          "value": [
+            {
+              "state": "terrain-vide",
+              "ratio": 1,
+              "w": 1920,
+              "h": 1080,
+              "unobscuredWithPanelsClosed": 0.8693702980324074
+            },
+            {
+              "state": "chantier",
+              "ratio": 1,
+              "w": 1920,
+              "h": 1080,
+              "unobscuredWithPanelsClosed": 0.8599848090277777
+            },
+            {
+              "state": "elevage",
+              "ratio": 1,
+              "w": 1920,
+              "h": 1080,
+              "unobscuredWithPanelsClosed": 0.8687158203125
+            },
+            {
+              "state": "contrat-client",
+              "ratio": 1,
+              "w": 1920,
+              "h": 1080,
+              "unobscuredWithPanelsClosed": 0.8658054832175925
+            },
+            {
+              "state": "lot-au-froid",
+              "ratio": 1,
+              "w": 1920,
+              "h": 1080,
+              "unobscuredWithPanelsClosed": 0.8625980782214506
+            },
+            {
+              "state": "expedition",
+              "ratio": 1,
+              "w": 1920,
+              "h": 1080,
+              "unobscuredWithPanelsClosed": 0.8664599609375
+            },
+            {
+              "state": "cycle-paye",
+              "ratio": 1,
+              "w": 1920,
+              "h": 1080,
+              "unobscuredWithPanelsClosed": 0.8693702980324074
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "1b : monde persistant, sept états et six panneaux en 1440×900",
+      "status": "passed",
+      "durationMs": 64604,
+      "attachments": [
+        {
+          "name": "world-measures",
+          "value": [
+            {
+              "state": "terrain-vide",
+              "ratio": 1,
+              "w": 1440,
+              "h": 900,
+              "unobscuredWithPanelsClosed": 0.8195804398148148
+            },
+            {
+              "state": "chantier",
+              "ratio": 1,
+              "w": 1440,
+              "h": 900,
+              "unobscuredWithPanelsClosed": 0.8045636574074074
+            },
+            {
+              "state": "elevage",
+              "ratio": 1,
+              "w": 1440,
+              "h": 900,
+              "unobscuredWithPanelsClosed": 0.818533275462963
+            },
+            {
+              "state": "contrat-client",
+              "ratio": 1,
+              "w": 1440,
+              "h": 900,
+              "unobscuredWithPanelsClosed": 0.8138767361111111
+            },
+            {
+              "state": "lot-au-froid",
+              "ratio": 1,
+              "w": 1440,
+              "h": 900,
+              "unobscuredWithPanelsClosed": 0.808744888117284
+            },
+            {
+              "state": "expedition",
+              "ratio": 1,
+              "w": 1440,
+              "h": 900,
+              "unobscuredWithPanelsClosed": 0.8149239004629629
+            },
+            {
+              "state": "cycle-paye",
+              "ratio": 1,
+              "w": 1440,
+              "h": 900,
+              "unobscuredWithPanelsClosed": 0.8195804398148148
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "1b : monde persistant, sept états et six panneaux en 1280×800",
+      "status": "passed",
+      "durationMs": 59690,
+      "attachments": [
+        {
+          "name": "world-measures",
+          "value": [
+            {
+              "state": "terrain-vide",
+              "ratio": 1,
+              "w": 1280,
+              "h": 800,
+              "unobscuredWithPanelsClosed": 0.783717041015625
+            },
+            {
+              "state": "chantier",
+              "ratio": 1,
+              "w": 1280,
+              "h": 800,
+              "unobscuredWithPanelsClosed": 0.76471142578125
+            },
+            {
+              "state": "elevage",
+              "ratio": 1,
+              "w": 1280,
+              "h": 800,
+              "unobscuredWithPanelsClosed": 0.7823917236328125
+            },
+            {
+              "state": "contrat-client",
+              "ratio": 1,
+              "w": 1280,
+              "h": 800,
+              "unobscuredWithPanelsClosed": 0.7764982910156251
+            },
+            {
+              "state": "lot-au-froid",
+              "ratio": 1,
+              "w": 1280,
+              "h": 800,
+              "unobscuredWithPanelsClosed": 0.7700032958984375
+            },
+            {
+              "state": "expedition",
+              "ratio": 1,
+              "w": 1280,
+              "h": 800,
+              "unobscuredWithPanelsClosed": 0.7778236083984376
+            },
+            {
+              "state": "cycle-paye",
+              "ratio": 1,
+              "w": 1280,
+              "h": 800,
+              "unobscuredWithPanelsClosed": 0.783717041015625
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "1b : raccourcis, restauration du focus, urgence et guide du modèle",
+      "status": "passed",
+      "durationMs": 8553,
+      "attachments": []
+    },
+    {
+      "title": "1c : échelle 80–150 %, onglets et composants à 1440×900",
+      "status": "passed",
+      "durationMs": 37271,
+      "attachments": [
+        {
+          "name": "scale-measures",
+          "value": [
+            {
+              "scale": 80,
+              "name": "Construire",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 1440,
+              "disabled": []
+            },
+            {
+              "scale": 80,
+              "name": "Bassins",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 1440,
+              "disabled": []
+            },
+            {
+              "scale": 80,
+              "name": "Logistique",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 1440,
+              "disabled": []
+            },
+            {
+              "scale": 80,
+              "name": "Finances",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 1440,
+              "disabled": []
+            },
+            {
+              "scale": 80,
+              "name": "Journal",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 1440,
+              "disabled": []
+            },
+            {
+              "scale": 80,
+              "name": "Guide",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 1440,
+              "disabled": []
+            },
+            {
+              "scale": 100,
+              "name": "Construire",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 1440,
+              "disabled": []
+            },
+            {
+              "scale": 100,
+              "name": "Bassins",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 1440,
+              "disabled": []
+            },
+            {
+              "scale": 100,
+              "name": "Logistique",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 1440,
+              "disabled": []
+            },
+            {
+              "scale": 100,
+              "name": "Finances",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 1440,
+              "disabled": []
+            },
+            {
+              "scale": 100,
+              "name": "Journal",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 1440,
+              "disabled": []
+            },
+            {
+              "scale": 100,
+              "name": "Guide",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 1440,
+              "disabled": []
+            },
+            {
+              "scale": 150,
+              "name": "Construire",
+              "clipped": [],
+              "min": 18,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 1440,
+              "disabled": []
+            },
+            {
+              "scale": 150,
+              "name": "Bassins",
+              "clipped": [],
+              "min": 18,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 1440,
+              "disabled": []
+            },
+            {
+              "scale": 150,
+              "name": "Logistique",
+              "clipped": [],
+              "min": 18,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 1440,
+              "disabled": []
+            },
+            {
+              "scale": 150,
+              "name": "Finances",
+              "clipped": [],
+              "min": 18,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 1440,
+              "disabled": []
+            },
+            {
+              "scale": 150,
+              "name": "Journal",
+              "clipped": [],
+              "min": 18,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 1440,
+              "disabled": []
+            },
+            {
+              "scale": 150,
+              "name": "Guide",
+              "clipped": [],
+              "min": 18,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 1440,
+              "disabled": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "1c : échelle 80–150 %, onglets et composants à 390×844",
+      "status": "passed",
+      "durationMs": 20968,
+      "attachments": [
+        {
+          "name": "scale-measures",
+          "value": [
+            {
+              "scale": 80,
+              "name": "Construire",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 390,
+              "disabled": []
+            },
+            {
+              "scale": 80,
+              "name": "Bassins",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 390,
+              "disabled": []
+            },
+            {
+              "scale": 80,
+              "name": "Logistique",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 390,
+              "disabled": []
+            },
+            {
+              "scale": 80,
+              "name": "Finances",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 390,
+              "disabled": []
+            },
+            {
+              "scale": 80,
+              "name": "Journal",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 390,
+              "disabled": []
+            },
+            {
+              "scale": 80,
+              "name": "Guide",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 390,
+              "disabled": []
+            },
+            {
+              "scale": 100,
+              "name": "Construire",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 390,
+              "disabled": []
+            },
+            {
+              "scale": 100,
+              "name": "Bassins",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 390,
+              "disabled": []
+            },
+            {
+              "scale": 100,
+              "name": "Logistique",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 390,
+              "disabled": []
+            },
+            {
+              "scale": 100,
+              "name": "Finances",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 390,
+              "disabled": []
+            },
+            {
+              "scale": 100,
+              "name": "Journal",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 390,
+              "disabled": []
+            },
+            {
+              "scale": 100,
+              "name": "Guide",
+              "clipped": [],
+              "min": 12,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 390,
+              "disabled": []
+            },
+            {
+              "scale": 150,
+              "name": "Construire",
+              "clipped": [],
+              "min": 18,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 390,
+              "disabled": []
+            },
+            {
+              "scale": 150,
+              "name": "Bassins",
+              "clipped": [],
+              "min": 18,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 390,
+              "disabled": []
+            },
+            {
+              "scale": 150,
+              "name": "Logistique",
+              "clipped": [],
+              "min": 18,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 390,
+              "disabled": []
+            },
+            {
+              "scale": 150,
+              "name": "Finances",
+              "clipped": [],
+              "min": 18,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 390,
+              "disabled": []
+            },
+            {
+              "scale": 150,
+              "name": "Journal",
+              "clipped": [],
+              "min": 18,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 390,
+              "disabled": []
+            },
+            {
+              "scale": 150,
+              "name": "Guide",
+              "clipped": [],
+              "min": 18,
+              "overlaps": [],
+              "outside": [],
+              "scroll": 390,
+              "disabled": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

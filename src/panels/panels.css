@@ -1,0 +1,661 @@
+/* Transitional panel bodies. Each group owns its component; no page-level overrides. */
+.project-layout,
+.logistics-layout,
+.guide-content {
+  display: grid;
+  gap: 16px;
+}
+.water-study,
+.logistics-section,
+.research-card,
+.guide-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  background: var(--surface-raised);
+}
+.water-study-intro,
+.guide-intro,
+.migration-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding-bottom: 16px;
+}
+.water-study-intro h2,
+.guide-intro h2 {
+  margin: 8px 0;
+}
+.water-study-intro p,
+.guide-intro p,
+.resource-grid p,
+.route-content p,
+.guide-card p,
+.research-card p,
+.logistics-section > p {
+  font-size: var(--text-body);
+  line-height: 1.6;
+}
+.project-icon,
+.guide-icon,
+.asset-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: var(--surface-muted);
+  border-radius: var(--radius);
+  color: var(--primary);
+  flex-shrink: 0;
+}
+.resource-grid,
+.route-grid,
+.asset-grid,
+.buyer-grid,
+.guide-grid,
+.market-species {
+  display: grid;
+  gap: 16px;
+}
+.resource-grid article {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+.resource-grid h3 {
+  margin: 8px 0;
+}
+.resource-grid strong {
+  display: block;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+.project-footnote,
+.empty-logistics {
+  color: var(--ink-muted);
+  font-size: var(--text-small);
+  margin-top: 16px;
+  line-height: 1.5;
+}
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.section-heading h2 {
+  margin-top: 4px;
+}
+.route-card,
+.asset-grid article,
+.buyer-grid article,
+.cold-batch {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.route-card.chosen {
+  border-color: var(--primary);
+}
+.route-art {
+  display: grid;
+  background: var(--surface-muted);
+  padding: 12px;
+  text-align: center;
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+}
+.route-art > svg {
+  height: 112px;
+  width: 100%;
+}
+.route-content {
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+.route-water {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--water);
+}
+.route-content dl {
+  margin: 0;
+  font-size: var(--text-small);
+}
+.route-content dl > div {
+  padding-block: 8px;
+  border-top: 1px solid var(--border);
+}
+.route-content dt {
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+}
+.route-content dd {
+  margin: 0;
+}
+.project-done {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--success);
+  font-weight: 600;
+}
+.chain-strip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: var(--text-small);
+}
+.chain-strip span {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+.supply-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding: 12px;
+  border-radius: var(--radius);
+  background: var(--surface-muted);
+}
+.supply-summary > div {
+  min-width: 0;
+}
+.supply-summary span {
+  display: block;
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+}
+.supply-summary strong {
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+.feed-order-grid {
+  display: grid;
+  gap: 12px;
+  margin: 16px 0;
+}
+.feed-order-grid article {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.feed-order-grid article > strong {
+  font-size: var(--text-lg);
+}
+.feed-order-grid article > span {
+  font-size: var(--text-small);
+}
+.feed-order-grid small,
+.asset-grid small,
+.buyer-grid small,
+.contract-list small {
+  display: block;
+  color: var(--ink-muted);
+  font-size: var(--text-caption);
+}
+.supply-ponds > div,
+.delivery-list > div,
+.shipment {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-block: 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: var(--text-small);
+}
+.supply-ponds small {
+  display: block;
+  color: var(--ink-muted);
+  margin: 4px 0;
+}
+.delivery-list {
+  margin-top: 16px;
+}
+.asset-grid article,
+.buyer-grid article {
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+.asset-grid p,
+.buyer-grid p {
+  font-size: var(--text-small);
+}
+.client-lots {
+  display: grid;
+  gap: 8px;
+}
+.client-lots small {
+  margin-top: 4px;
+}
+.contract-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+.contract-list article {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.contract-list p {
+  margin-block: 8px;
+  font-size: var(--text-small);
+}
+.contract-actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+.text-button,
+.upgrade-link {
+  padding: 8px;
+  border: 0;
+  background: transparent;
+  color: var(--primary);
+  font-size: var(--text-small);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  min-height: 40px;
+}
+.cold-batch {
+  padding: 16px;
+  margin-top: 12px;
+  display: grid;
+  gap: 12px;
+}
+.cold-batch h3 {
+  margin-block: 8px;
+}
+.cold-batch p {
+  margin-bottom: 8px;
+  font-size: var(--text-small);
+}
+.cold-batch strong {
+  font-size: var(--text-small);
+}
+.shipment h3 {
+  font-size: var(--text-small);
+}
+.shipment p {
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+}
+.pond-panel-heading h2 {
+  margin: 8px 0;
+}
+.pond-panel-heading p {
+  color: var(--ink-muted);
+  font-size: var(--text-small);
+}
+.empty-pond,
+.empty-stock {
+  display: grid;
+  gap: 16px;
+  margin-block: 20px;
+}
+.empty-pond-icon,
+.empty-stock > svg {
+  color: var(--primary);
+}
+.empty-pond p,
+.empty-stock p {
+  font-size: var(--text-body);
+}
+.build-cost {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.fish-profile {
+  padding-block: 16px;
+  text-align: center;
+}
+.fish-profile h3 {
+  margin-top: 8px;
+}
+.fish-profile p {
+  color: var(--ink-muted);
+  font-size: var(--text-caption);
+  font-style: italic;
+}
+.fish-illustration {
+  background: var(--surface-muted);
+  border-radius: var(--radius);
+}
+.fish-illustration .species-photo {
+  display: block;
+  width: 100%;
+  height: 112px;
+}
+.pond-numbers {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 12px 0;
+}
+.pond-numbers > div {
+  min-width: 0;
+}
+.pond-numbers strong {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  flex-wrap: wrap;
+  font-size: var(--text-lg);
+}
+.pond-numbers span {
+  display: block;
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+}
+.growth-section {
+  font-size: var(--text-small);
+  margin-block: 16px;
+}
+.growth-section > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.growth-section p {
+  margin-top: 8px;
+  color: var(--ink-muted);
+  font-size: var(--text-caption);
+}
+.growth-track,
+.objective-progress {
+  height: 6px;
+  margin-top: 8px;
+  background: var(--surface-muted);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.growth-track > span,
+.objective-progress > span {
+  display: block;
+  height: 100%;
+  background: var(--success);
+}
+.pond-actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+}
+.pond-actions small {
+  margin-left: auto;
+}
+.pond-panel .upgrade-link {
+  width: 100%;
+  margin-top: 12px;
+}
+.water-details {
+  border-block: 1px solid var(--border);
+  margin-top: 16px;
+}
+.technical-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-muted);
+  font-size: var(--text-caption);
+  margin-block: 12px;
+}
+.water-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  gap: 8px;
+}
+.water-grid > div {
+  min-width: 0;
+  padding: 12px 8px;
+  background: var(--surface-muted);
+  border-radius: 8px;
+}
+.water-grid dt {
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+}
+.water-grid dd {
+  margin: 4px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 4px;
+  font-size: var(--text-lg);
+  font-family: var(--font-ui);
+}
+.water-grid dd.metric-hint {
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+  line-height: 1.4;
+}
+.water-alert {
+  outline: 2px solid var(--danger);
+}
+.water-alert dt {
+  color: var(--danger);
+}
+.density-line {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: var(--text-small);
+  margin-top: 16px;
+}
+.husbandry-fields {
+  display: grid;
+  gap: 12px;
+  margin-block: 16px;
+}
+.husbandry-fields label {
+  display: grid;
+  gap: 4px;
+  font-size: var(--text-small);
+  min-width: 0;
+}
+.husbandry-fields select {
+  width: 100%;
+}
+.husbandry-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-block: 12px;
+}
+.husbandry-summary span {
+  display: grid;
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+}
+.husbandry-summary b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.technical-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 12px 0;
+  color: var(--ink-muted);
+  font-size: var(--text-small);
+}
+.technical-notice.urgent {
+  color: var(--danger);
+}
+.finance-balance {
+  display: grid;
+  gap: 4px;
+  padding-block: 20px;
+}
+.finance-balance span {
+  color: var(--ink-muted);
+  font-size: var(--text-small);
+}
+.finance-balance strong {
+  font-size: var(--text-title);
+}
+.finance-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block: 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: var(--text-small);
+}
+.finance-row strong {
+  white-space: nowrap;
+}
+.aid-card {
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+}
+.aid-card p {
+  font-size: var(--text-small);
+}
+.journal-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+.journal-filters button {
+  padding: 8px;
+  min-height: 36px;
+  background: var(--surface-raised);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.journal-filters button.active {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+.journal-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+  padding-block: 16px;
+}
+.journal-entry > span {
+  color: var(--primary);
+  padding: 4px;
+}
+.journal-entry h3 {
+  font-size: var(--text-small);
+}
+.journal-entry p {
+  font-size: var(--text-body);
+  line-height: 1.6;
+}
+.journal-entry small,
+.journal-limit {
+  color: var(--ink-muted);
+  font-size: var(--text-caption);
+}
+.journal-limit {
+  margin-top: 16px;
+}
+.empty-journal {
+  padding-block: 20px;
+  display: grid;
+  gap: 12px;
+}
+.market-species-card {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.species-art {
+  background: var(--surface-muted);
+}
+.species-art > .species-photo {
+  width: 100%;
+  height: 112px;
+  display: block;
+}
+.species-art > span:not(.species-photo) {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: var(--text-caption);
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: var(--surface-raised);
+}
+.market-species-card > h3 {
+  padding: 16px 16px 0;
+}
+.market-species-card > p {
+  font-size: var(--text-small);
+  color: var(--ink-muted);
+  padding: 4px 16px;
+}
+.market-price {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 16px;
+}
+.market-price strong {
+  font-size: var(--text-lg);
+}
+.market-price > span {
+  font-size: var(--text-caption);
+}
+.species-facts {
+  display: grid;
+  gap: 8px;
+  padding: 0 16px 16px;
+  font-size: var(--text-small);
+}
+.species-facts > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.guide-card h3 {
+  margin: 12px 0 8px;
+}
+.research-card h2 {
+  margin: 8px 0 16px;
+}
+.research-card p {
+  margin-bottom: 16px;
+}
+.research-links {
+  display: grid;
+  gap: 12px;
+  font-size: var(--text-small);
+  margin-bottom: 16px;
+}
+.simulation-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: var(--text-small);
+}

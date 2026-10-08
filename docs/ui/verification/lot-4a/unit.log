@@ -1,0 +1,39 @@
+
+> les-etangs@3.0.0 test
+> vitest run
+
+
+ RUN  v3.2.7 /workspace/projet-pisciculture
+
+ ✓ src/swimming.test.ts (4 tests) 538ms
+ ✓ src/game.test.ts (27 tests) 627ms
+   ✓ persistance et stabilité > reste déterministe, finie et rechargeable après deux ans  347ms
+ ✓ src/state/gameEvents.test.ts (5 tests) 74ms
+ ✓ src/development.test.ts (14 tests) 437ms
+   ✓ parcourt une nouvelle exploitation jusqu’au paiement, avec croissance de plusieurs mois et réapprovisionnements  328ms
+ ✓ src/ui/format.test.ts (3 tests) 29ms
+ ✓ src/state/ledger.test.ts (8 tests) 1786ms
+   ✓ réconcilie tous les centimes du terrain vide au règlement et recharge le registre à chaque étape  436ms
+   ✓ groupe sans doublonner deux vrais règlements reçus le même jour  344ms
+   ✓ observe deux cycles successifs sans attribuer les investissements initiaux au second  949ms
+ ✓ src/state/feedback.test.ts (2 tests) 54ms
+ ✓ src/state/pondSelectors.test.ts (3 tests) 54ms
+ ✓ src/world/artSelectors.test.ts (2 tests) 36ms
+ ✓ src/state/journalSelectors.test.ts (1 test) 99ms
+ ✓ src/ui/foundation.test.ts (1 test) 16ms
+ ✓ src/state/operatingGoals.test.ts (2 tests) 26ms
+ ✓ src/ui/gauge.test.tsx (1 test) 27ms
+ ✓ src/audio/mixer.test.ts (1 test) 4ms
+ ✓ src/state/financeSelectors.test.ts (2 tests) 6ms
+ ✓ src/state/preferences.test.ts (1 test) 12ms
+
+ Test Files  16 passed (16)
+      Tests  77 passed (77)
+   Start at  21:50:25
+   Duration  4.49s (transform 949ms, setup 0ms, collect 2.16s, tests 3.82s, environment 4ms, prepare 1.95s)
+
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

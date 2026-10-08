@@ -1,3 +1,4 @@
+import { paint } from "./world/palette";
 import * as T from "three";
 import type { SpeciesId } from "./game";
 
@@ -19,16 +20,34 @@ function skin(species: SpeciesId) {
   const rand = random(67);
   const colors =
     species === "trout"
-      ? ["#aebcab", "#e3dfc9", "#aebcab", "#425940", "#aebcab"]
+      ? [
+          paint("fish-trout"),
+          paint("fish-trout-belly"),
+          paint("fish-trout"),
+          paint("fish-trout-back"),
+          paint("fish-trout"),
+        ]
       : species === "carp"
-        ? ["#ae934e", "#dcc78a", "#ae934e", "#535b30", "#ae934e"]
-        : ["#96a89c", "#d8d9bd", "#96a89c", "#3e5349", "#96a89c"];
+        ? [
+            paint("fish-carp"),
+            paint("fish-carp-belly"),
+            paint("fish-carp"),
+            paint("fish-carp-back"),
+            paint("fish-carp"),
+          ]
+        : [
+            paint("fish-tilapia"),
+            paint("fish-tilapia-belly"),
+            paint("fish-tilapia"),
+            paint("fish-tilapia-back"),
+            paint("fish-tilapia"),
+          ];
   const grad = c.createLinearGradient(0, 0, 0, 512);
   colors.forEach((color, i) => grad.addColorStop(i / 4, color));
   c.fillStyle = grad;
   c.fillRect(0, 0, 1024, 512);
   if (species === "trout") {
-    c.fillStyle = "#cc7785aa";
+    c.fillStyle = paint("fish-trout-band");
     c.fillRect(0, 0, 1024, 14);
     c.fillRect(0, 244, 1024, 24);
     c.fillRect(0, 498, 1024, 14);
@@ -37,12 +56,14 @@ function skin(species: SpeciesId) {
   for (let y = -size; y < 512 + size; y += size * 0.68)
     for (let x = 0; x < 1024; x += size) {
       const xx = x + ((Math.round(y / (size * 0.68)) % 2) * size) / 2;
-      c.strokeStyle = `rgba(32,48,25,${species === "carp" ? 0.42 : 0.17})`;
+      c.strokeStyle = paint(
+        species === "carp" ? "fish-scale" : "fish-scale-soft",
+      );
       c.lineWidth = species === "carp" ? 2 : 1;
       c.beginPath();
       c.ellipse(xx, y, size * 0.54, size * 0.63, 0, 0, Math.PI);
       c.stroke();
-      c.strokeStyle = "rgba(245,242,206,.28)";
+      c.strokeStyle = paint("fish-scale-light");
       c.beginPath();
       c.ellipse(xx + 1, y - 2, size * 0.5, size * 0.57, 0, 0, Math.PI);
       c.stroke();
@@ -52,7 +73,7 @@ function skin(species: SpeciesId) {
       const x = rand() * 1024,
         y = rand() * 512;
       if (Math.sin((1 - y / 512) * Math.PI * 2) < -0.08) continue;
-      c.fillStyle = `rgba(24,39,29,${0.35 + rand() * 0.4})`;
+      c.fillStyle = paint("fish-spot");
       c.beginPath();
       c.ellipse(
         x,
@@ -69,9 +90,9 @@ function skin(species: SpeciesId) {
     for (let i = 0; i < 9; i++) {
       const x = 190 + i * 91;
       const stripe = c.createLinearGradient(x - 14, 0, x + 18, 0);
-      stripe.addColorStop(0, "#344c4100");
-      stripe.addColorStop(0.5, "#344c4199");
-      stripe.addColorStop(1, "#344c4100");
+      stripe.addColorStop(0, paint("fish-stripe-clear"));
+      stripe.addColorStop(0.5, paint("fish-stripe"));
+      stripe.addColorStop(1, paint("fish-stripe-clear"));
       c.fillStyle = stripe;
       c.fillRect(x - 14, 0, 32, 512);
     }
@@ -106,7 +127,7 @@ function fin(
   g.add(new T.Mesh(new T.ShapeGeometry(shape), material));
   if (detailed) {
     const rayMat = new T.LineBasicMaterial({
-      color: striped ? "#334c41" : "#736541",
+      color: striped ? paint("fish-tilapia-ray") : paint("fish-fin-ray"),
       transparent: true,
       opacity: 0.5,
     });
@@ -191,9 +212,9 @@ export function createFish(species: SpeciesId, detailed = true) {
   geo.computeVertexNormals();
   const mat = new T.MeshPhysicalMaterial({
     map: skin(species),
-    roughness: 0.46,
+    roughness: 0.65,
     metalness: 0.16,
-    clearcoat: 0.65,
+    clearcoat: 0.25,
     clearcoatRoughness: 0.26,
   });
   const body = new T.Mesh(geo, mat);
@@ -201,10 +222,10 @@ export function createFish(species: SpeciesId, detailed = true) {
   group.add(body);
   const finColor =
     species === "trout"
-      ? "#758a71"
+      ? paint("fish-trout-fin")
       : species === "carp"
-        ? "#9d7235"
-        : "#5b7066";
+        ? paint("fish-carp-fin")
+        : paint("fish-tilapia-fin");
   const tail = new T.Group();
   tail.position.set(0.77, 0, 0);
   const tailPoints: [number, number][] =
@@ -245,7 +266,7 @@ export function createFish(species: SpeciesId, detailed = true) {
           new T.Vector3(0.4, yy, 0.003),
         ]),
         new T.LineBasicMaterial({
-          color: "#596354",
+          color: paint("fish-tail-ray"),
           transparent: true,
           opacity: 0.5,
         }),
@@ -260,7 +281,7 @@ export function createFish(species: SpeciesId, detailed = true) {
             new T.Vector3(0.18 + i * 0.06, 0.11 + i * 0.027, 0.005),
           ]),
           new T.LineBasicMaterial({
-            color: "#344c43",
+            color: paint("fish-tilapia-stripe"),
             transparent: true,
             opacity: 0.8,
           }),
@@ -299,7 +320,7 @@ export function createFish(species: SpeciesId, detailed = true) {
           [0.56, 0.14],
           [0.59, 0.075],
         ],
-        "#879785",
+        paint("fish-trout-adipose"),
         detailed,
       ),
     );
@@ -310,7 +331,8 @@ export function createFish(species: SpeciesId, detailed = true) {
     const iris = new T.Mesh(
       new T.SphereGeometry(detailed ? 0.052 : 0.043, 12, 8),
       new T.MeshPhysicalMaterial({
-        color: species === "carp" ? "#bd963c" : "#cdb67c",
+        color:
+          species === "carp" ? paint("fish-carp-iris") : paint("fish-iris"),
         roughness: 0.22,
         metalness: 0.4,
       }),
@@ -320,7 +342,7 @@ export function createFish(species: SpeciesId, detailed = true) {
     const pupil = new T.Mesh(
       new T.SphereGeometry(detailed ? 0.032 : 0.029, 12, 8),
       new T.MeshPhysicalMaterial({
-        color: "#09120f",
+        color: paint("fish-pupil"),
         roughness: 0.06,
         clearcoat: 1,
       }),
@@ -331,7 +353,7 @@ export function createFish(species: SpeciesId, detailed = true) {
     if (detailed) {
       const glint = new T.Mesh(
         new T.SphereGeometry(0.01, 7, 5),
-        new T.MeshBasicMaterial({ color: "#ffffff" }),
+        new T.MeshBasicMaterial({ color: paint("fish-highlight") }),
       );
       glint.position.set(-0.009, 0.013, sign * 0.038);
       eye.add(glint);
@@ -381,7 +403,10 @@ export function createFish(species: SpeciesId, detailed = true) {
             false,
           ),
           new T.MeshStandardMaterial({
-            color: species === "trout" ? "#9d7279" : "#746a44",
+            color:
+              species === "trout"
+                ? paint("fish-trout-gill")
+                : paint("fish-gill"),
             roughness: 0.5,
           }),
         ),
@@ -397,7 +422,7 @@ export function createFish(species: SpeciesId, detailed = true) {
         group.add(
           new T.Mesh(
             new T.TubeGeometry(curve, 8, 0.009, 4, false),
-            new T.MeshStandardMaterial({ color: "#c9a76b" }),
+            new T.MeshStandardMaterial({ color: paint("fish-carp-barbel") }),
           ),
         );
       }
@@ -407,7 +432,8 @@ export function createFish(species: SpeciesId, detailed = true) {
     const mouth = new T.Mesh(
       new T.TorusGeometry(species === "carp" ? 0.047 : 0.036, 0.009, 6, 20),
       new T.MeshStandardMaterial({
-        color: species === "carp" ? "#bd9c63" : "#a9a89a",
+        color:
+          species === "carp" ? paint("fish-carp-mouth") : paint("fish-mouth"),
         roughness: 0.3,
       }),
     );

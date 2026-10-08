@@ -1,0 +1,305 @@
+{
+  "mode": "after",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "scope": "Mots visibles à au moins 80 % dans la fenêtre et les régions défilantes, sans défilement ; repli WebGL pour isoler le texte de gestion.",
+  "characters": 26569,
+  "rows": [
+    {
+      "state": "terrain-vide",
+      "screen": "Construire",
+      "words": 82,
+      "characters": 462,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 1 avril 2026 12,8 °C Trésorerie 60 000 € 0 € / jour Aliments 0 kg Aucun lot ×1 ×2 ×4 ×8 0 1/9 Analyser l’eau Température, pH, débit. Analyser l’eau · 240 € Conseils Caméra Construire Commencez par connaître l’eau L’analyse identifie les ressources avant le choix de la filière. Analyser l’eau · 240 € Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "terrain-vide",
+      "screen": "Bassins",
+      "words": 121,
+      "characters": 678,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 1 avril 2026 12,8 °C Trésorerie 60 000 € 0 € / jour Aliments 0 kg Aucun lot ×1 ×2 ×4 ×8 0 1/9 Analyser l’eau Température, pH, débit. Analyser l’eau · 240 € Conseils Caméra Bassins Bassin sélectionné À aménager Les Saules Truite arc-en-ciel Source fraîche, courant et oxygène. Installation Bassin d’eau courante · 60 m³ Chantier 8 000 € · 14 jours Eau neuve ? 12 L/s · 24 L/s encore disponibles Eau préférée 12–18 °C Choisir : Truite arc-en-ciel · Les Saules Gardez une réserve pour les juvéniles, les aliments et les Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "terrain-vide",
+      "screen": "Logistique",
+      "words": 142,
+      "characters": 758,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 1 avril 2026 12,8 °C Trésorerie 60 000 € 0 € / jour Aliments 0 kg Aucun lot ×1 ×2 ×4 ×8 0 1/9 Analyser l’eau Température, pH, débit. Analyser l’eau · 240 € Conseils Caméra Logistique Du fournisseur au paiement 1 · Fournisseur 0 commande 2 · Magasin 0 kg 3 · Bassin 0 en élevage 4 · Froid 0 kg 5 · Camion 0 en route 6 · Client 0 contrat 7 · Paiement 0 cycle réglé Approvisionnement Bâtiments Clients Expéditions Aliments 0 kg Autonomie Aucun lot à nourrir Stock + réservations / capacité 0 / 100 kg Commander des aliments Livraison en 2 jours. Transport de 18 € inclus dans chaque prix ci-dessous. Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "terrain-vide",
+      "screen": "Finances",
+      "words": 104,
+      "characters": 545,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 1 avril 2026 12,8 °C Trésorerie 60 000 € 0 € / jour Aliments 0 kg Aucun lot ×1 ×2 ×4 ×8 0 1/9 Analyser l’eau Température, pH, débit. Analyser l’eau · 240 € Conseils Caméra Finances Trésorerie Prévision Mois Cycles Trésorerie · euros 60 001 € 60 000 € 59 999 € 1 avril 2026 Voir les 1 relevé Recettes encaissées + 0 € Dépenses 0 € Vendu 0 kg Charges quotidiennes · 0 € Aide financière Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "terrain-vide",
+      "screen": "Journal",
+      "words": 74,
+      "characters": 408,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 1 avril 2026 12,8 °C Trésorerie 60 000 € 0 € / jour Aliments 0 kg Aucun lot ×1 ×2 ×4 ×8 0 1/9 Analyser l’eau Température, pH, débit. Analyser l’eau · 240 € Conseils Caméra Journal Type Bassin 1 événements avril 2026 1 Bienvenue sur votre terrain. Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "terrain-vide",
+      "screen": "Guide",
+      "words": 91,
+      "characters": 516,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 1 avril 2026 12,8 °C Trésorerie 60 000 € 0 € / jour Aliments 0 kg Aucun lot ×1 ×2 ×4 ×8 0 1/9 Analyser l’eau Température, pH, débit. Analyser l’eau · 240 € Conseils Caméra Guide Pratique Espèces Eau et alimentation À propos du modèle Rejouer le tutoriel Succès de cette ferme Analyser l’eau Du client au paiement Le rythme biologique Prévenir les risques Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "chantier",
+      "screen": "Construire",
+      "words": 108,
+      "characters": 611,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 7 avril 2026 13,3 °C Trésorerie 49 160 € 0 € / jour Aliments 0 kg Aucun lot ×1 ×2 ×4 ×8 0 3/9 Chantier en cours Encore 10 j. de travaux. Prochaine étape Conseils Caméra Construire Résultats de l’analyse Choisissez une parcelle. Parcelle sélectionnée Chantier · 10 j Les Saules Truite arc-en-ciel Source fraîche, courant et oxygène. Installation Bassin d’eau courante · 60 m³ Chantier 8 000 € · 14 jours Eau neuve ? 12 L/s · 12 L/s encore disponibles Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "chantier",
+      "screen": "Bassins",
+      "words": 122,
+      "characters": 665,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 7 avril 2026 13,3 °C Trésorerie 49 160 € 0 € / jour Aliments 0 kg Aucun lot ×1 ×2 ×4 ×8 0 3/9 Chantier en cours Encore 10 j. de travaux. Prochaine étape Conseils Caméra Bassins Bassin sélectionné Chantier · 10 j Les Saules Truite arc-en-ciel Source fraîche, courant et oxygène. Installation Bassin d’eau courante · 60 m³ Chantier 8 000 € · 14 jours Eau neuve ? 12 L/s · 12 L/s encore disponibles Eau préférée 12–18 °C Mise en service · 10 jours Gardez une réserve pour les juvéniles, les aliments et les Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "chantier",
+      "screen": "Logistique",
+      "words": 142,
+      "characters": 755,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 7 avril 2026 13,3 °C Trésorerie 49 160 € 0 € / jour Aliments 0 kg Aucun lot ×1 ×2 ×4 ×8 0 3/9 Chantier en cours Encore 10 j. de travaux. Prochaine étape Conseils Caméra Logistique Du fournisseur au paiement 1 · Fournisseur 0 commande 2 · Magasin 0 kg 3 · Bassin 0 en élevage 4 · Froid 0 kg 5 · Camion 0 en route 6 · Client 0 contrat 7 · Paiement 0 cycle réglé Approvisionnement Bâtiments Clients Expéditions Aliments 0 kg Autonomie Aucun lot à nourrir Stock + réservations / capacité 0 / 100 kg Commander des aliments Livraison en 2 jours. Transport de 18 € inclus dans chaque prix ci-dessous. Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "chantier",
+      "screen": "Finances",
+      "words": 108,
+      "characters": 562,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 7 avril 2026 13,3 °C Trésorerie 49 160 € 0 € / jour Aliments 0 kg Aucun lot ×1 ×2 ×4 ×8 0 3/9 Chantier en cours Encore 10 j. de travaux. Prochaine étape Conseils Caméra Finances Trésorerie Prévision Mois Cycles Trésorerie · euros 61 301 € 54 580 € 47 859 € 1 avril 2026 7 avril 2026 Voir les 7 relevés Recettes encaissées + 0 € Dépenses -10 840 € Vendu 0 kg Charges quotidiennes · 0 € Aide financière Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "chantier",
+      "screen": "Journal",
+      "words": 124,
+      "characters": 655,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 7 avril 2026 13,3 °C Trésorerie 49 160 € 0 € / jour Aliments 0 kg Aucun lot ×1 ×2 ×4 ×8 0 3/9 Chantier en cours Encore 10 j. de travaux. Prochaine étape Conseils Caméra Journal Type Bassin 7 événements avril 2026 7 Bilan de la semaine 3 Magasin d’aliments : travaux commandés, 7 jours · 2 600 €. 3 Les Saules : chantier et mise en service, 14 jours · 8 000 €. 3 Les Saules : projet Truite arc-en-ciel retenu. 3 Analyse reçue : source fraîche à 11,8–15,2 °C, débit disponible partagé de 24 L/s… Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "chantier",
+      "screen": "Guide",
+      "words": 91,
+      "characters": 513,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 7 avril 2026 13,3 °C Trésorerie 49 160 € 0 € / jour Aliments 0 kg Aucun lot ×1 ×2 ×4 ×8 0 3/9 Chantier en cours Encore 10 j. de travaux. Prochaine étape Conseils Caméra Guide Pratique Espèces Eau et alimentation À propos du modèle Rejouer le tutoriel Succès de cette ferme Analyser l’eau Du client au paiement Le rythme biologique Prévenir les risques Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "elevage",
+      "screen": "Construire",
+      "words": 110,
+      "characters": 615,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 23 avril 2026 14,8 °C Trésorerie 47 772 € -33 € / jour Aliments 100 kg 93 j ×1 ×2 ×4 ×8 0 5/9 Suivre l’élevage 50 / 450 g · stock 93,5 j. Prochaine étape Conseils Caméra Construire Résultats de l’analyse Choisissez une parcelle. Parcelle sélectionnée Observation · 14 j Les Saules Truite arc-en-ciel Source fraîche, courant et oxygène. Installation Bassin d’eau courante · 60 m³ Chantier 8 000 € · 14 jours Eau neuve ? 12 L/s · 12 L/s encore disponibles Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "elevage",
+      "screen": "Bassins",
+      "words": 124,
+      "characters": 662,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 23 avril 2026 14,8 °C Trésorerie 47 772 € -33 € / jour Aliments 100 kg 93 j ×1 ×2 ×4 ×8 0 5/9 Suivre l’élevage 50 / 450 g · stock 93,5 j. Prochaine étape Conseils Caméra Bassins Temp. 14 °C Bon O₂ 10 mg/L Bon NH₃-N 0 mg/L Bon Densité 0,83 kg/m³ Bon Bassin sélectionné Les Saules Observation · 14 j Truite arc-en-ciel 1 000 poissons 50 g poids moyen 50 kg biomasse Courbes et seuils 11 % · estimation indisponible Eau Alimentation Équipement Historique pH 7,2 · azote ammoniacal total (TAN) 0 mg N/L ? Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "elevage",
+      "screen": "Logistique",
+      "words": 143,
+      "characters": 755,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 23 avril 2026 14,8 °C Trésorerie 47 772 € -33 € / jour Aliments 100 kg 93 j ×1 ×2 ×4 ×8 0 5/9 Suivre l’élevage 50 / 450 g · stock 93,5 j. Prochaine étape Conseils Caméra Logistique Du fournisseur au paiement 1 · Fournisseur 0 commande 2 · Magasin 100 kg 3 · Bassin 1 en élevage 4 · Froid 0 kg 5 · Camion 0 en route 6 · Client 0 contrat 7 · Paiement 0 cycle réglé Approvisionnement Bâtiments Clients Expéditions Aliments 100 kg Autonomie 93,5 jours Stock + réservations / capacité 100 / 2 000 kg Commander des aliments Livraison en 2 jours. Transport de 18 € inclus dans chaque prix ci-dessous. Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "elevage",
+      "screen": "Finances",
+      "words": 110,
+      "characters": 566,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 23 avril 2026 14,8 °C Trésorerie 47 772 € -33 € / jour Aliments 100 kg 93 j ×1 ×2 ×4 ×8 0 5/9 Suivre l’élevage 50 / 450 g · stock 93,5 j. Prochaine étape Conseils Caméra Finances Trésorerie Prévision Mois Cycles Trésorerie · euros 61 468 € 53 886 € 46 304 € 1 avril 2026 23 avril 2026 Voir les 23 relevés Recettes encaissées + 0 € Dépenses -12 228 € Vendu 0 kg Charges quotidiennes · 33 € Aide financière Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "elevage",
+      "screen": "Journal",
+      "words": 112,
+      "characters": 626,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 23 avril 2026 14,8 °C Trésorerie 47 772 € -33 € / jour Aliments 100 kg 93 j ×1 ×2 ×4 ×8 0 5/9 Suivre l’élevage 50 / 450 g · stock 93,5 j. Prochaine étape Conseils Caméra Journal Type Bassin 16 événements avril 2026 23 Les Saules : distribution automatique activée. 23 Les Saules : 1000 juvéniles reçus de l’écloserie, acclimatés. 21 Bilan de la semaine 19 1000 juvéniles réservés à l’écloserie. 19 Livraison reçue : 100 kg d’aliments contrôlés et rangés au sec. 17 Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "elevage",
+      "screen": "Guide",
+      "words": 93,
+      "characters": 514,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 23 avril 2026 14,8 °C Trésorerie 47 772 € -33 € / jour Aliments 100 kg 93 j ×1 ×2 ×4 ×8 0 5/9 Suivre l’élevage 50 / 450 g · stock 93,5 j. Prochaine étape Conseils Caméra Guide Pratique Espèces Eau et alimentation À propos du modèle Rejouer le tutoriel Succès de cette ferme Analyser l’eau Du client au paiement Le rythme biologique Prévenir les risques Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "contrat-client",
+      "screen": "Construire",
+      "words": 109,
+      "characters": 619,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 4 septembre 2026 14,4 °C Trésorerie 37 720 € -36 € / jour Aliments 55,3 kg 11 j ×1 ×2 ×4 ×8 0 5/9 Suivre l’élevage 361 / 450 g · stock 11,7 j. Prochaine étape Conseils Caméra Construire Résultats de l’analyse Choisissez une parcelle. Parcelle sélectionnée Lot en croissance Les Saules Truite arc-en-ciel Source fraîche, courant et oxygène. Installation Bassin d’eau courante · 60 m³ Chantier 8 000 € · 14 jours Eau neuve ? 12 L/s · 12 L/s encore disponibles Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "contrat-client",
+      "screen": "Bassins",
+      "words": 126,
+      "characters": 690,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 4 septembre 2026 14,4 °C Trésorerie 37 720 € -36 € / jour Aliments 55,3 kg 11 j ×1 ×2 ×4 ×8 0 5/9 Suivre l’élevage 361 / 450 g · stock 11,7 j. Prochaine étape Conseils Caméra Bassins Temp. 14,3 °C Bon O₂ 8,2 mg/L Bon NH₃-N 0,0005 mg/L Bon Densité 6,01 kg/m³ Bon Bassin sélectionné Les Saules Lot en croissance Truite arc-en-ciel 1 000 poissons 361 g poids moyen 360,8 kg biomasse Courbes et seuils 80 % · environ 22 jours au rythme d’hier Eau Alimentation Équipement Historique pH 7,2 · azote ammoniacal total (TAN) 0,134 mg N/L Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "contrat-client",
+      "screen": "Logistique",
+      "words": 143,
+      "characters": 763,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 4 septembre 2026 14,4 °C Trésorerie 37 720 € -36 € / jour Aliments 55,3 kg 11 j ×1 ×2 ×4 ×8 0 5/9 Suivre l’élevage 361 / 450 g · stock 11,7 j. Prochaine étape Conseils Caméra Logistique Du fournisseur au paiement 1 · Fournisseur 0 commande 2 · Magasin 55,3 kg 3 · Bassin 1 en élevage 4 · Froid 0 kg 5 · Camion 0 en route 6 · Client 1 contrat 7 · Paiement 0 cycle réglé Approvisionnement Bâtiments Clients Expéditions Aliments 55,3 kg Autonomie 11,7 jours Stock + réservations / capacité 55,3 / 2 000 kg Commander des aliments Livraison en 2 jours. Transport de 18 € inclus dans chaque prix ci-dessous. Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "contrat-client",
+      "screen": "Finances",
+      "words": 110,
+      "characters": 573,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 4 septembre 2026 14,4 °C Trésorerie 37 720 € -36 € / jour Aliments 55,3 kg 11 j ×1 ×2 ×4 ×8 0 5/9 Suivre l’élevage 361 / 450 g · stock 11,7 j. Prochaine étape Conseils Caméra Finances Trésorerie Prévision Mois Cycles Trésorerie · euros 47 296 € 41 995 € 36 694 € 7 juin 2026 4 septembre 2026 Voir les 90 relevés Recettes encaissées + 0 € Dépenses -22 280 € Vendu 0 kg Charges quotidiennes · 36 € Aide financière Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "contrat-client",
+      "screen": "Journal",
+      "words": 109,
+      "characters": 612,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 4 septembre 2026 14,4 °C Trésorerie 37 720 € -36 € / jour Aliments 55,3 kg 11 j ×1 ×2 ×4 ×8 0 5/9 Suivre l’élevage 361 / 450 g · stock 11,7 j. Prochaine étape Conseils Caméra Journal Type Bassin 44 événements septembre 2026 4 Coopérative régionale : poissons entiers à 8,92 €/kg. 1 Bilan de la semaine août 2026 25 Bilan de la semaine 22 Chambre froide : aménagement terminé, équipement disponible. 20 Livraison reçue : 100 kg d’aliments contrôlés et Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "contrat-client",
+      "screen": "Guide",
+      "words": 93,
+      "characters": 519,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 4 septembre 2026 14,4 °C Trésorerie 37 720 € -36 € / jour Aliments 55,3 kg 11 j ×1 ×2 ×4 ×8 0 5/9 Suivre l’élevage 361 / 450 g · stock 11,7 j. Prochaine étape Conseils Caméra Guide Pratique Espèces Eau et alimentation À propos du modèle Rejouer le tutoriel Succès de cette ferme Analyser l’eau Du client au paiement Le rythme biologique Prévenir les risques Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "lot-au-froid",
+      "screen": "Construire",
+      "words": 122,
+      "characters": 720,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 24 septembre 2026 14,4 °C Trésorerie 36 639 € -150 € / jour Aliments 52,8 kg Aucun lot ×1 ×2 ×4 ×8 1 À traiter maintenant Votre récolte attend son transport 454 kg au froid, péremption dans 3 jours. Organiser le transport Conseils Votre récolte attend son transport Caméra Construire Résultats de l’analyse Choisissez une parcelle. Parcelle sélectionnée Vide sanitaire · 7 j Les Saules Truite arc-en-ciel Source fraîche, courant et oxygène. Installation Bassin d’eau courante · 60 m³ Chantier 8 000 € · 14 jours Eau neuve ? 12 L/s · 12 L/s encore disponibles Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "lot-au-froid",
+      "screen": "Bassins",
+      "words": 133,
+      "characters": 746,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 24 septembre 2026 14,4 °C Trésorerie 36 639 € -150 € / jour Aliments 52,8 kg Aucun lot ×1 ×2 ×4 ×8 1 À traiter maintenant Votre récolte attend son transport 454 kg au froid, péremption dans 3 jours. Organiser le transport Conseils Votre récolte attend son transport Caméra Bassins Temp. 13,8 °C Bon O₂ 7,9 mg/L Bon NH₃-N 0,0006 mg/L Bon Densité 0 kg/m³ Bon Bassin sélectionné Les Saules Vide sanitaire · 7 j Courbes et seuils Expédier le lot Fin du vide sanitaire · 7 jours Eau Alimentation Équipement Historique pH 7,2 · azote ammoniacal total (TAN) 0,16 mg N/L ? Débit d’eau neuve ? Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "lot-au-froid",
+      "screen": "Logistique",
+      "words": 156,
+      "characters": 872,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 24 septembre 2026 14,4 °C Trésorerie 36 639 € -150 € / jour Aliments 52,8 kg Aucun lot ×1 ×2 ×4 ×8 1 À traiter maintenant Votre récolte attend son transport 454 kg au froid, péremption dans 3 jours. Organiser le transport Conseils Votre récolte attend son transport Caméra Logistique Du fournisseur au paiement 1 · Fournisseur 0 commande 2 · Magasin 52,8 kg 3 · Bassin 0 en élevage 4 · Froid 454 kg 5 · Camion 0 en route 6 · Client 1 contrat 7 · Paiement 0 cycle réglé Approvisionnement Bâtiments Clients Expéditions Aliments 52,8 kg Autonomie Aucun lot à nourrir Stock + réservations / capacité 52,8 / 2 000 kg Commander des aliments Livraison en 2 jours. Transport de 18 € inclus dans chaque prix ci-dessous. Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "lot-au-froid",
+      "screen": "Finances",
+      "words": 121,
+      "characters": 673,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 24 septembre 2026 14,4 °C Trésorerie 36 639 € -150 € / jour Aliments 52,8 kg Aucun lot ×1 ×2 ×4 ×8 1 À traiter maintenant Votre récolte attend son transport 454 kg au froid, péremption dans 3 jours. Organiser le transport Conseils Votre récolte attend son transport Caméra Finances Trésorerie Prévision Mois Cycles Trésorerie · euros 46 400 € 40 996 € 35 592 € 27 juin 2026 24 septembre 2026 Voir les 90 relevés Recettes encaissées + 0 € Dépenses -23 361 € Vendu 0 kg Charges quotidiennes · 36 € Aide financière Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "lot-au-froid",
+      "screen": "Journal",
+      "words": 127,
+      "characters": 705,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 24 septembre 2026 14,4 °C Trésorerie 36 639 € -150 € / jour Aliments 52,8 kg Aucun lot ×1 ×2 ×4 ×8 1 À traiter maintenant Votre récolte attend son transport 454 kg au froid, péremption dans 3 jours. Organiser le transport Conseils Votre récolte attend son transport Caméra Journal Type Bassin 51 événements septembre 2026 24 454 kg récoltés et mis au froid · 114 €. 24 Les Saules : calibre commercial atteint, 454 g par poisson. 22 Bilan de la semaine 15 Bilan de la semaine 10 Livraison reçue : 100 kg d’aliments contrôlés et rangés au sec. 8 Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "lot-au-froid",
+      "screen": "Guide",
+      "words": 104,
+      "characters": 617,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 24 septembre 2026 14,4 °C Trésorerie 36 639 € -150 € / jour Aliments 52,8 kg Aucun lot ×1 ×2 ×4 ×8 1 À traiter maintenant Votre récolte attend son transport 454 kg au froid, péremption dans 3 jours. Organiser le transport Conseils Votre récolte attend son transport Caméra Guide Pratique Espèces Eau et alimentation À propos du modèle Rejouer le tutoriel Succès de cette ferme Analyser l’eau Du client au paiement Le rythme biologique Prévenir les risques Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "expedition",
+      "screen": "Construire",
+      "words": 110,
+      "characters": 631,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 24 septembre 2026 14,4 °C Trésorerie 36 471 € -317 € / jour Aliments 52,8 kg Aucun lot ×1 ×2 ×4 ×8 0 9/9 Attendre le paiement Échéance du client : 8 j. Prochaine étape Conseils Caméra Construire Résultats de l’analyse Choisissez une parcelle. Parcelle sélectionnée Vide sanitaire · 7 j Les Saules Truite arc-en-ciel Source fraîche, courant et oxygène. Installation Bassin d’eau courante · 60 m³ Chantier 8 000 € · 14 jours Eau neuve ? 12 L/s · 12 L/s encore disponibles Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "expedition",
+      "screen": "Bassins",
+      "words": 124,
+      "characters": 672,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 24 septembre 2026 14,4 °C Trésorerie 36 471 € -317 € / jour Aliments 52,8 kg Aucun lot ×1 ×2 ×4 ×8 0 9/9 Attendre le paiement Échéance du client : 8 j. Prochaine étape Conseils Caméra Bassins Temp. 13,8 °C Bon O₂ 7,9 mg/L Bon NH₃-N 0,0006 mg/L Bon Densité 0 kg/m³ Bon Bassin sélectionné Les Saules Vide sanitaire · 7 j Courbes et seuils Fin du vide sanitaire · 7 jours Eau Alimentation Équipement Historique pH 7,2 · azote ammoniacal total (TAN) 0,16 mg N/L ? Débit d’eau neuve ? Entretenir & renouveler · 23 € Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "expedition",
+      "screen": "Logistique",
+      "words": 144,
+      "characters": 781,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 24 septembre 2026 14,4 °C Trésorerie 36 471 € -317 € / jour Aliments 52,8 kg Aucun lot ×1 ×2 ×4 ×8 0 9/9 Attendre le paiement Échéance du client : 8 j. Prochaine étape Conseils Caméra Logistique Du fournisseur au paiement 1 · Fournisseur 0 commande 2 · Magasin 52,8 kg 3 · Bassin 0 en élevage 4 · Froid 0 kg 5 · Camion 1 en route 6 · Client 0 contrat 7 · Paiement 0 cycle réglé Approvisionnement Bâtiments Clients Expéditions Aliments 52,8 kg Autonomie Aucun lot à nourrir Stock + réservations / capacité 52,8 / 2 000 kg Commander des aliments Livraison en 2 jours. Transport de 18 € inclus dans chaque prix ci-dessous. Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "expedition",
+      "screen": "Finances",
+      "words": 109,
+      "characters": 584,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 24 septembre 2026 14,4 °C Trésorerie 36 471 € -317 € / jour Aliments 52,8 kg Aucun lot ×1 ×2 ×4 ×8 0 9/9 Attendre le paiement Échéance du client : 8 j. Prochaine étape Conseils Caméra Finances Trésorerie Prévision Mois Cycles Trésorerie · euros 46 420 € 40 912 € 35 404 € 27 juin 2026 24 septembre 2026 Voir les 90 relevés Recettes encaissées + 0 € Dépenses -23 529 € Vendu 0 kg Charges quotidiennes · 36 € Aide financière Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "expedition",
+      "screen": "Journal",
+      "words": 113,
+      "characters": 605,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 24 septembre 2026 14,4 °C Trésorerie 36 471 € -317 € / jour Aliments 52,8 kg Aucun lot ×1 ×2 ×4 ×8 0 9/9 Attendre le paiement Échéance du client : 8 j. Prochaine étape Conseils Caméra Journal Type Bassin 52 événements septembre 2026 24 Lot #8 confié au transporteur frigorifique · 168 €. 24 454 kg récoltés et mis au froid · 114 €. 24 Les Saules : calibre commercial atteint, 454 g par poisson. 22 Bilan de la semaine 15 Bilan de la semaine 10 Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "expedition",
+      "screen": "Guide",
+      "words": 92,
+      "characters": 528,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 24 septembre 2026 14,4 °C Trésorerie 36 471 € -317 € / jour Aliments 52,8 kg Aucun lot ×1 ×2 ×4 ×8 0 9/9 Attendre le paiement Échéance du client : 8 j. Prochaine étape Conseils Caméra Guide Pratique Espèces Eau et alimentation À propos du modèle Rejouer le tutoriel Succès de cette ferme Analyser l’eau Du client au paiement Le rythme biologique Prévenir les risques Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "cycle-paye",
+      "screen": "Construire",
+      "words": 106,
+      "characters": 631,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 2 octobre 2026 10 °C Trésorerie 40 232 € + 4 014 € / jour Aliments 52,8 kg Aucun lot ×1 ×2 ×4 ×8 0 Exploitation Diversifier la ferme Choisissez selon l’eau. Choisir une parcelle Conseils Caméra Construire Résultats de l’analyse Choisissez une parcelle. Parcelle sélectionnée Disponible Les Saules Truite arc-en-ciel Source fraîche, courant et oxygène. Installation Bassin d’eau courante · 60 m³ Chantier 8 000 € · 14 jours Eau neuve ? 12 L/s · 12 L/s encore disponibles Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "cycle-paye",
+      "screen": "Bassins",
+      "words": 110,
+      "characters": 626,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 2 octobre 2026 10 °C Trésorerie 40 232 € + 4 014 € / jour Aliments 52,8 kg Aucun lot ×1 ×2 ×4 ×8 0 Exploitation Diversifier la ferme Choisissez selon l’eau. Choisir une parcelle Conseils Caméra Bassins Temp. 13,5 °C Bon O₂ 10,1 mg/L Bon NH₃-N 0 mg/L Bon Densité 0 kg/m³ Bon Bassin sélectionné Les Saules Disponible Courbes et seuils Commander des juvéniles Eau Alimentation Équipement Historique pH 7,2 · azote ammoniacal total (TAN) 0 mg N/L ? Débit d’eau neuve ? Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "cycle-paye",
+      "screen": "Logistique",
+      "words": 144,
+      "characters": 791,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 2 octobre 2026 10 °C Trésorerie 40 232 € + 4 014 € / jour Aliments 52,8 kg Aucun lot ×1 ×2 ×4 ×8 0 Exploitation Diversifier la ferme Choisissez selon l’eau. Choisir une parcelle Conseils Caméra Logistique Du fournisseur au paiement 1 · Fournisseur 0 commande 2 · Magasin 52,8 kg 3 · Bassin 0 en élevage 4 · Froid 0 kg 5 · Camion 0 en route 6 · Client 0 contrat 7 · Paiement 1 cycle réglé Approvisionnement Bâtiments Clients Expéditions Aliments 52,8 kg Autonomie Aucun lot à nourrir Stock + réservations / capacité 52,8 / 2 000 kg Commander des aliments Livraison en 2 jours. Transport de 18 € inclus dans chaque prix ci-dessous. Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "cycle-paye",
+      "screen": "Finances",
+      "words": 110,
+      "characters": 599,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 2 octobre 2026 10 °C Trésorerie 40 232 € + 4 014 € / jour Aliments 52,8 kg Aucun lot ×1 ×2 ×4 ×8 0 Exploitation Diversifier la ferme Choisissez selon l’eau. Choisir une parcelle Conseils Caméra Finances Trésorerie Prévision Mois Cycles Trésorerie · euros 46 152 € 40 653 € 35 154 € 5 juillet 2026 2 octobre 2026 Voir les 90 relevés Recettes encaissées + 4 050 € Dépenses -23 817 € Vendu 454 kg Charges quotidiennes · 36 € Aide financière Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "cycle-paye",
+      "screen": "Journal",
+      "words": 107,
+      "characters": 608,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 2 octobre 2026 10 °C Trésorerie 40 232 € + 4 014 € / jour Aliments 52,8 kg Aucun lot ×1 ×2 ×4 ×8 0 Exploitation Diversifier la ferme Choisissez selon l’eau. Choisir une parcelle Conseils Caméra Journal Type Bassin 55 événements octobre 2026 2 Coopérative régionale : règlement reçu de 4 050 €. septembre 2026 29 Bilan de la semaine 25 Coopérative régionale : livraison de 454 kg acceptée. 24 Lot #8 confié au transporteur frigorifique · 168 €. 24 Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    },
+    {
+      "state": "cycle-paye",
+      "screen": "Guide",
+      "words": 92,
+      "characters": 538,
+      "text": "Carte 2D Réessayer la 3D Les Saules La Roselière Le Pré neuf Les Sources 2 octobre 2026 10 °C Trésorerie 40 232 € + 4 014 € / jour Aliments 52,8 kg Aucun lot ×1 ×2 ×4 ×8 0 Exploitation Diversifier la ferme Choisissez selon l’eau. Choisir une parcelle Conseils Caméra Guide Pratique Espèces Eau et alimentation À propos du modèle Rejouer le tutoriel Succès de cette ferme Analyser l’eau Du client au paiement Le rythme biologique Prévenir les risques Construire Alt+C Bassins Alt+B Logistique Alt+L Finances Alt+F Journal Alt+J Guide Alt+G"
+    }
+  ]
+}

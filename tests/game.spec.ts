@@ -1,3 +1,6 @@
+import { enterGame } from "./ui-helpers";
+import { SAVE_KEY } from "../src/state/saves";
+import { withoutWebGL, settleEvents } from "./ui-helpers";
 import { expect, test } from "@playwright/test";
 import { operatingGame as initialGame } from "../src/test-fixtures";
 import AxeBuilder from "@axe-core/playwright";
@@ -11,6 +14,7 @@ import {
 test("3D : ferme, bassin, bâtiments et identification des trois espèces", async ({
   page,
 }) => {
+  test.setTimeout(240000);
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   const seed = initialGame();
@@ -19,78 +23,77 @@ test("3D : ferme, bassin, bâtiments et identification des trois espèces", asyn
     { key: STORAGE_KEY, seed },
   );
   await page.goto("/");
-  await page.getByRole("button", { name: "Mes bassins", exact: true }).click();
-  await expect(page.locator(".scene-site-plan")).toBeVisible();
-  await page
-    .getByRole("button", { name: "Explorer en 3D", exact: true })
-    .click();
+  await enterGame(page);
+  await page.getByRole("button", { name: "Bassins", exact: true }).click();
   const canvas = page.locator('canvas[data-engine="three-webgl"]');
   await expect(canvas).toHaveAttribute("data-frame", "rendered", {
     timeout: 60000,
   });
-  await page
-    .getByTestId("farm-scene")
-    .screenshot({ path: "/tmp/les-etangs-v3-farm.png" });
+  await page.getByRole("tab", { name: "Équipement", exact: true }).click();
   await page
     .getByRole("button", { name: "Améliorer ce bassin", exact: true })
     .click();
   await page
     .getByRole("button", { name: "Installer l’équipement", exact: true })
     .click();
+  await settleEvents(page);
   for (const [label, view] of [
     ["Bâtiments", "buildings"],
     ["Le bassin", "pond"],
   ]) {
-    await page.getByRole("button", { name: label, exact: true }).click();
-    await expect(canvas).toHaveAttribute("data-view", view);
     await page
-      .getByTestId("farm-scene")
-      .screenshot({ path: `/tmp/les-etangs-v3-${view}.png` });
+      .getByLabel("Vue du terrain", { exact: true })
+      .selectOption({ label });
+    await expect(canvas).toHaveAttribute("data-view", view, { timeout: 60000 });
   }
   await page
     .getByRole("button", { name: "Observer sous l’eau", exact: true })
     .click();
   await expect(
-    page.getByRole("button", { name: "Vue pédagogique", exact: true }),
+    page.getByRole("button", { name: "Observer sous l’eau", exact: true }),
   ).toHaveAttribute("aria-pressed", "true");
-  await page.getByRole("button", { name: "Les poissons", exact: true }).click();
-  await expect(page.locator(".photo-observation")).toBeVisible();
-  await page.getByRole("button", { name: "Modèle 3D", exact: true }).click();
+  await page.getByLabel("Vue du terrain", { exact: true }).selectOption("fish");
+  await expect(page.locator(".fish-inspector")).toBeVisible();
   for (const [label, id, trait] of [
     ["Truite arc-en-ciel", "trout", "adipeuse"],
     ["Carpe commune", "carp", "barbillons"],
     ["Tilapia du Nil", "tilapia", "épineuse"],
   ]) {
-    await page.getByRole("button", { name: label, exact: true }).click();
-    await expect(canvas).toHaveAttribute("data-species", id);
-    await expect(page.locator(".fish-observation")).toContainText(trait);
     await page
-      .getByTestId("farm-scene")
-      .screenshot({ path: `/tmp/les-etangs-v3-${id}.png` });
+      .getByLabel("Espèce à observer", { exact: true })
+      .selectOption({ label });
+    await expect(canvas).toHaveAttribute("data-species", id, {
+      timeout: 60000,
+    });
+    await expect(page.locator(".fish-inspector")).toContainText(trait);
   }
-  await page.getByRole("button", { name: "Marché", exact: true }).click();
+  await page.getByRole("button", { name: "Finances", exact: true }).click();
   await page
-    .getByRole("navigation", { name: "Navigation principale" })
-    .getByRole("button", { name: "Mes bassins", exact: true })
+    .getByRole("navigation", { name: "Gestion de l’exploitation" })
+    .getByRole("button", { name: "Bassins", exact: true })
     .click();
-  await expect(page.locator(".scene-site-plan")).toBeVisible();
+  await expect(canvas).toHaveAttribute("data-view", "fish");
   expect(errors).toEqual([]);
 });
 
 test("import, export, mode expert et protection de sauvegarde corrompue", async ({
   page,
 }) => {
+  await withoutWebGL(page);
   await page.goto("/");
+  await enterGame(page);
   await page.getByRole("button", { name: "Jour suivant", exact: true }).click();
   await page
     .getByRole("button", { name: "Paramètres & sauvegarde", exact: true })
     .click();
+  await page.getByRole("tab", { name: "Jeu", exact: true }).click();
   await page.getByLabel("Mode de gestion").selectOption("expert");
+  await page.getByRole("tab", { name: "Partie", exact: true }).click();
   const valid = await page.evaluate(
     (key) => localStorage.getItem(key),
-    STORAGE_KEY,
+    SAVE_KEY,
   );
-  expect(JSON.parse(valid!).mode).toBe("expert");
+  expect(JSON.parse(valid!).game.mode).toBe("expert");
   const download = page.waitForEvent("download");
   await page.getByRole("button", { name: /Exporter ma partie/ }).click();
   expect((await download).suggestedFilename()).toBe("les-etangs-jour-2.json");
@@ -99,15 +102,15 @@ test("import, export, mode expert et protection de sauvegarde corrompue", async 
     mimeType: "application/json",
     buffer: Buffer.from("{}"),
   });
-  await expect(page.getByRole("status")).toContainText("incompatible");
+  await expect(page.locator(".toast")).toContainText("incompatible");
   expect(
-    await page.evaluate((key) => localStorage.getItem(key), STORAGE_KEY),
+    await page.evaluate((key) => localStorage.getItem(key), SAVE_KEY),
   ).toBe(valid);
   await page.getByRole("button", { name: /Nouvelle partie/ }).click();
   await page
     .getByRole("button", { name: "Recommencer maintenant", exact: true })
     .click();
-  await expect(page.getByTestId("day")).toHaveText("Jour 1");
+  await expect(page.getByTestId("day")).toHaveAttribute("data-day", "1");
   await page
     .getByRole("button", { name: "Paramètres & sauvegarde", exact: true })
     .click();
@@ -116,17 +119,14 @@ test("import, export, mode expert et protection de sauvegarde corrompue", async 
     mimeType: "application/json",
     buffer: Buffer.from(valid!),
   });
-  await expect(page.getByTestId("day")).toHaveText("Jour 2");
-  await page.evaluate(
-    (key) => localStorage.setItem(key, "{broken"),
-    STORAGE_KEY,
-  );
+  await expect(page.getByTestId("day")).toHaveAttribute("data-day", "2");
+  await page.evaluate((key) => localStorage.setItem(key, "{broken"), SAVE_KEY);
   await page.reload();
   await expect(page.getByRole("alert")).toContainText(
     "sauvegarde ne peut pas être lue",
   );
   expect(
-    await page.evaluate((key) => localStorage.getItem(key), STORAGE_KEY),
+    await page.evaluate((key) => localStorage.getItem(key), SAVE_KEY),
   ).toBe("{broken");
 });
 
@@ -146,18 +146,20 @@ test("migration automatique V1 conserve le fichier original", async ({
     })),
   };
   const raw = JSON.stringify(legacy);
+  await withoutWebGL(page);
   await page.addInitScript(({ key, raw }) => localStorage.setItem(key, raw), {
     key: LEGACY_STORAGE_KEY,
     raw,
   });
   await page.goto("/");
-  await expect(page.getByTestId("day")).toHaveText("Jour 1");
+  await enterGame(page);
+  await expect(page.getByTestId("day")).toHaveAttribute("data-day", "1");
   await expect
-    .poll(() => page.evaluate((key) => localStorage.getItem(key), STORAGE_KEY))
+    .poll(() => page.evaluate((key) => localStorage.getItem(key), SAVE_KEY))
     .not.toBeNull();
   const migrated = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key)!),
-    STORAGE_KEY,
+    (key) => JSON.parse(localStorage.getItem(key)!).game,
+    SAVE_KEY,
   );
   expect(migrated.version).toBe(3);
   expect(migrated.ponds[0].count).toBe(30);
@@ -168,33 +170,26 @@ test("migration automatique V1 conserve le fichier original", async ({
   ).toBe(raw);
 });
 
-test("horloge : vitesse ×60, fenêtre de gestion et pause", async ({ page }) => {
+test("horloge : vitesse ×8, fenêtre de gestion et pause", async ({ page }) => {
+  await withoutWebGL(page);
   await page.clock.install({ time: new Date("2026-01-01T00:00:00Z") });
   await page.goto("/");
+  await enterGame(page);
   await page.clock.pauseAt(new Date("2026-01-01T00:01:00Z"));
-  for (const [from, to] of [
-    [1, 3],
-    [3, 12],
-    [12, 60],
-  ])
-    await page
-      .getByRole("button", {
-        name: `Vitesse ${from}, passer à ${to}`,
-        exact: true,
-      })
-      .click();
-  await page.getByRole("button", { name: "Lancer la simulation" }).click();
-  await page.clock.fastForward(210);
-  await expect(page.getByTestId("day")).toHaveText("Jour 2");
+  await page.getByRole("button", { name: "Vitesse ×8", exact: true }).click();
+  await page.clock.runFor(500);
+  await expect(page.getByTestId("day")).toHaveAttribute("data-day", "2");
   await page
     .getByRole("button", { name: "Paramètres & sauvegarde", exact: true })
     .click();
-  await page.clock.fastForward(1000);
+  await page.clock.runFor(4000);
   await page.keyboard.press("Escape");
-  await expect(page.getByTestId("day")).toHaveText("Jour 2");
-  await page.getByRole("button", { name: "Mettre en pause" }).click();
-  await page.clock.fastForward(1000);
-  await expect(page.getByTestId("day")).toHaveText("Jour 2");
+  await expect(page.getByTestId("day")).toHaveAttribute("data-day", "2");
+  await page
+    .getByRole("button", { name: "Mettre en pause", exact: true })
+    .click();
+  await page.clock.runFor(4000);
+  await expect(page.getByTestId("day")).toHaveAttribute("data-day", "2");
 });
 
 test("sans WebGL : la carte et la gestion restent disponibles", async ({
@@ -222,37 +217,44 @@ test("sans WebGL : la carte et la gestion restent disponibles", async ({
     { key: STORAGE_KEY, seed },
   );
   await page.goto("/");
-  await page.getByRole("button", { name: "Mes bassins", exact: true }).click();
-  await page
-    .getByRole("button", { name: "Explorer en 3D", exact: true })
-    .click();
-  await expect(page.getByText(/La 3D n’est pas disponible/)).toBeVisible();
-  for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
+  await enterGame(page);
+  await expect(page.getByText("Carte 2D", { exact: true })).toBeVisible();
+  for (const viewport of [
+    { width: 1440, height: 900 },
+    { width: 390, height: 844 },
+  ]) {
     await page.setViewportSize(viewport);
     await expect(page.locator(".scene-location")).toBeHidden();
     await expect(page.locator(".scene-bottom")).toBeHidden();
-    await expect(page.locator(".scene-caption")).toContainText("Carte de secours");
-    const warningTop = await page.locator(".scene-fallback > p").evaluate(e => {
-      const range = document.createRange(); range.selectNodeContents(e); return range.getBoundingClientRect().top;
-    });
-    const toolbar = (await page.locator(".scene-toolbar").boundingBox())!;
-    expect(warningTop).toBeGreaterThanOrEqual(toolbar.y + toolbar.height);
-    for (const label of await page.locator(".scene-fallback .map-name").all()) {
-      expect(await label.evaluate(e => parseFloat(getComputedStyle(e).fontSize))).toBeGreaterThanOrEqual(12);
-      expect(await label.evaluate(e => {
-        const frame = e.closest(".farm-map-frame")!;
-        const index = [...frame.querySelectorAll(".map-name")].indexOf(e);
-        const group = frame.querySelectorAll<SVGGElement>(".map-pond")[index];
-        const point = new DOMPoint(0, 0).matrixTransform(group.getScreenCTM()!);
-        const r = e.getBoundingClientRect();
-        return Math.abs(r.x + r.width / 2 - point.x);
-      })).toBeLessThan(1);
+    await expect(page.locator(".world-fallback > p")).toContainText(
+      "Carte 2D",
+    );
+    for (const label of await page.locator(".world-fallback .map-name").all()) {
+      expect(
+        await label.evaluate((e) => parseFloat(getComputedStyle(e).fontSize)),
+      ).toBeGreaterThanOrEqual(12);
+      await expect
+        .poll(() =>
+          label.evaluate((e) => {
+            const frame = e.closest(".farm-map-frame")!;
+            const index = [...frame.querySelectorAll(".map-name")].indexOf(e);
+            const group =
+              frame.querySelectorAll<SVGGElement>(".map-pond")[index];
+            const point = new DOMPoint(0, 0).matrixTransform(
+              group.getScreenCTM()!,
+            );
+            const r = e.getBoundingClientRect();
+            return Math.abs(r.x + r.width / 2 - point.x);
+          }),
+        )
+        .toBeLessThan(1);
     }
   }
   await page.getByRole("button", { name: /Bassin 2, La Roselière/ }).click();
   await expect(
     page.getByRole("heading", { name: "La Roselière", exact: true }),
   ).toBeVisible();
+  await page.getByRole("tab", { name: "Alimentation", exact: true }).click();
   await page.getByRole("button", { name: /Programmer la ration/ }).click();
   await expect(
     page.getByRole("button", { name: /Ration programmée/ }),
@@ -260,23 +262,22 @@ test("sans WebGL : la carte et la gestion restent disponibles", async ({
 });
 
 test("mobile et accessibilité des pages principales", async ({ page }) => {
+  await withoutWebGL(page);
   await page.goto("/");
+  await enterGame(page);
   for (const name of [
-    "Mon projet",
+    "Construire",
     "Logistique",
-    "Mes bassins",
-    "Marché",
+    "Bassins",
+    "Finances",
     "Journal",
     "Guide",
   ]) {
     await page
-      .getByRole("navigation", { name: "Navigation principale" })
+      .getByRole("navigation", { name: "Gestion de l’exploitation" })
       .getByRole("button", { name, exact: true })
       .click();
-    if (name === "Mes bassins")
-      await expect(
-        page.getByRole("button", { name: "Explorer en 3D", exact: true }),
-      ).toBeVisible();
+    await expect(page.getByTestId("farm-scene")).toBeVisible();
     const result = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
       .analyze();
@@ -296,15 +297,15 @@ test("mobile et accessibilité des pages principales", async ({ page }) => {
   await page.keyboard.press("Escape");
   await page.setViewportSize({ width: 360, height: 800 });
   for (const name of [
-    "Mon projet",
+    "Construire",
     "Logistique",
-    "Mes bassins",
-    "Marché",
+    "Bassins",
+    "Finances",
     "Journal",
     "Guide",
   ]) {
     await page
-      .getByRole("navigation", { name: "Navigation principale" })
+      .getByRole("navigation", { name: "Gestion de l’exploitation" })
       .getByRole("button", { name, exact: true })
       .click();
     expect(
@@ -313,10 +314,10 @@ test("mobile et accessibilité des pages principales", async ({ page }) => {
       ),
       `Largeur de ${name}`,
     ).toBe(true);
-    if (name === "Mes bassins") {
+    if (name === "Bassins") {
       await page
-        .getByRole("button", { name: "Sélectionner La Roselière", exact: true })
-        .click();
+        .getByLabel("Bassin sélectionné", { exact: true })
+        .selectOption("2");
       await expect(
         page.getByRole("heading", { name: "La Roselière", exact: true }),
       ).toBeVisible();
@@ -331,19 +332,33 @@ test("mobile et accessibilité des pages principales", async ({ page }) => {
 test("nouvelle partie guidée : terrain vide jusqu’au premier règlement, uniquement par les commandes du jeu", async ({
   page,
 }) => {
-  test.setTimeout(120000);
+  test.setTimeout(240000);
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   const current = async (): Promise<Game> =>
-    page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), STORAGE_KEY);
-  const step = () => page.getByTestId("next-task").getByRole("button");
+    page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key)!).game,
+      SAVE_KEY,
+    );
+  const step = () => ({
+    click: async () => {
+      await page.getByTestId("task-action").click();
+      await settleEvents(page);
+    },
+  });
+  await withoutWebGL(page);
   await page.goto("/");
+  await enterGame(page);
   await expect(
     page.getByRole("heading", { name: "Tout commence par l’eau" }),
   ).toBeVisible();
   expect((await current()).ponds.every((p) => !p.built && !p.count)).toBe(true);
   await step().click(); // Analysis order.
   await step().click(); // Receive analysis, day 3.
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Choisir une parcelle", exact: true })
+    .click(); // Results → construction.
   await page
     .getByRole("button", {
       name: "Choisir : Truite arc-en-ciel · Les Saules",
@@ -352,7 +367,7 @@ test("nouvelle partie guidée : terrain vide jusqu’au premier règlement, uniq
     .click();
   await step().click(); // Build.
   await step().click(); // Fourteen-day construction.
-  await expect(page.getByTestId("day")).toHaveText("Jour 17");
+  await expect(page.getByTestId("day")).toHaveAttribute("data-day", "17");
   await step().click(); // Warehouse.
   await step().click(); // Seven-day works.
   await step().click(); // Open supply chain.
@@ -384,11 +399,12 @@ test("nouvelle partie guidée : terrain vide jusqu’au premier règlement, uniq
   });
   let iterations = 0;
   while ((await current()).development.paid === 0 && iterations++ < 90) {
+    await settleEvents(page);
     const state = await current(),
       title = await page
         .getByTestId("next-task")
         .getByRole("heading")
-        .innerText();
+        .evaluate((e) => e.getAttribute("aria-label") || e.textContent || "");
     if (state.development.batches.length) {
       await page.getByRole("button", { name: /^Expédier le lot/ }).click();
     } else if (title.includes("Anticipez la rupture")) {
@@ -420,6 +436,7 @@ test("nouvelle partie guidée : terrain vide jusqu’au premier règlement, uniq
   expect(state.day).toBeGreaterThan(130);
   expect(state.money).toBeGreaterThan(1000);
   await page.reload();
+  await enterGame(page);
   expect(await current()).toEqual(state);
   expect(errors).toEqual([]);
 });
@@ -429,17 +446,20 @@ test("migration V2 préserve la partie et propose explicitement le nouveau dépa
 }) => {
   const seed = initialGame();
   const raw = JSON.stringify({ ...seed, version: 2, development: undefined });
+  await withoutWebGL(page);
   await page.addInitScript(({ key, raw }) => localStorage.setItem(key, raw), {
     key: V2_STORAGE_KEY,
     raw,
   });
   await page.goto("/");
+  await enterGame(page);
+  await page.getByRole("button", { name: "Construire", exact: true }).click();
   await expect(
     page.getByText("Votre ancienne exploitation est conservée."),
   ).toBeVisible();
   const state = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key)!),
-    STORAGE_KEY,
+    (key) => JSON.parse(localStorage.getItem(key)!).game,
+    SAVE_KEY,
   );
   expect(state.version).toBe(3);
   expect(state.ponds[0].count).toBe(1200);

@@ -1,75 +1,137 @@
-import { useEffect, useRef, useState } from "react";
+import { createRewards } from "./world/Rewards";
+import type { AchievementId } from "./state/profile";
+import { t, displayText, useLocale } from "./i18n";
+import { disposeRenderCaches } from "./world/renderCaches";
+import { registerSceneSnapshots } from "./world/snapshots";
+import { Button } from "./ui/Button";
+import { WorldLabels } from "./world/WorldLabels";
+import { createLabelLayout } from "./world/LabelLayout";
+import { createCameraRig } from "./world/CameraRig";
+import { renderPipeline } from "./world/RenderPipeline";
+import {
+  QUALITY,
+  detectQuality,
+  type Graphics,
+  type Quality,
+} from "./world/quality";
+import { softContour, targetKey, type WorldTarget } from "./world/selection";
+import { ASSET_POSITIONS } from "./farm3d";
+import { createLifeEffects } from "./world/LifeEffects";
+import { createWeather } from "./world/WeatherScene";
+import { oxygenMotion } from "./world/lifeSelectors";
+import type { GameClock } from "./state/useGameClock";
+import { registerFeedbackProjector } from "./state/feedback";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as T from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
-import {
-  Focus,
-  Fish,
-  Map,
-  RotateCcw,
-  Maximize2,
-  Eye,
-  Camera,
-  Warehouse,
-} from "lucide-react";
 import FarmMap from "./FarmMap";
 import { stepSchool, swimRotation } from "./swimming";
 import { animateFish, clearFishTextures, createFish } from "./fish3d";
 import { createFarm, disposeObject, POND_POSITIONS } from "./farm3d";
-import { SPECIES, number, type Pond, type SpeciesId } from "./game";
-
-type SceneMode = "farm" | "pond" | "fish" | "buildings";
-import { FishArt } from "./FishArt";
+import { type Pond, type SpeciesId } from "./game";
+import { paint } from "./world/palette";
+import type { FarmState } from "./world/artSelectors";
+import type { SceneMode } from "./world/types";
 export default function FarmScene({
   ponds,
+  development,
+  food,
   selected,
   select,
   day,
+  mode,
+  species,
+  clearWater,
+  reset,
+  clock,
+  graphics,
+  target,
+  inspect,
+  panelOpen,
+  presentation = false,
+  introFlight = false,
+  source,
+  rewards = [],
 }: {
+  presentation?: boolean;
+  introFlight?: boolean;
+  source?: () => void;
+  rewards?: readonly AchievementId[];
+  graphics: Graphics;
+  target: WorldTarget | null;
+  inspect: (target: WorldTarget) => void;
+  panelOpen: boolean;
   ponds: Pond[];
+  development: FarmState["development"];
+  food: number;
   selected: number;
   select: (id: number) => void;
   day: number;
+  mode: SceneMode;
+  species: SpeciesId;
+  clearWater: boolean;
+  reset: number;
+  clock: Pick<GameClock, "active" | "phase" | "seeking">;
 }) {
-  const [started, setStarted] = useState(false);
-  const [landscape, setLandscape] = useState(false);
-  const [notice, setNotice] = useState("");
-  const [mode, setMode] = useState<SceneMode>("farm");
-  const [species, setSpecies] = useState<SpeciesId>("trout");
-  const [clearWater, setClearWater] = useState(false);
+  const locale = useLocale();
   const [error, setError] = useState("");
   const [ready, setReady] = useState(false);
-  const [reset, setReset] = useState(0);
-  const [showPlate, setShowPlate] = useState(false);
   const host = useRef<HTMLDivElement>(null);
-  const shell = useRef<HTMLDivElement>(null);
-  const latest = useRef({
-    ponds,
-    selected,
-    select,
-    day,
-    mode,
-    species,
-    clearWater,
-    reset,
-    landscape,
-    showPlate,
-  });
-  latest.current = {
-    ponds,
-    selected,
-    select,
-    day,
-    mode,
-    species,
-    clearWater,
-    reset,
-    landscape,
-    showPlate,
-  };
-  const selectedPond = ponds[selected - 1];
+  const recovering = useRef(false);
+  const state = useMemo(
+    () => ({
+      ponds,
+      development,
+      food,
+      selected,
+      select,
+      day,
+      mode,
+      species,
+      clearWater,
+      reset,
+      clock: {
+        active: clock.active,
+        seeking: clock.seeking,
+        phase: { started: clock.phase.started, duration: clock.phase.duration },
+      },
+      graphics,
+      target,
+      inspect,
+      panelOpen,
+      presentation,
+      introFlight,
+      rewards,
+    }),
+    [
+      ponds,
+      development,
+      food,
+      selected,
+      select,
+      day,
+      mode,
+      species,
+      clearWater,
+      reset,
+      clock.active,
+      clock.seeking,
+      clock.phase.started,
+      clock.phase.duration,
+      graphics,
+      target,
+      inspect,
+      panelOpen,
+      presentation,
+      introFlight,
+      rewards,
+    ],
+  );
+  const latest = useRef(state);
+  latest.current = state;
   useEffect(() => {
-    if (!started || !host.current) return;
+    if (!host.current || error) return;
     const container = host.current;
     let renderer: T.WebGLRenderer;
     try {
@@ -79,9 +141,7 @@ export default function FarmScene({
         powerPreference: "high-performance",
       });
     } catch {
-      setError(
-        "La 3D n’est pas disponible dans ce navigateur. La carte de gestion reste utilisable.",
-      );
+      setError(t("m_eba7171035"));
       return;
     }
     renderer.setPixelRatio(
@@ -92,18 +152,28 @@ export default function FarmScene({
     renderer.toneMapping = T.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 0.94;
     renderer.outputColorSpace = T.SRGBColorSpace;
-    renderer.domElement.setAttribute(
-      "aria-label",
-      "Vue 3D de l’exploitation. Utilisez les boutons pour sélectionner une vue ou un bassin.",
-    );
+    renderer.domElement.setAttribute("aria-label", t("m_1a5af6074a"));
     renderer.domElement.setAttribute("role", "img");
     renderer.domElement.dataset.engine = "three-webgl";
     container.appendChild(renderer.domElement);
     const scene = new T.Scene();
-    scene.background = new T.Color("#dbe6dc");
-    scene.fog = new T.Fog("#dbe6dc", 100, 220);
-    const camera = new T.PerspectiveCamera(40, 1, 0.08, 250);
+    scene.background = new T.Color(paint("sky"));
+    scene.fog = new T.Fog(paint("sky"), 100, 220);
+    const camera = new T.PerspectiveCamera(40, 1, 0.08, 400);
     camera.position.set(37, 36, 45);
+    const stopProjection = registerFeedbackProjector((id) => {
+      if (latest.current.mode === "fish" || !POND_POSITIONS[id - 1])
+        return null;
+      const [x, z] = POND_POSITIONS[id - 1];
+      const v = new T.Vector3(x, 1.5, z).project(camera),
+        rect = renderer.domElement.getBoundingClientRect();
+      return v.z < 1
+        ? {
+            x: rect.left + ((v.x + 1) * rect.width) / 2,
+            y: rect.top + ((1 - v.y) * rect.height) / 2,
+          }
+        : null;
+    });
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.07;
@@ -112,9 +182,21 @@ export default function FarmScene({
     controls.maxDistance = 100;
     controls.maxPolarAngle = Math.PI / 2 - 0.045;
     controls.enablePan = true;
-    const sky = new T.HemisphereLight("#eef4ec", "#736749", 1.05);
+    const cameraSensitivity = () => {
+      const sensitivity =
+        Number(document.documentElement.dataset.cameraSensitivity) || 1;
+      controls.rotateSpeed = sensitivity;
+      controls.zoomSpeed = sensitivity;
+      controls.panSpeed = sensitivity;
+    };
+    cameraSensitivity();
+    const sky = new T.HemisphereLight(
+      paint("sky-light"),
+      paint("ground-light"),
+      1.05,
+    );
     scene.add(sky);
-    const sun = new T.DirectionalLight("#fff0ce", 2.5);
+    const sun = new T.DirectionalLight(paint("sun"), 2.5);
     sun.position.set(-30, 50, 25);
     sun.castShadow = true;
     sun.shadow.mapSize.set(
@@ -134,29 +216,20 @@ export default function FarmScene({
     const environment = pmrem.fromScene(room, 0.04);
     scene.environment = environment.texture;
     scene.environmentIntensity = 0.45;
+    disposeRenderCaches(renderer, room);
     room.dispose();
     pmrem.dispose();
-    let farm = createFarm(latest.current.ponds);
+    const farm = createFarm(latest.current);
+    const decorations = createRewards(farm.root);
     scene.add(farm.root);
     let specimen = createFish("trout", true);
     specimen.scale.setScalar(2.1);
     specimen.position.y = 1.7;
     specimen.visible = false;
     scene.add(specimen);
-    let signature = latest.current.ponds
-        .map((p) =>
-          [
-            p.built,
-            p.species,
-            p.count > 0,
-            p.upgrade,
-            p.facility,
-            p.constructionDays > 0,
-          ].join(":"),
-        )
-        .join("|"),
-      cameraKey = "",
-      fishSpecies: SpeciesId = "trout";
+    let pendingFrames = 2;
+    let fishSpecies: SpeciesId = "trout";
+    let renderedFrames = 0;
     let frame = 0,
       lastRender = 0,
       lastSwim = 0;
@@ -165,17 +238,123 @@ export default function FarmScene({
     let down = { x: 0, y: 0 };
     let active = true,
       needsRender = true;
+    const life = createLifeEffects(farm, () => {
+      needsRender = true;
+    });
+    scene.add(life.root);
+    const weatherScene = createWeather(scene, farm, sun, sky);
+    const pipeline = renderPipeline(renderer, scene, camera, sun, farm);
+    const invalidate = () => {
+      needsRender = true;
+    };
+    const snapshots = registerSceneSnapshots(invalidate);
+    const rig = createCameraRig(camera, controls, invalidate);
+    const labels = createLabelLayout(container.parentElement!, invalidate);
+    const selection = softContour(),
+      hover = softContour(true);
+    scene.add(selection.root, hover.root);
+    let hovered: WorldTarget | null = null;
+    const gl = renderer.getContext(),
+      debug = gl.getExtension("WEBGL_debug_renderer_info");
+    const hardware = debug
+      ? String(gl.getParameter(debug.UNMASKED_RENDERER_WEBGL))
+      : String(gl.getParameter(gl.RENDERER));
+    const automatic = detectQuality({
+      renderer: hardware,
+      threads: navigator.hardwareConcurrency || 4,
+      width: container.clientWidth,
+      maxTextureSize: renderer.capabilities.maxTextureSize,
+    });
+    let quality: Quality =
+      latest.current.graphics.quality === "auto"
+        ? automatic
+        : latest.current.graphics.quality;
+    pipeline.quality(quality);
+    renderer.domElement.dataset.hardware = hardware;
+    renderer.domElement.dataset.automaticQuality = automatic;
+    function contour(
+      outline: ReturnType<typeof softContour>,
+      target: WorldTarget | null,
+    ) {
+      outline.root.rotation.y = 0;
+      if (!target || latest.current.mode === "fish") {
+        outline.hide();
+        return;
+      }
+      if (target.kind === "pond") {
+        const [x, z] = POND_POSITIONS[target.id - 1];
+        const p = latest.current.ponds[target.id - 1];
+        outline.show(x, z, 13.6, p.facility === "earth" ? 8.4 : 7.2);
+      }
+      if (target.kind === "asset") {
+        const [x, z] = ASSET_POSITIONS[target.id];
+        outline.show(x, z, 11.6, 11.2);
+      }
+      if (target.kind === "truck") {
+        const obj = life.root.children.find(
+          (o) =>
+            targetKey(o.userData.worldTarget ?? null) === targetKey(target),
+        );
+        if (obj) {
+          outline.show(obj.position.x, obj.position.z, 2.4, 4.7);
+          outline.root.rotation.y = obj.rotation.y;
+        } else outline.hide();
+      }
+    }
+    function pick(e: PointerEvent): WorldTarget | null {
+      if (latest.current.mode === "fish") return null;
+      const b = renderer.domElement.getBoundingClientRect();
+      pointer.set(
+        ((e.clientX - b.left) / b.width) * 2 - 1,
+        -((e.clientY - b.top) / b.height) * 2 + 1,
+      );
+      raycaster.setFromCamera(pointer, camera);
+      const objects = [
+        ...farm.targets,
+        ...[...farm.assets].map(([id, v]) => {
+          v.group.userData.worldTarget = { kind: "asset", id };
+          return v.group;
+        }),
+        ...life.root.children.filter((o) => o.userData.worldTarget),
+      ];
+      const hit = raycaster.intersectObjects(objects, true)[0];
+      let object: T.Object3D | null = hit?.object ?? null;
+      while (object) {
+        if (object.userData.worldTarget)
+          return object.userData.worldTarget as WorldTarget;
+        if (object.userData.pondId)
+          return { kind: "pond", id: object.userData.pondId };
+        object = object.parent;
+      }
+      return null;
+    }
+    const onMove = (e: PointerEvent) => {
+      if (e.buttons) return;
+      const target = pick(e);
+      if (targetKey(target) !== targetKey(hovered)) {
+        hovered = target;
+        invalidate();
+      }
+      renderer.domElement.style.cursor = target ? "pointer" : "grab";
+    };
+    const onLeave = () => {
+      hovered = null;
+      invalidate();
+    };
     let previousState = latest.current;
+    let stateUpdates = 0;
     controls.addEventListener("change", () => {
       needsRender = true;
     });
     const resize = () => {
       needsRender = true;
+      renderer.domElement.dataset.settled = "false";
       const w = container.clientWidth,
         h = container.clientHeight;
       renderer.setSize(w, h, false);
       camera.aspect = w / Math.max(1, h);
       camera.updateProjectionMatrix();
+      pipeline.resize();
     };
     const observer = new ResizeObserver(resize);
     observer.observe(container);
@@ -193,112 +372,100 @@ export default function FarmScene({
         Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5
       )
         return;
-      const b = renderer.domElement.getBoundingClientRect();
-      pointer.set(
-        ((e.clientX - b.left) / b.width) * 2 - 1,
-        (-(e.clientY - b.top) / b.height) * 2 + 1,
-      );
-      raycaster.setFromCamera(pointer, camera);
-      const hit = raycaster.intersectObjects(farm.targets, false)[0];
-      if (hit) latest.current.select(hit.object.userData.pondId);
+      const hit = pick(e);
+      if (hit) latest.current.inspect(hit);
     };
     const contextLost = (e: Event) => {
       e.preventDefault();
       active = false;
-      setError(
-        "Le contexte graphique a été interrompu. La carte de secours permet de continuer la partie.",
-      );
+      setError(t("m_1223712dee"));
     };
     renderer.domElement.addEventListener("pointerdown", onDown);
     renderer.domElement.addEventListener("pointerup", onUp);
+    renderer.domElement.addEventListener("pointermove", onMove);
+    renderer.domElement.addEventListener("pointerleave", onLeave);
     renderer.domElement.addEventListener("webglcontextlost", contextLost);
-    const reduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const motionChanged = () => {
+      cameraSensitivity();
+      needsRender = true;
+      lastSwim = 0;
+    };
+    motionQuery.addEventListener("change", motionChanged);
+    window.addEventListener("etangs-preferences", motionChanged);
     const animate = (ms: number) => {
       frame = requestAnimationFrame(animate);
       if (
         !active ||
         document.hidden ||
-        ms - lastRender < (window.innerWidth < 700 ? 50 : 32)
+        ms - lastRender < 1000 / QUALITY[quality].fps
       )
         return;
       lastRender = ms;
+      const reduced =
+        motionQuery.matches ||
+        document.documentElement.dataset.motion === "reduce";
       const state = latest.current;
+      quality =
+        state.graphics.quality === "auto" ? automatic : state.graphics.quality;
+      pipeline.quality(quality);
+      renderer.domElement.dataset.quality = quality;
+      renderer.domElement.dataset.presentation = String(state.presentation);
       const changed = state !== previousState;
       previousState = state;
-      if (
-        (reduced ||
-          state.showPlate ||
-          (state.landscape && state.mode === "farm")) &&
-        !needsRender &&
-        !changed
-      )
-        return;
+      // Let freshly uploaded geometry/materials settle before freezing reduced-motion views.
+      if (changed || needsRender) pendingFrames = 2;
+      if (reduced && pendingFrames === 0) return;
+      pendingFrames = Math.max(0, pendingFrames - 1);
       needsRender = false;
       const delta =
         reduced || !lastSwim ? 0 : Math.min(0.1, (ms - lastSwim) * 0.001);
       lastSwim = ms;
       const time = reduced ? 0 : ms * 0.001;
-      const nextSignature = state.ponds
-        .map((p) =>
-          [
-            p.built,
-            p.species,
-            p.count > 0,
-            p.upgrade,
-            p.facility,
-            p.constructionDays > 0,
-          ].join(":"),
-        )
-        .join("|");
-      if (nextSignature !== signature) {
-        const swimmers = new globalThis.Map(
-          state.ponds.map((p) => [
-            p.id,
-            farm.fish.filter((f) => f.pondId === p.id).map((f) => f.swimmer),
-          ]),
-        );
-        scene.remove(farm.root);
-        disposeObject(farm.root);
-        farm = createFarm(state.ponds);
-        for (const p of state.ponds) {
-          farm.fish
-            .filter((f) => f.pondId === p.id)
-            .forEach((f, i) => {
-              const previous = swimmers.get(p.id)?.[i];
-              if (previous?.species === f.swimmer.species) f.swimmer = previous;
-            });
-        }
-        scene.add(farm.root);
-        signature = nextSignature;
+      if (changed) {
+        farm.update(state);
+        stateUpdates++;
       }
-      const key = `${state.mode}:${state.mode === "pond" ? state.selected : ""}:${state.reset}`;
-      if (key !== cameraKey) {
-        controls.maxPolarAngle =
-          state.mode === "fish" ? Math.PI - 0.1 : Math.PI / 2 - 0.045;
-        controls.minDistance = state.mode === "fish" ? 3.5 : 6;
-        controls.maxDistance = state.mode === "fish" ? 13 : 100;
-        if (state.mode === "farm") {
-          camera.position.set(37, 36, 45);
-          controls.target.set(0, 0, -2);
-        }
-        if (state.mode === "buildings") {
-          camera.position.set(-7, 5.2, -3);
-          controls.target.set(-10, 2.1, -17);
-        }
-        if (state.mode === "pond") {
-          const [x, z] = POND_POSITIONS[state.selected - 1];
-          camera.position.set(x + 2.5, 8, z + 11);
-          controls.target.set(x, 0.55, z);
-        }
-        if (state.mode === "fish") {
-          camera.position.set(-0.1, 2.15, 7.5);
-          controls.target.set(0, 1.7, 0);
-        }
-        cameraKey = key;
-        controls.update();
-      }
+      renderer.domElement.dataset.stateUpdates = String(stateUpdates);
+      decorations.update(state.rewards);
+      renderer.domElement.dataset.rewards = state.rewards
+        .filter((id) => id === "paid" || id === "cold")
+        .join(",");
+      renderer.domElement.dataset.farmId = farm.root.uuid;
+      renderer.domElement.dataset.pondGroups = JSON.stringify(
+        [...farm.ponds].map(([id, e]) => ({
+          id,
+          uuid: e.group.uuid,
+          progress: e.group.userData.progress,
+        })),
+      );
+      renderer.domElement.dataset.assetGroups = JSON.stringify(
+        [...farm.assets].map(([id, e]) => ({
+          id,
+          uuid: e.group.uuid,
+          progress: e.group.userData.progress,
+          objects: e.group.children.length,
+        })),
+      );
+      controls.enableDamping = !reduced;
+      const tracked =
+        state.target?.kind === "truck"
+          ? life.root.children.find(
+              (o) =>
+                targetKey(o.userData.worldTarget ?? null) ===
+                targetKey(state.target),
+            )
+          : undefined;
+      const flying = rig.update(
+        {
+          ...state,
+          targetPoint: tracked
+            ? { x: tracked.position.x, z: tracked.position.z }
+            : undefined,
+        },
+        ms,
+        reduced,
+      );
       if (state.species !== fishSpecies) {
         scene.remove(specimen);
         disposeObject(specimen);
@@ -311,11 +478,9 @@ export default function FarmScene({
       farm.root.visible = state.mode !== "fish";
       specimen.visible = state.mode === "fish";
       scene.background = new T.Color(
-        state.mode === "fish" ? "#d9e2da" : "#dbe6dc",
+        state.mode === "fish" ? paint("specimen-background") : paint("sky"),
       );
-      const [sx, sz] = POND_POSITIONS[state.selected - 1];
-      farm.selection.position.set(sx, 1.035, sz);
-      farm.normal.offset.set(time * 0.008, time * 0.006);
+      farm.normal.offset.set(-time * 0.008, time * 0.006);
       for (const water of farm.waters) {
         const p = state.ponds[water.userData.pondId - 1];
         water.material.opacity = state.clearWater
@@ -325,17 +490,17 @@ export default function FarmScene({
             : 0.64;
         water.material.color.set(
           p.facility === "earth"
-            ? "#617747"
+            ? paint("water-earth")
             : p.tan > 1
-              ? "#596e4d"
-              : "#397876",
+              ? paint("water-turbid")
+              : paint("water-source"),
         );
       }
       for (const p of state.ponds) {
         const members = farm.fish.filter((f) => f.pondId === p.id);
         stepSchool(
           members.map((f) => f.swimmer),
-          delta,
+          delta * oxygenMotion(p) * (life.feeding(p.id) ? 1.2 : 1),
           {
             halfWidth: p.facility === "earth" ? 5.1 : 4.8,
             halfDepth: p.facility === "earth" ? 2.9 : 1.75,
@@ -349,7 +514,12 @@ export default function FarmScene({
           f.mesh.rotation.y = swimRotation(swim.heading);
           f.mesh.rotation.z = -swim.turn * 0.025;
           f.mesh.scale.setScalar(0.17 + p.weight ** (1 / 3) * 0.14);
-          animateFish(f.mesh, swim.phase, swim.effort, swim.turn);
+          animateFish(
+            f.mesh,
+            swim.phase,
+            swim.effort + (life.feeding(p.id) ? 0.25 : 0),
+            swim.turn,
+          );
         }
       }
       if (specimen.visible) {
@@ -357,272 +527,167 @@ export default function FarmScene({
         animateFish(specimen, time * 5.5, 0.55);
       }
       controls.update();
-      renderer.render(scene, camera);
+      life.root.visible = farm.root.visible;
+      life.update(ms, reduced);
+      const conditions = weatherScene.update(
+        state,
+        state.clock,
+        ms,
+        reduced,
+        camera.position.distanceTo(controls.target),
+        QUALITY[quality].rain,
+        state.presentation ? 0.82 : undefined,
+      );
+      renderer.domElement.dataset.weather = JSON.stringify(conditions);
+      renderer.domElement.dataset.life = JSON.stringify(life.diagnostics());
+      contour(selection, state.target);
+      contour(hover, hovered);
+      labels.update(camera, state.graphics.labels && state.mode !== "fish");
+      const renderStart = performance.now();
+      pipeline.render();
+      snapshots.afterRender(renderer.domElement);
+      if (renderer.domElement.dataset.measureGpu === "true") {
+        gl.finish();
+        renderer.domElement.dataset.gpuFrameMs = String(
+          performance.now() - renderStart,
+        );
+        renderer.domElement.dataset.gpuCompletedAt = String(performance.now());
+      }
+      renderer.domElement.dataset.drawCalls = String(
+        renderer.info.render.calls,
+      );
+      renderer.domElement.dataset.selection = targetKey(state.target);
+      renderer.domElement.dataset.hover = targetKey(hovered);
+      renderer.domElement.dataset.resources = JSON.stringify(
+        renderer.info.memory,
+      );
       renderer.domElement.dataset.frame = "rendered";
+      renderer.domElement.dataset.viewport = `${container.clientWidth}x${container.clientHeight}`;
+      renderer.domElement.dataset.renderCount = String(++renderedFrames);
       renderer.domElement.dataset.view = state.mode;
       renderer.domElement.dataset.species = state.species;
+      renderer.domElement.dataset.day = String(state.day);
+      renderer.domElement.dataset.ponds = state.ponds
+        .map(
+          (p) =>
+            `${p.id}:${p.built}:${p.constructionDays}:${p.count}:${p.upgrade}`,
+        )
+        .join("|");
+      renderer.domElement.dataset.settled = String(
+        pendingFrames === 0 && !flying,
+      );
+      renderer.domElement.dataset.camera = [
+        ...camera.position.toArray(),
+        ...controls.target.toArray(),
+      ]
+        .map((n) => n.toFixed(3))
+        .join(",");
     };
     frame = requestAnimationFrame(animate);
     setReady(true);
+    window.dispatchEvent(new Event("etangs-world-ready"));
+    if (recovering.current) {
+      recovering.current = false;
+      queueMicrotask(() =>
+        document
+          .querySelector<HTMLSelectElement>(".world-controls select")
+          ?.focus(),
+      );
+    }
     return () => {
+      stopProjection();
       cancelAnimationFrame(frame);
+      motionQuery.removeEventListener("change", motionChanged);
+      window.removeEventListener("etangs-preferences", motionChanged);
       observer.disconnect();
       intersection.disconnect();
+      rig.dispose();
+      snapshots.dispose();
+      labels.dispose();
+      disposeRenderCaches(renderer, scene);
+      pipeline.dispose();
+      selection.dispose();
+      hover.dispose();
       controls.dispose();
       renderer.domElement.removeEventListener("pointerdown", onDown);
       renderer.domElement.removeEventListener("pointerup", onUp);
+      renderer.domElement.removeEventListener("pointermove", onMove);
+      renderer.domElement.removeEventListener("pointerleave", onLeave);
       renderer.domElement.removeEventListener("webglcontextlost", contextLost);
-      disposeObject(farm.root);
+      scene.remove(life.root);
+      life.dispose();
+      weatherScene.dispose();
+      farm.dispose();
       disposeObject(specimen);
       clearFishTextures();
       environment.dispose();
+      sun.shadow.dispose();
       renderer.dispose();
       renderer.forceContextLoss();
+      window.dispatchEvent(
+        new CustomEvent("etangs-render-disposed", {
+          detail: {
+            contextLost: gl.isContextLost(),
+            memory: { ...renderer.info.memory },
+          },
+        }),
+      );
       renderer.domElement.remove();
     };
-  }, [started]);
-  function setView(next: SceneMode) {
-    setStarted(true);
-    setMode(next);
-    if (next !== "farm") setLandscape(false);
-    setShowPlate(next === "fish");
-    if (next === "fish" && selectedPond.species)
-      setSpecies(selectedPond.species);
-  }
-  async function fullscreen() {
-    try {
-      if (document.fullscreenElement) await document.exitFullscreen();
-      else await shell.current?.requestFullscreen();
-    } catch {
-      setNotice("Le plein écran est indisponible dans ce navigateur.");
-    }
-  }
+  }, [error]);
+  useEffect(() => {
+    host.current
+      ?.querySelector("canvas")
+      ?.setAttribute("aria-label", t("m_1a5af6074a"));
+  }, [locale, ready]);
   return (
     <div
-      className="scene-shell"
-      ref={shell}
+      className="world-scene"
       data-testid="farm-scene"
       data-ready={ready && !error ? "true" : "false"}
     >
-      <div className="scene-toolbar">
-        <div className="scene-tabs" aria-label="Vues de l’exploitation">
-          {(
-            [
-              { id: "farm", label: "La ferme", icon: <Map size={14} /> },
-              { id: "pond", label: "Le bassin", icon: <Focus size={14} /> },
-              { id: "fish", label: "Les poissons", icon: <Fish size={14} /> },
-              {
-                id: "buildings",
-                label: "Bâtiments",
-                icon: <Warehouse size={14} />,
-              },
-            ] as const
-          ).map((v) => (
-            <button
-              key={v.id}
-              aria-pressed={mode === v.id}
-              onClick={() => setView(v.id)}
-            >
-              {v.icon}
-              {v.label}
-            </button>
-          ))}
-        </div>
-        <div className="scene-utilities">
-          <button
-            aria-label="Réinitialiser la caméra"
-            onClick={() => setReset((x) => x + 1)}
-          >
-            <RotateCcw size={15} />
-          </button>
-          <button
-            aria-label="Vue plein écran"
-            onClick={() => void fullscreen()}
-          >
-            <Maximize2 size={15} />
-          </button>
-        </div>
-      </div>
-      <div className="scene-viewport">
-        <div
-          className={`scene-canvas ${error ? "has-error" : ""} ${showPlate ? "showing-plate" : ""}`}
-          ref={host}
+      <div className="world-canvas" ref={host} hidden={!!error} />
+      {ready && !error && !presentation && (
+        <WorldLabels
+          ponds={ponds}
+          select={select}
+          selected={target?.kind === "pond" ? target.id : null}
+          source={source}
         />
-        {!started && !landscape && mode === "farm" && (
-          <div className="scene-site-plan">
+      )}
+      {displayText(
+        error && (
+          <div className="world-fallback">
+            <p role="status">
+              <span title={t("m_700e2d455f")}>{t("compact.map")}</span>
+              {displayText(" ")}
+              <Button
+                className="retry-renderer"
+                size="small"
+                autoFocus={recovering.current}
+                onClick={() => {
+                  recovering.current = true;
+                  setReady(false);
+                  setError("");
+                }}
+              >
+                {t("m_3a1117c870")}
+              </Button>
+            </p>
+            {source && (
+              <Button data-world-source="true" onClick={source}>
+                {t("source.action")}
+              </Button>
+            )}
             <FarmMap ponds={ponds} selected={selected} select={select} />
           </div>
-        )}
-      </div>
-      {error && (
-        <div className="scene-fallback">
-          <p role="status">{error}</p>
-          <FarmMap ponds={ponds} selected={selected} select={select} />
+        ),
+      )}
+      {!ready && !error && (
+        <div className="world-loading" role="status">
+          {t("m_55ae92620d")}
         </div>
       )}
-      {started && !ready && !error && (
-        <div className="scene-loading">Préparation de la visite…</div>
-      )}
-      {landscape && mode === "farm" && (
-        <div className="landscape-observation">
-          <img
-            src={`${import.meta.env.BASE_URL}assets/farm-landscape.png`}
-            alt="Vue d’ambiance de la ferme : maison en pierre, grange, bassin de truites et étang bordé de végétation."
-          />
-          <div className="landscape-hotspots">
-            {ponds.slice(0, 2).map((p) => (
-              <button
-                key={p.id}
-                onClick={() => {
-                  select(p.id);
-                  setView("pond");
-                }}
-              >
-                <span>{String(p.id).padStart(2, "0")}</span>
-                <strong>{p.name}</strong>
-                <small>{number(p.count)} poissons · visiter</small>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-      {showPlate && (
-        <div className="photo-observation">
-          <FishArt species={species} />
-          <span>
-            Planche d’identification artistique générée · proportions
-            indicatives
-          </span>
-        </div>
-      )}
-      {mode === "fish" ? (
-        <>
-          <div className="species-picker" aria-label="Espèce à observer">
-            {Object.values(SPECIES).map((s) => (
-              <button
-                key={s.id}
-                aria-pressed={species === s.id}
-                onClick={() => setSpecies(s.id)}
-              >
-                {s.name}
-              </button>
-            ))}
-          </div>
-          <div className="fish-observation">
-            <div>
-              <span className="section-kicker">
-                OBSERVATION NATURALISTE · VUE AGRANDIE
-              </span>
-              <h3>{SPECIES[species].name}</h3>
-              <em>{SPECIES[species].latin}</em>
-              <p>{SPECIES[species].identification}</p>
-            </div>
-            <button
-              className="button light"
-              aria-pressed={showPlate}
-              onClick={() => setShowPlate(!showPlate)}
-            >
-              <Camera size={15} />
-              {showPlate ? "Modèle 3D" : "Planche réaliste"}
-            </button>
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="scene-location" hidden={!started && !landscape}>
-            <span>DOMAINE DES SAULES</span>
-            <strong>
-              {mode === "pond"
-                ? selectedPond.name
-                : mode === "buildings"
-                  ? "La maison d’exploitation"
-                  : "Une ferme au fil de l’eau"}
-            </strong>
-            <small>
-              {mode === "pond"
-                ? `${selectedPond.volume} m³ · ${selectedPond.count ? number(selectedPond.count) + " poissons" : "bassin sans lot"}`
-                : "Bâtiments de pierre · eau de source · étang de terre"}
-            </small>
-          </div>
-          <div className="scene-bottom">
-            {mode === "farm" && (
-              <button
-                className="landscape-toggle"
-                aria-pressed={landscape}
-                onClick={() => {
-                  setStarted(true);
-                  setLandscape(started ? !landscape : false);
-                }}
-              >
-                <Camera size={14} />
-                {!started || landscape
-                  ? "Explorer en 3D"
-                  : "Illustration d’ambiance"}
-              </button>
-            )}
-            <span
-              style={{
-                display: landscape && mode === "farm" ? "none" : undefined,
-              }}
-            >
-              Glissez pour tourner · molette ou pincement pour zoomer
-            </span>
-            <button
-              style={{
-                display: landscape && mode === "farm" ? "none" : undefined,
-              }}
-              aria-pressed={clearWater}
-              disabled={!selectedPond.count}
-              onClick={() => {
-                setStarted(true);
-                setLandscape(false);
-                setMode("pond");
-                setClearWater(!clearWater);
-              }}
-            >
-              <Eye size={14} />
-              {clearWater ? "Vue pédagogique" : "Observer sous l’eau"}
-            </button>
-          </div>
-          <div
-            className="scene-pond-picker"
-            aria-label="Sélection des bassins en 3D"
-          >
-            {ponds.map((p) => (
-              <button
-                key={p.id}
-                aria-label={`Sélectionner ${p.name}`}
-                aria-pressed={selected === p.id}
-                onClick={() => {
-                  select(p.id);
-                  if (mode === "pond") setReset((r) => r + 1);
-                }}
-              >
-                <span>{String(p.id).padStart(2, "0")}</span>
-                {p.name}
-              </button>
-            ))}
-          </div>
-        </>
-      )}
-      {notice && (
-        <p className="scene-notice" role="status">
-          {notice}
-        </p>
-      )}
-      <div className="scene-caption">
-        {error
-          ? "Carte de secours · la gestion et les commandes des bassins restent disponibles."
-          : landscape && mode === "farm"
-          ? "Illustration d’ambiance générée · consultez la 3D pour voir les travaux et l’état actuel de la ferme."
-          : !started
-            ? "Plan du terrain : les emplacements grisés ne sont pas aménagés. Ouvrez la 3D pour visiter."
-            : mode === "fish"
-              ? "Modèle anatomique original et illustration générée : repères visuels, pas une mesure scientifique."
-              : clearWater
-                ? "Observation pédagogique : transparence de l’eau accentuée. Les poissons visibles sont un échantillon du lot."
-                : "Rendu 3D en temps réel · poissons à échelle indicative · échantillon visuel du lot."}
-      </div>
     </div>
   );
 }

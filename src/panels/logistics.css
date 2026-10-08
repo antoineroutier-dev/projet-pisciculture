@@ -1,0 +1,194 @@
+.logistics-panel,
+.logistics-cards {
+  display: grid;
+  gap: 16px;
+}
+.logistics-cards > .ui-card,
+.feed-shop > .ui-card {
+  display: grid;
+  gap: 8px;
+}
+.logistics-cards h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.logistics-cards p,
+.logistics-cards span,
+.logistics-cards dd {
+  font-size: var(--text-small);
+}
+.logistics-cards .ui-badge {
+  justify-self: start;
+}
+.logistics-totals {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+.logistics-totals > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  column-gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.logistics-totals dt {
+  font-size: var(--text-caption);
+  color: var(--ink-muted);
+}
+.logistics-totals dd {
+  margin: 0;
+  font-weight: 600;
+}
+.production-chain {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, max(96px, 6rem)), 1fr)
+  );
+  gap: 4px;
+}
+.production-chain li {
+  min-width: 0;
+  position: relative;
+}
+.production-chain li > svg {
+  position: absolute;
+  top: 8px;
+  right: 4px;
+  pointer-events: none;
+}
+.production-chain button {
+  display: grid;
+  justify-items: start;
+  align-content: start;
+  gap: 4px;
+  width: 100%;
+  height: 100%;
+  padding: 8px;
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.production-chain span,
+.production-chain small {
+  font-size: var(--text-caption);
+}
+.production-chain button:hover {
+  background: var(--surface-raised);
+}
+.feed-shop {
+  display: grid;
+  gap: 8px;
+}
+.feed-shop .ui-card {
+  grid-template-columns: 1fr 1fr;
+  align-items: baseline;
+}
+.feed-shop .ui-card > :last-child {
+  grid-column: 1 / -1;
+}
+.client-offer {
+  display: grid;
+  gap: 8px;
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
+.cash-chart {
+  margin: 0;
+}
+.cash-chart figcaption {
+  font-size: var(--text-small);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.cash-plot {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 8px;
+}
+.cash-y {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: right;
+  height: 160px;
+  padding-block: 0;
+}
+.cash-y span,
+.cash-x span {
+  font-size: var(--text-caption);
+}
+.cash-plot svg {
+  display: block;
+  width: 100%;
+  height: 160px;
+  overflow: visible;
+}
+.cash-plot polyline {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 2;
+}
+.cash-plot circle {
+  fill: var(--primary);
+}
+.cash-plot .chart-grid {
+  stroke: var(--border);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.cash-x {
+  grid-column: 2;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 8px;
+}
+.cash-x span {
+  flex: 0 1 50%;
+}
+.cash-x span:last-child:not(:first-child) {
+  text-align: right;
+}
+.chart-data {
+  margin-top: 8px;
+  font-size: var(--text-small);
+}
+.chart-data table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  font-size: var(--text-caption);
+}
+.chart-data caption {
+  margin-bottom: 8px;
+  text-align: left;
+  color: var(--ink-muted);
+}
+.chart-data td,
+.chart-data th {
+  text-align: left;
+  padding-block: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.chart-data td:last-child {
+  text-align: right;
+}
+
+.production-flow > summary {
+  font-size: var(--text-small);
+  font-weight: 600;
+  padding-block: 8px;
+}
+.production-flow[open] > summary {
+  margin-bottom: 8px;
+}

@@ -1,0 +1,87 @@
+
+> les-etangs@3.0.0 test:e2e
+> playwright test --reporter=list,json
+
+[WebServer] (node:168342) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:168363) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 
+[WebServer] (!) Some chunks are larger than 500 kB after minification. Consider:
+[WebServer] - Using dynamic import() to code-split the application
+[WebServer] - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+[WebServer] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[WebServer] npm notice
+[WebServer] npm notice New major version of npm available! 11.9.0 -> 12.2.0
+[WebServer] npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+[WebServer] npm notice To update run: npm install -g npm@12.2.0
+[WebServer] npm notice
+[WebServer] (node:168384) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:168397) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 51 tests using 1 worker
+
+(node:168415) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/game.spec.ts:13:1 › 3D : ferme, bassin, bâtiments et identification des trois espèces (44.3s)
+  ✓   2 tests/game.spec.ts:77:1 › import, export, mode expert et protection de sauvegarde corrompue (7.5s)
+  ✓   3 tests/game.spec.ts:128:1 › migration automatique V1 conserve le fichier original (1.0s)
+  ✓   4 tests/game.spec.ts:167:1 › horloge : vitesse ×8, fenêtre de gestion et pause (4.6s)
+  ✓   5 tests/game.spec.ts:188:1 › sans WebGL : la carte et la gestion restent disponibles (6.1s)
+  ✓   6 tests/game.spec.ts:256:1 › mobile et accessibilité des pages principales (11.4s)
+  ✓   7 tests/game.spec.ts:323:1 › nouvelle partie guidée : terrain vide jusqu’au premier règlement, uniquement par les commandes du jeu (1.9m)
+  ✓   8 tests/game.spec.ts:432:1 › migration V2 préserve la partie et propose explicitement le nouveau départ (2.4s)
+  ✓   9 tests/keyboard-cycle.spec.ts:38:1 › 1a : du terrain vide au paiement, uniquement au clavier en 1280×800 (1.8m)
+  ✓  10 tests/ui-lot0.spec.ts:15:3 › lot 0 : HUD, portraits, ration et clavier à 1920×1080 (5.7s)
+  ✓  11 tests/ui-lot0.spec.ts:15:3 › lot 0 : HUD, portraits, ration et clavier à 1440×900 (4.7s)
+  ✓  12 tests/ui-lot0.spec.ts:15:3 › lot 0 : HUD, portraits, ration et clavier à 1280×800 (3.9s)
+  ✓  13 tests/ui-lot0.spec.ts:15:3 › lot 0 : HUD, portraits, ration et clavier à 1280×720 (4.3s)
+  ✓  14 tests/ui-lot0.spec.ts:15:3 › lot 0 : HUD, portraits, ration et clavier à 390×844 (3.4s)
+  ✓  15 tests/ui-lot0.spec.ts:131:1 › lot 0 : portable autonome, polices et portraits hors ligne, budget 15 Mo (19.5s)
+  ✓  16 tests/ui-lot1a.spec.ts:44:3 › 1a : typographie des sept étapes et six vues en 1920×1080 (14.7s)
+  ✓  17 tests/ui-lot1a.spec.ts:44:3 › 1a : typographie des sept étapes et six vues en 1440×900 (12.4s)
+  ✓  18 tests/ui-lot1a.spec.ts:44:3 › 1a : typographie des sept étapes et six vues en 1280×800 (14.4s)
+  ✓  19 tests/ui-lot1a.spec.ts:44:3 › 1a : typographie des sept étapes et six vues en 1280×720 (13.5s)
+  ✓  20 tests/ui-lot1a.spec.ts:44:3 › 1a : typographie des sept étapes et six vues en 390×844 (6.0s)
+  ✓  21 tests/ui-lot1a.spec.ts:77:3 › 1a : axe, fontes et libellés de carte à 1440×900 (15.4s)
+  ✓  22 tests/ui-lot1a.spec.ts:77:3 › 1a : axe, fontes et libellés de carte à 390×844 (12.7s)
+  ✓  23 tests/ui-lot1a.spec.ts:113:1 › 1a : focus du dialogue et explication de désactivation au clavier (3.0s)
+  ✓  24 tests/ui-lot1a.spec.ts:138:1 › 1a : les fenêtres de gestion respectent le plancher de texte et axe (8.0s)
+  ✓  25 tests/ui-lot1a.spec.ts:169:1 › 1a : la réduction de mouvement et le plancher typographique résistent à 80 % (1.9s)
+  ✓  26 tests/ui-lot1a.spec.ts:179:1 › 1a : textes et superpositions des vues 3D sur PC et mobile (31.6s)
+  ✓  27 tests/ui-lot1b.spec.ts:14:3 › 1b : monde persistant, sept états et six panneaux en 1920×1080 (2.9m)
+  ✓  28 tests/ui-lot1b.spec.ts:14:3 › 1b : monde persistant, sept états et six panneaux en 1440×900 (2.0m)
+  ✓  29 tests/ui-lot1b.spec.ts:14:3 › 1b : monde persistant, sept états et six panneaux en 1280×800 (1.8m)
+  ✓  30 tests/ui-lot1b.spec.ts:59:1 › 1b : raccourcis, restauration du focus, urgence et guide du modèle (6.0s)
+  ✓  31 tests/ui-lot1c.spec.ts:17:3 › 1c : échelle 80–150 %, onglets et composants à 1440×900 (23.9s)
+  ✓  32 tests/ui-lot1c.spec.ts:17:3 › 1c : échelle 80–150 %, onglets et composants à 390×844 (14.7s)
+  ✓  33 tests/ui-lot2a.spec.ts:9:1 › 2a : sélectionner et construire une parcelle dans le vrai monde 3D (28.6s)
+  ✓  34 tests/ui-lot2a.spec.ts:81:3 › 2a : quatre mesures, onglets et action unique en 1440×900 (11.3s)
+  ✓  35 tests/ui-lot2a.spec.ts:81:3 › 2a : quatre mesures, onglets et action unique en 390×844 (7.2s)
+  ✓  36 tests/ui-lot2b.spec.ts:11:3 › 2b : chaîne, quatre onglets et graphique à 1440×900 (15.4s)
+  ✓  37 tests/ui-lot2b.spec.ts:11:3 › 2b : chaîne, quatre onglets et graphique à 390×844 (11.8s)
+  ✓  38 tests/ui-lot2b.spec.ts:130:1 › 2b : récolte, transport et paiement restent des actions distinctes (4.7s)
+  ✓  39 tests/ui-lot2c.spec.ts:11:3 › 2c : journal, encyclopédie et progression à 1440×900 (11.5s)
+  ✓  40 tests/ui-lot2c.spec.ts:11:3 › 2c : journal, encyclopédie et progression à 390×844 (8.1s)
+  ✓  41 tests/ui-lot2c.spec.ts:154:1 › 2c : TAN, débit et conversion expliqués au clavier dans leur contexte (3.8s)
+  ✓  42 tests/ui-lot3a.spec.ts:9:3 › 3a : audio, cinq volumes, geste, visibilité et retours à 1440×900 (11.2s)
+  ✓  43 tests/ui-lot3a.spec.ts:9:3 › 3a : audio, cinq volumes, geste, visibilité et retours à 390×844 (5.8s)
+  ✓  44 tests/ui-lot3b.spec.ts:12:3 › 3b : horloge, événements et interruption à 1440×900 (20.4s)
+  ✓  45 tests/ui-lot3b.spec.ts:12:3 › 3b : horloge, événements et interruption à 390×844 (9.1s)
+  ✓  46 tests/ui-lot3c.spec.ts:21:3 › 3c : bilan exact, prévision, registre V4 à 1440×900 (17.8s)
+  ✓  47 tests/ui-lot3c.spec.ts:21:3 › 3c : bilan exact, prévision, registre V4 à 390×844 (8.7s)
+  ✓  48 tests/ui-lot3c.spec.ts:177:1 › 3c : première récolte célébrée puis bilan provisoire sans encaissement fictif (4.4s)
+  ✓  49 tests/ui-lot4a.spec.ts:8:1 › 4a : travaux incrémentaux, bâtiments réels et scène persistante (24.8s)
+  ✓  50 tests/ui-lot4b.spec.ts:7:1 › 4b : camions et nourrissage suivent les transitions réelles, import sans rejeu (31.4s)
+  ✓  51 tests/ui-lot4b.spec.ts:71:1 › 4b : quatre saisons réelles, éclairage au repos et réduit, aucune glace sur eau positive (30.3s)
+
+  Slow test file: tests/ui-lot1b.spec.ts (6.7m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  51 passed (20.0m)
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

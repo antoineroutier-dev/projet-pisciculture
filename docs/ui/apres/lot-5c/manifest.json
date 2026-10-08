@@ -1,0 +1,449 @@
+{
+  "totalBytes": 4085140,
+  "captures": [
+    {
+      "file": "docs/ui/apres/lot-5c/1440-titre.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 66741
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-nouvelle-partie.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 50875
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-emplacements.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 46719
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-credits.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 57613
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-pause.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 39125
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-monde.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 79024
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-sauvegarde.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 48670
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-affichage.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 56477
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-audio.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 45496
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-jeu.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 56697
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-controles.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 61582
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-langue.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 34259
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-bassin.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 101499
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-alimentation.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 101476
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-equipement.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 103229
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-historique.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 105322
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-approvisionnement.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 101857
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-batiments.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 100695
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-clients.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 103144
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-expeditions.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 102005
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-finances.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 103772
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-prevision.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 102363
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-mois.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 97629
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-cycles.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 98492
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-journal.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 104480
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-guide.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 101847
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-especes.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 104026
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-eau-sante.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 106115
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-modele.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 125426
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-construire.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 85931
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-analyse.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 46069
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-premier-batiment.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 38168
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-premiers-poissons.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 40373
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-premiere-recolte.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 47018
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-bilan-provisoire.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 68379
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-premier-paiement.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 41639
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/1440-bilan-paye.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 58819
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-titre.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 25506
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-nouvelle-partie.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 31436
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-emplacements.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 25056
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-credits.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 35184
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-pause.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 18730
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-monde.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 35515
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-sauvegarde.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 30229
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-affichage.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 32818
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-audio.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 27049
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-jeu.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 37258
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-controles.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 37903
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-langue.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 18139
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-bassin.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 39047
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-alimentation.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 38444
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-equipement.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 38623
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-historique.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 39106
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-approvisionnement.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 38607
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-batiments.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 37220
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-clients.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 38209
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-expeditions.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 39732
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-finances.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 36077
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-prevision.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 36878
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-mois.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 40607
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-cycles.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 41148
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-journal.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 38033
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-guide.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 37761
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-especes.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 38203
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-eau-sante.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 41593
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-modele.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 46415
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-construire.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 35205
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-analyse.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 25783
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-premier-batiment.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 20662
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-premiers-poissons.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 24097
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-premiere-recolte.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 23505
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-bilan-provisoire.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 42931
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-premier-paiement.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 22438
+    },
+    {
+      "file": "docs/ui/apres/lot-5c/390-bilan-paye.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 36942
+    }
+  ]
+}

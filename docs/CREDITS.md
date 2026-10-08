@@ -10,8 +10,43 @@ Vérification effectuée le **7 octobre 2026**. Les fichiers ci-dessous sont loc
 | Three.js et modules d’environnement/caméra | Three.js Authors | MIT ; [texte fourni](licenses/Three-MIT.txt) | https://threejs.org/ |
 | Modèles des trois poissons, bâtiments, végétation, matériaux et textures Canvas | Créations originales du projet, code de `fish3d.ts` et `farm3d.ts` | Créations du dépôt, aucun modèle ou texture tiers importé | Fichiers sources du dépôt |
 | Carte du domaine, favicon | Créations originales du projet en SVG | Créations du dépôt | `src/FarmMap.tsx`, `public/favicon.svg` |
-| Planche des espèces et vue paysagère | Images originales générées pour les versions précédentes du projet | Images générées, pas de photographie documentaire ni de ressource de banque d’images. Le lot 4 prévoit leur remplacement par des rendus cohérents avec les modèles du jeu. | `public/assets/species-atlas.png`, `public/assets/farm-landscape.png` ; provenance décrite dans le README et le prompt V2 |
+| Portraits des trois espèces (WebP) | Projet Les Étangs, rendus locaux des modèles originaux | Créations originales, aucun modèle, photo ni texture tiers | `src/assets/portraits/`, `scripts/render-portraits.mjs`, 07/10/2026 |
 
-Les masques d’affichage de la planche préservent les proportions ; ils n’ajoutent aucune ressource tierce. React et React DOM sont sous licence MIT ; les notices des dépendances restent dans leurs paquets verrouillés par `package-lock.json`.
+React et React DOM sont sous licence MIT ; [notice React intégrée](licenses/React-MIT.txt), vérifiée dans le paquet installé. Les autres notices de dépendances restent dans leurs paquets verrouillés par `package-lock.json`.
 
 Aucun son ni musique n’est intégré au lot 0. Leur provenance et licence seront ajoutées lors du lot 3. Aucune attribution de licence CC0 n’est présumée pour une ressource trouvée sur Internet.
+
+Lot 1b : aucune nouvelle ressource externe. Les icônes supplémentaires proviennent du paquet Lucide déjà crédité. L’illustration paysagère historique n’est plus utilisée dans l’interface ni intégrée au portable ; la planche des espèces reste accessible depuis l’observation.
+
+Lot 1c : composants, styles et pictogrammes de jauge originaux, créés dans le dépôt. Aucune nouvelle ressource externe ; Inter/Fraunces (OFL) et Lucide (ISC) restent les seuls paquets visuels utilisés.
+
+Lot 2a : schéma de l’analyse d’eau original, dessiné en SVG dans `src/panels/ConstructionPanel.tsx`. Courbes des relevés calculées à partir des états observés du moteur, sans donnée externe. Aucune nouvelle ressource téléchargée.
+
+Lot 2b : diagramme de chaîne logistique et graphique de trésorerie originaux (HTML/SVG), icônes Lucide déjà créditées. Aucune nouvelle ressource externe.
+
+Lot 2c : illustration de l’encyclopédie originale en SVG (`src/RealismGuide.tsx`), courbes du journal issues des relevés du jeu. Pas de nouvelle ressource tierce ; icônes Lucide sous ISC.
+
+| Ressource ajoutée au lot 3a | Auteur / provenance | Licence / statut | Source / date |
+| --- | --- | --- | --- |
+| Ambiances d’eau, oiseaux saisonniers, pluie et vent ; clic, ouverture, validation, erreur, caisse, nourrissage, camion, chantier, alerte et célébration | Créations originales du projet par synthèse Web Audio (oscillateurs et bruit déterministe filtré) | Aucune captation, banque de sons ou ressource tierce. Créations du dépôt. | `src/audio/mixer.ts`, 7 octobre 2026 |
+| Musique générative, trois phrases harmoniques calmes | Composition algorithmique originale du projet | Aucun morceau ni échantillon tiers | `src/audio/mixer.ts`, 7 octobre 2026 |
+
+La synthèse est un choix délibéré pour garder le portable autonome : aucun téléchargement audio n’a été tenté ou bloqué. Budget des fichiers audio intégrés : **0 octet** ; le synthétiseur fait partie du JavaScript mesuré dans le portable. Les signaux sont produits en mémoire après une interaction du joueur, jamais au chargement automatique.
+
+Lot 3b : illustrations des cartes d’événement (relief, onde et feuilles en SVG/CSS) originales, créées dans le dépôt ; pictogrammes Lucide déjà recensés ci-dessus. Aucune ressource externe supplémentaire. Sources : `src/panels/EventCard.tsx`, `src/hud/time-events.css` (07/10/2026).
+
+Lot 3c : bilans, tableaux et prévision sont des composants originaux du projet, calculés localement depuis les états du moteur. Aucune nouvelle ressource externe, police, texture ou piste sonore.
+
+Lot 4a : portraits WebP (640 × 300) générés localement par `scripts/render-portraits.mjs` / `src/world/portraitScene.ts` à partir des trois modèles originaux de `src/fish3d.ts`. Auteur : projet Les Étangs ; création originale, sans modèle, photo ni texture tiers. Palette commune de diorama dans `src/ui/tokens.css`. Bassins, cuves, végétation de rive, engin de chantier et équipements frigorifiques sont également des maillages originaux procéduraux. Date : 07/10/2026. Les deux anciennes images générées et leurs masques SVG sont retirés du jeu et du portable ; elles subsistent seulement dans l’historique Git.
+
+Lot 4b : camions d’aliments, cuves de transport vivant et carrosseries frigorifiques, ondulations, silhouettes, gouttelettes, nuages et pluie sont des géométries/effets procéduraux originaux du projet. Aucun fichier de texture, son ou modèle externe ajouté. Sources : `src/world/LifeEffects.ts`, `src/world/WeatherScene.ts`, `src/farm3d.ts`, palette locale (07/10/2026).
+
+Lot 4c : contours de sélection, anneaux de calibre, étiquettes, notifications et vignettage doux sont des créations originales du projet. `EffectComposer`, `RenderPass`, `ShaderPass`, `OutputPass` et `FXAAShader` proviennent du paquet Three.js 0.186.1 installé : licence MIT vérifiée dans `node_modules/three/LICENSE`, déjà reproduite dans [Three-MIT.txt](licenses/Three-MIT.txt). L’en-tête du module FXAA crédite l’algorithme NVIDIA, l’implémentation C# de Jasper Flick et le port GLSL de Dave Hoskins. Source : https://github.com/mrdoob/three.js/tree/r186/examples/jsm ; vérification le 07/10/2026. Aucun téléchargement de modèle, texture ou son supplémentaire.
+
+Lot 5a : écran titre, menus et composants de sauvegarde originaux. Vignettes produites directement par le rendu local ; aucune image téléchargée. Les licences Inter/Fraunces (OFL), Lucide (ISC), Three.js et React (MIT) sont consultables intégralement depuis les crédits du titre, y compris dans le portable.
+
+Lot 5b : navigation à la manette, contrôles réassignables et motifs de jauges réalisés dans le dépôt. Aucun modèle, police, image ou son tiers ajouté. Les invites de boutons sont du texte, dessiné avec les polices locales existantes.
+
+Lot 5c : catalogues français et anglais, traductions et adaptateur d’affichage originaux du projet Les Étangs (`src/i18n/`), 08/10/2026. Aucun service distant ni ressource tierce ajoutée. Les notices des licences gardent leur texte original.
+
+Lot 5d : tutoriel, textes FR/EN des douze succès, modèles procéduraux du jardin et du banc originaux du projet Les Étangs (`src/onboarding/`, `src/state/profile.ts`, `src/world/Rewards.ts`), 08/10/2026. Palette, géométries et matériaux locaux ; aucune texture ni ressource distante ajoutée. Adaptateur de plateforme web original, sans SDK tiers.

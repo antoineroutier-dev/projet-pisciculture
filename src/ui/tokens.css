@@ -1,4 +1,5 @@
 :root {
+  --scrim: #172b3680;
   --surface: #f6f5ee;
   --surface-raised: #fffef8;
   --surface-muted: #e9ece3;
@@ -26,6 +27,8 @@
   --text-xl: max(18px, 1.5rem);
   --text-title: max(18px, 2rem);
   --text-display: max(18px, 2.75rem);
+  --text-logo: clamp(36px, 5vw, 4rem);
+  --text-logo-mobile: max(36px, 2.625rem);
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -40,5 +43,116 @@
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 @media (prefers-reduced-motion: reduce) {
-  :root { --duration-fast: 0ms; --duration-normal: 0ms; --duration-slow: 0ms; }
+  :root {
+    --duration-fast: 0ms;
+    --duration-normal: 0ms;
+    --duration-slow: 0ms;
+  }
+}
+
+/* Original painterly world and anatomy materials; shared by Three and the SVG fallback. */
+:root {
+  --paint-soil: #8a7755;
+  --paint-reed: #778b50;
+  --paint-leaf: #8eaa72;
+  --paint-machine: #d8ae51;
+  --paint-water-earth: #617747;
+  --paint-water-source: #397876;
+  --paint-water-foam: #d5e8d9;
+  --paint-glass: #9db2ae;
+  --paint-stone: #b5ac96;
+  --paint-stone-light: #c1b69f;
+  --paint-stone-mid: #a89e88;
+  --paint-stone-shadow: #938e7e;
+  --paint-wood: #987c56;
+  --paint-wood-mid: #8b7150;
+  --paint-wood-shadow: #81664a;
+  --paint-wood-dark: #69543e;
+  --paint-roof: #606b6d;
+  --paint-roof-light: #6c7678;
+  --paint-roof-shadow: #525d60;
+  --paint-roof-dark: #4a5659;
+  --paint-grass: #829166;
+  --paint-grass-light: #909971;
+  --paint-grass-shadow: #75895d;
+  --paint-grass-dark: #6d8159;
+  --paint-gravel: #c5bda6;
+  --paint-gravel-light: #d2c9b0;
+  --paint-gravel-shadow: #b0ad96;
+  --paint-gravel-dark: #999d8b;
+  --paint-concrete: #b5b6a3;
+  --paint-timber: #594b35;
+  --paint-trim: #ddd5bd;
+  --paint-shutter: #476052;
+  --paint-metal: #8c9590;
+  --paint-stream: #658f86;
+  --paint-leaf-shadow: #415a31;
+  --paint-meadow: #7c8b51;
+  --paint-selection: #2f6a55;
+  --paint-hover: #c08b37;
+  --paint-grain-light: #f6edc316;
+  --paint-grain-shadow: #18201c13;
+  --paint-mortar: #302e231f;
+  --paint-wood-grain: #322b1e27;
+  --paint-sky: #dbe6dc;
+  --paint-specimen-background: #d9e2da;
+  --paint-sky-light: #eef4ec;
+  --paint-ground-light: #736749;
+  --paint-sun: #fff0ce;
+  --paint-water-turbid: #596e4d;
+  --paint-fish-trout: #aebcab;
+  --paint-fish-trout-belly: #e3dfc9;
+  --paint-fish-trout-back: #425940;
+  --paint-fish-trout-band: #cc7785aa;
+  --paint-fish-trout-fin: #758a71;
+  --paint-fish-trout-adipose: #879785;
+  --paint-fish-trout-gill: #9d7279;
+  --paint-fish-carp: #ae934e;
+  --paint-fish-carp-belly: #dcc78a;
+  --paint-fish-carp-back: #535b30;
+  --paint-fish-carp-fin: #9d7235;
+  --paint-fish-carp-iris: #bd963c;
+  --paint-fish-carp-barbel: #c9a76b;
+  --paint-fish-carp-mouth: #bd9c63;
+  --paint-fish-tilapia: #96a89c;
+  --paint-fish-tilapia-belly: #d8d9bd;
+  --paint-fish-tilapia-back: #3e5349;
+  --paint-fish-tilapia-fin: #5b7066;
+  --paint-fish-tilapia-ray: #334c41;
+  --paint-fish-tilapia-stripe: #344c43;
+  --paint-fish-stripe-clear: #344c4100;
+  --paint-fish-stripe: #344c4199;
+  --paint-fish-fin-ray: #736541;
+  --paint-fish-tail-ray: #596354;
+  --paint-fish-iris: #cdb67c;
+  --paint-fish-pupil: #09120f;
+  --paint-fish-highlight: #ffffff;
+  --paint-fish-gill: #746a44;
+  --paint-fish-mouth: #a9a89a;
+  --paint-fish-scale: #2030196b;
+  --paint-fish-scale-soft: #2030192b;
+  --paint-fish-scale-light: #f5f2ce47;
+  --paint-fish-spot: #18271d;
+}
+
+/* Original seasonal grading and logistics colors. */
+:root {
+  --paint-truck-feed: #b99348;
+  --paint-truck-living: #477e84;
+  --paint-truck-cold: #557866;
+  --paint-cloud: #edf0e8;
+  --paint-rain: #b5c9cf;
+  --paint-rain-sky: #b8c9c6;
+  --paint-night-sky: #46596c;
+  --paint-sunset: #f4cc95;
+  --paint-frost: #e5e5d6;
+  --paint-ice: #d0e5df;
+  --paint-ground-spring: #ffffff;
+  --paint-ground-summer: #e9ddb0;
+  --paint-ground-autumn: #d1b486;
+  --paint-ground-winter: #c5c9c0;
+  --paint-foliage-spring: #ffffff;
+  --paint-foliage-summer: #c8dfb1;
+  --paint-foliage-autumn: #dcaa64;
+  --paint-foliage-winter: #c0bdb0;
 }
