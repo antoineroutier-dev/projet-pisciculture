@@ -698,12 +698,10 @@ export function createFarm(initial: FarmState): FarmObjects {
     bloomA: new T.MeshStandardMaterial({
       color: paint("bloom-pink"),
       roughness: 0.7,
-      flatShading: true,
     }),
     bloomB: new T.MeshStandardMaterial({
       color: paint("bloom-white"),
       roughness: 0.7,
-      flatShading: true,
     }),
     contact: new T.MeshBasicMaterial({
       map: contact,

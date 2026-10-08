@@ -91,11 +91,11 @@ export function createSky(scene: T.Scene) {
   dome.frustumCulled = false;
   root.add(dome);
   const texture = cloudTexture(),
+    // Fog softens distant clouds into the haze and shares the smoke's sprite program.
     cloudMaterial = new T.SpriteMaterial({
       map: texture,
       transparent: true,
       depthWrite: false,
-      fog: false,
     });
   const r = seeded(5),
     clouds: T.Sprite[] = [];

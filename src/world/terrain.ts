@@ -153,8 +153,19 @@ function toCanvas(v: number) {
 }
 const UNIT = PAINT_SIZE / (PAINT_EXTENT * 2);
 
+let paintedGround: HTMLCanvasElement | undefined,
+  grain: HTMLCanvasElement | undefined;
 /** Hand-painted look: noise mottling, soft-edged lanes, worn ruts, yard and damp banks. */
 function paintGround(trees: Point[]) {
+  // The layout is fixed, so the title scene and the game share one painting.
+  paintedGround ??= paintCanvas(trees);
+  const texture = new T.CanvasTexture(paintedGround);
+  texture.colorSpace = T.SRGBColorSpace;
+  texture.wrapS = texture.wrapT = T.ClampToEdgeWrapping;
+  texture.anisotropy = 8;
+  return texture;
+}
+function paintCanvas(trees: Point[]) {
   const c = document.createElement("canvas");
   c.width = c.height = PAINT_SIZE;
   const ctx = c.getContext("2d")!;
@@ -198,40 +209,48 @@ function paintGround(trees: Point[]) {
     ctx.stroke();
   }
   ctx.globalAlpha = 1;
+  // Soft shapes use gradients and stacked strokes: canvas blur is far too
+  // slow when the browser rasterises in software.
+  const softEllipse = (
+    x: number,
+    z: number,
+    rx: number,
+    rz: number,
+    color: string,
+    alpha: number,
+  ) => {
+    ctx.save();
+    ctx.translate(toCanvas(x), toCanvas(z));
+    ctx.scale(1, rz / rx);
+    const g = ctx.createRadialGradient(0, 0, 0, 0, 0, rx * UNIT);
+    g.addColorStop(0, color);
+    g.addColorStop(0.55, color);
+    g.addColorStop(1, clear(color));
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(0, 0, rx * UNIT, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  };
   // Damp, lusher grass around pond sites and along the channel.
-  ctx.filter = `blur(${Math.round(UNIT * 2)}px)`;
-  ctx.fillStyle = paint("grass-lush");
-  ctx.globalAlpha = 0.45;
-  for (const [px, pz] of PONDS) {
-    ctx.beginPath();
-    ctx.ellipse(
-      toCanvas(px),
-      toCanvas(pz),
-      9.5 * UNIT,
-      6.8 * UNIT,
-      0,
-      0,
-      Math.PI * 2,
-    );
-    ctx.fill();
-  }
-  ctx.fillRect(toCanvas(-36), toCanvas(CHANNEL_Z - 3.4), 72 * UNIT, 6.8 * UNIT);
+  for (const [px, pz] of PONDS)
+    softEllipse(px, pz, 10.5, 7.6, paint("grass-lush"), 0.45);
+  const bank = ctx.createLinearGradient(
+    0,
+    toCanvas(CHANNEL_Z - 3.6),
+    0,
+    toCanvas(CHANNEL_Z + 3.6),
+  );
+  bank.addColorStop(0, clear(paint("grass-lush")));
+  bank.addColorStop(0.5, paint("grass-lush"));
+  bank.addColorStop(1, clear(paint("grass-lush")));
+  ctx.globalAlpha = 0.5;
+  ctx.fillStyle = bank;
+  ctx.fillRect(toCanvas(-38), toCanvas(CHANNEL_Z - 3.6), 76 * UNIT, 7.2 * UNIT);
   // Contact shadows under trees ground them even without shadow maps.
-  ctx.fillStyle = paint("ground-shade");
-  for (const [tx, tz] of trees) {
-    ctx.globalAlpha = 0.5;
-    ctx.beginPath();
-    ctx.ellipse(
-      toCanvas(tx + 0.8),
-      toCanvas(tz + 0.6),
-      2.6 * UNIT,
-      2.2 * UNIT,
-      0,
-      0,
-      Math.PI * 2,
-    );
-    ctx.fill();
-  }
+  for (const [tx, tz] of trees)
+    softEllipse(tx + 0.8, tz + 0.6, 2.9, 2.5, paint("ground-shade"), 0.55);
   ctx.globalAlpha = 1;
   // Gravel yard in front of the farm buildings.
   const yard = () => {
@@ -244,17 +263,6 @@ function paintGround(trees: Point[]) {
       3 * UNIT,
     );
   };
-  ctx.filter = `blur(${Math.round(UNIT * 0.35)}px)`;
-  ctx.globalAlpha = 0.45;
-  ctx.lineWidth = 0.9 * UNIT;
-  ctx.strokeStyle = paint("grass-dark");
-  yard();
-  ctx.stroke();
-  ctx.globalAlpha = 1;
-  ctx.fillStyle = paint("gravel");
-  yard();
-  ctx.fill();
-  // Lanes: darker soft verge, gravel bed, then worn wheel ruts.
   const lane = (road: Road, width: number) => {
     ctx.lineWidth = width * UNIT;
     ctx.lineCap = "round";
@@ -267,15 +275,27 @@ function paintGround(trees: Point[]) {
     );
     ctx.stroke();
   };
-  ctx.filter = `blur(${Math.round(UNIT * 0.35)}px)`;
+  // Darker trodden verge, built from widening translucent passes.
   ctx.strokeStyle = paint("grass-dark");
-  ctx.globalAlpha = 0.45;
-  for (const road of ROADS) lane(road, road.width + 0.9);
-  ctx.globalAlpha = 1;
-  ctx.filter = `blur(${Math.max(1, Math.round(UNIT * 0.12))}px)`;
+  for (const spread of [1.4, 1, 0.6]) {
+    ctx.globalAlpha = 0.13;
+    ctx.lineWidth = spread * UNIT;
+    yard();
+    ctx.stroke();
+    for (const road of ROADS) lane(road, road.width + spread);
+  }
+  // Gravel bed with a feathered rim.
   ctx.strokeStyle = paint("gravel");
+  ctx.fillStyle = paint("gravel");
+  ctx.globalAlpha = 0.45;
+  ctx.lineWidth = 0.35 * UNIT;
+  yard();
+  ctx.stroke();
+  for (const road of ROADS) lane(road, road.width + 0.35);
+  ctx.globalAlpha = 1;
+  yard();
+  ctx.fill();
   for (const road of ROADS) lane(road, road.width);
-  ctx.filter = "none";
   // Gravel speckles over lanes and yard.
   for (let i = 0; i < 60000; i++) {
     const x = (r() - 0.5) * PAINT_EXTENT * 2,
@@ -292,36 +312,39 @@ function paintGround(trees: Point[]) {
     const s = 1 + r() * 2.5;
     ctx.fillRect(toCanvas(x), toCanvas(z), s, s);
   }
-  ctx.filter = `blur(${Math.round(UNIT * 0.4)}px)`;
+  const path = (points: Point[], offset: number) => {
+    ctx.beginPath();
+    points.forEach(([x, z], i) =>
+      i
+        ? ctx.lineTo(toCanvas(x + offset), toCanvas(z))
+        : ctx.moveTo(toCanvas(x + offset), toCanvas(z)),
+    );
+    ctx.stroke();
+  };
   for (const road of ROADS) {
     if (!road.ruts) continue;
-    ctx.globalAlpha = 0.5;
+    // Worn wheel ruts: a faint wide pass under a narrower darker one.
     ctx.strokeStyle = paint("gravel-shadow");
-    for (const offset of [-1.15, 1.15]) {
-      ctx.lineWidth = 0.6 * UNIT;
-      ctx.beginPath();
-      road.points.forEach(([x, z], i) =>
-        i
-          ? ctx.lineTo(toCanvas(x + offset), toCanvas(z))
-          : ctx.moveTo(toCanvas(x + offset), toCanvas(z)),
-      );
-      ctx.stroke();
+    for (const [width, alpha] of [
+      [1.1, 0.18],
+      [0.55, 0.42],
+    ]) {
+      ctx.globalAlpha = alpha;
+      ctx.lineWidth = width * UNIT;
+      for (const offset of [-1.15, 1.15]) path(road.points, offset);
     }
     // A grassy crown on the lane beyond the gate.
-    ctx.globalAlpha = 0.55;
     ctx.strokeStyle = paint("grass-shadow");
-    ctx.lineWidth = 0.9 * UNIT;
-    ctx.beginPath();
-    road.points
-      .filter(([, z]) => z > 26)
-      .forEach(([x, z], i) =>
-        i
-          ? ctx.lineTo(toCanvas(x), toCanvas(z))
-          : ctx.moveTo(toCanvas(x), toCanvas(z)),
-      );
-    ctx.stroke();
+    const crown = road.points.filter(([, z]) => z > 26);
+    for (const [width, alpha] of [
+      [1.3, 0.2],
+      [0.8, 0.45],
+    ]) {
+      ctx.globalAlpha = alpha;
+      ctx.lineWidth = width * UNIT;
+      path(crown, 0);
+    }
   }
-  ctx.filter = "none";
   ctx.globalAlpha = 1;
   // Fade to the plain hill green at the border so clamped edges stay seamless.
   const edge = ctx.createRadialGradient(
@@ -339,14 +362,16 @@ function paintGround(trees: Point[]) {
   ctx.strokeStyle = paint("grass");
   ctx.lineWidth = 24;
   ctx.strokeRect(0, 0, PAINT_SIZE, PAINT_SIZE);
-  const texture = new T.CanvasTexture(c);
-  texture.colorSpace = T.SRGBColorSpace;
-  texture.wrapS = texture.wrapT = T.ClampToEdgeWrapping;
-  texture.anisotropy = 8;
-  return texture;
+  return c;
 }
 /** Grey speckle multiplied at close range so painted ground keeps a crisp grain. */
 function detailTexture() {
+  grain ??= detailCanvas();
+  const texture = new T.CanvasTexture(grain);
+  texture.wrapS = texture.wrapT = T.RepeatWrapping;
+  return texture;
+}
+function detailCanvas() {
   const c = document.createElement("canvas");
   c.width = c.height = 256;
   const ctx = c.getContext("2d")!;
@@ -359,9 +384,7 @@ function detailTexture() {
     const s = 1 + r() * 2;
     ctx.fillRect(r() * 256, r() * 256, s, s);
   }
-  const texture = new T.CanvasTexture(c);
-  texture.wrapS = texture.wrapT = T.RepeatWrapping;
-  return texture;
+  return c;
 }
 
 export function createTerrain(trees: Point[]) {

@@ -156,15 +156,21 @@ function flowerGeometry() {
   const head = new T.IcosahedronGeometry(0.11, 0).translate(0, 0.42, 0);
   return colored(head, paint("bloom"), paint("bloom"), 0, 1);
 }
-/** Vertex wind: tops sway, bases stay planted; disabled when the clock is still. */
-export function windy(material: T.Material, strength: number, key: string) {
+/**
+ * Vertex wind: tops sway, bases stay planted; disabled when the clock is still.
+ * The bend is a per-material uniform so every windy material shares one program
+ * per render state, which keeps first-frame shader compilation short.
+ */
+export function windy(material: T.Material, strength: number) {
+  const bend = { value: strength };
   material.onBeforeCompile = (shader) => {
     shader.uniforms.uWind = wind;
     shader.uniforms.uWindStrength = windStrength;
+    shader.uniforms.uBend = bend;
     shader.vertexShader = shader.vertexShader
       .replace(
         "#include <common>",
-        "#include <common>\nuniform float uWind;\nuniform float uWindStrength;",
+        "#include <common>\nuniform float uWind;\nuniform float uWindStrength;\nuniform float uBend;",
       )
       .replace(
         "#include <begin_vertex>",
@@ -176,12 +182,12 @@ export function windy(material: T.Material, strength: number, key: string) {
         #endif
         float sway = sin(uWind * 1.4 + anchor.x * 0.31 + anchor.y * 0.23) * 0.6
           + sin(uWind * 2.3 + anchor.x * 0.77) * 0.3;
-        float bend = max(0.0, position.y) * ${strength.toFixed(3)} * uWindStrength;
+        float bend = max(0.0, position.y) * uBend * uWindStrength;
         transformed.x += sway * bend;
         transformed.z += sway * bend * 0.55;`,
       );
   };
-  material.customProgramCacheKey = () => `wind-${key}`;
+  material.customProgramCacheKey = () => "wind";
   return material;
 }
 function scatter(
@@ -218,7 +224,6 @@ export function plotMeadow(
         color: paint("plot-grass"),
       }),
       0.2,
-      "grass",
     ),
     mesh = new T.InstancedMesh(geometry, material, count),
     dummy = new T.Object3D(),
@@ -311,7 +316,6 @@ export function createVegetation(root: T.Group, trees: Point[]) {
       flatShading: true,
     }),
     0.035,
-    "leaf",
   );
   const foliage = instanced(
     "foliage",
@@ -352,7 +356,6 @@ export function createVegetation(root: T.Group, trees: Point[]) {
         flatShading: true,
       }),
       0.02,
-      "conifer",
     ),
     forest.map(([x, z]) => ({
       x,
@@ -393,7 +396,6 @@ export function createVegetation(root: T.Group, trees: Point[]) {
         flatShading: true,
       }),
       0.05,
-      "bush",
     ),
     bushPoints.map(([x, z]) => ({
       x,
@@ -414,11 +416,14 @@ export function createVegetation(root: T.Group, trees: Point[]) {
   const rocks = instanced(
     "rocks",
     rockGeometry(),
-    new T.MeshStandardMaterial({
-      vertexColors: true,
-      roughness: 0.9,
-      flatShading: true,
-    }),
+    windy(
+      new T.MeshStandardMaterial({
+        vertexColors: true,
+        roughness: 0.9,
+        flatShading: true,
+      }),
+      0,
+    ),
     rockPoints.map(([x, z]) => ({
       x,
       z,
@@ -445,7 +450,6 @@ export function createVegetation(root: T.Group, trees: Point[]) {
         side: T.DoubleSide,
       }),
       0.16,
-      "grass",
     ),
     grassPoints.map(([x, z]) => ({
       x,
@@ -470,11 +474,14 @@ export function createVegetation(root: T.Group, trees: Point[]) {
   const flowers = instanced(
     "flowers",
     flowerGeometry(),
-    new T.MeshStandardMaterial({
-      vertexColors: true,
-      roughness: 0.7,
-      flatShading: true,
-    }),
+    windy(
+      new T.MeshStandardMaterial({
+        vertexColors: true,
+        roughness: 0.7,
+        flatShading: true,
+      }),
+      0.08,
+    ),
     flowerPoints.map(([x, z]) => {
       const patch = Math.floor(fbm(x * 0.02, z * 0.02) * 9) % blooms.length;
       return {
