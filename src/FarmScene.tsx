@@ -166,6 +166,14 @@ export default function FarmScene({
     controls.maxDistance = 100;
     controls.maxPolarAngle = Math.PI / 2 - 0.045;
     controls.enablePan = true;
+    const cameraSensitivity = () => {
+      const sensitivity =
+        Number(document.documentElement.dataset.cameraSensitivity) || 1;
+      controls.rotateSpeed = sensitivity;
+      controls.zoomSpeed = sensitivity;
+      controls.panSpeed = sensitivity;
+    };
+    cameraSensitivity();
     const sky = new T.HemisphereLight(
       paint("sky-light"),
       paint("ground-light"),
@@ -363,6 +371,7 @@ export default function FarmScene({
     renderer.domElement.addEventListener("webglcontextlost", contextLost);
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const motionChanged = () => {
+      cameraSensitivity();
       needsRender = true;
       lastSwim = 0;
     };

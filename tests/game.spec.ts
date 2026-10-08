@@ -86,7 +86,9 @@ test("import, export, mode expert et protection de sauvegarde corrompue", async 
   await page
     .getByRole("button", { name: "Paramètres & sauvegarde", exact: true })
     .click();
+  await page.getByRole("tab", { name: "Jeu", exact: true }).click();
   await page.getByLabel("Mode de gestion").selectOption("expert");
+  await page.getByRole("tab", { name: "Partie", exact: true }).click();
   const valid = await page.evaluate(
     (key) => localStorage.getItem(key),
     SAVE_KEY,

@@ -1,3 +1,5 @@
+import { useControlPreferences } from "./state/preferences";
+import { bindingLabel } from "./controls/bindings";
 import { Card, Tabs } from "./ui/Primitives";
 import { useState } from "react";
 import { SpeciesPortrait } from "./world/SpeciesPortrait";
@@ -21,6 +23,7 @@ import {
   Thermometer,
 } from "lucide-react";
 export default function RealismGuide() {
+  const { bindings } = useControlPreferences();
   const [tab, setTab] = useState<"practice" | "species" | "water" | "model">(
     "practice",
   );
@@ -38,7 +41,7 @@ export default function RealismGuide() {
     {
       icon: <Clock3 />,
       title: "Le rythme biologique",
-      text: "Une journée de jeu contient 24 pas horaires de calcul de l’eau. La croissance de 50 g à la taille de vente prend des mois. Pause arrête le calendrier. ×1, ×2, ×4 et ×8 durent respectivement 4, 2, 1 et 0,5 seconde par jour. L’avance au prochain événement prend 0,25 seconde par jour et peut être interrompue. Espace suspend/reprend ; 1–5 choisissent Pause à ×8 hors des champs de saisie. Vous démarrez sans bassin aménagé. L’avance guidée s’arrête aux réceptions, aux risques et aux étapes de vente. Il n’y a pas de progression hors ligne.",
+      text: "Une journée de jeu contient 24 pas horaires de calcul de l’eau. La croissance de 50 g à la taille de vente prend des mois. Pause arrête le calendrier. ×1, ×2, ×4 et ×8 durent respectivement 4, 2, 1 et 0,5 seconde par jour. L’avance au prochain événement prend 0,25 seconde par jour et peut être interrompue. Vous démarrez sans bassin aménagé. L’avance guidée s’arrête aux réceptions, aux risques et aux étapes de vente. Il n’y a pas de progression hors ligne.",
     },
     {
       icon: <Thermometer />,
@@ -83,6 +86,23 @@ export default function RealismGuide() {
         <span>{sections[i].title}</span>
       </summary>
       <p>{sections[i].text}</p>
+      {i === 2 && (
+        <p className="hint">
+          {bindingLabel(bindings.toggle)} : suspendre/reprendre ;{" "}
+          {[
+            bindings.pause,
+            bindings.speed1,
+            bindings.speed2,
+            bindings.speed4,
+            bindings.speed8,
+          ]
+            .map(bindingLabel)
+            .join(" / ")}{" "}
+          : Pause à ×8, hors saisie. Réassignez les touches dans Paramètres →
+          Contrôles. Les pauses courantes se règlent dans Jeu ; les urgences et
+          les bilans restent des arrêts obligatoires.
+        </p>
+      )}
     </details>
   );
   return (

@@ -33,3 +33,5 @@ import "./panels/finance.css";
 import "./world/world.css";
 
 import "./panels/title.css";
+
+import "./panels/controls.css";

@@ -1,3 +1,5 @@
+import { matchControl } from "./controls/bindings";
+import { interruptingEvents } from "./controls/interruptions";
 import { SettingsPanel } from "./panels/SettingsPanel";
 import { SaveSlots } from "./panels/SaveSlots";
 import { PauseMenu } from "./panels/PauseMenu";
@@ -85,7 +87,6 @@ import {
   compatible,
   facilityName,
   initialGame,
-  nextDay,
   number,
   OBJECTIVES,
   SPECIES,
@@ -304,6 +305,7 @@ export default function GameSession({
     after: Game,
     reason = "",
     action: Action | { type: "day" } = { type: "day" },
+    seeking = false,
   ) {
     const updated = recordLedger(currentLedger.current, before, after, action);
     currentLedger.current = updated;
@@ -311,7 +313,12 @@ export default function GameSession({
     currentGame.current = after;
     setGame(after);
     publishLife(before, after);
-    const incoming = gameEvents(before, after, reason);
+    const allEvents = gameEvents(before, after, reason);
+    const incoming = interruptingEvents(
+      allEvents,
+      runtime.preferences.autoPause,
+      seeking,
+    );
     const firstHarvest = incoming.some((e) => e.id.endsWith(":first-harvest"));
     const paid = after.development.paid > before.development.paid;
     if (firstHarvest || paid) {
@@ -333,6 +340,8 @@ export default function GameSession({
         },
       });
     }
+    if (!incoming.length && allEvents.length)
+      setNotice({ text: allEvents.map((e) => e.text).join(" "), ok: true });
     if (incoming.length) {
       clock.pause();
       setNotice(null);
@@ -347,7 +356,7 @@ export default function GameSession({
     }
     return (
       incoming.length > 0 ||
-      !!reason ||
+      (!!reason && (runtime.preferences.autoPause || seeking)) ||
       (!before.development.surveyed && after.development.surveyed)
     );
   }
@@ -368,10 +377,7 @@ export default function GameSession({
       return true;
     }
     const pending = beginFeedback(before, { type: "day" }, audio.play, started);
-    const result =
-      seeking || before.mode === "guided"
-        ? advanceGuided(before, 1)
-        : { game: nextDay(before), reason: "" };
+    const result = advanceGuided(before, 1);
     requestFeedback(
       before,
       result.game,
@@ -382,7 +388,7 @@ export default function GameSession({
       started,
       pending,
     );
-    return commit(before, result.game, result.reason);
+    return commit(before, result.game, result.reason, { type: "day" }, seeking);
   }
   useEffect(() => {
     if (panel || modal) audio.play("open");
@@ -490,17 +496,23 @@ export default function GameSession({
         if (panel) closePanel();
         else setModal("pause");
       }
-      const match = PANELS.find(
-        (p) => p.key.toLowerCase() === e.key.toLowerCase(),
-      );
-      if (e.altKey && !e.ctrlKey && !e.metaKey && match) {
+      const action = matchControl(e, runtime.preferences.bindings);
+      const match = PANELS.find((p) => p.id === action);
+      if (match) {
         e.preventDefault();
         togglePanel(match.id);
       }
     };
     window.addEventListener("keydown", handle);
     return () => window.removeEventListener("keydown", handle);
-  }, [modal, activeEvent, panel, closePanel, togglePanel]);
+  }, [
+    modal,
+    activeEvent,
+    panel,
+    closePanel,
+    togglePanel,
+    runtime.preferences.bindings,
+  ]);
   function perform(action: Action, dismiss = false) {
     const before = currentGame.current;
     const started = performance.now();
@@ -742,7 +754,11 @@ export default function GameSession({
           </ManagementPanel>
         )}
         <FeedbackLayer panelOpen={!!panel} />
-        <Dock active={panel} open={togglePanel} />
+        <Dock
+          gamepad={runtime.gamepad.active}
+          active={panel}
+          open={togglePanel}
+        />
       </div>
       {notice && !modal && !activeEvent && (
         <Toast
@@ -945,35 +961,15 @@ export default function GameSession({
             </div>
           )}
           {modal === "settings" && (
-            <SettingsPanel runtime={runtime}>
+            <SettingsPanel
+              runtime={runtime}
+              mode={game.mode}
+              changeMode={(mode) => perform({ type: "mode", mode })}
+            >
               <p className="modal-intro">
                 Votre partie est enregistrée dans ce navigateur. Gardez une
                 copie pour la retrouver sur un autre appareil.
               </p>
-              <div className="mode-setting">
-                <label htmlFor="simulation-mode">Mode de gestion</label>
-                <select
-                  id="simulation-mode"
-                  value={game.mode}
-                  onChange={(e) =>
-                    perform({
-                      type: "mode",
-                      mode: e.target.value as Game["mode"],
-                    })
-                  }
-                >
-                  <option value="guided">
-                    Réaliste avec aides pédagogiques
-                  </option>
-                  <option value="expert">
-                    Expert · sans aides économiques
-                  </option>
-                </select>
-                <p>
-                  Les deux modes utilisent les mêmes lois biologiques. Les aides
-                  monétaires sont désactivées en mode expert.
-                </p>
-              </div>
               <div className="settings-summary">
                 <span>
                   <Sprout size={18} /> Jour {game.day}

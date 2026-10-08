@@ -109,6 +109,13 @@ export function TitleScreen({
           {automatic.error && (
             <div className="title-recovery">
               <p role="alert">{automatic.error}</p>
+              <p className="hint">
+                Mode préféré :{" "}
+                {runtime.preferences.defaultMode === "guided"
+                  ? "avec aides pédagogiques"
+                  : "expert"}
+                . Vous pouvez choisir l’autre mode ci-dessous.
+              </p>
               {automatic.raw !== null && (
                 <Button
                   onClick={() =>
@@ -143,6 +150,13 @@ export function TitleScreen({
                 Vous disposez d’un terrain inexploité et de 60 000 €. Analysez
                 votre eau avant de choisir une filière.
               </p>
+              <p className="hint">
+                Mode préféré :{" "}
+                {runtime.preferences.defaultMode === "guided"
+                  ? "avec aides pédagogiques"
+                  : "expert"}
+                . Vous pouvez choisir l’autre mode ci-dessous.
+              </p>
               {automatic.raw !== null && (
                 <p className="inline-error">
                   La sauvegarde automatique sera remplacée. Les trois
@@ -150,13 +164,27 @@ export function TitleScreen({
                   charger et exporter votre partie.
                 </p>
               )}
-              <Button tone="primary" onClick={() => start(newSave("guided"))}>
+              <Button
+                tone={
+                  runtime.preferences.defaultMode === "guided"
+                    ? "primary"
+                    : "secondary"
+                }
+                onClick={() => start(newSave("guided"))}
+              >
                 Commencer avec les aides pédagogiques
               </Button>
               <p className="hint">
                 Conseils et aides financières aux étapes d’apprentissage.
               </p>
-              <Button tone="secondary" onClick={() => start(newSave("expert"))}>
+              <Button
+                tone={
+                  runtime.preferences.defaultMode === "expert"
+                    ? "primary"
+                    : "secondary"
+                }
+                onClick={() => start(newSave("expert"))}
+              >
                 Commencer en mode expert
               </Button>
               <p className="hint">

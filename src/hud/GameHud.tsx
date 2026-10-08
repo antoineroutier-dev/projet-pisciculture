@@ -1,3 +1,5 @@
+import { useControlPreferences } from "../state/preferences";
+import { bindingLabel } from "../controls/bindings";
 import { TimeControls } from "./TimeControls";
 import type { GameClock } from "../state/useGameClock";
 import { AnimatedNumber } from "../ui/AnimatedNumber";
@@ -142,7 +144,12 @@ export function GameHud({
         >
           <Settings2 size={20} />
         </button>
-        <button onClick={menu} aria-label="Menu pause" title="Menu · Échap">
+        <button
+          data-command="pause-menu"
+          onClick={menu}
+          aria-label="Menu pause"
+          title="Menu · Échap"
+        >
           <Menu size={20} />
         </button>
       </div>
@@ -164,6 +171,7 @@ export function GoalHud({
   follow: (task: Task) => void;
   objectives: () => void;
 }) {
+  const { aids } = useControlPreferences();
   const [expanded, setExpanded] = useState(false);
   const task = presentationTask(game);
   const text = formatEngineText(task.text);
@@ -207,21 +215,23 @@ export function GoalHud({
         {formatEngineText(task.label)}
         <ArrowRight size={16} />
       </button>
-      <button
-        className="goal-details-toggle"
-        aria-expanded={expanded}
-        aria-controls="goal-details"
-        onClick={() => setExpanded((v) => !v)}
-      >
-        {game.development.paid
-          ? expanded
-            ? "Masquer les conseils"
-            : "Conseils d’exploitation"
-          : expanded
-            ? "Masquer le parcours"
-            : "Parcours et conseils"}
-      </button>
-      {expanded && (
+      {aids && (
+        <button
+          className="goal-details-toggle"
+          aria-expanded={expanded}
+          aria-controls="goal-details"
+          onClick={() => setExpanded((v) => !v)}
+        >
+          {game.development.paid
+            ? expanded
+              ? "Masquer les conseils"
+              : "Conseils d’exploitation"
+            : expanded
+              ? "Masquer le parcours"
+              : "Parcours et conseils"}
+        </button>
+      )}
+      {aids && expanded && (
         <div
           className="goal-details"
           id="goal-details"
@@ -250,12 +260,15 @@ export function GoalHud({
 }
 const icons = [Hammer, Waves, Package, Coins, BookOpen, CircleHelp];
 export function Dock({
+  gamepad,
   active,
   open,
 }: {
   active: PanelId | null;
+  gamepad: boolean;
   open: (id: PanelId) => void;
 }) {
+  const { bindings } = useControlPreferences();
   return (
     <nav className="game-dock" aria-label="Gestion de l’exploitation">
       {PANELS.map((p, i) => {
@@ -267,15 +280,20 @@ export function Dock({
             aria-label={p.label}
             aria-expanded={active === p.id}
             aria-controls={active === p.id ? "management-panel" : undefined}
-            aria-keyshortcuts={`Alt+${p.key}`}
+            aria-keyshortcuts={bindings[p.id]}
             onClick={() => open(p.id)}
           >
             <Icon size={20} />
             <span>{p.label}</span>
-            <kbd>Alt+{p.key}</kbd>
+            <kbd>{bindingLabel(bindings[p.id])}</kbd>
           </button>
         );
       })}
+      {gamepad && (
+        <span className="pad-hints">
+          A · activer　B · retour　LB/RB · zones　Start · pause
+        </span>
+      )}
     </nav>
   );
 }

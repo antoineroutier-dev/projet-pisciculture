@@ -1,3 +1,5 @@
+import { matchControl } from "../controls/bindings";
+import { useControlPreferences } from "./preferences";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export const CLOCK_SPEEDS = [0, 1, 2, 4, 8] as const;
@@ -5,35 +7,11 @@ export type ClockSpeed = (typeof CLOCK_SPEEDS)[number];
 // Pause has no duration. The fifth duration in the specification belongs to seeking.
 export const dayDuration = (speed: ClockSpeed, seeking = false) =>
   seeking ? 250 : speed ? 4000 / speed : Infinity;
-export function isClockShortcut(
-  event: Pick<
-    KeyboardEvent,
-    | "target"
-    | "altKey"
-    | "ctrlKey"
-    | "metaKey"
-    | "isComposing"
-    | "defaultPrevented"
-  >,
-) {
-  return (
-    !event.defaultPrevented &&
-    !event.isComposing &&
-    !event.altKey &&
-    !event.ctrlKey &&
-    !event.metaKey &&
-    !(
-      event.target instanceof Element &&
-      event.target.closest(
-        'input,select,textarea,[contenteditable="true"],[role="slider"]',
-      )
-    )
-  );
-}
 export function useGameClock(
   tick: (guided: boolean) => boolean,
   blocked: boolean,
 ) {
+  const { bindings, defaultSpeed } = useControlPreferences();
   const [speed, setSpeed] = useState<ClockSpeed>(0);
   const [remaining, setRemaining] = useState(0);
   const [revision, setRevision] = useState(0);
@@ -41,7 +19,10 @@ export function useGameClock(
   const [visible, setVisible] = useState(!document.hidden);
   const latest = useRef(tick);
   latest.current = tick;
-  const remembered = useRef<ClockSpeed>(1);
+  const remembered = useRef<ClockSpeed>(defaultSpeed);
+  useEffect(() => {
+    remembered.current = defaultSpeed;
+  }, [defaultSpeed]);
   const pause = useCallback(() => {
     setSpeed(0);
     setRemaining(0);
@@ -81,22 +62,27 @@ export function useGameClock(
   }, [active, speed, remaining, revision, pause]);
   useEffect(() => {
     const key = (e: KeyboardEvent) => {
-      if (blocked || e.repeat || !isClockShortcut(e)) return;
-      if (
-        e.code === "Space" &&
-        !(e.target instanceof Element && e.target.closest("button,summary"))
-      ) {
+      if (blocked) return;
+      const action = matchControl(e, bindings);
+      if (action === "toggle") {
         e.preventDefault();
         toggle();
       }
-      if (/^[1-5]$/.test(e.key)) {
+      const speeds = {
+        pause: 0,
+        speed1: 1,
+        speed2: 2,
+        speed4: 4,
+        speed8: 8,
+      } as const;
+      if (action && action in speeds) {
         e.preventDefault();
-        choose(CLOCK_SPEEDS[Number(e.key) - 1]);
+        choose(speeds[action as keyof typeof speeds]);
       }
     };
     window.addEventListener("keydown", key);
     return () => window.removeEventListener("keydown", key);
-  }, [blocked, toggle, choose]);
+  }, [blocked, toggle, choose, bindings]);
   return {
     speed,
     seeking: remaining > 0,

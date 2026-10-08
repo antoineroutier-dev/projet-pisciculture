@@ -42,11 +42,13 @@ export function useAudio(day: number) {
         audio.play("click");
     };
     const visibility = () => audio.visibility(document.hidden);
+    window.addEventListener("etangs-gamepad-gesture", gesture);
     document.addEventListener("pointerdown", gesture, { capture: true });
     document.addEventListener("keydown", gesture, { capture: true });
     document.addEventListener("click", click, { capture: true });
     document.addEventListener("visibilitychange", visibility);
     return () => {
+      window.removeEventListener("etangs-gamepad-gesture", gesture);
       document.removeEventListener("pointerdown", gesture, true);
       document.removeEventListener("keydown", gesture, true);
       document.removeEventListener("click", click, true);

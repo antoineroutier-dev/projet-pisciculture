@@ -130,12 +130,13 @@ for (const [width, height] of [
         ),
       );
     expect(minimum).toBeGreaterThanOrEqual(12);
-    await page.getByRole("tab", { name: "Partie", exact: true }).click();
+    await page.getByRole("tab", { name: "Jeu", exact: true }).click();
     await page
       .getByLabel("Mode de gestion", { exact: true })
       .selectOption("expert");
     await expect(page.locator(".toast-inline")).toBeVisible();
     await expect(page.locator(".toast-inline")).toContainText(/expert/i);
+    await page.getByRole("tab", { name: "Partie", exact: true }).click();
     await page.getByLabel("Fichier de sauvegarde").setInputFiles({
       name: "contrat.json",
       mimeType: "application/json",

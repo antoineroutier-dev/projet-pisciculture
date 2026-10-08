@@ -1,7 +1,17 @@
+import { useControlPreferences } from "../state/preferences";
+import { bindingLabel } from "../controls/bindings";
 import { useEffect, useState } from "react";
 import { FastForward, Pause, SkipForward, Square } from "lucide-react";
 import { CLOCK_SPEEDS, type GameClock } from "../state/useGameClock";
 export function TimeControls({ clock }: { clock: GameClock }) {
+  const { bindings } = useControlPreferences();
+  const shortcuts = [
+    bindings.pause,
+    bindings.speed1,
+    bindings.speed2,
+    bindings.speed4,
+    bindings.speed8,
+  ];
   const [progress, setProgress] = useState(0);
   useEffect(() => {
     if (!clock.active) {
@@ -36,8 +46,8 @@ export function TimeControls({ clock }: { clock: GameClock }) {
             key={speed}
             aria-label={speed ? `Vitesse ×${speed}` : "Mettre en pause"}
             aria-pressed={!clock.seeking && clock.speed === speed}
-            title={`${speed ? `Vitesse ×${speed}` : "Pause"} · ${i + 1}`}
-            aria-keyshortcuts={String(i + 1)}
+            title={`${speed ? `Vitesse ×${speed}` : "Pause"} · ${bindingLabel(shortcuts[i])}`}
+            aria-keyshortcuts={shortcuts[i]}
             onClick={() => clock.choose(speed)}
           >
             {speed ? `×${speed}` : <Pause size={16} />}

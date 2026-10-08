@@ -1,3 +1,6 @@
+import { matchControl, bindingLabel } from "../controls/bindings";
+import { useControlPreferences } from "../state/preferences";
+import { toggleFullscreen } from "../controls/fullscreen";
 import { moveCamera } from "./cameraBus";
 import { Button } from "../ui/Button";
 import { IconButton } from "../ui/Primitives";
@@ -32,44 +35,37 @@ export function WorldControls({
   canObserve: boolean;
   hiddenOnMobile: boolean;
 }) {
+  const { bindings } = useControlPreferences();
   useEffect(() => {
     const key = (e: KeyboardEvent) => {
-      if (
-        e.defaultPrevented ||
-        e.altKey ||
-        e.ctrlKey ||
-        e.metaKey ||
-        e.isComposing ||
-        document.querySelector('[role="dialog"]') ||
-        (e.target instanceof Element &&
-          e.target.closest('input,select,textarea,[contenteditable="true"]'))
-      )
-        return;
-      const code = e.key.toLowerCase();
-      if (code === "q" || code === "e") {
+      if (document.querySelector('[role="dialog"]')) return;
+      const action = matchControl(e, bindings);
+      if (action === "left" || action === "right") {
         e.preventDefault();
         moveCamera({
           kind: "rotate",
-          amount: ((code === "q" ? -1 : 1) * Math.PI) / 8,
+          amount: ((action === "left" ? -1 : 1) * Math.PI) / 8,
         });
       }
-      if (code === "+" || code === "-" || code === "=") {
+      if (action === "zoomIn" || action === "zoomOut") {
         e.preventDefault();
-        moveCamera({ kind: "zoom", amount: code === "-" ? 0.18 : -0.18 });
+        moveCamera({
+          kind: "zoom",
+          amount: action === "zoomOut" ? 0.18 : -0.18,
+        });
       }
-      if (code === "r") {
+      if (action === "reset") {
         e.preventDefault();
         reset();
       }
     };
     window.addEventListener("keydown", key);
     return () => window.removeEventListener("keydown", key);
-  }, [reset]);
+  }, [reset, bindings]);
   const [notice, setNotice] = useState("");
   async function fullscreen() {
     try {
-      if (document.fullscreenElement) await document.exitFullscreen();
-      else await document.documentElement.requestFullscreen();
+      await toggleFullscreen();
     } catch {
       setNotice("Le plein écran est indisponible dans ce navigateur.");
     }
@@ -124,28 +120,32 @@ export function WorldControls({
         <Eye size={18} />
       </Button>
       <details className="camera-tools">
-        <summary title="Rotation Q/E · Zoom +/− · Recentrer R">Caméra</summary>
+        <summary
+          title={`Rotation ${bindingLabel(bindings.left)}/${bindingLabel(bindings.right)} · Zoom ${bindingLabel(bindings.zoomIn)}/${bindingLabel(bindings.zoomOut)} · Recentrer ${bindingLabel(bindings.reset)}`}
+        >
+          Caméra
+        </summary>
         <div className="camera-more">
           <IconButton
-            label="Tourner à gauche · Q"
+            label={`Tourner à gauche · ${bindingLabel(bindings.left)}`}
             onClick={() => moveCamera({ kind: "rotate", amount: -Math.PI / 8 })}
           >
             <ChevronLeft size={18} />
           </IconButton>
           <IconButton
-            label="Tourner à droite · E"
+            label={`Tourner à droite · ${bindingLabel(bindings.right)}`}
             onClick={() => moveCamera({ kind: "rotate", amount: Math.PI / 8 })}
           >
             <ChevronRight size={18} />
           </IconButton>
           <IconButton
-            label="Rapprocher · +"
+            label={`Rapprocher · ${bindingLabel(bindings.zoomIn)}`}
             onClick={() => moveCamera({ kind: "zoom", amount: -0.18 })}
           >
             <Plus size={18} />
           </IconButton>
           <IconButton
-            label="Éloigner · −"
+            label={`Éloigner · ${bindingLabel(bindings.zoomOut)}`}
             onClick={() => moveCamera({ kind: "zoom", amount: 0.18 })}
           >
             <Minus size={18} />

@@ -1,13 +1,13 @@
 import { expect, it } from "vitest";
-import { parsePreferences } from "./preferences";
+import { parsePreferences, DEFAULT_PREFERENCES } from "./preferences";
 it("borne les préférences locales sans toucher à la sauvegarde de simulation", () => {
   expect(parsePreferences("{oops")).toEqual({
-    version: 1,
+    ...DEFAULT_PREFERENCES,
     scale: 100,
     motion: "system",
   });
   expect(parsePreferences('{"scale":45,"motion":"reduce"}')).toEqual({
-    version: 1,
+    ...DEFAULT_PREFERENCES,
     scale: 80,
     motion: "reduce",
   });

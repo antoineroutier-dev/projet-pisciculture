@@ -24,7 +24,7 @@ Critères communs : moteurs et règles inchangés ; V1/V2/V3 et import/export co
 | **4b** | terminé | Logistique visible, vie, saisons et météo | Camions synchronisés avec les vrais événements ; nourrissage visible ; silhouettes/ondulations ; effets saisonniers, pluie/brume/nuages et lumière ; mouvement réduit ; captures des saisons hors dépôt sauf sélection ≤ 5 Mo. | `src/world/`, `farm3d.ts`, `FarmScene.tsx`, tests états/saisons |
 | **4c** | terminé | Caméra, sélection et performances | Contours/étiquettes et survol lisibles ; notifications (≤ 3) reliées au recentrage ; zoom borné, recentrage, rotation clavier ; quatre niveaux de qualité et détection initiale ; mesures réelles de FPS par niveau ; aucune fuite au démontage ; contrôle final de la palette hors tokens, sans altérer les règles du moteur. | `src/world/`, `FarmScene.tsx`, paramètres graphiques, tests et rapport de mesures |
 | **5a** | **terminé** | Écran titre, pause et sauvegardes | Continuer/Nouvelle/Charger/Paramètres/Crédits ; survol de fond ; menu Échap ; trois emplacements manuels + automatique, vignettes/date/cash/durée ; import/export avancé et migrations testées ; sortie vers titre libérant le rendu. | `src/panels/`, `src/state/`, `src/world/`, migrations, tests |
-| **5b** | à faire | Paramètres complets et manette | Affichage/audio/jeu/contrôles ; raccourcis réassignables et sensibilité ; Gamepad API, navigation au focus, caméra au stick et invites ; cycle entier au clavier puis manette simulée en 1280×800 ; aucune perte d’accessibilité. | `src/state/`, paramètres, contrôles, `src/world/`, tests périphériques |
+| **5b** | **terminé** | Paramètres complets et manette | Affichage/audio/jeu/contrôles ; raccourcis réassignables et sensibilité ; Gamepad API, navigation au focus, caméra au stick et invites ; cycle entier au clavier puis manette simulée en 1280×800 ; aucune perte d’accessibilité. | `src/state/`, paramètres, contrôles, `src/world/`, tests périphériques |
 | **5c** | à faire | Français et anglais complets | Chaînes extraites en JSON, `t()` léger, nombres/dates localisés, anglais relu sur toutes les vues/événements ; adaptation des messages du moteur sans altérer les données ; zéro débordement aux deux langues. | `src/i18n/`, interface complète, tests langues |
 | **5d** | à faire | Succès, tutoriel et réception finale | Adaptateur plateforme web sans effet, 12 succès dérivés ; tutoriel interactif passable/rejouable sur éléments réels ; objectifs d’exploitation ; réception complète section 13, documentation Steamworks/bureau sans revendiquer une publication Steam. | `platform.ts`, tutoriel, sélecteurs, Guide, tests complets, README, bilan |
 
@@ -323,3 +323,35 @@ Validation finale 5a, le 08/10/2026 :
 [Sorties des commandes](verification/lot-5a/) et [mesures complètes](verification/lot-5a/measures.json). L’ajout du rôle ARIA ne modifie pas l’apparence des captures inspectées. Le titre réduit cesse de produire des images après stabilisation, y compris en portrait. Le cycle intégral au clavier inclut désormais le titre. Les trois fichiers de règles restent identiques à `0da1338` ; les imports V1–V4 sont migrés vers l’enveloppe V5 sans réécrire leurs anciennes clés.
 
 Limites : aucun nouveau relevé FPS dans ce sous-lot ; les mesures réelles par qualité restent celles de 4c. `file://`, la manette, les paramètres complémentaires, l’anglais, les succès, le tutoriel et le budget rédactionnel final suivent dans **5b–5d**, au cours de cette même tâche. Aucun portage ni publication Steam revendiqué.
+
+
+## Lot 5b — paramètres et commandes
+
+Terminé. Préférences d’interface V2 séparées du jeu, commandes communes réassignables, paramètres de jeu et Gamepad API. Aucun changement des règles biologiques.
+
+Implémentation 5b : préférences d’interface V2 avec migration de V1 et conservation de l’ancienne clé ; motifs de jauges, plein écran, aides, pauses automatiques, mode et vitesse préférés. La partie commence toujours en pause. Les interruptions critiques, célébrations, bilans et avances explicitement demandées restent actives même si les pauses ordinaires sont désactivées. La progression quotidienne utilise le moteur existant ; l’égalité avec `nextDay` est testée sur sept états dans les deux modes.
+
+Les 17 raccourcis de panneaux, horloge et caméra partagent une table validée : conflits, touches réservées et saisie native protégés, annulation par Échap et restauration des valeurs initiales. Les indications du dock, de l’horloge, de la caméra et du Guide suivent les réassignations. La sensibilité s’applique une seule fois aux commandes et aux contrôles de pointeur, sans recréer le canvas.
+
+La Gamepad API active les vrais éléments focalisés : croix pour naviguer/régler, A pour activer, B pour revenir, Start pour la pause, LB/RB pour les régions, sticks et gâchettes pour la caméra. Les invites apparaissent à la connexion et le contour de focus demeure visible après une interaction au pointeur. Nettoyage des écouteurs et arrêt de la boucle à la déconnexion ; seules les manettes avec mapping standard sont prises en charge.
+
+Vérifications intermédiaires : six nouveaux parcours ciblés réussis, dont le cycle intégral au contrôleur simulé et la rotation réelle de la caméra avec une touche réassignée. Après le renforcement du focus manette, ce dernier contrôle passe de nouveau (1 test, 36,7 s). La première commande de capture utilisait un ancien serveur dont la base était `/projet-pisciculture/`, incompatible avec le build courant à la racine ; le serveur de capture a été relancé explicitement sur la bonne base. Les captures définitives montrent aussi le conflit de raccourci et les commandes du Guide après défilement réel. La suite complète reste à valider avant commit.
+
+
+Validation finale 5b le 08/10/2026 :
+
+| Commande / mesure | Résultat observé |
+| --- | --- |
+| `npm test` | **22 fichiers, 93 passed (93)** ; 3,59 s |
+| `npm run build` | TypeScript et Vite réussis ; **built in 4.68s** |
+| `npm run build:portable` | **1 711 879 octets (1,71 Mo)** |
+| `npm run test:e2e` | **65 passed (24.6m)** ; aucun échec, ignoré ni flaky |
+| Texte / monde | **12 px minimum** ; 210 combinaisons typographiques et 36 d’échelle ; canvas 100 % ; monde non masqué, panneaux fermés, ≥ **77,18 %** dans la matrice PC |
+| Axe WCAG 2.1 AA | **0 violation** dans les 12 nouvelles vues de paramètres PC/mobile et dans les contrôles antérieurs de la suite |
+| Cycle manette simulée | Premier paiement **J192**, **453,989 kg** vendus, **0 mortalité**, **40 075,78 €**, 28 itérations ; **aucun événement clavier ou pointeur** dans le parcours |
+| Caméra et plein écran | Rotation réelle réassignée de π/4 à sensibilité 200 %, canvas conservé ; entrée/sortie réelles du plein écran vérifiées sur PC |
+| Captures | **20 JPEG, 1 112 351 octets**, inspectées ; [manifeste](apres/lot-5b/manifest.json) |
+
+[Mesures détaillées](verification/lot-5b/measures.json) et [sorties des commandes](verification/lot-5b/). Le contexte audio du parcours manette est effectivement `running` dans Chromium, sans ajout de drapeau contournant sa politique audio ; cela ne constitue pas une écoute ni une validation sur un périphérique physique. Les captures ont conduit à rapprocher le soulignement du dock de son libellé pour le séparer du raccourci. Les trois fichiers de règles restent identiques à `0da1338`.
+
+Limites : manette standard simulée uniquement ; aucun nouveau relevé FPS (ceux de 4c restent la référence). L’anglais, les succès, le tutoriel, la réception directe `file://` et le budget rédactionnel final suivent dans **5c–5d**. Aucun nouveau champ de sauvegarde de partie, ni ressource tierce. Poursuite dans cette même tâche, conformément à la demande de terminer tous les lots.
