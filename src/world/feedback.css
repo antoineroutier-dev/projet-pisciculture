@@ -12,10 +12,11 @@
   transform: translate(-50%, -50%);
   max-width: 170px;
   padding: 8px 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface-raised);
-  box-shadow: var(--shadow-panel);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--surface-glass-strong);
+  box-shadow: var(--shadow-2);
+  font-weight: 600;
   font-size: var(--text-small);
   animation: float-feedback 2.4s var(--ease) both;
 }
@@ -46,13 +47,16 @@
   animation: resource-pulse var(--duration-slow) var(--ease);
   border-radius: 4px;
 }
+/* A brass glow on the changed figure; the text keeps its contrast throughout. */
 @keyframes resource-pulse {
   0%,
   100% {
-    background: transparent;
+    text-shadow: none;
   }
   35% {
-    background: var(--accent);
+    text-shadow:
+      0 0 12px var(--glow-gold-strong),
+      0 0 2px var(--primary);
   }
 }
 .audio-settings {
@@ -72,18 +76,34 @@ html[data-motion="reduce"] .world-feedback,
 html[data-motion="reduce"] .resource-pulse {
   animation: none;
 }
-.management-panel,
+/* Drawers slide in from their edge; dialogs rise and settle. */
+.management-panel {
+  animation: drawer-reveal var(--duration-slow) var(--ease);
+}
 .modal {
-  animation: panel-reveal var(--duration-normal) var(--ease);
+  animation: panel-reveal var(--duration-slow) var(--ease-out-back);
+}
+.goal-hud {
+  animation: panel-reveal var(--duration-slow) var(--ease);
+}
+@keyframes drawer-reveal {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 @keyframes panel-reveal {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(10px) scale(0.985);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 .save-indicator {
