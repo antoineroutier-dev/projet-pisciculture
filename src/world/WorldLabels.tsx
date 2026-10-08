@@ -1,5 +1,5 @@
 import { t, displayText } from "../i18n";
-import { Check, AlertTriangle, Construction } from "lucide-react";
+import { Check, AlertTriangle, Construction, Droplets } from "lucide-react";
 import { pondStatus, SPECIES, type Pond } from "../game";
 export function WorldLabels({
   ponds,
@@ -25,8 +25,17 @@ export function WorldLabels({
           onClick={source}
           aria-label={t("source.action")}
         >
-          <strong>{t("source.name")}</strong>
-          <span>{t("m_e2c053ebd5")}</span>
+          <span className="world-label-heading">
+            <span
+              className="world-label-state"
+              data-state="source"
+              aria-hidden="true"
+            >
+              <Droplets size={14} />
+            </span>
+            <strong>{t("source.name")}</strong>
+          </span>
+          <span className="world-label-status">{t("m_e2c053ebd5")}</span>
         </button>
       )}
       {ponds.map((p) => {
@@ -55,16 +64,22 @@ export function WorldLabels({
             )}
           >
             <span className="world-label-heading">
-              {!p.built ? (
-                <Construction size={16} />
-              ) : status.tone === "danger" || status.tone === "warning" ? (
-                <AlertTriangle size={16} />
-              ) : (
-                <Check size={16} />
-              )}
+              <span
+                className="world-label-state"
+                data-state={!p.built ? "site" : status.tone}
+                aria-hidden="true"
+              >
+                {!p.built ? (
+                  <Construction size={14} />
+                ) : status.tone === "danger" || status.tone === "warning" ? (
+                  <AlertTriangle size={14} />
+                ) : (
+                  <Check size={14} />
+                )}
+              </span>
               <strong>{displayText(p.name)}</strong>
             </span>
-            <span>{displayText(label)}</span>
+            <span className="world-label-status">{displayText(label)}</span>
             {p.count > 0 && (
               <span className="world-calibre">
                 <svg

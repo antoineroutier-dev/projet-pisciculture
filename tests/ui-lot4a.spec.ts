@@ -85,7 +85,7 @@ test("4a : travaux incrémentaux, bâtiments réels et scène persistante", asyn
   }
   await page.keyboard.press("Escape");
   await page.setViewportSize({width:390,height:844});
-  await page.getByLabel("Vue du terrain",{exact:true}).selectOption("pond");
+  await page.getByRole("radio",{name:"Le bassin",exact:true}).click();
   await expect(canvas).toHaveAttribute("data-view","pond",{timeout:60000});
   await expect(canvas).toHaveAttribute("data-settled","true",{timeout:60000});
   const values=(await canvas.getAttribute("data-camera"))!.split(",").map(Number);

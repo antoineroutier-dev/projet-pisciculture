@@ -590,7 +590,9 @@ export default function FarmScene({
       recovering.current = false;
       queueMicrotask(() =>
         document
-          .querySelector<HTMLSelectElement>(".world-controls select")
+          .querySelector<HTMLElement>(
+            '.world-controls [role="radio"][aria-checked="true"]',
+          )
           ?.focus(),
       );
     }

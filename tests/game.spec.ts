@@ -42,8 +42,9 @@ test("3D : ferme, bassin, bâtiments et identification des trois espèces", asyn
     ["Le bassin", "pond"],
   ]) {
     await page
-      .getByLabel("Vue du terrain", { exact: true })
-      .selectOption({ label });
+      .getByRole("radiogroup", { name: "Vue du terrain", exact: true })
+      .getByRole("radio", { name: label, exact: true })
+      .click();
     await expect(canvas).toHaveAttribute("data-view", view, { timeout: 60000 });
   }
   await page
@@ -52,7 +53,7 @@ test("3D : ferme, bassin, bâtiments et identification des trois espèces", asyn
   await expect(
     page.getByRole("button", { name: "Observer sous l’eau", exact: true }),
   ).toHaveAttribute("aria-pressed", "true");
-  await page.getByLabel("Vue du terrain", { exact: true }).selectOption("fish");
+  await page.getByRole("radio", { name: "Les poissons", exact: true }).click();
   await expect(page.locator(".fish-inspector")).toBeVisible();
   for (const [label, id, trait] of [
     ["Truite arc-en-ciel", "trout", "adipeuse"],
@@ -226,9 +227,7 @@ test("sans WebGL : la carte et la gestion restent disponibles", async ({
     await page.setViewportSize(viewport);
     await expect(page.locator(".scene-location")).toBeHidden();
     await expect(page.locator(".scene-bottom")).toBeHidden();
-    await expect(page.locator(".world-fallback > p")).toContainText(
-      "Carte 2D",
-    );
+    await expect(page.locator(".world-fallback > p")).toContainText("Carte 2D");
     for (const label of await page.locator(".world-fallback .map-name").all()) {
       expect(
         await label.evaluate((e) => parseFloat(getComputedStyle(e).fontSize)),

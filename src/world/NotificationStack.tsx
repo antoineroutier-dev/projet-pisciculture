@@ -5,6 +5,7 @@ import type { Game } from "../game";
 import { subscribeLife } from "./lifeBus";
 import { criticalNotices, lifeNotice, type WorldNotice } from "./notifications";
 import type { WorldTarget } from "./selection";
+import { Medallion } from "../ui/Primitives";
 export function NotificationStack({
   game,
   inspect,
@@ -55,13 +56,24 @@ export function NotificationStack({
               onClick={() => (n.target ? inspect(n.target) : journal())}
               title={displayText(n.text)}
             >
-              {n.kind === "critical" ? (
-                <AlertTriangle size={18} />
-              ) : n.kind === "truck" ? (
-                <Truck size={18} />
-              ) : (
-                <Hammer size={18} />
-              )}
+              <Medallion
+                size="small"
+                tint={
+                  n.kind === "critical"
+                    ? "alert"
+                    : n.kind === "truck"
+                      ? "water"
+                      : "money"
+                }
+              >
+                {n.kind === "critical" ? (
+                  <AlertTriangle size={16} />
+                ) : n.kind === "truck" ? (
+                  <Truck size={16} />
+                ) : (
+                  <Hammer size={16} />
+                )}
+              </Medallion>
               <span>{displayText(n.text)}</span>
             </button>
             {n.kind !== "critical" && (

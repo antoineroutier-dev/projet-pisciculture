@@ -186,7 +186,7 @@ test("1a : textes et superpositions des vues 3D sur PC et mobile", async ({ page
   for (const [width,height] of [[1440,900], [390,844]]) {
     await page.setViewportSize({ width, height });
     for (const name of ["La ferme", "Le bassin", "Bâtiments", "Les poissons"]) {
-      await page.getByLabel("Vue du terrain", {exact:true}).selectOption({label:name});
+      await page.getByRole("radiogroup", {name:"Vue du terrain", exact:true}).getByRole("radio", {name, exact:true}).click();
       expect((await typography(page)).tooSmall).toEqual([]);
       await noOverlap(page, [".game-hud", ".goal-hud", ".game-dock", ".world-controls", ".fish-inspector"]);
     }

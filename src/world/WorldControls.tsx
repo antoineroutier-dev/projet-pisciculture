@@ -5,8 +5,12 @@ import { toggleFullscreen } from "../controls/fullscreen";
 import { moveCamera } from "./cameraBus";
 import { Button } from "../ui/Button";
 import { IconButton } from "../ui/Primitives";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
+  Map as MapIcon,
+  Waves,
+  Fish,
+  Warehouse,
   RotateCcw,
   Maximize2,
   Eye,
@@ -76,19 +80,8 @@ export function WorldControls({
       data-mobile-hidden={hiddenOnMobile}
       aria-label={t("m_fc919992c4")}
     >
-      <label>
-        <span className="sr-only">{t("m_e4fb2be1e8")}</span>
-        <select
-          aria-label={t("m_e4fb2be1e8")}
-          value={mode}
-          onChange={(e) => changeMode(e.target.value as SceneMode)}
-        >
-          <option value="farm">{t("m_1dab9f8d3c")}</option>
-          <option value="pond">{t("m_f6b5a49866")}</option>
-          <option value="fish">{t("m_2c600db9a0")}</option>
-          <option value="buildings">{t("m_df2e10f983")}</option>
-        </select>
-      </label>
+      <ViewSwitch mode={mode} changeMode={changeMode} />
+      <span className="world-controls-divider" aria-hidden="true" />
       <IconButton
         label={t("m_9a48e810aa")}
         onClick={reset}
@@ -162,6 +155,67 @@ export function WorldControls({
         </div>
       </details>
       {displayText(notice && <p role="status">{displayText(notice)}</p>)}
+    </div>
+  );
+}
+const VIEWS = [
+  { id: "farm", label: () => t("m_1dab9f8d3c"), Icon: MapIcon },
+  { id: "pond", label: () => t("m_f6b5a49866"), Icon: Waves },
+  { id: "fish", label: () => t("m_2c600db9a0"), Icon: Fish },
+  { id: "buildings", label: () => t("m_df2e10f983"), Icon: Warehouse },
+] as const satisfies readonly {
+  id: SceneMode;
+  label: () => string;
+  Icon: typeof Fish;
+}[];
+/** Segmented camera views: one radio per framing, arrows move like a native radio group. */
+function ViewSwitch({
+  mode,
+  changeMode,
+}: {
+  mode: SceneMode;
+  changeMode: (mode: SceneMode) => void;
+}) {
+  const group = useRef<HTMLDivElement>(null);
+  return (
+    <div
+      ref={group}
+      className="view-switch"
+      role="radiogroup"
+      aria-label={t("m_e4fb2be1e8")}
+      onKeyDown={(e) => {
+        const i = VIEWS.findIndex((v) => v.id === mode);
+        let next = i;
+        if (e.key === "ArrowRight" || e.key === "ArrowDown")
+          next = (i + 1) % VIEWS.length;
+        else if (e.key === "ArrowLeft" || e.key === "ArrowUp")
+          next = (i + VIEWS.length - 1) % VIEWS.length;
+        else if (e.key === "Home") next = 0;
+        else if (e.key === "End") next = VIEWS.length - 1;
+        else return;
+        e.preventDefault();
+        e.stopPropagation();
+        changeMode(VIEWS[next].id);
+        group.current
+          ?.querySelectorAll<HTMLButtonElement>("[role=radio]")
+          [next]?.focus();
+      }}
+    >
+      {VIEWS.map(({ id, label, Icon }) => (
+        <button
+          key={id}
+          type="button"
+          role="radio"
+          aria-checked={mode === id}
+          aria-label={label()}
+          title={label()}
+          tabIndex={mode === id ? 0 : -1}
+          data-view={id}
+          onClick={() => changeMode(id)}
+        >
+          <Icon size={18} aria-hidden="true" />
+        </button>
+      ))}
     </div>
   );
 }

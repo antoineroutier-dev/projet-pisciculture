@@ -114,9 +114,7 @@ test("4c : étiquettes sans recouvrement, sélection du monde et rotation au cla
   await expect(canvas).toHaveAttribute("data-selection", `pond:${id}`);
   await expect(page.locator(".management-panel")).toBeVisible();
   await page.keyboard.press("Escape");
-  await page
-    .getByLabel("Vue du terrain", { exact: true })
-    .selectOption("buildings");
+  await page.getByRole("radio", { name: "Bâtiments", exact: true }).click();
   await expect(canvas).toHaveAttribute("data-view", "buildings");
   await expect(canvas).toHaveAttribute("data-settled", "true");
   const values = (await canvas.getAttribute("data-camera"))!
@@ -324,7 +322,9 @@ test("4c : perte du contexte, libération et reprise de la 3D sans perdre la par
       timeout: 60000,
     });
     await expect(
-      page.getByLabel("Vue du terrain", { exact: true }),
+      page
+        .getByRole("radiogroup", { name: "Vue du terrain", exact: true })
+        .getByRole("radio", { checked: true }),
     ).toBeFocused();
   }
   const disposals = await page.evaluate(

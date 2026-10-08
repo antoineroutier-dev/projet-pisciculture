@@ -8,7 +8,7 @@ import { bindingLabel } from "../controls/bindings";
 import { TimeControls } from "./TimeControls";
 import type { GameClock } from "../state/useGameClock";
 import { AnimatedNumber } from "../ui/AnimatedNumber";
-import { Stepper, ResourcePill } from "../ui/Primitives";
+import { Stepper, ResourcePill, Medallion } from "../ui/Primitives";
 import { useState } from "react";
 import {
   AlertTriangle,
@@ -25,7 +25,20 @@ import {
   Award,
   CloudSun,
   CloudRain,
+  Wheat,
+  Flower2,
+  Sun,
+  Leaf,
+  Snowflake,
+  TrendingUp,
+  TrendingDown,
 } from "lucide-react";
+const SEASON_ICONS = {
+  Printemps: Flower2,
+  Été: Sun,
+  Automne: Leaf,
+  Hiver: Snowflake,
+} as const;
 import { dailyFeed, nextTask, STAGES, type Task } from "../development";
 import { weather, pondStatus, type Game } from "../game";
 import { formatMoney, formatEngineText, plural } from "../ui/format";
@@ -51,6 +64,8 @@ export function GameHud({
   alerts: () => void;
 }) {
   const today = weather(game.day);
+  const SeasonIcon =
+    SEASON_ICONS[today.season as keyof typeof SEASON_ICONS] ?? Sun;
   const feed = dailyFeed(game);
   const days = feed > 0 ? Math.floor(game.food / feed) : null;
   const last = game.history.at(-2);
@@ -68,33 +83,48 @@ export function GameHud({
         className="hud-date"
         title={displayText(t("m_b7f2057e90", number(game.day)))}
       >
-        <strong data-testid="day" data-day={game.day}>
-          {displayText(simDate(game.day))}
-        </strong>
-        <Tooltip
-          text={`${displayText(today.season)} · ${displayText(today.label)}`}
-        >
-          {(id) => (
-            <span
-              role="img"
-              tabIndex={0}
-              aria-describedby={id}
-              className="hud-weather"
-              aria-label={`${displayText(today.season)} · ${displayText(today.label)} · ${number(today.temperature, 1)} °C`}
-            >
-              {today.rainy ? <CloudRain size={15} /> : <CloudSun size={15} />}
-              {number(today.temperature, 1)} °C
-            </span>
-          )}
-        </Tooltip>
+        <Medallion tint="season" size="large">
+          <SeasonIcon size={20} />
+        </Medallion>
+        <span className="hud-date-text">
+          <strong data-testid="day" data-day={game.day}>
+            {displayText(simDate(game.day))}
+          </strong>
+          <Tooltip
+            text={`${displayText(today.season)} · ${displayText(today.label)}`}
+          >
+            {(id) => (
+              <span
+                role="img"
+                tabIndex={0}
+                aria-describedby={id}
+                className="hud-weather"
+                aria-label={`${displayText(today.season)} · ${displayText(today.label)} · ${number(today.temperature, 1)} °C`}
+              >
+                {today.rainy ? <CloudRain size={15} /> : <CloudSun size={15} />}
+                {number(today.temperature, 1)} °C
+              </span>
+            )}
+          </Tooltip>
+        </span>
       </div>
       <div className="hud-resources" aria-label={t("m_f15c129752")}>
         <ResourcePill
           label={t("m_5a430676b9")}
+          icon={<Coins size={20} />}
+          tint="money"
           value={<AnimatedNumber value={game.money} format={formatMoney} />}
           testId="money"
           detail={
-            <span title={t("m_1d69c4d15f")}>
+            <span
+              title={t("m_1d69c4d15f")}
+              className={`hud-trend ${trend > 0 ? "up" : trend < 0 ? "down" : ""}`}
+            >
+              {trend > 0 ? (
+                <TrendingUp size={14} aria-hidden="true" />
+              ) : trend < 0 ? (
+                <TrendingDown size={14} aria-hidden="true" />
+              ) : null}
               {displayText(trend > 0 ? "+" : "")}
               {displayText(formatMoney(trend))}
               {" " + t("m_94581a0c2d")}
@@ -102,6 +132,17 @@ export function GameHud({
           }
         />
         <ResourcePill
+          icon={<Wheat size={20} />}
+          tint="feed"
+          tone={
+            days === null
+              ? undefined
+              : days < 3
+                ? "danger"
+                : days < 7
+                  ? "warning"
+                  : "success"
+          }
           label={
             <>
               {t("m_4b5169ce38")}
@@ -136,6 +177,8 @@ export function GameHud({
       <TimeControls clock={clock} />
       <div className="hud-utilities">
         <button
+          className="hud-alerts"
+          data-count={warnings}
           onClick={alerts}
           aria-label={displayText(
             t("m_ea75113d04", warnings, warnings === 1 ? "" : "s"),
@@ -253,6 +296,18 @@ export function GoalHud({
           <Award size={18} />
         </button>
       </div>
+      {!game.development.paid && !task.urgent && (
+        <div className="goal-progress" aria-hidden="true">
+          {STAGES.map((stage, i) => (
+            <span
+              key={stage}
+              data-state={
+                i < task.stage ? "done" : i === task.stage ? "current" : "todo"
+              }
+            />
+          ))}
+        </div>
+      )}
       <h2 aria-label={displayText(task.title)}>{displayText(copy.title)}</h2>
       <span
         className={
@@ -381,8 +436,10 @@ export function Dock({
             aria-keyshortcuts={bindings[p.id]}
             onClick={() => open(p.id)}
           >
-            <Icon size={20} />
-            <span>{displayText(p.label)}</span>
+            <span className="dock-icon" aria-hidden="true">
+              <Icon size={22} />
+            </span>
+            <span className="dock-label">{displayText(p.label)}</span>
             <kbd>{displayText(bindingLabel(bindings[p.id]))}</kbd>
           </button>
         );

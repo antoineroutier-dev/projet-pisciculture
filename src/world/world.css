@@ -16,53 +16,122 @@
   position: absolute;
   left: 0;
   top: 0;
-  max-width: 190px;
+  max-width: 200px;
   min-width: 132px;
-  padding: 6px 10px;
-  border-radius: 8px;
-  background: var(--surface-raised);
+  padding: 7px 12px 7px 8px;
+  border-radius: var(--radius);
+  background: var(--surface-glass-strong);
   border: 1px solid var(--border);
   color: var(--ink);
-  box-shadow: var(--shadow-panel);
+  box-shadow: var(--shadow-2), var(--inner-sheen);
   pointer-events: auto;
   text-align: left;
   display: grid;
-  gap: 2px;
+  gap: 1px;
   font-size: var(--text-caption);
+  transition:
+    border-color var(--duration-fast) var(--ease),
+    box-shadow var(--duration-fast) var(--ease);
+}
+/* The pin's tail points at the pond it names. */
+.world-label::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  width: 12px;
+  height: 12px;
+  background: inherit;
+  border: inherit;
+  border-width: 0 1px 1px 0;
+  border-radius: 0 0 3px;
+  transform: translateX(-50%) rotate(45deg);
+}
+.world-label[data-placement="below"]::after {
+  bottom: auto;
+  top: -7px;
+  border-width: 1px 0 0 1px;
+  border-radius: 3px 0 0;
+}
+.world-label:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-3), var(--inner-sheen);
 }
 .world-label-heading {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   font-size: var(--text-small);
+  line-height: 1.3;
+}
+.world-label-state {
+  --state: var(--success);
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  color: var(--on-primary);
+  background: var(--state);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--state) 55%, transparent);
+}
+.world-label-state[data-state="warning"] {
+  --state: var(--warning);
+}
+.world-label-state[data-state="danger"] {
+  --state: var(--danger);
+}
+.world-label-state[data-state="site"] {
+  --state: var(--ink-muted);
+  box-shadow: none;
+}
+.world-label-state[data-state="source"] {
+  --state: var(--water);
+}
+.world-label-status {
+  padding-inline-start: 29px;
+  color: var(--ink-muted);
 }
 .world-label[data-tone="danger"] {
-  border-inline-start: 4px solid var(--danger);
+  border-color: var(--danger);
 }
 .world-label[data-tone="warning"] {
-  border-inline-start: 4px solid var(--warning);
+  border-color: color-mix(in srgb, var(--warning) 60%, transparent);
 }
 .world-calibre {
   display: flex;
   align-items: center;
   gap: 6px;
+  padding-inline-start: 29px;
+  color: var(--ink-soft);
+}
+.world-calibre svg {
+  margin-inline-start: -2px;
 }
 .world-calibre circle {
   fill: none;
   stroke: var(--primary);
   stroke-width: 3;
+  stroke-linecap: round;
 }
 .world-calibre .ring-track {
-  stroke: var(--border);
+  stroke: var(--surface-hover);
 }
 .camera-tools {
   position: relative;
 }
 .camera-tools summary {
-  padding: 8px;
-  border-radius: 6px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
   font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--ink-soft);
   cursor: pointer;
+}
+.camera-tools summary:hover {
+  background: var(--surface-hover);
+  color: var(--primary-hover);
 }
 .camera-more {
   position: absolute;
@@ -71,13 +140,15 @@
   display: flex;
   padding: 8px;
   gap: 4px;
-  background: var(--surface-raised);
+  background: var(--surface-glass-strong);
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-3);
+  backdrop-filter: var(--blur-glass);
 }
 .notification-stack {
   position: absolute;
-  right: 16px;
+  right: 12px;
   top: var(--hud-bottom);
   width: 276px;
   z-index: 4;
@@ -93,13 +164,24 @@
   display: flex;
   align-items: center;
   border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--surface-raised);
+  border-radius: var(--radius);
+  background: var(--surface-glass-strong);
   color: var(--ink);
-  box-shadow: var(--shadow-panel);
+  box-shadow: var(--shadow-2), var(--inner-sheen);
+  backdrop-filter: var(--blur-glass);
+  animation: notice-in var(--duration-slow) var(--ease-out-back) both;
 }
 .notification-stack li[data-kind="critical"] {
-  border-inline-start: 4px solid var(--danger);
+  border-color: var(--danger);
+  box-shadow:
+    var(--shadow-2),
+    0 0 18px color-mix(in srgb, var(--danger) 30%, transparent);
+}
+@keyframes notice-in {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
 }
 .notification-target {
   display: flex;
@@ -113,11 +195,12 @@
   text-align: left;
   padding: 8px;
   font-size: var(--text-caption);
+  color: var(--ink);
 }
 .notification-target svg {
   flex-shrink: 0;
 }
-.notification-target span {
+.notification-target > span:not(.ui-medallion) {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -125,6 +208,8 @@
 }
 .notification-close {
   border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--ink-muted);
   background: transparent;
   padding: 6px;
   min-width: 28px;
@@ -133,12 +218,13 @@
 .game-shell:not([data-panel="none"]) .notification-stack {
   top: auto;
   right: auto;
-  left: 16px;
+  left: 12px;
   bottom: calc(var(--dock-top) + 80px);
 }
 .world-context {
   padding: 12px;
-  background: var(--surface-muted);
+  border: 1px solid var(--border-faint);
+  background: var(--surface-raised);
   border-radius: var(--radius);
   margin: 0 0 12px;
   font-size: var(--text-small);
@@ -176,9 +262,11 @@
 }
 
 .world-label[aria-pressed="true"] {
-  border: 2px solid var(--primary);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-3), var(--glow-primary);
 }
 .world-label[aria-pressed="true"] strong {
+  color: var(--primary-hover);
   text-decoration: underline;
   text-underline-offset: 3px;
 }

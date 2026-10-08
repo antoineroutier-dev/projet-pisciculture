@@ -92,6 +92,9 @@ export function createLabelLayout(host: HTMLElement, invalidate: () => void) {
       button.setAttribute("aria-hidden", String(!box));
       if (box) {
         button.style.transform = `translate(${box.x.toFixed(1)}px,${box.y.toFixed(1)}px)`;
+        // Point the pin's tail at its anchor whether the label sits above or below it.
+        button.dataset.placement =
+          box.y + box.height / 2 < ((1 - v.y) * height) / 2 ? "above" : "below";
         taken.push(box);
       }
     }
