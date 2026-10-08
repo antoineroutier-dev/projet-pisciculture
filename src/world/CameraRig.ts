@@ -9,6 +9,7 @@ export function createCameraRig(
   controls: OrbitControls,
   invalidate: () => void,
 ) {
+  let presentationStart: number | null = null;
   let key = "",
     mode: SceneMode = "farm",
     animation: {
@@ -78,12 +79,14 @@ export function createCameraRig(
       panelOpen: boolean;
       targetPoint?: { x: number; z: number };
       presentation?: boolean;
+      introFlight?: boolean;
     },
     ms: number,
     reduced: boolean,
   ) {
     mode = s.mode;
     if (s.presentation) {
+      presentationStart ??= ms;
       controls.minDistance = 8;
       controls.maxDistance = 250;
       const distance = Math.max(
@@ -91,7 +94,11 @@ export function createCameraRig(
         54 /
           (2 * Math.tan(T.MathUtils.degToRad(camera.fov / 2)) * camera.aspect),
       );
-      const angle = 0.7 + (reduced ? 0 : Math.sin(ms * 0.00007) * 0.16);
+      const angle = reduced
+        ? 0.7
+        : s.introFlight
+          ? 0.25 + Math.min(1, (ms - presentationStart) / 3000) * 0.65
+          : 0.7 + Math.sin(ms * 0.00007) * 0.16;
       controls.target.set(camera.aspect > 1 ? -8 : 0, 0, -3);
       camera.position
         .copy(controls.target)
@@ -100,10 +107,13 @@ export function createCameraRig(
             .normalize()
             .multiplyScalar(distance),
         );
+      key = "presentation";
       controls.enabled = false;
       controls.update();
       return false;
     }
+    presentationStart = null;
+    controls.enabled = true;
     const next = `${mode}:${mode === "pond" ? s.selected : ""}:${mode === "buildings" ? targetKey(s.target) : ""}:${s.reset}:${camera.aspect}`;
     if (next !== key) {
       const oldKey = key;

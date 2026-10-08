@@ -1,3 +1,4 @@
+import type { Profile } from "./profile";
 import { t } from "../i18n";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Game } from "../game";
@@ -10,9 +11,10 @@ export function useSessionSaves(
   game: Game,
   ledger: Ledger,
   initial: SaveMetadata,
+  profile: Profile,
 ) {
-  const latest = useRef({ game, ledger });
-  latest.current = { game, ledger };
+  const latest = useRef({ game, ledger, profile });
+  latest.current = { game, ledger, profile };
   const metadata = useRef(initial),
     generation = useRef(0);
   const alive = useRef(true);
@@ -37,7 +39,7 @@ export function useSessionSaves(
     [busy, setBusy] = useState(false);
   const snapshot = useCallback(
     (): Save => ({
-      version: 5,
+      version: 6,
       ...latest.current,
       metadata: {
         ...metadata.current,
@@ -58,6 +60,7 @@ export function useSessionSaves(
         value.ledger,
         false,
         value.metadata,
+        value.profile,
       );
       localStorage.setItem(SAVE_KEY, raw);
       expectedRaw.current = raw;
@@ -104,7 +107,7 @@ export function useSessionSaves(
   useEffect(() => {
     alive.current = true;
     flush();
-  }, [game, ledger, flush]);
+  }, [game, ledger, profile, flush]);
   useEffect(() => {
     timer.current!.visibility(performance.now(), !document.hidden);
     const visibility = () => {
@@ -155,7 +158,13 @@ export function useSessionSaves(
         const value = snapshot();
         localStorage.setItem(
           slotKey(id),
-          serializeSave(value.game, value.ledger, false, value.metadata),
+          serializeSave(
+            value.game,
+            value.ledger,
+            false,
+            value.metadata,
+            value.profile,
+          ),
         );
         flush();
         return value;

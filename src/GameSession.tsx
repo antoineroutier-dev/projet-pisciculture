@@ -1,3 +1,8 @@
+import { useOnboarding } from "./onboarding/useOnboarding";
+import "./onboarding/onboarding.css";
+import { initialProfile, observeProfile } from "./state/profile";
+import { platform } from "./platform";
+import { Achievements } from "./panels/Achievements";
 import { number } from "./ui/format";
 import { t, displayText } from "./i18n";
 import { matchControl } from "./controls/bindings";
@@ -47,6 +52,7 @@ import {
 } from "./ui/format";
 import {
   useCallback,
+  useMemo,
   useLayoutEffect,
   useEffect,
   useRef,
@@ -102,6 +108,7 @@ type ModalKind =
   | "survey"
   | "upgrade"
   | "objectives"
+  | "achievements"
   | "settings"
   | "pause"
   | "save"
@@ -259,6 +266,13 @@ export default function GameSession({
   const { audio, graphics } = runtime;
   const [game, setGame] = useState<Game>(boot.game);
   const [ledger, setLedger] = useState(boot.ledger);
+  const [profile, setProfile] = useState(boot.profile);
+  const rewards = useMemo(
+    () => profile.earned.map((e) => e.id),
+    [profile.earned],
+  );
+  const currentProfile = useRef(profile);
+  currentProfile.current = profile;
   const currentLedger = useRef(ledger);
   currentLedger.current = ledger;
   const currentGame = useRef(game);
@@ -266,7 +280,7 @@ export default function GameSession({
   const [session, setSession] = useState(0);
   const readings = usePondReadings(game, session);
   const surveyed = useRef(boot.game.development.surveyed);
-  const saves = useSessionSaves(game, ledger, boot.metadata);
+  const saves = useSessionSaves(game, ledger, boot.metadata, profile);
   const saved = saves.saved,
     storageError = saves.error,
     saveRevision = saves.revision;
@@ -297,9 +311,17 @@ export default function GameSession({
     feedbackId?: number;
   } | null>(null);
   const activeEvent = modal ? undefined : events[0];
+  const onboarding = useOnboarding(
+    game,
+    profile,
+    setProfile,
+    panel,
+    !!modal || !!activeEvent,
+    session,
+  );
   const clock = useGameClock(
     tickDay,
-    !!modal || events.length > 0 || saves.busy,
+    !!modal || events.length > 0 || saves.busy || onboarding.intro,
   );
   const dismissEvent = useCallback(
     () => setEvents((queue) => queue.slice(1)),
@@ -329,6 +351,13 @@ export default function GameSession({
     const updated = recordLedger(currentLedger.current, before, after, action);
     currentLedger.current = updated;
     setLedger(updated);
+    const progress = observeProfile(currentProfile.current, after, updated);
+    for (const earned of progress.earned)
+      if (!currentProfile.current.earned.some((e) => e.id === earned.id)) {
+        void platform.unlockAchievement(earned.id).catch(() => {});
+      }
+    currentProfile.current = progress;
+    setProfile(progress);
     currentGame.current = after;
     setGame(after);
     publishLife(before, after);
@@ -580,7 +609,13 @@ export default function GameSession({
   function exportSave() {
     const value = saves.snapshot();
     downloadSave(
-      serializeSave(value.game, value.ledger, true, value.metadata),
+      serializeSave(
+        value.game,
+        value.ledger,
+        true,
+        value.metadata,
+        value.profile,
+      ),
       `les-etangs-jour-${value.game.day}.json`,
     );
     audio.play("confirm");
@@ -590,6 +625,8 @@ export default function GameSession({
     const restored = restoredSave.game;
     currentLedger.current = restoredSave.ledger;
     setLedger(restoredSave.ledger);
+    currentProfile.current = restoredSave.profile;
+    setProfile(restoredSave.profile);
     clearFeedback();
     clearLife();
     setWorldTarget({ kind: "pond", id: 1 });
@@ -664,6 +701,17 @@ export default function GameSession({
               target={worldTarget}
               inspect={inspectWorld}
               panelOpen={!!panel}
+              presentation={onboarding.intro}
+              introFlight={onboarding.intro}
+              rewards={rewards}
+              source={
+                onboarding.active &&
+                !onboarding.intro &&
+                !game.development.surveyed &&
+                game.development.surveyDue === null
+                  ? () => perform({ type: "survey" })
+                  : undefined
+              }
             />
           </Suspense>
         </main>
@@ -681,6 +729,7 @@ export default function GameSession({
           game={game}
           follow={followTask}
           objectives={() => setModal("objectives")}
+          onboarding={onboarding}
         />
         <NotificationStack
           game={game}
@@ -768,7 +817,16 @@ export default function GameSession({
               <FinancePanel game={game} ledger={ledger} perform={perform} />
             )}
             {panel === "journal" && <JournalPanel game={game} />}
-            {panel === "guide" && <Guide />}
+            {panel === "guide" && (
+              <Guide
+                replayTutorial={() => {
+                  onboarding.replay();
+                  closePanel();
+                  clock.pause();
+                }}
+                achievements={() => setModal("achievements")}
+              />
+            )}
           </ManagementPanel>
         )}
         <FeedbackLayer panelOpen={!!panel} />
@@ -798,17 +856,19 @@ export default function GameSession({
                 ? t("m_0265afabb4")
                 : modal === "upgrade"
                   ? t("m_3dc218e77e")
-                  : modal === "objectives"
-                    ? t("m_c435e6a608")
-                    : modal === "pause"
-                      ? t("m_066abc0005")
-                      : modal === "save"
-                        ? t("m_73195e944d")
-                        : modal === "load"
-                          ? t("m_3e961df87c")
-                          : modal === "leave"
-                            ? t("m_bd3034cf05")
-                            : t("m_89ec71f965"),
+                  : modal === "achievements"
+                    ? t("achievements.title")
+                    : modal === "objectives"
+                      ? t("m_c435e6a608")
+                      : modal === "pause"
+                        ? t("m_066abc0005")
+                        : modal === "save"
+                          ? t("m_73195e944d")
+                          : modal === "load"
+                            ? t("m_3e961df87c")
+                            : modal === "leave"
+                              ? t("m_bd3034cf05")
+                              : t("m_89ec71f965"),
           )}
         >
           <DialogFeedback />
@@ -889,9 +949,15 @@ export default function GameSession({
               )}
             </>
           )}
+          {modal === "achievements" && <Achievements profile={profile} />}
           {modal === "objectives" && (
             <>
-              {game.development.paid > 0 && <OperatingGoals game={game} />}
+              {game.development.paid > 0 && (
+                <OperatingGoals game={game} ledger={ledger} profile={profile} />
+              )}
+              <Button tone="secondary" onClick={() => setModal("achievements")}>
+                {t("achievements.title")}
+              </Button>
               <h3>{t("m_feb531085c")}</h3>
               <div className="objectives-list">
                 {OBJECTIVES.map((o) => {
@@ -1053,6 +1119,8 @@ export default function GameSession({
                           setGame(fresh);
                           currentLedger.current = initialLedger(fresh);
                           setLedger(currentLedger.current);
+                          currentProfile.current = initialProfile();
+                          setProfile(currentProfile.current);
                           saves.reset(initialMetadata());
                           clock.pause();
                           setSelected(1);

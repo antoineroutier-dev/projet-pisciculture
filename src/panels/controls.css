@@ -42,33 +42,48 @@ html[data-input="gamepad"]
 .hud-clock [aria-pressed="true"] {
   box-shadow: inset 0 -3px 0 currentColor;
 }
-html[data-patterns="true"] .ui-gauge [role="meter"] > span {
+html[data-patterns="true"]
+  .ui-gauge
+  :is([role="meter"], [role="progressbar"])
+  > span {
   background-image: repeating-linear-gradient(
     45deg,
     transparent 0 4px,
     var(--surface) 4px 6px
   );
 }
-html[data-patterns="true"] .ui-gauge.tone-warning [role="meter"] > span {
+html[data-patterns="true"]
+  .ui-gauge.tone-warning
+  :is([role="meter"], [role="progressbar"])
+  > span {
   background-image: repeating-linear-gradient(
     90deg,
     transparent 0 4px,
     var(--surface) 4px 6px
   );
 }
-html[data-patterns="true"] .ui-gauge.tone-danger [role="meter"] > span {
+html[data-patterns="true"]
+  .ui-gauge.tone-danger
+  :is([role="meter"], [role="progressbar"])
+  > span {
   background-image:
     repeating-linear-gradient(45deg, transparent 0 4px, var(--surface) 4px 6px),
     repeating-linear-gradient(-45deg, transparent 0 4px, var(--surface) 4px 6px);
 }
-html[data-patterns="true"] .ui-gauge.circular [role="meter"] {
+html[data-patterns="true"]
+  .ui-gauge.circular
+  :is([role="meter"], [role="progressbar"]) {
   border: 2px solid var(--gauge-color);
   border-radius: 50%;
 }
-html[data-patterns="true"] .ui-gauge.circular.tone-warning [role="meter"] {
+html[data-patterns="true"]
+  .ui-gauge.circular.tone-warning
+  :is([role="meter"], [role="progressbar"]) {
   border-style: dashed;
 }
-html[data-patterns="true"] .ui-gauge.circular.tone-danger [role="meter"] {
+html[data-patterns="true"]
+  .ui-gauge.circular.tone-danger
+  :is([role="meter"], [role="progressbar"]) {
   border-style: dotted;
 }
 @media (max-width: 680px) {

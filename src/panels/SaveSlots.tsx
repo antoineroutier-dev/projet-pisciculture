@@ -1,3 +1,4 @@
+import { number } from "../ui/format";
 import { t, displayText, localeTag } from "../i18n";
 import { useRef, useState } from "react";
 import { ImageOff, Download, Upload, Save as SaveIcon } from "lucide-react";
@@ -27,7 +28,7 @@ export function SaveSummary({ value }: { value: Save }) {
       <div>
         <strong>
           {t("m_3eb0f64015") + " "}
-          {value.game.day} · {displayText(formatDate(value.game.day))}
+          {number(value.game.day)} · {displayText(formatDate(value.game.day))}
         </strong>
         <span>{displayText(formatMoney(value.game.money))}</span>
         <small>{displayText(playtimeLabel(value.metadata))}</small>
@@ -118,7 +119,7 @@ export function SaveSlots({
           {current && (
             <p>
               {t("m_c25882a6f4") + " "}
-              {current.game.day} ·{displayText(" ")}
+              {number(current.game.day)} ·{displayText(" ")}
               {displayText(formatMoney(current.game.money))}.
             </p>
           )}
@@ -216,8 +217,9 @@ export function SaveSlots({
                         current.ledger,
                         true,
                         current.metadata,
+                        current.profile,
                       ),
-                      `les-etangs-jour-${current.game.day}.json`,
+                      `les-etangs-jour-${number(current.game.day)}.json`,
                     )
               }
             >

@@ -1,4 +1,4 @@
-import { t, displayText } from "../i18n";
+import { t, displayText, localeTag } from "../i18n";
 import { useState } from "react";
 import {
   BookOpen,
@@ -24,9 +24,10 @@ export function JournalPanel({ game }: { game: Game }) {
     <div className="journal-panel">
       <div className="journal-controls">
         <div>
-          <label htmlFor="journal-type">{t("m_32769cddb4")}</label>
+          <label htmlFor="journal-type">{t("compact.journal.type")}</label>
           <select
             id="journal-type"
+            aria-label={t("m_32769cddb4")}
             value={type}
             onChange={(e) => setType(e.target.value as JournalType)}
           >
@@ -39,9 +40,10 @@ export function JournalPanel({ game }: { game: Game }) {
           </select>
         </div>
         <div>
-          <label htmlFor="journal-pond">{t("m_677213497f")}</label>
+          <label htmlFor="journal-pond">{t("compact.journal.pond")}</label>
           <select
             id="journal-pond"
+            aria-label={t("m_677213497f")}
             value={pond}
             onChange={(e) => setPond(e.target.value)}
           >
@@ -55,10 +57,8 @@ export function JournalPanel({ game }: { game: Game }) {
           </select>
         </div>
       </div>
-      <small>
-        {count}{" "}
-        {displayText(plural(count, t("m_f5c40e7d9e"), t("m_a0374a88dd")))}
-        {" " + t("m_8a61427beb")}
+      <small title={t("m_8a61427beb")}>
+        {t("compact.journal.count", count)}
       </small>
       {months.map((month) => (
         <section
@@ -86,11 +86,15 @@ export function JournalPanel({ game }: { game: Game }) {
                   <Icon size={18} aria-hidden="true" />
                   <span>
                     <time
+                      title={formatDate(log.day)}
                       dateTime={new Date(Date.UTC(2026, 3, log.day))
                         .toISOString()
                         .slice(0, 10)}
                     >
-                      {displayText(formatDate(log.day))}
+                      {new Intl.DateTimeFormat(localeTag(), {
+                        day: "numeric",
+                        timeZone: "UTC",
+                      }).format(new Date(Date.UTC(2026, 3, log.day)))}
                     </time>
                     <strong>
                       {displayText(

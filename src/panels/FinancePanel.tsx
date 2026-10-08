@@ -101,7 +101,8 @@ export function FinancePanel({
               ))}
               <p className="hint">{t("m_53bdc676fc")}</p>
             </details>
-            <div className="aid-card">
+            <details className="aid-card" open={game.money < 1000 || undefined}>
+              <summary>{t("compact.aid")}</summary>
               <Heart size={18} />
               <h3>{t("m_b844bcac31")}</h3>
               <p>{t("m_875bce04ad")}</p>
@@ -130,7 +131,7 @@ export function FinancePanel({
                   {game.lastAidDay + 90}
                 </small>
               )}
-            </div>
+            </details>
           </>
         )}
         {tab === "forecast" && (

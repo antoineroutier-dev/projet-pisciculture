@@ -1,0 +1,50 @@
+
+> les-etangs@3.0.0 test
+> vitest run
+
+
+ RUN  v3.2.7 /workspace/projet-pisciculture
+
+ ✓ src/game.test.ts (27 tests) 2211ms
+   ✓ lots et alimentation > fait grandir les carpes sur deux saisons avec hivernage  504ms
+   ✓ persistance et stabilité > reste déterministe, finie et rechargeable après deux ans  1426ms
+ ✓ src/state/ledger.test.ts (8 tests) 3151ms
+   ✓ réconcilie tous les centimes du terrain vide au règlement et recharge le registre à chaque étape  1426ms
+   ✓ groupe sans doublonner deux vrais règlements reçus le même jour  556ms
+   ✓ observe deux cycles successifs sans attribuer les investissements initiaux au second  1113ms
+ ✓ src/swimming.test.ts (4 tests) 838ms
+   ✓ trout nage sans téléportation ni sortie du bassin pendant cinq minutes  335ms
+ ✓ src/development.test.ts (14 tests) 318ms
+ ✓ src/state/profile.test.ts (6 tests) 404ms
+   ✓ observe le vrai premier cycle sans modifier le moteur ; conserve les succès après rotation du registre  384ms
+ ✓ src/hud/goalCopy.test.ts (1 test) 49ms
+ ✓ src/i18n/index.test.ts (5 tests) 126ms
+ ✓ src/controls/controls.test.ts (5 tests) 76ms
+ ✓ src/state/pondSelectors.test.ts (3 tests) 43ms
+ ✓ src/ui/format.test.ts (3 tests) 49ms
+ ✓ src/state/gameEvents.test.ts (5 tests) 67ms
+ ✓ src/state/feedback.test.ts (2 tests) 44ms
+ ✓ src/world/lifeSelectors.test.ts (3 tests) 43ms
+ ✓ src/state/operatingGoals.test.ts (2 tests) 36ms
+ ✓ src/world/notifications.test.ts (1 test) 35ms
+ ✓ src/world/artSelectors.test.ts (2 tests) 30ms
+ ✓ src/state/journalSelectors.test.ts (1 test) 30ms
+ ✓ src/ui/foundation.test.ts (1 test) 21ms
+ ✓ src/ui/gauge.test.tsx (1 test) 22ms
+ ✓ src/state/financeSelectors.test.ts (2 tests) 11ms
+ ✓ src/state/saves.test.ts (4 tests) 33ms
+ ✓ src/world/quality.test.ts (2 tests) 7ms
+ ✓ src/world/disposal.test.ts (1 test) 6ms
+ ✓ src/audio/mixer.test.ts (1 test) 6ms
+ ✓ src/state/preferences.test.ts (1 test) 7ms
+
+ Test Files  25 passed (25)
+      Tests  105 passed (105)
+   Start at  05:22:16
+   Duration  10.41s (transform 1.44s, setup 0ms, collect 3.54s, tests 7.66s, environment 7ms, prepare 3.17s)
+
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

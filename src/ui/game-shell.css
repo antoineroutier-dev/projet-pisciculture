@@ -647,7 +647,8 @@ html[data-scale="150"] .game-hud {
     max-width: 170px;
   }
   .goal-hud > .goal-description {
-    display: none;
+    display: block;
+    font-size: var(--text-caption);
   }
   .game-dock button {
     grid-template-columns: minmax(0, 1fr);

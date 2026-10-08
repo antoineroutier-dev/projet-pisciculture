@@ -53,4 +53,11 @@ export async function enterGame(page: Page) {
     await activate("Commencer avec les aides pédagogiques");
   }
   await page.getByTestId("day").waitFor();
+  await expect(page.getByTestId("intro")).toHaveCount(0, { timeout: 90000 });
+  if (
+    await page
+      .getByRole("button", { name: "Passer le tutoriel", exact: true })
+      .count()
+  )
+    await activate("Passer le tutoriel");
 }

@@ -48,3 +48,5 @@ Lot 5a : écran titre, menus et composants de sauvegarde originaux. Vignettes pr
 Lot 5b : navigation à la manette, contrôles réassignables et motifs de jauges réalisés dans le dépôt. Aucun modèle, police, image ou son tiers ajouté. Les invites de boutons sont du texte, dessiné avec les polices locales existantes.
 
 Lot 5c : catalogues français et anglais, traductions et adaptateur d’affichage originaux du projet Les Étangs (`src/i18n/`), 08/10/2026. Aucun service distant ni ressource tierce ajoutée. Les notices des licences gardent leur texte original.
+
+Lot 5d : tutoriel, textes FR/EN des douze succès, modèles procéduraux du jardin et du banc originaux du projet Les Étangs (`src/onboarding/`, `src/state/profile.ts`, `src/world/Rewards.ts`), 08/10/2026. Palette, géométries et matériaux locaux ; aucune texture ni ressource distante ajoutée. Adaptateur de plateforme web original, sans SDK tiers.

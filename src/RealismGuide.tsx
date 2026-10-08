@@ -1,3 +1,4 @@
+import { Button } from "./ui/Button";
 import { number } from "./ui/format";
 import { t, displayText } from "./i18n";
 import { useControlPreferences } from "./state/preferences";
@@ -24,7 +25,13 @@ import {
   Eye,
   Thermometer,
 } from "lucide-react";
-export default function RealismGuide() {
+export default function RealismGuide({
+  replayTutorial,
+  achievements,
+}: {
+  replayTutorial: () => void;
+  achievements: () => void;
+}) {
   const { bindings } = useControlPreferences();
   const [tab, setTab] = useState<"practice" | "species" | "water" | "model">(
     "practice",
@@ -125,6 +132,14 @@ export default function RealismGuide() {
       >
         {tab === "practice" && (
           <div className="guide-articles">
+            <div className="button-row">
+              <Button tone="secondary" onClick={replayTutorial}>
+                {t("tutorial.replay")}
+              </Button>
+              <Button tone="secondary" onClick={achievements}>
+                {t("achievements.title")}
+              </Button>
+            </div>
             <svg
               className="guide-illustration"
               viewBox="0 0 320 90"

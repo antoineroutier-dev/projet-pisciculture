@@ -218,7 +218,7 @@ test("sans WebGL : la carte et la gestion restent disponibles", async ({
   );
   await page.goto("/");
   await enterGame(page);
-  await expect(page.getByText(/Carte de secours/)).toBeVisible();
+  await expect(page.getByText("Carte 2D", { exact: true })).toBeVisible();
   for (const viewport of [
     { width: 1440, height: 900 },
     { width: 390, height: 844 },
@@ -227,7 +227,7 @@ test("sans WebGL : la carte et la gestion restent disponibles", async ({
     await expect(page.locator(".scene-location")).toBeHidden();
     await expect(page.locator(".scene-bottom")).toBeHidden();
     await expect(page.locator(".world-fallback > p")).toContainText(
-      "Carte de secours",
+      "Carte 2D",
     );
     for (const label of await page.locator(".world-fallback .map-name").all()) {
       expect(
@@ -356,6 +356,7 @@ test("nouvelle partie guidée : terrain vide jusqu’au premier règlement, uniq
   await step().click(); // Analysis order.
   await step().click(); // Receive analysis, day 3.
   await page
+    .getByRole("dialog")
     .getByRole("button", { name: "Choisir une parcelle", exact: true })
     .click(); // Results → construction.
   await page
@@ -403,7 +404,7 @@ test("nouvelle partie guidée : terrain vide jusqu’au premier règlement, uniq
       title = await page
         .getByTestId("next-task")
         .getByRole("heading")
-        .innerText();
+        .evaluate((e) => e.getAttribute("aria-label") || e.textContent || "");
     if (state.development.batches.length) {
       await page.getByRole("button", { name: /^Expédier le lot/ }).click();
     } else if (title.includes("Anticipez la rupture")) {

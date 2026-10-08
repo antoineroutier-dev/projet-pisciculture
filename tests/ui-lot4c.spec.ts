@@ -313,7 +313,7 @@ test("4c : perte du contexte, libération et reprise de la 3D sans perdre la par
     });
     await expect(canvas).toHaveCount(0);
     await expect(
-      page.getByText("Carte de secours · la 3D est indisponible.", {
+      page.getByTitle("Carte de secours · la 3D est indisponible.", {
         exact: false,
       }),
     ).toBeVisible();

@@ -10,7 +10,7 @@ import {
   type HTMLAttributes,
   type ReactNode,
 } from "react";
-import { AlertTriangle, Check, Clock3, X } from "lucide-react";
+import { AlertTriangle, Check, Clock3, CircleDashed, X } from "lucide-react";
 import { Button } from "./Button";
 import { plural } from "./format";
 export function IconButton({
@@ -247,6 +247,7 @@ export function Gauge({
   label,
   caption,
   tone = "success",
+  purpose = "measure",
   circular = false,
 }: {
   value: number;
@@ -254,13 +255,14 @@ export function Gauge({
   label: string;
   caption: string;
   tone?: "success" | "warning" | "danger";
+  purpose?: "measure" | "progress";
   circular?: boolean;
 }) {
   const percent = Math.max(0, Math.min(100, max > 0 ? (value / max) * 100 : 0));
   return (
     <div className={`ui-gauge tone-${tone} ${circular ? "circular" : ""}`}>
       <div
-        role="meter"
+        role={purpose === "progress" ? "progressbar" : "meter"}
         aria-label={displayText(label)}
         aria-valuemin={0}
         aria-valuemax={max}
@@ -283,7 +285,13 @@ export function Gauge({
         )}
       </div>
       <span>
-        {tone === "success" ? <Check size={14} /> : <AlertTriangle size={14} />}
+        {purpose === "progress" ? (
+          <CircleDashed size={14} />
+        ) : tone === "success" ? (
+          <Check size={14} />
+        ) : (
+          <AlertTriangle size={14} />
+        )}
         {displayText(" ")}
         {displayText(caption)}
       </span>

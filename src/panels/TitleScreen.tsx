@@ -1,3 +1,4 @@
+import { number } from "../ui/format";
 import { t, displayText } from "../i18n";
 import { lazy, Suspense, useCallback, useState } from "react";
 import { Fish, Play, Sprout, FolderOpen, Settings2, Heart } from "lucide-react";
@@ -97,7 +98,7 @@ export function TitleScreen({
             <details className="title-last-save">
               <summary>
                 {t("m_bb4317c6c1") + " "}
-                {game.day}
+                {number(game.day)}
               </summary>
               <SaveSummary value={automatic.save} />
             </details>

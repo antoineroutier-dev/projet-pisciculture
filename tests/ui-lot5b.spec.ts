@@ -219,6 +219,8 @@ test("5b : manette, onglets, valeurs natives, régions et commandes caméra", as
   await padPress(page, 1);
   await padActivate(page, button("Nouvelle partie"));
   await padActivate(page, button("Commencer avec les aides pédagogiques"));
+  await expect(page.getByTestId("intro")).toHaveCount(0, { timeout: 90000 });
+  await padActivate(page, button("Passer le tutoriel"));
   await padPress(page, 5);
   await expect(page.locator(".game-shell")).toBeVisible();
   await page.evaluate(() => {

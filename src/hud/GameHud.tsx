@@ -1,3 +1,6 @@
+import { Tooltip } from "../ui/Tooltip";
+import { goalCopy } from "./goalCopy";
+import type { useOnboarding } from "../onboarding/useOnboarding";
 import { number, simDate } from "../ui/format";
 import { t, displayText } from "../i18n";
 import { useControlPreferences } from "../state/preferences";
@@ -21,6 +24,7 @@ import {
   ArrowRight,
   Award,
   CloudSun,
+  CloudRain,
 } from "lucide-react";
 import { dailyFeed, nextTask, STAGES, type Task } from "../development";
 import { weather, pondStatus, type Game } from "../game";
@@ -62,17 +66,27 @@ export function GameHud({
     <header className="game-hud" aria-label={t("m_3e9656402b")}>
       <div
         className="hud-date"
-        title={displayText(t("m_b7f2057e90", game.day))}
+        title={displayText(t("m_b7f2057e90", number(game.day)))}
       >
         <strong data-testid="day" data-day={game.day}>
           {displayText(simDate(game.day))}
         </strong>
-        <span>
-          <CloudSun size={15} />
-          {displayText(today.season)} · {displayText(today.label)} ·{" "}
-          {displayText(number(today.temperature, 1))}
-          {" " + t("m_11c4350690")}
-        </span>
+        <Tooltip
+          text={`${displayText(today.season)} · ${displayText(today.label)}`}
+        >
+          {(id) => (
+            <span
+              role="img"
+              tabIndex={0}
+              aria-describedby={id}
+              className="hud-weather"
+              aria-label={`${displayText(today.season)} · ${displayText(today.label)} · ${number(today.temperature, 1)} °C`}
+            >
+              {today.rainy ? <CloudRain size={15} /> : <CloudSun size={15} />}
+              {number(today.temperature, 1)} °C
+            </span>
+          )}
+        </Tooltip>
       </div>
       <div className="hud-resources" aria-label={t("m_f15c129752")}>
         <ResourcePill
@@ -110,10 +124,10 @@ export function GameHud({
           }
           detail={displayText(
             days === null
-              ? t("m_dbd5715c3a")
+              ? t("compact.feedNone")
               : t(
-                  "m_36c9097c36",
-                  days,
+                  "compact.feedDays",
+                  number(days),
                   days < 3 ? " " + t("m_f31ef1c21c") : "",
                 ),
           )}
@@ -179,23 +193,42 @@ export function GoalHud({
   game,
   follow,
   objectives,
+  onboarding,
 }: {
   game: Game;
   follow: (task: Task) => void;
   objectives: () => void;
+  onboarding: ReturnType<typeof useOnboarding>;
 }) {
   const { aids } = useControlPreferences();
   const [expanded, setExpanded] = useState(false);
   const task = presentationTask(game);
+  if (onboarding.intro)
+    return (
+      <section
+        className="goal-hud"
+        aria-label={t("intro.label")}
+        data-testid="intro"
+      >
+        <span>{t("intro.label")}</span>
+        <h2>{t("intro.title")}</h2>
+        <span className="tutorial-instruction">{t("intro.text")}</span>
+        <button className="button primary" onClick={onboarding.finishIntro}>
+          {t("intro.skip")}
+        </button>
+      </section>
+    );
+  const copy = goalCopy(game, task);
   const text = formatEngineText(task.text);
+  const brief = formatEngineText(copy.text);
   // A short explanation; the full operational guidance remains expandable.
-  const firstSentence = text.split(/(?<=[.!?])\s/)[0];
+  const firstSentence = brief.split(/(?<=[.!?])\s/)[0];
   const description =
-    text.length <= 140
-      ? text
+    brief.length <= 140
+      ? brief
       : firstSentence.length <= 140
         ? firstSentence
-        : `${text.slice(0, 137).replace(/\s+\S*$/, "")}…`;
+        : `${brief.slice(0, 137).replace(/\s+\S*$/, "")}…`;
   return (
     <section
       className={`goal-hud ${task.urgent ? "goal-urgent" : ""}`}
@@ -208,8 +241,8 @@ export function GoalHud({
             task.urgent
               ? t("m_954ebd41a5")
               : game.development.paid
-                ? t("m_7ac2ddbdc7")
-                : t("m_b79c180dfa", task.stage + 1),
+                ? t("goal.ongoing")
+                : t("goal.progress", task.stage + 1),
           )}
         </span>
         <button
@@ -220,35 +253,67 @@ export function GoalHud({
           <Award size={18} />
         </button>
       </div>
-      <h2>{displayText(task.title)}</h2>
-      <span className="goal-description">{displayText(description)}</span>
+      <h2 aria-label={displayText(task.title)}>{displayText(copy.title)}</h2>
+      <span
+        className={
+          onboarding.active ? "tutorial-instruction" : "goal-description"
+        }
+      >
+        {onboarding.active ? onboarding.text : displayText(description)}
+      </span>
       <button
         className="button primary goal-action"
         data-testid="task-action"
+        title={displayText(formatEngineText(task.label))}
         onClick={() => follow(task)}
       >
-        {displayText(formatEngineText(task.label))}
+        {displayText(formatEngineText(copy.label))}
         <ArrowRight size={16} />
       </button>
-      {aids && (
+      {onboarding.active && (
+        <div
+          className="tutorial-controls"
+          data-testid="tutorial"
+          data-step={onboarding.step}
+        >
+          {onboarding.canAcknowledge && (
+            <button className="button outline" onClick={onboarding.acknowledge}>
+              {t(
+                onboarding.step === "finish"
+                  ? "tutorial.finish.button"
+                  : "tutorial.understood",
+              )}
+            </button>
+          )}
+          <button className="goal-details-toggle" onClick={onboarding.skip}>
+            {t("tutorial.skip")}
+          </button>
+        </div>
+      )}
+      {aids && !onboarding.active && (
         <button
           className="goal-details-toggle"
-          aria-expanded={expanded}
-          aria-controls="goal-details"
-          onClick={() => setExpanded((v) => !v)}
-        >
-          {displayText(
+          aria-label={
             game.development.paid
               ? expanded
                 ? t("m_a846999d44")
                 : t("m_5a0fe6efc6")
               : expanded
                 ? t("m_a99b976cda")
-                : t("m_c9ea7e6276"),
-          )}
+                : t("m_c9ea7e6276")
+          }
+          aria-expanded={expanded}
+          aria-controls="goal-details"
+          onClick={() => setExpanded((v) => !v)}
+        >
+          {expanded
+            ? game.development.paid
+              ? t("m_a846999d44")
+              : t("m_a99b976cda")
+            : t("goal.details")}
         </button>
       )}
-      {aids && expanded && (
+      {aids && !onboarding.active && expanded && (
         <div
           className="goal-details"
           id="goal-details"

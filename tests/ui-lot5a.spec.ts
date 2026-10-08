@@ -225,7 +225,7 @@ test("5a : erreur de stockage à la sortie conserve la session et offre un expor
   await page.evaluate(() => {
     const original = Storage.prototype.setItem;
     Storage.prototype.setItem = function (key, value) {
-      if (key.includes("save-v5"))
+      if (key.includes("save-v6"))
         throw new DOMException("Quota", "QuotaExceededError");
       original.call(this, key, value);
     };

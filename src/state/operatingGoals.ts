@@ -1,10 +1,18 @@
+import type { Ledger } from "./ledger";
+import { cleanPaidCycle, profitableMonths, type Profile } from "./profile";
 import { t } from "../i18n";
 import { nextTask, type Task } from "../development";
 import type { Game } from "../game";
-export function operatingGoals(game: Game) {
+export function operatingGoals(game: Game, ledger?: Ledger, profile?: Profile) {
   const species = new Set(
     game.ponds.filter((p) => p.built).map((p) => p.facility),
   );
+  const profitable =
+    profile?.profitableMonths.length ??
+    (ledger ? profitableMonths(ledger).length : 0);
+  const clean =
+    !!profile?.earned.some((e) => e.id === "cold") ||
+    !!(ledger && cleanPaidCycle(ledger));
   return [
     {
       id: "diversify",
@@ -23,6 +31,24 @@ export function operatingGoals(game: Game) {
       target: 5000,
       unit: t("m_131ed73429"),
       done: game.stats.soldKg >= 5000,
+    },
+    {
+      id: "profitable",
+      title: t("goal.months"),
+      text: t("goal.months.detail"),
+      progress: profitable,
+      target: 12,
+      unit: t("goal.month.unit"),
+      done: profitable >= 12,
+    },
+    {
+      id: "cold",
+      title: t("goal.cold"),
+      text: t("goal.cold.detail"),
+      progress: clean ? 1 : 0,
+      target: 1,
+      unit: t("goal.cycle.unit"),
+      done: clean,
     },
   ];
 }

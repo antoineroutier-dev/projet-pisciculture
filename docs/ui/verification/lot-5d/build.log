@@ -1,0 +1,39 @@
+
+> les-etangs@3.0.0 build
+> tsc -b && vite build
+
+vite v6.4.4 building for production...
+transforming...
+✓ 1714 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                         0.71 kB │ gzip:   0.43 kB
+dist/assets/trout-x6Wje64I.webp                        17.73 kB
+dist/assets/fraunces-latin-400-normal-6IfK1voy.woff2   17.97 kB
+dist/assets/fraunces-latin-600-normal-BFCDtZfi.woff2   18.10 kB
+dist/assets/tilapia-6yeyleZs.webp                      21.50 kB
+dist/assets/fraunces-latin-400-normal-NUPT2cO8.woff    22.48 kB
+dist/assets/fraunces-latin-600-normal-DL5QCzvS.woff    22.51 kB
+dist/assets/inter-latin-400-normal-C38fXH4l.woff2      23.66 kB
+dist/assets/inter-latin-500-normal-Cerq10X2.woff2      24.27 kB
+dist/assets/inter-latin-700-normal-Yt3aPRUw.woff2      24.36 kB
+dist/assets/inter-latin-600-normal-LgqL8muc.woff2      24.45 kB
+dist/assets/carp-El6EhueO.webp                         30.31 kB
+dist/assets/inter-latin-400-normal-CyCys3Eg.woff       30.70 kB
+dist/assets/inter-latin-600-normal-CiBQ2DWP.woff       31.26 kB
+dist/assets/inter-latin-500-normal-BL9OpVg8.woff       31.28 kB
+dist/assets/inter-latin-700-normal-BLAVimhd.woff       31.32 kB
+dist/assets/index-BFuWhfdF.css                         61.28 kB │ gzip:  12.36 kB
+dist/assets/index-8Tt_xfwu.js                         604.48 kB │ gzip: 206.91 kB
+dist/assets/FarmScene-CepvjQbC.js                     679.68 kB │ gzip: 179.82 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 7.15s
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice

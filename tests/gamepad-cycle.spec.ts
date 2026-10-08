@@ -17,6 +17,8 @@ test("5b : du terrain vide au premier paiement, uniquement à la manette simulé
     page.getByRole("button", { name, exact: typeof name === "string" });
   await padActivate(page, button("Nouvelle partie"));
   await padActivate(page, button("Commencer avec les aides pédagogiques"));
+  await expect(page.getByTestId("intro")).toHaveCount(0, { timeout: 90000 });
+  await padActivate(page, button("Passer le tutoriel"));
   await expect(page.locator(".game-shell")).toBeVisible();
   const current = (): Promise<Game> =>
     page.evaluate(
@@ -41,7 +43,11 @@ test("5b : du terrain vide au premier paiement, uniquement à la manette simulé
   expect((await current()).ponds.every((p) => !p.built && !p.count)).toBe(true);
   await step();
   await step();
-  await press(button("Choisir une parcelle"));
+  await press(
+    page
+      .getByRole("dialog")
+      .getByRole("button", { name: "Choisir une parcelle", exact: true }),
+  );
   await press(button("Choisir : Truite arc-en-ciel · Les Saules"));
   await step();
   await step();
@@ -63,7 +69,7 @@ test("5b : du terrain vide au premier paiement, uniquement à la manette simulé
       title = await page
         .getByTestId("next-task")
         .getByRole("heading")
-        .innerText();
+        .evaluate((e) => e.getAttribute("aria-label") || e.textContent || "");
     if (state.development.batches.length)
       await press(button(/^Expédier le lot/));
     else if (title.includes("Anticipez la rupture")) {

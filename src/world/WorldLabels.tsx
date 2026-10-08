@@ -5,13 +5,30 @@ export function WorldLabels({
   ponds,
   select,
   selected,
+  source,
 }: {
+  source?: () => void;
   selected: number | null;
   ponds: Pond[];
   select: (id: number) => void;
 }) {
   return (
     <div className="world-labels" role="group" aria-label={t("m_02236fe79f")}>
+      {source && (
+        <button
+          className="world-label"
+          data-world-pond="0"
+          data-world-source="true"
+          style={{ visibility: "hidden" }}
+          tabIndex={-1}
+          aria-hidden="true"
+          onClick={source}
+          aria-label={t("source.action")}
+        >
+          <strong>{t("source.name")}</strong>
+          <span>{t("m_e2c053ebd5")}</span>
+        </button>
+      )}
       {ponds.map((p) => {
         const status = pondStatus(p),
           ratio = p.species

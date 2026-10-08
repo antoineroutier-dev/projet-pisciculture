@@ -1,3 +1,4 @@
+import { initialProfile, observeProfile } from "./profile";
 import { expect, it } from "vitest";
 import { initialGame, STORAGE_KEY } from "../game";
 import { initialLedger } from "./ledger";
@@ -16,10 +17,11 @@ it("V5 conserve le jeu, son registre et la durée observée, sans changer les do
     raw = JSON.stringify(old);
   const migrated = parseSavedGame(raw);
   expect(migrated).toEqual({
-    version: 5,
+    version: 6,
     game,
     ledger,
     metadata: initialMetadata(true),
+    profile: observeProfile(initialProfile(true), game, ledger, true),
   });
   expect(JSON.stringify(old)).toBe(raw);
   const metadata = {
@@ -29,10 +31,11 @@ it("V5 conserve le jeu, son registre et la durée observée, sans changer les do
     thumbnail: "data:image/webp;base64,UklGRgAAAABXRUJQ",
   };
   expect(parseSavedGame(serializeSave(game, ledger, true, metadata))).toEqual({
-    version: 5,
+    version: 6,
     game,
     ledger,
     metadata,
+    profile: observeProfile(initialProfile(true), game, ledger, true),
   });
   expect(newSave("expert").game.mode).toBe("expert");
   expect(newSave().metadata.priorPlaytimeUnknown).toBe(false);

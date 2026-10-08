@@ -44,7 +44,7 @@ for (const [width, height] of [
     expect(
       await page.evaluate(() => localStorage.getItem("les-etangs-save-v3")),
     ).toBe(JSON.stringify(initial.game));
-    expect(initial.version).toBe(5);
+    expect(initial.version).toBe(6);
     expect(initial.game).toEqual(game);
     while (!game.development.paid) {
       const after = nextDay(game);

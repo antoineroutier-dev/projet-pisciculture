@@ -19,6 +19,8 @@ test("5c : cycle guidé en anglais, du terrain vide au premier paiement", async 
     page.getByRole("button", { name, exact: typeof name === "string" });
   await button("New game").click();
   await button("Start with learning support").click();
+  await expect(page.getByTestId("intro")).toHaveCount(0, { timeout: 90000 });
+  await button("Skip tutorial").click();
   const current = (): Promise<Game> =>
     page.evaluate(
       (key) => JSON.parse(localStorage.getItem(key)!).game,
@@ -48,7 +50,11 @@ test("5c : cycle guidé en anglais, du terrain vide au premier paiement", async 
   const step = () => press(page.getByTestId("task-action"));
   await step();
   await step();
-  await press(button("Choose a plot"));
+  await press(
+    page
+      .getByRole("dialog")
+      .getByRole("button", { name: "Choose a plot", exact: true }),
+  );
   await press(button("Choose: Rainbow trout · Les Saules"));
   await step();
   await step();
@@ -68,7 +74,7 @@ test("5c : cycle guidé en anglais, du terrain vide au premier paiement", async 
       title = await page
         .getByTestId("next-task")
         .getByRole("heading")
-        .innerText();
+        .evaluate((e) => e.getAttribute("aria-label") || e.textContent || "");
     if (g.development.batches.length) await press(button(/^Dispatch batch/));
     else if (title.includes("Prevent a feed shortage")) {
       await step();

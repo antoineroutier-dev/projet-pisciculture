@@ -227,65 +227,68 @@ export function PondInspector({
               </div>
             </>
           )}
-          <div
-            className="water-grid inspector-vitals"
-            aria-label={t("m_e57f3fb8a7")}
-          >
-            {pondVitals(p).map((v) => (
-              <div key={v.key} data-vital-detail={v.key}>
-                <div className="vital-label">
-                  <strong>{displayText(v.label)}</strong>
-                  <Tooltip text={displayText(v.help)}>
-                    {(id) => (
-                      <button
-                        className="vital-help"
-                        aria-label={displayText(t("m_0b51688308", v.label))}
-                        aria-describedby={id}
-                      >
-                        ?
-                      </button>
+          <details className="vital-curves">
+            <summary>{t("compact.waterDetails")}</summary>
+            <div
+              className="water-grid inspector-vitals"
+              aria-label={t("m_e57f3fb8a7")}
+            >
+              {pondVitals(p).map((v) => (
+                <div key={v.key} data-vital-detail={v.key}>
+                  <div className="vital-label">
+                    <strong>{displayText(v.label)}</strong>
+                    <Tooltip text={displayText(v.help)}>
+                      {(id) => (
+                        <button
+                          className="vital-help"
+                          aria-label={displayText(t("m_0b51688308", v.label))}
+                          aria-describedby={id}
+                        >
+                          ?
+                        </button>
+                      )}
+                    </Tooltip>
+                  </div>
+                  <Gauge
+                    value={v.value}
+                    max={v.max}
+                    label={displayText(v.label)}
+                    tone={v.tone}
+                    caption={displayText(v.state)}
+                  />
+                  <small>{displayText(v.threshold)}</small>
+                  <Sparkline
+                    values={readings.map((r) => r[v.key])}
+                    positions={readings.map((r) => r.day)}
+                    domain={[Math.max(1, game.day - 13), game.day]}
+                    label={displayText(
+                      t(
+                        "m_3dc55fb04c",
+                        v.label,
+                        readings.length,
+                        plural(
+                          readings.length,
+                          t("m_2327660f4e"),
+                          t("m_ad322cd874"),
+                        ),
+                        plural(
+                          readings.length,
+                          t("m_009ad8b977"),
+                          t("m_b35a16c22e"),
+                        ),
+                      ),
                     )}
-                  </Tooltip>
+                  />
                 </div>
-                <Gauge
-                  value={v.value}
-                  max={v.max}
-                  label={displayText(v.label)}
-                  tone={v.tone}
-                  caption={displayText(v.state)}
-                />
-                <small>{displayText(v.threshold)}</small>
-                <Sparkline
-                  values={readings.map((r) => r[v.key])}
-                  positions={readings.map((r) => r.day)}
-                  domain={[Math.max(1, game.day - 13), game.day]}
-                  label={displayText(
-                    t(
-                      "m_3dc55fb04c",
-                      v.label,
-                      readings.length,
-                      plural(
-                        readings.length,
-                        t("m_2327660f4e"),
-                        t("m_ad322cd874"),
-                      ),
-                      plural(
-                        readings.length,
-                        t("m_009ad8b977"),
-                        t("m_b35a16c22e"),
-                      ),
-                    ),
-                  )}
-                />
-              </div>
-            ))}
-          </div>
-          <small className="readings-note">
-            {readings.length}
-            {" " + t("m_2327660f4e")}
-            {displayText(readings.length > 1 ? "s" : "")}
-            {" " + t("m_8f74fb72bd")}
-          </small>
+              ))}
+            </div>
+            <small className="readings-note">
+              {readings.length}
+              {" " + t("m_2327660f4e")}
+              {displayText(readings.length > 1 ? "s" : "")}
+              {" " + t("m_8f74fb72bd")}
+            </small>
+          </details>
           {primary && (
             <Button
               className="full inspector-primary"
@@ -386,10 +389,10 @@ export function PondInspector({
                 {game.logs
                   .filter((l) => l.text.includes(p.name))
                   .map((l, i) => (
-                    <article key={`${l.day}-${i}`}>
+                    <article key={`${number(l.day)}-${i}`}>
                       <small>
                         {t("m_3eb0f64015") + " "}
-                        {l.day}
+                        {number(l.day)}
                       </small>
                       <p>{displayText(formatEngineText(l.text))}</p>
                     </article>

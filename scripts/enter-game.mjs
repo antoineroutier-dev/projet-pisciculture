@@ -20,4 +20,12 @@ export async function enterGame(page) {
     await page.keyboard.press("Enter");
   }
   await page.getByTestId("day").waitFor();
+  await page
+    .getByTestId("intro")
+    .waitFor({ state: "detached", timeout: 90000 });
+  const skip = page.getByRole("button", {
+    name: "Passer le tutoriel",
+    exact: true,
+  });
+  if (await skip.count()) await skip.click();
 }

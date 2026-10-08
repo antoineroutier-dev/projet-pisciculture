@@ -26,7 +26,7 @@ try {
     page.setDefaultTimeout(120000);
     page.on("pageerror", (e) => errors.push(e.message));
     await page.addInitScript(
-      (raw) => localStorage.setItem("les-etangs-save-v5", raw),
+      (raw) => localStorage.setItem("les-etangs-save-v6", raw),
       fs.readFileSync("docs/ui/fixtures/elevage.json", "utf8"),
     );
     await page.goto(process.env.UI_BASE_URL || "http://127.0.0.1:5173");

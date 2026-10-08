@@ -1,3 +1,4 @@
+import { initialProfile } from "./profile";
 import { t } from "../i18n";
 import {
   STORAGE_KEY,
@@ -8,7 +9,13 @@ import {
 } from "../game";
 import { initialLedger } from "./ledger";
 import { initialMetadata } from "./saveMetadata";
-import { parseSavedGame, SAVE_KEY, V4_SAVE_KEY, type Save } from "./saves";
+import {
+  parseSavedGame,
+  SAVE_KEY,
+  V4_SAVE_KEY,
+  V5_SAVE_KEY,
+  type Save,
+} from "./saves";
 export type SlotId = "auto" | 1 | 2 | 3;
 export type Slot = {
   id: SlotId;
@@ -25,7 +32,14 @@ export function readSlot(id: SlotId, storage: StorageReader): Slot {
     raw: string | null = null;
   try {
     for (const candidate of id === "auto"
-      ? [SAVE_KEY, V4_SAVE_KEY, STORAGE_KEY, V2_STORAGE_KEY, LEGACY_STORAGE_KEY]
+      ? [
+          SAVE_KEY,
+          V5_SAVE_KEY,
+          V4_SAVE_KEY,
+          STORAGE_KEY,
+          V2_STORAGE_KEY,
+          LEGACY_STORAGE_KEY,
+        ]
       : [key]) {
       key = candidate;
       raw = storage.getItem(candidate);
@@ -53,10 +67,11 @@ export const readSlots = (storage: StorageReader): Slot[] =>
 export function newSave(mode: Game["mode"] = "guided"): Save {
   const game = initialGame(mode);
   return {
-    version: 5,
+    version: 6,
     game,
     ledger: initialLedger(game),
     metadata: initialMetadata(),
+    profile: initialProfile(),
   };
 }
 export function downloadSave(raw: string, name: string) {

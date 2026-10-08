@@ -1,3 +1,9 @@
+import {
+  initialProfile,
+  observeProfile,
+  parseProfile,
+  type Profile,
+} from "./profile";
 import { t } from "../i18n";
 import { parseSave, type Game } from "../game";
 import {
@@ -16,12 +22,14 @@ import {
   type Ledger,
 } from "./ledger";
 export const V4_SAVE_KEY = "les-etangs-save-v4";
-export const SAVE_KEY = "les-etangs-save-v5";
+export const V5_SAVE_KEY = "les-etangs-save-v5";
+export const SAVE_KEY = "les-etangs-save-v6";
 export type Save = {
-  version: 5;
+  version: 6;
   game: Game;
   ledger: Ledger;
   metadata: SaveMetadata;
+  profile: Profile;
 };
 const bad = () => {
   throw Error(t("m_1e93ecfa02"));
@@ -198,24 +206,35 @@ export function parseSavedGame(raw: string): Save {
     value &&
     typeof value === "object" &&
     "version" in value &&
-    (value.version === 4 || value.version === 5)
+    (value.version === 4 || value.version === 5 || value.version === 6)
   ) {
     const v = value as Record<string, unknown>;
     const game = parseSave(JSON.stringify(v.game));
+    const ledger = parseLedger(v.ledger, game);
     return {
-      version: 5,
+      version: 6,
       game,
-      ledger: parseLedger(v.ledger, game),
+      ledger,
       metadata:
-        value.version === 5 ? parseMetadata(v.metadata) : initialMetadata(true),
+        value.version >= 5 ? parseMetadata(v.metadata) : initialMetadata(true),
+      profile:
+        value.version === 6
+          ? parseProfile(v.profile, game)
+          : observeProfile(initialProfile(true), game, ledger, true),
     };
   }
   const game = parseSave(raw);
   return {
-    version: 5,
+    version: 6,
     game,
     ledger: initialLedger(game),
     metadata: initialMetadata(true),
+    profile: observeProfile(
+      initialProfile(true),
+      game,
+      initialLedger(game),
+      true,
+    ),
   };
 }
 export const serializeSave = (
@@ -223,9 +242,10 @@ export const serializeSave = (
   ledger: Ledger,
   pretty = false,
   metadata = initialMetadata(true),
+  profile = observeProfile(initialProfile(true), game, ledger, true),
 ) =>
   JSON.stringify(
-    { version: 5, game, ledger, metadata } satisfies Save,
+    { version: 6, game, ledger, metadata, profile } satisfies Save,
     null,
     pretty ? 2 : undefined,
   );

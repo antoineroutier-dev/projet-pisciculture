@@ -1,3 +1,5 @@
+import { createRewards } from "./world/Rewards";
+import type { AchievementId } from "./state/profile";
 import { t, displayText, useLocale } from "./i18n";
 import { disposeRenderCaches } from "./world/renderCaches";
 import { registerSceneSnapshots } from "./world/snapshots";
@@ -48,8 +50,14 @@ export default function FarmScene({
   inspect,
   panelOpen,
   presentation = false,
+  introFlight = false,
+  source,
+  rewards = [],
 }: {
   presentation?: boolean;
+  introFlight?: boolean;
+  source?: () => void;
+  rewards?: readonly AchievementId[];
   graphics: Graphics;
   target: WorldTarget | null;
   inspect: (target: WorldTarget) => void;
@@ -83,12 +91,18 @@ export default function FarmScene({
       species,
       clearWater,
       reset,
-      clock,
+      clock: {
+        active: clock.active,
+        seeking: clock.seeking,
+        phase: { started: clock.phase.started, duration: clock.phase.duration },
+      },
       graphics,
       target,
       inspect,
       panelOpen,
       presentation,
+      introFlight,
+      rewards,
     }),
     [
       ponds,
@@ -101,12 +115,17 @@ export default function FarmScene({
       species,
       clearWater,
       reset,
-      clock,
+      clock.active,
+      clock.seeking,
+      clock.phase.started,
+      clock.phase.duration,
       graphics,
       target,
       inspect,
       panelOpen,
       presentation,
+      introFlight,
+      rewards,
     ],
   );
   const latest = useRef(state);
@@ -201,6 +220,7 @@ export default function FarmScene({
     room.dispose();
     pmrem.dispose();
     const farm = createFarm(latest.current);
+    const decorations = createRewards(farm.root);
     scene.add(farm.root);
     let specimen = createFish("trout", true);
     specimen.scale.setScalar(2.1);
@@ -322,6 +342,7 @@ export default function FarmScene({
       invalidate();
     };
     let previousState = latest.current;
+    let stateUpdates = 0;
     controls.addEventListener("change", () => {
       needsRender = true;
     });
@@ -389,6 +410,7 @@ export default function FarmScene({
         state.graphics.quality === "auto" ? automatic : state.graphics.quality;
       pipeline.quality(quality);
       renderer.domElement.dataset.quality = quality;
+      renderer.domElement.dataset.presentation = String(state.presentation);
       const changed = state !== previousState;
       previousState = state;
       // Let freshly uploaded geometry/materials settle before freezing reduced-motion views.
@@ -400,7 +422,15 @@ export default function FarmScene({
         reduced || !lastSwim ? 0 : Math.min(0.1, (ms - lastSwim) * 0.001);
       lastSwim = ms;
       const time = reduced ? 0 : ms * 0.001;
-      if (changed) farm.update(state);
+      if (changed) {
+        farm.update(state);
+        stateUpdates++;
+      }
+      renderer.domElement.dataset.stateUpdates = String(stateUpdates);
+      decorations.update(state.rewards);
+      renderer.domElement.dataset.rewards = state.rewards
+        .filter((id) => id === "paid" || id === "cold")
+        .join(",");
       renderer.domElement.dataset.farmId = farm.root.uuid;
       renderer.domElement.dataset.pondGroups = JSON.stringify(
         [...farm.ponds].map(([id, e]) => ({
@@ -622,13 +652,14 @@ export default function FarmScene({
           ponds={ponds}
           select={select}
           selected={target?.kind === "pond" ? target.id : null}
+          source={source}
         />
       )}
       {displayText(
         error && (
           <div className="world-fallback">
             <p role="status">
-              {t("m_700e2d455f")}
+              <span title={t("m_700e2d455f")}>{t("compact.map")}</span>
               {displayText(" ")}
               <Button
                 className="retry-renderer"
@@ -643,6 +674,11 @@ export default function FarmScene({
                 {t("m_3a1117c870")}
               </Button>
             </p>
+            {source && (
+              <Button data-world-source="true" onClick={source}>
+                {t("source.action")}
+              </Button>
+            )}
             <FarmMap ponds={ponds} selected={selected} select={select} />
           </div>
         ),

@@ -1,3 +1,4 @@
+import { initialProfile, observeProfile } from "./profile";
 import { initialMetadata } from "./saveMetadata";
 import { expect, it } from "vitest";
 import { readFileSync } from "node:fs";
@@ -24,10 +25,11 @@ function farm(pondIds = [1]) {
     game = after;
     ledger = updated;
     expect(parseSavedGame(serializeSave(game, ledger))).toEqual({
-      version: 5,
+      version: 6,
       game,
       ledger,
       metadata: initialMetadata(true),
+      profile: observeProfile(initialProfile(true), game, ledger, true),
     });
   };
   const command = (action: Action) => {
@@ -174,7 +176,7 @@ it("migre V1/V2/V3 et rejette les incohÃ©rences du registre V4 sans modifier lâ€
         : {}),
     });
     const parsed = parseSavedGame(raw);
-    expect(parsed.version).toBe(5);
+    expect(parsed.version).toBe(6);
     expect(parsed.game.version).toBe(3);
     expect(parseSavedGame(serializeSave(parsed.game, parsed.ledger))).toEqual(
       parsed,
@@ -184,8 +186,9 @@ it("migre V1/V2/V3 et rejette les incohÃ©rences du registre V4 sans modifier lâ€
   const raw = JSON.stringify(good);
   expect(parseSavedGame(raw)).toEqual({
     ...good,
-    version: 5,
+    version: 6,
     metadata: initialMetadata(true),
+    profile: observeProfile(initialProfile(true), g, good.ledger, true),
   });
   for (const mutate of [
     (x: typeof good) => {

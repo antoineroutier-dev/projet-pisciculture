@@ -1,0 +1,651 @@
+{
+  "browser": "151.0.7922.173",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "fixture": "elevage",
+  "method": "6 warm-up frames, then 24 frames; gl.finish after every render, elapsed wall time between GPU-completed frames. Clock paused; decorative animation active. Software renderer; no inference about physical hardware.",
+  "results": [
+    {
+      "hardware": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "quality": "low",
+      "pixelWidth": 1080,
+      "pixelHeight": 675,
+      "resources": {
+        "geometries": 357,
+        "textures": 9
+      },
+      "samples": [
+        {
+          "completed": 22615.40000000596,
+          "renderMs": 20.299999997019768,
+          "frame": 14,
+          "drawCalls": 423
+        },
+        {
+          "completed": 23215.5,
+          "renderMs": 24.5,
+          "frame": 15,
+          "drawCalls": 423
+        },
+        {
+          "completed": 23744.79999999702,
+          "renderMs": 16,
+          "frame": 16,
+          "drawCalls": 423
+        },
+        {
+          "completed": 24345.60000000894,
+          "renderMs": 14.100000008940697,
+          "frame": 17,
+          "drawCalls": 423
+        },
+        {
+          "completed": 24936.79999999702,
+          "renderMs": 8.699999988079071,
+          "frame": 18,
+          "drawCalls": 423
+        },
+        {
+          "completed": 25511.29999999702,
+          "renderMs": 8.700000002980232,
+          "frame": 19,
+          "drawCalls": 423
+        },
+        {
+          "completed": 26119.40000000596,
+          "renderMs": 12.799999997019768,
+          "frame": 20,
+          "drawCalls": 423
+        },
+        {
+          "completed": 26696.10000000894,
+          "renderMs": 7.9000000059604645,
+          "frame": 21,
+          "drawCalls": 423
+        },
+        {
+          "completed": 27268.70000000298,
+          "renderMs": 8.599999994039536,
+          "frame": 22,
+          "drawCalls": 423
+        },
+        {
+          "completed": 27828.79999999702,
+          "renderMs": 12.699999988079071,
+          "frame": 23,
+          "drawCalls": 423
+        },
+        {
+          "completed": 28406,
+          "renderMs": 11.5,
+          "frame": 24,
+          "drawCalls": 423
+        },
+        {
+          "completed": 28998.60000000894,
+          "renderMs": 10,
+          "frame": 25,
+          "drawCalls": 423
+        },
+        {
+          "completed": 29573.10000000894,
+          "renderMs": 35.8999999910593,
+          "frame": 26,
+          "drawCalls": 423
+        },
+        {
+          "completed": 30251.70000000298,
+          "renderMs": 22.799999997019768,
+          "frame": 27,
+          "drawCalls": 423
+        },
+        {
+          "completed": 32075.60000000894,
+          "renderMs": 1182.2999999970198,
+          "frame": 28,
+          "drawCalls": 423
+        },
+        {
+          "completed": 32114.79999999702,
+          "renderMs": 19.5,
+          "frame": 29,
+          "drawCalls": 423
+        },
+        {
+          "completed": 32433.70000000298,
+          "renderMs": 25.400000005960464,
+          "frame": 30,
+          "drawCalls": 423
+        },
+        {
+          "completed": 32470.29999999702,
+          "renderMs": 10.099999994039536,
+          "frame": 31,
+          "drawCalls": 423
+        },
+        {
+          "completed": 33200.90000000596,
+          "renderMs": 24.19999998807907,
+          "frame": 32,
+          "drawCalls": 423
+        },
+        {
+          "completed": 33745.79999999702,
+          "renderMs": 10.799999997019768,
+          "frame": 33,
+          "drawCalls": 423
+        },
+        {
+          "completed": 34313.60000000894,
+          "renderMs": 9.5,
+          "frame": 34,
+          "drawCalls": 423
+        },
+        {
+          "completed": 34978.70000000298,
+          "renderMs": 10.5,
+          "frame": 35,
+          "drawCalls": 423
+        },
+        {
+          "completed": 35546.5,
+          "renderMs": 28.5,
+          "frame": 36,
+          "drawCalls": 423
+        },
+        {
+          "completed": 36107.29999999702,
+          "renderMs": 34.900000005960464,
+          "frame": 37,
+          "drawCalls": 423
+        }
+      ],
+      "warmup": 6,
+      "fps": 1.7047265396286098,
+      "averageRenderMs": 65.42499999826153,
+      "elapsedMs": 13491.89999999106
+    },
+    {
+      "hardware": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "quality": "medium",
+      "pixelWidth": 1440,
+      "pixelHeight": 900,
+      "resources": {
+        "geometries": 364,
+        "textures": 11
+      },
+      "samples": [
+        {
+          "completed": 53406.5,
+          "renderMs": 139,
+          "frame": 51,
+          "drawCalls": 616
+        },
+        {
+          "completed": 54421.10000000894,
+          "renderMs": 16,
+          "frame": 52,
+          "drawCalls": 616
+        },
+        {
+          "completed": 55651.5,
+          "renderMs": 17.299999997019768,
+          "frame": 53,
+          "drawCalls": 616
+        },
+        {
+          "completed": 56887.70000000298,
+          "renderMs": 10.900000005960464,
+          "frame": 54,
+          "drawCalls": 616
+        },
+        {
+          "completed": 58891.79999999702,
+          "renderMs": 456.70000000298023,
+          "frame": 55,
+          "drawCalls": 616
+        },
+        {
+          "completed": 69938.79999999702,
+          "renderMs": 7456.20000000298,
+          "frame": 56,
+          "drawCalls": 616
+        },
+        {
+          "completed": 70049.79999999702,
+          "renderMs": 48.1000000089407,
+          "frame": 57,
+          "drawCalls": 616
+        },
+        {
+          "completed": 70347,
+          "renderMs": 43.29999999701977,
+          "frame": 58,
+          "drawCalls": 616
+        },
+        {
+          "completed": 71708.5,
+          "renderMs": 19.200000002980232,
+          "frame": 59,
+          "drawCalls": 616
+        },
+        {
+          "completed": 71762,
+          "renderMs": 34.20000000298023,
+          "frame": 60,
+          "drawCalls": 616
+        },
+        {
+          "completed": 72883.79999999702,
+          "renderMs": 19.099999994039536,
+          "frame": 61,
+          "drawCalls": 616
+        },
+        {
+          "completed": 74572.60000000894,
+          "renderMs": 19.700000002980232,
+          "frame": 62,
+          "drawCalls": 616
+        },
+        {
+          "completed": 75711.20000000298,
+          "renderMs": 32.599999994039536,
+          "frame": 63,
+          "drawCalls": 616
+        },
+        {
+          "completed": 76892.29999999702,
+          "renderMs": 22.19999998807907,
+          "frame": 64,
+          "drawCalls": 616
+        },
+        {
+          "completed": 78118.20000000298,
+          "renderMs": 15.5,
+          "frame": 65,
+          "drawCalls": 616
+        },
+        {
+          "completed": 79331.79999999702,
+          "renderMs": 15.399999991059303,
+          "frame": 66,
+          "drawCalls": 616
+        },
+        {
+          "completed": 80508.29999999702,
+          "renderMs": 15.799999997019768,
+          "frame": 67,
+          "drawCalls": 616
+        },
+        {
+          "completed": 81648.20000000298,
+          "renderMs": 14.900000005960464,
+          "frame": 68,
+          "drawCalls": 616
+        },
+        {
+          "completed": 83060.29999999702,
+          "renderMs": 22.5,
+          "frame": 69,
+          "drawCalls": 616
+        },
+        {
+          "completed": 84317.10000000894,
+          "renderMs": 40.70000000298023,
+          "frame": 70,
+          "drawCalls": 616
+        },
+        {
+          "completed": 85402.20000000298,
+          "renderMs": 18.799999997019768,
+          "frame": 71,
+          "drawCalls": 616
+        },
+        {
+          "completed": 86597.29999999702,
+          "renderMs": 16.399999991059303,
+          "frame": 72,
+          "drawCalls": 616
+        },
+        {
+          "completed": 87738.60000000894,
+          "renderMs": 19.700000002980232,
+          "frame": 73,
+          "drawCalls": 616
+        },
+        {
+          "completed": 89182.60000000894,
+          "renderMs": 17.30000001192093,
+          "frame": 74,
+          "drawCalls": 616
+        }
+      ],
+      "warmup": 6,
+      "fps": 0.6428872906771351,
+      "averageRenderMs": 355.4791666666667,
+      "elapsedMs": 35776.10000000894
+    },
+    {
+      "hardware": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "quality": "high",
+      "pixelWidth": 2160,
+      "pixelHeight": 1350,
+      "resources": {
+        "geometries": 365,
+        "textures": 13
+      },
+      "samples": [
+        {
+          "completed": 119687.29999999702,
+          "renderMs": 12,
+          "frame": 88,
+          "drawCalls": 618
+        },
+        {
+          "completed": 129778,
+          "renderMs": 7474.899999991059,
+          "frame": 89,
+          "drawCalls": 618
+        },
+        {
+          "completed": 129827.60000000894,
+          "renderMs": 15.300000011920929,
+          "frame": 90,
+          "drawCalls": 618
+        },
+        {
+          "completed": 129983.40000000596,
+          "renderMs": 17.299999997019768,
+          "frame": 91,
+          "drawCalls": 618
+        },
+        {
+          "completed": 131484.70000000298,
+          "renderMs": 16.400000005960464,
+          "frame": 92,
+          "drawCalls": 618
+        },
+        {
+          "completed": 132704.90000000596,
+          "renderMs": 14.599999994039536,
+          "frame": 93,
+          "drawCalls": 618
+        },
+        {
+          "completed": 135209.29999999702,
+          "renderMs": 18,
+          "frame": 94,
+          "drawCalls": 618
+        },
+        {
+          "completed": 137796,
+          "renderMs": 15.899999991059303,
+          "frame": 95,
+          "drawCalls": 618
+        },
+        {
+          "completed": 140396.70000000298,
+          "renderMs": 11.099999994039536,
+          "frame": 96,
+          "drawCalls": 618
+        },
+        {
+          "completed": 142885.29999999702,
+          "renderMs": 14.899999991059303,
+          "frame": 97,
+          "drawCalls": 618
+        },
+        {
+          "completed": 145345.60000000894,
+          "renderMs": 13.600000008940697,
+          "frame": 98,
+          "drawCalls": 618
+        },
+        {
+          "completed": 147804.70000000298,
+          "renderMs": 12.099999994039536,
+          "frame": 99,
+          "drawCalls": 618
+        },
+        {
+          "completed": 150435.5,
+          "renderMs": 11.899999991059303,
+          "frame": 100,
+          "drawCalls": 618
+        },
+        {
+          "completed": 160389.79999999702,
+          "renderMs": 7463.79999999702,
+          "frame": 101,
+          "drawCalls": 618
+        },
+        {
+          "completed": 160422.90000000596,
+          "renderMs": 13.100000008940697,
+          "frame": 102,
+          "drawCalls": 618
+        },
+        {
+          "completed": 160586.29999999702,
+          "renderMs": 21.19999998807907,
+          "frame": 103,
+          "drawCalls": 618
+        },
+        {
+          "completed": 163018.40000000596,
+          "renderMs": 12.900000005960464,
+          "frame": 104,
+          "drawCalls": 618
+        },
+        {
+          "completed": 165519.20000000298,
+          "renderMs": 18,
+          "frame": 105,
+          "drawCalls": 618
+        },
+        {
+          "completed": 165536.70000000298,
+          "renderMs": 12.200000002980232,
+          "frame": 106,
+          "drawCalls": 618
+        },
+        {
+          "completed": 168008.20000000298,
+          "renderMs": 12.900000005960464,
+          "frame": 107,
+          "drawCalls": 618
+        },
+        {
+          "completed": 170576.10000000894,
+          "renderMs": 12.600000008940697,
+          "frame": 108,
+          "drawCalls": 618
+        },
+        {
+          "completed": 172989.79999999702,
+          "renderMs": 11.299999997019768,
+          "frame": 109,
+          "drawCalls": 618
+        },
+        {
+          "completed": 175368.29999999702,
+          "renderMs": 13.700000002980232,
+          "frame": 110,
+          "drawCalls": 618
+        },
+        {
+          "completed": 177798.40000000596,
+          "renderMs": 10,
+          "frame": 111,
+          "drawCalls": 618
+        }
+      ],
+      "warmup": 6,
+      "fps": 0.3957935747214639,
+      "averageRenderMs": 635.40416666617,
+      "elapsedMs": 58111.10000000894
+    },
+    {
+      "hardware": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "quality": "ultra",
+      "pixelWidth": 2880,
+      "pixelHeight": 1800,
+      "resources": {
+        "geometries": 365,
+        "textures": 13
+      },
+      "samples": [
+        {
+          "completed": 237340.10000000894,
+          "renderMs": 26.299999997019768,
+          "frame": 125,
+          "drawCalls": 619
+        },
+        {
+          "completed": 264421.799999997,
+          "renderMs": 20707.30000001192,
+          "frame": 126,
+          "drawCalls": 619
+        },
+        {
+          "completed": 264453.200000003,
+          "renderMs": 15.900000005960464,
+          "frame": 127,
+          "drawCalls": 619
+        },
+        {
+          "completed": 264610.90000000596,
+          "renderMs": 26.69999998807907,
+          "frame": 128,
+          "drawCalls": 619
+        },
+        {
+          "completed": 264636.799999997,
+          "renderMs": 20.299999997019768,
+          "frame": 129,
+          "drawCalls": 619
+        },
+        {
+          "completed": 286508,
+          "renderMs": 15677.29999999702,
+          "frame": 130,
+          "drawCalls": 619
+        },
+        {
+          "completed": 286558.5,
+          "renderMs": 30,
+          "frame": 131,
+          "drawCalls": 619
+        },
+        {
+          "completed": 286584.799999997,
+          "renderMs": 13.299999997019768,
+          "frame": 132,
+          "drawCalls": 619
+        },
+        {
+          "completed": 286894.10000000894,
+          "renderMs": 26.100000008940697,
+          "frame": 133,
+          "drawCalls": 619
+        },
+        {
+          "completed": 292974,
+          "renderMs": 11.5,
+          "frame": 134,
+          "drawCalls": 619
+        },
+        {
+          "completed": 297775.90000000596,
+          "renderMs": 24.599999994039536,
+          "frame": 135,
+          "drawCalls": 619
+        },
+        {
+          "completed": 320653.60000000894,
+          "renderMs": 16988.5,
+          "frame": 136,
+          "drawCalls": 619
+        },
+        {
+          "completed": 320693.200000003,
+          "renderMs": 12,
+          "frame": 137,
+          "drawCalls": 619
+        },
+        {
+          "completed": 320711.200000003,
+          "renderMs": 13.800000011920929,
+          "frame": 138,
+          "drawCalls": 619
+        },
+        {
+          "completed": 320841.10000000894,
+          "renderMs": 16.399999991059303,
+          "frame": 139,
+          "drawCalls": 619
+        },
+        {
+          "completed": 326848,
+          "renderMs": 13.700000002980232,
+          "frame": 140,
+          "drawCalls": 619
+        },
+        {
+          "completed": 346115.299999997,
+          "renderMs": 14557.5,
+          "frame": 141,
+          "drawCalls": 619
+        },
+        {
+          "completed": 346297.5,
+          "renderMs": 40.099999994039536,
+          "frame": 142,
+          "drawCalls": 619
+        },
+        {
+          "completed": 346390.40000000596,
+          "renderMs": 22.400000005960464,
+          "frame": 143,
+          "drawCalls": 619
+        },
+        {
+          "completed": 346405.90000000596,
+          "renderMs": 13.099999994039536,
+          "frame": 144,
+          "drawCalls": 619
+        },
+        {
+          "completed": 351368.799999997,
+          "renderMs": 12.799999997019768,
+          "frame": 145,
+          "drawCalls": 619
+        },
+        {
+          "completed": 356132.60000000894,
+          "renderMs": 8.799999997019768,
+          "frame": 146,
+          "drawCalls": 619
+        },
+        {
+          "completed": 469189.10000000894,
+          "renderMs": 98695.09999999404,
+          "frame": 147,
+          "drawCalls": 619
+        },
+        {
+          "completed": 469337.60000000894,
+          "renderMs": 27.100000008940697,
+          "frame": 148,
+          "drawCalls": 619
+        }
+      ],
+      "warmup": 6,
+      "fps": 0.09913899934266533,
+      "averageRenderMs": 6958.358333333085,
+      "elapsedMs": 231997.5
+    }
+  ]
+}

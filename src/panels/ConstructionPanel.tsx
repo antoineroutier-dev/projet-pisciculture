@@ -89,12 +89,23 @@ export function ConstructionCard({
     ? { type: "build", pondId: pond.id }
     : { type: "plan", pondId: pond.id, species };
   const guard = availability(game, action);
+  const status = pondStatus(pond);
   return (
     <Card className="construction-card" data-testid="construction-card">
       <div className="construction-portrait">
         <SpeciesPortrait species={species} />
-        <Badge tone={pond.built ? "success" : "neutral"}>
-          {displayText(pondStatus(pond).label)}
+        <Badge
+          tone={
+            status.tone === "danger"
+              ? "danger"
+              : status.tone === "warning"
+                ? "warning"
+                : ["good", "harvest"].includes(status.tone)
+                  ? "success"
+                  : "neutral"
+          }
+        >
+          {displayText(status.label)}
         </Badge>
       </div>
       <h3>{displayText(pond.name)}</h3>

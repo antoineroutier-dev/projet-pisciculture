@@ -16,6 +16,13 @@ test("2a : sélectionner et construire une parcelle dans le vrai monde 3D", asyn
   await enterGame(page);
   await page.getByTestId("task-action").click();
   await page.getByTestId("task-action").click();
+  // Wait for the real two-day advance, including software-renderer stalls.
+  await expect(page.locator(".hud-clock")).toHaveAttribute(
+    "data-seeking",
+    "false",
+    { timeout: 60000 },
+  );
+  await expect(page.getByTestId("day")).toHaveAttribute("data-day", "3");
   await expect(
     page.getByRole("dialog", { name: "Votre analyse de l’eau" }),
   ).toBeVisible();
@@ -27,6 +34,7 @@ test("2a : sélectionner et construire une parcelle dans le vrai monde 3D", asyn
     ).violations,
   ).toEqual([]);
   await page
+    .getByRole("dialog")
     .getByRole("button", { name: "Choisir une parcelle", exact: true })
     .click();
   await expect(
@@ -97,6 +105,7 @@ for (const [width, height] of [
       .getByRole("button", { name: "Bassins", exact: true })
       .click();
     await expect(page.locator("[data-vital]")).toHaveCount(4);
+    await page.locator(".vital-curves > summary").click();
     const checks = [];
     for (const tab of ["Eau", "Alimentation", "Équipement", "Historique"]) {
       await page.getByRole("tab", { name: tab, exact: true }).click();

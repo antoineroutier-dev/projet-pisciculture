@@ -69,7 +69,7 @@ export function createLabelLayout(host: HTMLElement, invalidate: () => void) {
       width = host.clientWidth,
       height = host.clientHeight;
     for (const node of nodes) {
-      const [x, z] = POND_POSITIONS[node.id - 1],
+      const [x, z] = node.id === 0 ? [16, -23.5] : POND_POSITIONS[node.id - 1],
         v = new T.Vector3(x, 1.3, z - 3.5).project(camera);
       const budget =
         width < 700 ||

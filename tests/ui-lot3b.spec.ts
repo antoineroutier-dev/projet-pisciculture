@@ -100,6 +100,7 @@ for (const [width, height] of [
       "Votre analyse de l’eau",
     );
     await page
+      .getByRole("dialog")
       .getByRole("button", { name: "Choisir une parcelle", exact: true })
       .click();
     const importFixture = async (name: string, state?: Game) => {

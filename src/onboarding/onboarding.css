@@ -1,0 +1,66 @@
+.game-shell [data-tutorial-target="true"],
+.game-shell .game-dock button[data-tutorial-target="true"] {
+  outline: 3px solid var(--focus);
+  outline-offset: 4px;
+  box-shadow: 0 0 0 7px var(--surface);
+}
+.tutorial-controls {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.goal-hud .tutorial-controls button {
+  font-size: var(--text-caption);
+  min-height: 32px;
+}
+.goal-hud .tutorial-instruction {
+  display: block;
+  margin: 0 0 12px;
+  font-size: var(--text-small);
+  line-height: 1.4;
+}
+.achievements h3,
+.achievements > p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.achievement-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.achievement {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+}
+.achievement summary {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  cursor: pointer;
+  font-size: var(--text-small);
+}
+.achievement summary svg {
+  flex-shrink: 0;
+}
+.achievement p {
+  font-size: var(--text-small);
+}
+@media (max-width: 680px) {
+  .achievement-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.world-fallback > [data-world-source] {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  max-width: 60%;
+  z-index: 2;
+  font-size: var(--text-caption);
+}

@@ -1,0 +1,383 @@
+{
+  "totalBytes": 3188093,
+  "captures": [
+    {
+      "file": "docs/ui/apres/lot-5d/1440-en-bassin.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "en",
+      "bytes": 97026
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-en-construire.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "en",
+      "bytes": 91733
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-en-finances.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "en",
+      "bytes": 90391
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-en-guide.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "en",
+      "bytes": 93135
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-en-jardin.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "en",
+      "bytes": 86181
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-en-journal.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "en",
+      "bytes": 90975
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-en-logistique.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "en",
+      "bytes": 96093
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-en-monde.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "en",
+      "bytes": 74843
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-en-objectifs.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "en",
+      "bytes": 68236
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-en-succes-cycle.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "en",
+      "bytes": 64587
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-en-succes-debut.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "en",
+      "bytes": 56335
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-fr-bassin.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "fr",
+      "bytes": 97105
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-fr-construire.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "fr",
+      "bytes": 94195
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-fr-courbes.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "fr",
+      "bytes": 98314
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-fr-finances.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "fr",
+      "bytes": 92238
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-fr-guide.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "fr",
+      "bytes": 93883
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-fr-jardin.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "fr",
+      "bytes": 87970
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-fr-journal.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "fr",
+      "bytes": 92354
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-fr-logistique.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "fr",
+      "bytes": 99439
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-fr-monde.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "fr",
+      "bytes": 75684
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-fr-objectifs.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "fr",
+      "bytes": 70244
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-fr-succes-cycle.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "fr",
+      "bytes": 68076
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-fr-succes-debut.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "fr",
+      "bytes": 57912
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-fr-survol.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "fr",
+      "bytes": 69863
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-fr-tutoriel-chantier.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "fr",
+      "bytes": 94719
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-fr-tutoriel-soins.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "fr",
+      "bytes": 100207
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/1440-fr-tutoriel-source.jpg",
+      "width": 1440,
+      "height": 900,
+      "locale": "fr",
+      "bytes": 76315
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-en-bassin.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "en",
+      "bytes": 35365
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-en-construire.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "en",
+      "bytes": 31097
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-en-finances.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "en",
+      "bytes": 32375
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-en-guide.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "en",
+      "bytes": 33967
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-en-jardin.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "en",
+      "bytes": 35865
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-en-journal.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "en",
+      "bytes": 33688
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-en-logistique.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "en",
+      "bytes": 33514
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-en-monde.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "en",
+      "bytes": 32680
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-en-objectifs.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "en",
+      "bytes": 33020
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-en-succes-cycle.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "en",
+      "bytes": 31836
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-en-succes-debut.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "en",
+      "bytes": 26198
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-fr-bassin.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "fr",
+      "bytes": 36075
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-fr-construire.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "fr",
+      "bytes": 33115
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-fr-courbes.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "fr",
+      "bytes": 35966
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-fr-finances.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "fr",
+      "bytes": 33100
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-fr-guide.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "fr",
+      "bytes": 33815
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-fr-jardin.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "fr",
+      "bytes": 37288
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-fr-journal.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "fr",
+      "bytes": 33101
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-fr-logistique.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "fr",
+      "bytes": 35550
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-fr-monde.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "fr",
+      "bytes": 33431
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-fr-objectifs.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "fr",
+      "bytes": 33695
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-fr-succes-cycle.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "fr",
+      "bytes": 33435
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-fr-succes-debut.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "fr",
+      "bytes": 27656
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-fr-survol.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "fr",
+      "bytes": 32044
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-fr-tutoriel-chantier.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "fr",
+      "bytes": 37999
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-fr-tutoriel-soins.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "fr",
+      "bytes": 38683
+    },
+    {
+      "file": "docs/ui/apres/lot-5d/390-fr-tutoriel-source.jpg",
+      "width": 390,
+      "height": 844,
+      "locale": "fr",
+      "bytes": 35482
+    }
+  ]
+}

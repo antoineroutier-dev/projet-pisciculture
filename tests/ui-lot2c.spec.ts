@@ -22,7 +22,7 @@ for (const [width, height] of [
     await page.goto("/");
     await enterGame(page);
     await expect(page.getByTestId("next-task")).toContainText(
-      "Diversifiez votre exploitation",
+      "Diversifier la ferme",
     );
     await expect(page.locator(".goal-hud > p")).toHaveCount(0);
     const before = await page.evaluate(

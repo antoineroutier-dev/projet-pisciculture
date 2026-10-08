@@ -63,7 +63,7 @@ export async function captureLot(lot, visit, initial = "terrain-vide") {
         await page.evaluate(() => document.fonts.ready);
         const game = await page.evaluate(
           () =>
-            JSON.parse(localStorage.getItem("les-etangs-save-v5"))?.game ||
+            JSON.parse(localStorage.getItem("les-etangs-save-v6"))?.game ||
             JSON.parse(localStorage.getItem("les-etangs-save-v4"))?.game ||
             JSON.parse(localStorage.getItem("les-etangs-save-v3")),
         );

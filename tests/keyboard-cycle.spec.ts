@@ -95,7 +95,11 @@ test("1a : du terrain vide au paiement, uniquement au clavier en 1280×800", asy
   expect((await current()).ponds.every((p) => !p.built && !p.count)).toBe(true);
   await step();
   await step();
-  await press(button("Choisir une parcelle"));
+  await press(
+    page
+      .getByRole("dialog")
+      .getByRole("button", { name: "Choisir une parcelle", exact: true }),
+  );
   await press(button("Choisir : Truite arc-en-ciel · Les Saules"));
   await step();
   await step();
@@ -119,7 +123,7 @@ test("1a : du terrain vide au paiement, uniquement au clavier en 1280×800", asy
     const title = await page
       .getByTestId("next-task")
       .getByRole("heading")
-      .innerText();
+      .evaluate((e) => e.getAttribute("aria-label") || e.textContent || "");
     if (state.development.batches.length)
       await press(button(/^Expédier le lot/));
     else if (title.includes("Anticipez la rupture")) {
