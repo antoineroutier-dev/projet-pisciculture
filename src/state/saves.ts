@@ -1,5 +1,10 @@
 import { parseSave, type Game } from "../game";
 import {
+  initialMetadata,
+  parseMetadata,
+  type SaveMetadata,
+} from "./saveMetadata";
+import {
   costKeys,
   cents,
   initialLedger,
@@ -9,8 +14,14 @@ import {
   type Period,
   type Ledger,
 } from "./ledger";
-export const SAVE_KEY = "les-etangs-save-v4";
-export type Save = { version: 4; game: Game; ledger: Ledger };
+export const V4_SAVE_KEY = "les-etangs-save-v4";
+export const SAVE_KEY = "les-etangs-save-v5";
+export type Save = {
+  version: 5;
+  game: Game;
+  ledger: Ledger;
+  metadata: SaveMetadata;
+};
 const bad = () => {
   throw Error(
     "Le registre financier de cette sauvegarde est incompatible ou incohérent. La partie actuelle est conservée.",
@@ -176,6 +187,8 @@ export function parseLedger(raw: unknown, game: Game): Ledger {
   };
 }
 export function parseSavedGame(raw: string): Save {
+  if (new TextEncoder().encode(raw).byteLength > 2_000_000)
+    throw Error("Ce fichier est trop volumineux.");
   let value: unknown;
   try {
     value = JSON.parse(raw);
@@ -186,18 +199,34 @@ export function parseSavedGame(raw: string): Save {
     value &&
     typeof value === "object" &&
     "version" in value &&
-    value.version === 4
+    (value.version === 4 || value.version === 5)
   ) {
     const v = value as Record<string, unknown>;
     const game = parseSave(JSON.stringify(v.game));
-    return { version: 4, game, ledger: parseLedger(v.ledger, game) };
+    return {
+      version: 5,
+      game,
+      ledger: parseLedger(v.ledger, game),
+      metadata:
+        value.version === 5 ? parseMetadata(v.metadata) : initialMetadata(true),
+    };
   }
   const game = parseSave(raw);
-  return { version: 4, game, ledger: initialLedger(game) };
+  return {
+    version: 5,
+    game,
+    ledger: initialLedger(game),
+    metadata: initialMetadata(true),
+  };
 }
-export const serializeSave = (game: Game, ledger: Ledger, pretty = false) =>
+export const serializeSave = (
+  game: Game,
+  ledger: Ledger,
+  pretty = false,
+  metadata = initialMetadata(true),
+) =>
   JSON.stringify(
-    { version: 4, game, ledger } satisfies Save,
+    { version: 5, game, ledger, metadata } satisfies Save,
     null,
     pretty ? 2 : undefined,
   );

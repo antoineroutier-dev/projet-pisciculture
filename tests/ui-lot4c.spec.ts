@@ -1,3 +1,4 @@
+import { enterGame } from "./ui-helpers";
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { readFileSync } from "node:fs";
@@ -15,6 +16,7 @@ test("4c : étiquettes sans recouvrement, sélection du monde et rotation au cla
     readFileSync("docs/ui/fixtures/expedition.json", "utf8"),
   );
   await page.goto("/");
+  await enterGame(page);
   const canvas = page.locator('canvas[data-engine="three-webgl"]');
   await expect(canvas).toHaveAttribute("data-settled", "true", {
     timeout: 60000,
@@ -164,6 +166,7 @@ test("4c : quatre qualités persistantes sans reconstruire le terrain, étiquett
     readFileSync("docs/ui/fixtures/elevage.json", "utf8"),
   );
   await page.goto("/");
+  await enterGame(page);
   const canvas = page.locator('canvas[data-engine="three-webgl"]');
   await expect(canvas).toHaveAttribute("data-settled", "true", {
     timeout: 60000,
@@ -218,8 +221,14 @@ test("4c : quatre qualités persistantes sans reconstruire le terrain, étiquett
     0,
   );
   expect(
-    await page.evaluate((key) => localStorage.getItem(key), SAVE_KEY),
-  ).toBe(save);
+    await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key)!),
+      SAVE_KEY,
+    ),
+  ).toMatchObject({
+    game: JSON.parse(save!).game,
+    ledger: JSON.parse(save!).ledger,
+  });
   await expect(canvas).toHaveCount(1);
   await info.attach("quality-resources", {
     body: JSON.stringify(records),
@@ -242,6 +251,7 @@ test("4c : notification de livraison reliée au véhicule et à son panneau rée
     raw: JSON.stringify(before),
   });
   await page.goto("/");
+  await enterGame(page);
   const canvas = page.locator('canvas[data-engine="three-webgl"]');
   await expect(canvas).toHaveAttribute("data-settled", "true", {
     timeout: 60000,
@@ -282,6 +292,7 @@ test("4c : perte du contexte, libération et reprise de la 3D sans perdre la par
     );
   });
   await page.goto("/");
+  await enterGame(page);
   const canvas = page.locator('canvas[data-engine="three-webgl"]');
   await expect(canvas).toHaveAttribute("data-settled", "true", {
     timeout: 60000,
@@ -290,6 +301,9 @@ test("4c : perte du contexte, libération et reprise de la 3D sans perdre la par
     (key) => localStorage.getItem(key),
     SAVE_KEY,
   );
+  await page.evaluate(() => {
+    (window as any).renderDisposals.length = 0;
+  });
   for (let i = 0; i < 3; i++) {
     await canvas.evaluate((c) => {
       const gl = (c as HTMLCanvasElement).getContext("webgl2")!,
@@ -333,8 +347,14 @@ test("4c : perte du contexte, libération et reprise de la 3D sans perdre la par
     })),
   );
   expect(
-    await page.evaluate((key) => localStorage.getItem(key), SAVE_KEY),
-  ).toBe(save);
+    await page.evaluate(
+      (key) => JSON.parse(localStorage.getItem(key)!),
+      SAVE_KEY,
+    ),
+  ).toMatchObject({
+    game: JSON.parse(save!).game,
+    ledger: JSON.parse(save!).ledger,
+  });
   await expect(canvas).toHaveCount(1);
   await info.attach("renderer-disposals", {
     body: JSON.stringify(disposals),

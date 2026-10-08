@@ -27,6 +27,8 @@
   --text-xl: max(18px, 1.5rem);
   --text-title: max(18px, 2rem);
   --text-display: max(18px, 2.75rem);
+  --text-logo: clamp(36px, 5vw, 4rem);
+  --text-logo-mobile: max(36px, 2.625rem);
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;

@@ -31,3 +31,5 @@ import "./hud/time-events.css";
 import "./panels/finance.css";
 
 import "./world/world.css";
+
+import "./panels/title.css";

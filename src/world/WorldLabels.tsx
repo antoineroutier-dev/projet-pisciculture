@@ -10,7 +10,7 @@ export function WorldLabels({
   select: (id: number) => void;
 }) {
   return (
-    <div className="world-labels" aria-label="Bassins dans le monde">
+    <div className="world-labels" role="group" aria-label="Bassins dans le monde">
       {ponds.map((p) => {
         const status = pondStatus(p),
           ratio = p.species

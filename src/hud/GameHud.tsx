@@ -7,6 +7,7 @@ import {
   AlertTriangle,
   CheckCheck,
   Settings2,
+  Menu,
   Hammer,
   Waves,
   Package,
@@ -30,6 +31,7 @@ export function GameHud({
   storageError,
   clock,
   settings,
+  menu,
   alerts,
 }: {
   game: Game;
@@ -38,6 +40,7 @@ export function GameHud({
   storageError: string;
   clock: GameClock;
   settings: () => void;
+  menu: () => void;
   alerts: () => void;
 }) {
   const today = weather(game.day);
@@ -135,9 +138,12 @@ export function GameHud({
         <button
           onClick={settings}
           aria-label="Paramètres & sauvegarde"
-          title="Paramètres · Échap"
+          title="Paramètres"
         >
           <Settings2 size={20} />
+        </button>
+        <button onClick={menu} aria-label="Menu pause" title="Menu · Échap">
+          <Menu size={20} />
         </button>
       </div>
       {storageError && (

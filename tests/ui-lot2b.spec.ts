@@ -1,3 +1,4 @@
+import { enterGame } from "./ui-helpers";
 import { SAVE_KEY } from "../src/state/saves";
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
@@ -19,6 +20,7 @@ for (const [width, height] of [
       raw: readFileSync("docs/ui/fixtures/contrat-client.json", "utf8"),
     });
     await page.goto("/");
+    await enterGame(page);
     await page
       .getByRole("navigation")
       .getByRole("button", { name: "Logistique", exact: true })
@@ -136,6 +138,7 @@ test("2b : récolte, transport et paiement restent des actions distinctes", asyn
     raw: readFileSync("docs/ui/fixtures/lot-au-froid.json", "utf8"),
   });
   await page.goto("/");
+  await enterGame(page);
   await page.getByTestId("task-action").click();
   await expect(
     page.getByRole("tab", { name: "Expéditions", exact: true }),

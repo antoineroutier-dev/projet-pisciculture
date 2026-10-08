@@ -1,3 +1,4 @@
+import { enterGame } from "./ui-helpers";
 import { expect, test, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import AxeBuilder from "@axe-core/playwright";
@@ -15,6 +16,7 @@ for (const [width,height] of [[1920,1080],[1440,900],[1280,800]]) {
     test.setTimeout(240000);
     await page.setViewportSize({width,height});
     await page.goto("/");
+  await enterGame(page);
     const canvas=page.locator('canvas[data-engine="three-webgl"]');
     await expect(canvas).toHaveAttribute("data-frame","rendered",{timeout:60000});
     await canvas.evaluate(e=>{e.setAttribute("data-identity","original");});
@@ -59,6 +61,7 @@ for (const [width,height] of [[1920,1080],[1440,900],[1280,800]]) {
 test("1b : raccourcis, restauration du focus, urgence et guide du modèle",async({page})=>{
   await withoutWebGL(page);
   await page.goto("/");
+  await enterGame(page);
   const dock=page.getByRole("navigation");
   await expect(dock.getByRole("button")).toHaveCount(6);
   for(const [label,key] of [["Construire","c"],["Bassins","b"],["Logistique","l"],["Finances","f"],["Journal","j"],["Guide","g"]]){

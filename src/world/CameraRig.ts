@@ -77,11 +77,33 @@ export function createCameraRig(
       target: WorldTarget | null;
       panelOpen: boolean;
       targetPoint?: { x: number; z: number };
+      presentation?: boolean;
     },
     ms: number,
     reduced: boolean,
   ) {
     mode = s.mode;
+    if (s.presentation) {
+      controls.minDistance = 8;
+      controls.maxDistance = 250;
+      const distance = Math.max(
+        66,
+        54 /
+          (2 * Math.tan(T.MathUtils.degToRad(camera.fov / 2)) * camera.aspect),
+      );
+      const angle = 0.7 + (reduced ? 0 : Math.sin(ms * 0.00007) * 0.16);
+      controls.target.set(camera.aspect > 1 ? -8 : 0, 0, -3);
+      camera.position
+        .copy(controls.target)
+        .add(
+          new T.Vector3(Math.sin(angle), 0.68, Math.cos(angle))
+            .normalize()
+            .multiplyScalar(distance),
+        );
+      controls.enabled = false;
+      controls.update();
+      return false;
+    }
     const next = `${mode}:${mode === "pond" ? s.selected : ""}:${mode === "buildings" ? targetKey(s.target) : ""}:${s.reset}:${camera.aspect}`;
     if (next !== key) {
       const oldKey = key;

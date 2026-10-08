@@ -1,3 +1,4 @@
+import { enterGame } from "./enter-game.mjs";
 import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
@@ -45,6 +46,7 @@ try {
       fs.readFileSync(`docs/ui/fixtures/${state}.json`, "utf8"),
     );
     await page.goto(origin);
+    if (mode === "after") await enterGame(page);
     await page.evaluate(() => document.fonts.ready);
     for (const screen of screens) {
       await page

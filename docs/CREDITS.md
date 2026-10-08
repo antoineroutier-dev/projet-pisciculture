@@ -12,7 +12,7 @@ Vérification effectuée le **7 octobre 2026**. Les fichiers ci-dessous sont loc
 | Carte du domaine, favicon | Créations originales du projet en SVG | Créations du dépôt | `src/FarmMap.tsx`, `public/favicon.svg` |
 | Portraits des trois espèces (WebP) | Projet Les Étangs, rendus locaux des modèles originaux | Créations originales, aucun modèle, photo ni texture tiers | `src/assets/portraits/`, `scripts/render-portraits.mjs`, 07/10/2026 |
 
-React et React DOM sont sous licence MIT ; les notices des dépendances restent dans leurs paquets verrouillés par `package-lock.json`.
+React et React DOM sont sous licence MIT ; [notice React intégrée](licenses/React-MIT.txt), vérifiée dans le paquet installé. Les autres notices de dépendances restent dans leurs paquets verrouillés par `package-lock.json`.
 
 Aucun son ni musique n’est intégré au lot 0. Leur provenance et licence seront ajoutées lors du lot 3. Aucune attribution de licence CC0 n’est présumée pour une ressource trouvée sur Internet.
 
@@ -42,3 +42,5 @@ Lot 4a : portraits WebP (640 × 300) générés localement par `scripts/render-p
 Lot 4b : camions d’aliments, cuves de transport vivant et carrosseries frigorifiques, ondulations, silhouettes, gouttelettes, nuages et pluie sont des géométries/effets procéduraux originaux du projet. Aucun fichier de texture, son ou modèle externe ajouté. Sources : `src/world/LifeEffects.ts`, `src/world/WeatherScene.ts`, `src/farm3d.ts`, palette locale (07/10/2026).
 
 Lot 4c : contours de sélection, anneaux de calibre, étiquettes, notifications et vignettage doux sont des créations originales du projet. `EffectComposer`, `RenderPass`, `ShaderPass`, `OutputPass` et `FXAAShader` proviennent du paquet Three.js 0.186.1 installé : licence MIT vérifiée dans `node_modules/three/LICENSE`, déjà reproduite dans [Three-MIT.txt](licenses/Three-MIT.txt). L’en-tête du module FXAA crédite l’algorithme NVIDIA, l’implémentation C# de Jasper Flick et le port GLSL de Dave Hoskins. Source : https://github.com/mrdoob/three.js/tree/r186/examples/jsm ; vérification le 07/10/2026. Aucun téléchargement de modèle, texture ou son supplémentaire.
+
+Lot 5a : écran titre, menus et composants de sauvegarde originaux. Vignettes produites directement par le rendu local ; aucune image téléchargée. Les licences Inter/Fraunces (OFL), Lucide (ISC), Three.js et React (MIT) sont consultables intégralement depuis les crédits du titre, y compris dans le portable.

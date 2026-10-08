@@ -1,4 +1,5 @@
 import { disposeRenderCaches } from "./world/renderCaches";
+import { registerSceneSnapshots } from "./world/snapshots";
 import { Button } from "./ui/Button";
 import { WorldLabels } from "./world/WorldLabels";
 import { createLabelLayout } from "./world/LabelLayout";
@@ -45,7 +46,9 @@ export default function FarmScene({
   target,
   inspect,
   panelOpen,
+  presentation = false,
 }: {
+  presentation?: boolean;
   graphics: Graphics;
   target: WorldTarget | null;
   inspect: (target: WorldTarget) => void;
@@ -83,6 +86,7 @@ export default function FarmScene({
       target,
       inspect,
       panelOpen,
+      presentation,
     }),
     [
       ponds,
@@ -100,6 +104,7 @@ export default function FarmScene({
       target,
       inspect,
       panelOpen,
+      presentation,
     ],
   );
   const latest = useRef(state);
@@ -217,6 +222,7 @@ export default function FarmScene({
     const invalidate = () => {
       needsRender = true;
     };
+    const snapshots = registerSceneSnapshots(invalidate);
     const rig = createCameraRig(camera, controls, invalidate);
     const labels = createLabelLayout(container.parentElement!, invalidate);
     const selection = softContour(),
@@ -496,6 +502,7 @@ export default function FarmScene({
         reduced,
         camera.position.distanceTo(controls.target),
         QUALITY[quality].rain,
+        state.presentation ? 0.82 : undefined,
       );
       renderer.domElement.dataset.weather = JSON.stringify(conditions);
       renderer.domElement.dataset.life = JSON.stringify(life.diagnostics());
@@ -504,6 +511,7 @@ export default function FarmScene({
       labels.update(camera, state.graphics.labels && state.mode !== "fish");
       const renderStart = performance.now();
       pipeline.render();
+      snapshots.afterRender(renderer.domElement);
       if (renderer.domElement.dataset.measureGpu === "true") {
         gl.finish();
         renderer.domElement.dataset.gpuFrameMs = String(
@@ -543,6 +551,7 @@ export default function FarmScene({
     };
     frame = requestAnimationFrame(animate);
     setReady(true);
+    window.dispatchEvent(new Event("etangs-world-ready"));
     if (recovering.current) {
       recovering.current = false;
       queueMicrotask(() =>
@@ -559,6 +568,7 @@ export default function FarmScene({
       observer.disconnect();
       intersection.disconnect();
       rig.dispose();
+      snapshots.dispose();
       labels.dispose();
       disposeRenderCaches(renderer, scene);
       pipeline.dispose();
@@ -598,7 +608,7 @@ export default function FarmScene({
       data-ready={ready && !error ? "true" : "false"}
     >
       <div className="world-canvas" ref={host} hidden={!!error} />
-      {ready && !error && (
+      {ready && !error && !presentation && (
         <WorldLabels
           ponds={ponds}
           select={select}

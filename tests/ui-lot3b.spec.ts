@@ -1,3 +1,4 @@
+import { enterGame } from "./ui-helpers";
 import { SAVE_KEY } from "../src/state/saves";
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
@@ -16,6 +17,13 @@ for (const [width, height] of [
     await page.setViewportSize({ width, height });
     await page.clock.install({ time: new Date("2026-01-01T00:00:00Z") });
     await page.goto("/");
+    await enterGame(page);
+    // The title restores focus to the task button. Space there must retain
+    // its native activation; test the global clock shortcut on non-button focus.
+    await page.getByTestId("day").click();
+    expect(
+      await page.evaluate(() => document.activeElement === document.body),
+    ).toBe(true);
     await page.clock.pauseAt(new Date("2026-01-01T00:01:00Z"));
     await page.keyboard.press("5");
     await expect(

@@ -1,3 +1,4 @@
+import { enterGame } from "./enter-game.mjs";
 import { chromium, expect } from "@playwright/test";
 import fs from "node:fs";
 const output = process.argv[2] || "/tmp/etangs-quality.json";
@@ -21,6 +22,7 @@ try {
     fs.readFileSync("docs/ui/fixtures/elevage.json", "utf8"),
   );
   await page.goto(process.env.UI_BASE_URL || "http://127.0.0.1:5173");
+  await enterGame(page);
   const canvas = page.locator('canvas[data-engine="three-webgl"]');
   await expect(canvas).toHaveAttribute("data-settled", "true", {
     timeout: 120000,

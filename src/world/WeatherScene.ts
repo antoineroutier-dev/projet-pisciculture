@@ -76,6 +76,7 @@ export function createWeather(
     reduced: boolean,
     cameraDistance: number,
     rainCount = 240,
+    presentationHour?: number,
   ) {
     for (let i = 0; i < foliage.count; i++) {
       windMatrix.copy(baseMatrices[i]);
@@ -125,6 +126,7 @@ export function createWeather(
       );
     // Reduced motion uses stable daytime lighting, including while seeking.
     if (reduced) hour = 0.5;
+    if (presentationHour !== undefined) hour = presentationHour;
     const light = Math.max(0.18, Math.sin(hour * Math.PI));
     sun.intensity = (0.5 + light * 2.2) * (w.rainy ? 0.72 : 1);
     sky.intensity = 0.7 + light * 0.4;

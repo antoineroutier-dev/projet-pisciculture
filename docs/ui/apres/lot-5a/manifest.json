@@ -1,0 +1,101 @@
+{
+  "totalBytes": 709398,
+  "captures": [
+    {
+      "file": "docs/ui/apres/lot-5a/1440-titre.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 56808
+    },
+    {
+      "file": "docs/ui/apres/lot-5a/1440-nouvelle-partie.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 43696
+    },
+    {
+      "file": "docs/ui/apres/lot-5a/1440-credits.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 57181
+    },
+    {
+      "file": "docs/ui/apres/lot-5a/1440-hud-menu.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 83082
+    },
+    {
+      "file": "docs/ui/apres/lot-5a/1440-pause.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 39506
+    },
+    {
+      "file": "docs/ui/apres/lot-5a/1440-emplacements.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 71908
+    },
+    {
+      "file": "docs/ui/apres/lot-5a/1440-remplacement.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 53516
+    },
+    {
+      "file": "docs/ui/apres/lot-5a/1440-titre-reprise.jpg",
+      "width": 1440,
+      "height": 900,
+      "bytes": 63942
+    },
+    {
+      "file": "docs/ui/apres/lot-5a/390-titre.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 25690
+    },
+    {
+      "file": "docs/ui/apres/lot-5a/390-nouvelle-partie.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 28190
+    },
+    {
+      "file": "docs/ui/apres/lot-5a/390-credits.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 36109
+    },
+    {
+      "file": "docs/ui/apres/lot-5a/390-hud-menu.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 38333
+    },
+    {
+      "file": "docs/ui/apres/lot-5a/390-pause.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 20518
+    },
+    {
+      "file": "docs/ui/apres/lot-5a/390-emplacements.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 27642
+    },
+    {
+      "file": "docs/ui/apres/lot-5a/390-remplacement.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 31532
+    },
+    {
+      "file": "docs/ui/apres/lot-5a/390-titre-reprise.jpg",
+      "width": 390,
+      "height": 844,
+      "bytes": 31745
+    }
+  ]
+}

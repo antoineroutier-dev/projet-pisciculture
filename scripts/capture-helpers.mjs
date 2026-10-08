@@ -1,3 +1,4 @@
+import { enterGame } from "./enter-game.mjs";
 import { chromium, expect } from "@playwright/test";
 import fs from "node:fs";
 export async function captureLot(lot, visit, initial = "terrain-vide") {
@@ -15,8 +16,12 @@ export async function captureLot(lot, visit, initial = "terrain-vide") {
     ],
   });
   const onlyWidth = Number(process.env.UI_CAPTURE_WIDTH) || null;
-  const previous = onlyWidth && fs.existsSync(`${directory}/manifest.json`) ? JSON.parse(fs.readFileSync(`${directory}/manifest.json`, "utf8")).captures : [];
-  const captures = previous.filter(c => c.width !== onlyWidth),
+  const previous =
+    onlyWidth && fs.existsSync(`${directory}/manifest.json`)
+      ? JSON.parse(fs.readFileSync(`${directory}/manifest.json`, "utf8"))
+          .captures
+      : [];
+  const captures = previous.filter((c) => c.width !== onlyWidth),
     errors = [];
   try {
     for (const [width, height] of [
@@ -37,6 +42,7 @@ export async function captureLot(lot, visit, initial = "terrain-vide") {
         fs.readFileSync(`docs/ui/fixtures/${initial}.json`, "utf8"),
       );
       await page.goto(process.env.UI_BASE_URL || "http://127.0.0.1:5173");
+      await enterGame(page);
       const canvas = page.locator('canvas[data-engine="three-webgl"]');
       await expect(canvas).toHaveAttribute("data-settled", "true", {
         timeout: 120000,
@@ -51,12 +57,15 @@ export async function captureLot(lot, visit, initial = "terrain-vide") {
           mimeType: "application/json",
           buffer: fs.readFileSync(`docs/ui/fixtures/${name}.json`),
         });
-        await page.getByRole("dialog").waitFor({state:"hidden"});
+        await page.getByRole("dialog").waitFor({ state: "hidden" });
       }
       async function snap(name, { toast = true } = {}) {
         await page.evaluate(() => document.fonts.ready);
-        const game = await page.evaluate(() =>
-          JSON.parse(localStorage.getItem("les-etangs-save-v4"))?.game || JSON.parse(localStorage.getItem("les-etangs-save-v3")),
+        const game = await page.evaluate(
+          () =>
+            JSON.parse(localStorage.getItem("les-etangs-save-v5"))?.game ||
+            JSON.parse(localStorage.getItem("les-etangs-save-v4"))?.game ||
+            JSON.parse(localStorage.getItem("les-etangs-save-v3")),
         );
         await expect(canvas).toHaveAttribute("data-day", String(game.day), {
           timeout: 120000,

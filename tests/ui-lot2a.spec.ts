@@ -1,3 +1,4 @@
+import { enterGame } from "./ui-helpers";
 import { SAVE_KEY } from "../src/state/saves";
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
@@ -12,6 +13,7 @@ test("2a : sélectionner et construire une parcelle dans le vrai monde 3D", asyn
   test.setTimeout(120000);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
+  await enterGame(page);
   await page.getByTestId("task-action").click();
   await page.getByTestId("task-action").click();
   await expect(
@@ -89,6 +91,7 @@ for (const [width, height] of [
       raw: readFileSync("docs/ui/fixtures/contrat-client.json", "utf8"),
     });
     await page.goto("/");
+    await enterGame(page);
     await page
       .getByRole("navigation")
       .getByRole("button", { name: "Bassins", exact: true })

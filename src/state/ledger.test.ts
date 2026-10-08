@@ -1,3 +1,4 @@
+import { initialMetadata } from "./saveMetadata";
 import { expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { act, initialGame, nextDay, parseSave, type Action } from "../game";
@@ -23,9 +24,10 @@ function farm(pondIds = [1]) {
     game = after;
     ledger = updated;
     expect(parseSavedGame(serializeSave(game, ledger))).toEqual({
-      version: 4,
+      version: 5,
       game,
       ledger,
+      metadata: initialMetadata(true),
     });
   };
   const command = (action: Action) => {
@@ -172,7 +174,7 @@ it("migre V1/V2/V3 et rejette les incohÃ©rences du registre V4 sans modifier lâ€
         : {}),
     });
     const parsed = parseSavedGame(raw);
-    expect(parsed.version).toBe(4);
+    expect(parsed.version).toBe(5);
     expect(parsed.game.version).toBe(3);
     expect(parseSavedGame(serializeSave(parsed.game, parsed.ledger))).toEqual(
       parsed,
@@ -180,7 +182,11 @@ it("migre V1/V2/V3 et rejette les incohÃ©rences du registre V4 sans modifier lâ€
   }
   const good = { version: 4, game: g, ledger: initialLedger(g) };
   const raw = JSON.stringify(good);
-  expect(parseSavedGame(raw)).toEqual(good);
+  expect(parseSavedGame(raw)).toEqual({
+    ...good,
+    version: 5,
+    metadata: initialMetadata(true),
+  });
   for (const mutate of [
     (x: typeof good) => {
       x.ledger.cumulativeCosts.feed = 100;

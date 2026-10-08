@@ -1,3 +1,4 @@
+import { enterGame } from "./ui-helpers";
 import { SAVE_KEY } from "../src/state/saves";
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
@@ -19,6 +20,7 @@ for (const [width, height] of [
       raw: readFileSync("docs/ui/fixtures/cycle-paye.json", "utf8"),
     });
     await page.goto("/");
+    await enterGame(page);
     await expect(page.getByTestId("next-task")).toContainText(
       "Diversifiez votre exploitation",
     );
@@ -160,6 +162,7 @@ test("2c : TAN, débit et conversion expliqués au clavier dans leur contexte", 
     raw: readFileSync("docs/ui/fixtures/contrat-client.json", "utf8"),
   });
   await page.goto("/");
+  await enterGame(page);
   await page
     .getByRole("navigation")
     .getByRole("button", { name: "Bassins", exact: true })

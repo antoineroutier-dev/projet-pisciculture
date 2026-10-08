@@ -1,3 +1,4 @@
+import { enterGame } from "./ui-helpers";
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { readFileSync } from "node:fs";
@@ -18,7 +19,7 @@ for (const [width, height] of [
   [1440, 900],
   [390, 844],
 ])
-  test(`3c : bilan exact, prévision, registre V4 à ${width}×${height}`, async ({
+  test(`3c : bilan exact, prévision, registre migré à ${width}×${height}`, async ({
     page,
   }, info) => {
     test.setTimeout(180000);
@@ -33,6 +34,7 @@ for (const [width, height] of [
       JSON.stringify(game),
     );
     await page.goto("/");
+    await enterGame(page);
     const current = () =>
       page.evaluate(
         (key) => JSON.parse(localStorage.getItem(key)!),
@@ -42,7 +44,7 @@ for (const [width, height] of [
     expect(
       await page.evaluate(() => localStorage.getItem("les-etangs-save-v3")),
     ).toBe(JSON.stringify(initial.game));
-    expect(initial.version).toBe(4);
+    expect(initial.version).toBe(5);
     expect(initial.game).toEqual(game);
     while (!game.development.paid) {
       const after = nextDay(game);
@@ -133,7 +135,14 @@ for (const [width, height] of [
     await axe("saved-cycle");
     const saved = await current();
     await page.reload();
-    expect(await current()).toEqual(saved);
+    await enterGame(page);
+    expect(await current()).toMatchObject({
+      game: saved.game,
+      ledger: saved.ledger,
+    });
+    expect((await current()).metadata.playedMs).toBeGreaterThanOrEqual(
+      saved.metadata.playedMs,
+    );
     await page
       .getByRole("button", { name: "Paramètres & sauvegarde", exact: true })
       .click();
@@ -141,23 +150,38 @@ for (const [width, height] of [
     await page.getByRole("button", { name: /Exporter ma partie/ }).click();
     const file = await download;
     const exported = parseSavedGame(readFileSync((await file.path())!, "utf8"));
-    expect(exported).toEqual(saved);
+    expect(exported).toMatchObject({ game: saved.game, ledger: saved.ledger });
+    expect(exported.metadata.playedMs).toBeGreaterThanOrEqual(
+      saved.metadata.playedMs,
+    );
     const bad = structuredClone(saved);
     bad.ledger.cumulativeCosts.feed++;
     await page.getByLabel("Fichier de sauvegarde").setInputFiles({
-      name: "bad-v4.json",
+      name: "bad-v5.json",
       mimeType: "application/json",
       buffer: Buffer.from(JSON.stringify(bad)),
     });
     await expect(page.locator(".toast")).toContainText("registre financier");
-    expect(await current()).toEqual(saved);
+    expect(await current()).toMatchObject({
+      game: saved.game,
+      ledger: saved.ledger,
+    });
+    expect((await current()).metadata.playedMs).toBeGreaterThanOrEqual(
+      saved.metadata.playedMs,
+    );
     await page.getByLabel("Fichier de sauvegarde").setInputFiles({
-      name: "good-v4.json",
+      name: "good-v5.json",
       mimeType: "application/json",
       buffer: Buffer.from(JSON.stringify(saved)),
     });
     await expect(page.getByRole("dialog")).toBeHidden();
-    expect(await current()).toEqual(saved);
+    expect(await current()).toMatchObject({
+      game: saved.game,
+      ledger: saved.ledger,
+    });
+    expect((await current()).metadata.playedMs).toBeGreaterThanOrEqual(
+      saved.metadata.playedMs,
+    );
     await info.attach("finance-ledger", {
       body: JSON.stringify({
         width,
@@ -189,6 +213,7 @@ test("3c : première récolte célébrée puis bilan provisoire sans encaissemen
     JSON.stringify(game),
   );
   await page.goto("/");
+  await enterGame(page);
   await page
     .getByRole("navigation")
     .getByRole("button", { name: "Logistique", exact: true })

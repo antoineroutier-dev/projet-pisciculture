@@ -1,3 +1,4 @@
+import { enterGame } from "./ui-helpers";
 import { expect, test } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import AxeBuilder from "@axe-core/playwright";
@@ -27,6 +28,7 @@ for (const [width, height] of [
       raw: seed,
     });
     await page.goto("/");
+    await enterGame(page);
     await page.evaluate(() => document.fonts.ready);
     expect(
       await page.evaluate(
@@ -141,6 +143,7 @@ test("lot 0 : portable autonome, polices et portraits hors ligne, budget 15 Mo",
     return route.abort();
   });
   await page.goto("http://portable.test/");
+  await enterGame(page);
   await page.evaluate(() => document.fonts.ready);
   expect(
     await page.evaluate(() =>

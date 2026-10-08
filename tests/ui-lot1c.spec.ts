@@ -1,3 +1,4 @@
+import { enterGame } from "./ui-helpers";
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { readFileSync } from "node:fs";
@@ -26,6 +27,7 @@ for (const [width, height] of [
       readFileSync("docs/ui/fixtures/contrat-client.json", "utf8"),
     );
     await page.reload();
+    await enterGame(page);
     const measures = [];
     for (const scale of [80, 100, 150]) {
       await page
@@ -165,6 +167,7 @@ for (const [width, height] of [
       }
     }
     await page.reload();
+    await enterGame(page);
     await expect(page.locator("html")).toHaveAttribute("data-scale", "150");
     await expect(page.locator("html")).toHaveAttribute("data-motion", "reduce");
     await info.attach("scale-measures", {

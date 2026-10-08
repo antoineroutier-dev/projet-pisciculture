@@ -1,3 +1,4 @@
+import { enterGame } from "./ui-helpers";
 import { SAVE_KEY } from "../src/state/saves";
 import { withoutWebGL, settleEvents } from "./ui-helpers";
 import { expect, test } from "@playwright/test";
@@ -22,6 +23,7 @@ test("3D : ferme, bassin, bâtiments et identification des trois espèces", asyn
     { key: STORAGE_KEY, seed },
   );
   await page.goto("/");
+  await enterGame(page);
   await page.getByRole("button", { name: "Bassins", exact: true }).click();
   const canvas = page.locator('canvas[data-engine="three-webgl"]');
   await expect(canvas).toHaveAttribute("data-frame", "rendered", {
@@ -79,6 +81,7 @@ test("import, export, mode expert et protection de sauvegarde corrompue", async 
 }) => {
   await withoutWebGL(page);
   await page.goto("/");
+  await enterGame(page);
   await page.getByRole("button", { name: "Jour suivant", exact: true }).click();
   await page
     .getByRole("button", { name: "Paramètres & sauvegarde", exact: true })
@@ -147,6 +150,7 @@ test("migration automatique V1 conserve le fichier original", async ({
     raw,
   });
   await page.goto("/");
+  await enterGame(page);
   await expect(page.getByTestId("day")).toHaveAttribute("data-day", "1");
   await expect
     .poll(() => page.evaluate((key) => localStorage.getItem(key), SAVE_KEY))
@@ -168,6 +172,7 @@ test("horloge : vitesse ×8, fenêtre de gestion et pause", async ({ page }) => 
   await withoutWebGL(page);
   await page.clock.install({ time: new Date("2026-01-01T00:00:00Z") });
   await page.goto("/");
+  await enterGame(page);
   await page.clock.pauseAt(new Date("2026-01-01T00:01:00Z"));
   await page.getByRole("button", { name: "Vitesse ×8", exact: true }).click();
   await page.clock.runFor(500);
@@ -210,6 +215,7 @@ test("sans WebGL : la carte et la gestion restent disponibles", async ({
     { key: STORAGE_KEY, seed },
   );
   await page.goto("/");
+  await enterGame(page);
   await expect(page.getByText(/Carte de secours/)).toBeVisible();
   for (const viewport of [
     { width: 1440, height: 900 },
@@ -256,6 +262,7 @@ test("sans WebGL : la carte et la gestion restent disponibles", async ({
 test("mobile et accessibilité des pages principales", async ({ page }) => {
   await withoutWebGL(page);
   await page.goto("/");
+  await enterGame(page);
   for (const name of [
     "Construire",
     "Logistique",
@@ -339,6 +346,7 @@ test("nouvelle partie guidée : terrain vide jusqu’au premier règlement, uniq
   });
   await withoutWebGL(page);
   await page.goto("/");
+  await enterGame(page);
   await expect(
     page.getByRole("heading", { name: "Tout commence par l’eau" }),
   ).toBeVisible();
@@ -425,6 +433,7 @@ test("nouvelle partie guidée : terrain vide jusqu’au premier règlement, uniq
   expect(state.day).toBeGreaterThan(130);
   expect(state.money).toBeGreaterThan(1000);
   await page.reload();
+  await enterGame(page);
   expect(await current()).toEqual(state);
   expect(errors).toEqual([]);
 });
@@ -440,6 +449,7 @@ test("migration V2 préserve la partie et propose explicitement le nouveau dépa
     raw,
   });
   await page.goto("/");
+  await enterGame(page);
   await page.getByRole("button", { name: "Construire", exact: true }).click();
   await expect(
     page.getByText("Votre ancienne exploitation est conservée."),

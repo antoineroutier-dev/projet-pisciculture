@@ -1,3 +1,4 @@
+import { enterGame } from "./ui-helpers";
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
@@ -39,6 +40,7 @@ for (const [width, height] of [
     expect(
       await page.evaluate(() => (window as any).__audioContexts.length),
     ).toBe(0);
+    await enterGame(page);
     await page.getByTestId("task-action").click();
     await expect
       .poll(() =>
@@ -134,13 +136,11 @@ for (const [width, height] of [
       .selectOption("expert");
     await expect(page.locator(".toast-inline")).toBeVisible();
     await expect(page.locator(".toast-inline")).toContainText(/expert/i);
-    await page
-      .getByLabel("Fichier de sauvegarde")
-      .setInputFiles({
-        name: "contrat.json",
-        mimeType: "application/json",
-        buffer: readFileSync("docs/ui/fixtures/contrat-client.json"),
-      });
+    await page.getByLabel("Fichier de sauvegarde").setInputFiles({
+      name: "contrat.json",
+      mimeType: "application/json",
+      buffer: readFileSync("docs/ui/fixtures/contrat-client.json"),
+    });
     await page
       .getByRole("navigation")
       .getByRole("button", { name: "Bassins", exact: true })
@@ -209,6 +209,10 @@ for (const [width, height] of [
     expect(
       await page.evaluate(() => (window as any).__audioContexts.length),
     ).toBe(0);
+    await enterGame(page);
+    expect(
+      await page.evaluate(() => (window as any).__audioContexts.length),
+    ).toBe(1);
     await page
       .getByRole("button", { name: "Paramètres & sauvegarde", exact: true })
       .click();

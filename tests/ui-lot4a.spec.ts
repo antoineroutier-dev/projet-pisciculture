@@ -1,3 +1,4 @@
+import { enterGame } from "./ui-helpers";
 import { expect, test } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { STORAGE_KEY, nextDay, parseSave } from "../src/game";
@@ -18,6 +19,7 @@ test("4a : travaux incrémentaux, bâtiments réels et scène persistante", asyn
     raw: JSON.stringify(start),
   });
   await page.goto("/");
+  await enterGame(page);
   const canvas = page.locator('canvas[data-engine="three-webgl"]');
   await expect(canvas).toHaveAttribute("data-settled", "true", {
     timeout: 60000,

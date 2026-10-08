@@ -24,7 +24,11 @@ export function Dialog({
         ...(ref.current?.querySelectorAll<HTMLElement>(
           'button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), a[href], [tabindex="0"], summary',
         ) || []),
-      ].filter((e) => e.getClientRects().length > 0);
+      ].filter(
+        (e) =>
+          e.getClientRects().length > 0 &&
+          !e.closest('[inert],[aria-hidden="true"]'),
+      );
     focusable()[0]?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {

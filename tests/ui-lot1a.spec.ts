@@ -1,3 +1,4 @@
+import { enterGame } from "./ui-helpers";
 import { SAVE_KEY } from "../src/state/saves";
 import { expect, test, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
@@ -13,6 +14,7 @@ async function seed(page: Page, name: string) {
     raw: readFileSync(`docs/ui/fixtures/${name}.json`, "utf8"), key: STORAGE_KEY,
   });
   await page.reload();
+  await enterGame(page);
   await page.evaluate(() => document.fonts.ready);
 }
 async function typography(page: Page) {
@@ -180,6 +182,7 @@ test("1a : textes et superpositions des vues 3D sur PC et mobile", async ({ page
   test.setTimeout(180000);
   await seed(page, "contrat-client");
   await expect(page.locator('canvas[data-engine="three-webgl"]')).toHaveAttribute("data-frame", "rendered", { timeout: 60000 });
+  await expect(page.getByRole("group", { name: "Bassins dans le monde" })).toBeAttached();
   for (const [width,height] of [[1440,900], [390,844]]) {
     await page.setViewportSize({ width, height });
     for (const name of ["La ferme", "Le bassin", "Bâtiments", "Les poissons"]) {

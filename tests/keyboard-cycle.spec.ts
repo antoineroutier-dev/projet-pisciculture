@@ -1,3 +1,4 @@
+import { enterGame } from "./ui-helpers";
 import { SAVE_KEY } from "../src/state/saves";
 import { withoutWebGL } from "./ui-helpers";
 import { expect, test, type Locator, type Page } from "@playwright/test";
@@ -90,6 +91,7 @@ test("1a : du terrain vide au paiement, uniquement au clavier en 1280×800", asy
     page.getByRole("button", { name, exact: typeof name === "string" });
   await withoutWebGL(page);
   await page.goto("/");
+  await enterGame(page);
   expect((await current()).ponds.every((p) => !p.built && !p.count)).toBe(true);
   await step();
   await step();
@@ -174,6 +176,7 @@ test("1a : du terrain vide au paiement, uniquement au clavier en 1280×800", asy
     }),
   });
   await page.reload();
+  await enterGame(page);
   expect(await current()).toEqual(state);
   expect(errors).toEqual([]);
   await info.attach("keyboard-cycle", {

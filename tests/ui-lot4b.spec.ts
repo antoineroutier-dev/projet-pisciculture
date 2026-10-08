@@ -1,3 +1,4 @@
+import { enterGame } from "./ui-helpers";
 import { expect, test } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { act, nextDay, parseSave, STORAGE_KEY } from "../src/game";
@@ -21,6 +22,7 @@ test("4b : camions et nourrissage suivent les transitions réelles, import sans 
     raw: JSON.stringify(before),
   });
   await page.goto("/");
+  await enterGame(page);
   const canvas = page.locator('canvas[data-engine="three-webgl"]');
   await expect(canvas).toHaveAttribute("data-settled", "true", {
     timeout: 60000,
@@ -84,6 +86,7 @@ test("4b : quatre saisons réelles, éclairage au repos et réduit, aucune glace
     raw: states[0],
   });
   await page.goto("/");
+  await enterGame(page);
   const canvas = page.locator('canvas[data-engine="three-webgl"]');
   for (let i = 0; i < states.length; i++) {
     if (i) {
