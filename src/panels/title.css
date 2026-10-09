@@ -18,6 +18,18 @@
   height: 100%;
   width: 100%;
 }
+/* The backdrop builds after the menu is ready, then fades in. */
+.title-world .world-loading {
+  display: none;
+}
+.title-world canvas {
+  animation: title-world-in 900ms var(--ease) both;
+}
+@keyframes title-world-in {
+  from {
+    opacity: 0;
+  }
+}
 /* Cinematic scrim: deep on the menu side, open over the landscape. */
 .title-screen:before {
   content: "";

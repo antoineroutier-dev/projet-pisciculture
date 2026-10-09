@@ -59,6 +59,7 @@ export function TitleScreen({
               clock={still}
               graphics={runtime.graphics}
               presentation
+              deferStart
             />
           </Suspense>
         </div>

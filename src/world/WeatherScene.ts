@@ -185,8 +185,8 @@ export function createWeather(
       .copy(rainy ? colors.cloudRain : colors.cloud)
       .lerp(colors.sunset, rainy ? 0 : golden * 0.5)
       .multiplyScalar(0.55 + light * 0.45);
-    state.cloudOpacity = rainy ? 0.95 : w.label === "Éclaircies" ? 0.9 : 0.75;
-    state.clouds = rainy ? 14 : w.label === "Éclaircies" ? 11 : 7;
+    state.cloudOpacity = rainy ? 0.95 : w.label === "Éclaircies" ? 0.95 : 0.88;
+    state.clouds = rainy ? 18 : w.label === "Éclaircies" ? 15 : 11;
     state.drift = reduced ? 0 : ms * 0.0000035;
     waterUniforms.uTime.value = reduced ? 0 : ms * 0.001;
     waterUniforms.uSunDir.value.copy(state.sun);

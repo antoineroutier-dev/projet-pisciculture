@@ -2,27 +2,37 @@ import * as T from "three";
 import { paint } from "./palette";
 import { seeded } from "./terrain";
 
-/** Painted cumulus: overlapping soft puffs with a cooler underside. */
+/** Painted cumulus: crisp rounded puffs, a shaded underside and a flat base. */
 function cloudTexture() {
   const c = document.createElement("canvas");
-  c.width = 256;
-  c.height = 128;
+  c.width = 512;
+  c.height = 256;
   const ctx = c.getContext("2d")!,
     r = seeded(77);
   const puff = (x: number, y: number, radius: number, color: string) => {
-    const g = ctx.createRadialGradient(x, y, 0, x, y, radius);
+    const g = ctx.createRadialGradient(x, y - radius * 0.25, 0, x, y, radius);
     g.addColorStop(0, color);
-    g.addColorStop(0.55, `${color}cc`);
+    g.addColorStop(0.82, color);
     g.addColorStop(1, `${color}00`);
     ctx.fillStyle = g;
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
   };
-  for (let i = 0; i < 9; i++)
-    puff(50 + r() * 156, 74 + r() * 16, 26 + r() * 18, paint("cloud-shadow"));
-  for (let i = 0; i < 14; i++)
-    puff(56 + r() * 144, 52 + r() * 26, 22 + r() * 22, paint("cloud"));
+  // Shadowed lower mass first, sunlit crowns on top.
+  for (let i = 0; i < 10; i++)
+    puff(110 + r() * 290, 168 + r() * 18, 44 + r() * 26, paint("cloud-shadow"));
+  for (let i = 0; i < 12; i++)
+    puff(120 + r() * 270, 132 + r() * 26, 40 + r() * 34, paint("cloud"));
+  for (let i = 0; i < 5; i++)
+    puff(170 + r() * 170, 104 + r() * 20, 36 + r() * 22, paint("cloud"));
+  // Flat, softly fading base.
+  ctx.globalCompositeOperation = "destination-out";
+  const base = ctx.createLinearGradient(0, 186, 0, 214);
+  base.addColorStop(0, `${paint("cloud")}00`);
+  base.addColorStop(1, paint("cloud"));
+  ctx.fillStyle = base;
+  ctx.fillRect(0, 186, 512, 70);
   const texture = new T.CanvasTexture(c);
   texture.colorSpace = T.SRGBColorSpace;
   return texture;
@@ -99,17 +109,17 @@ export function createSky(scene: T.Scene) {
     });
   const r = seeded(5),
     clouds: T.Sprite[] = [];
-  for (let i = 0; i < 14; i++) {
+  for (let i = 0; i < 18; i++) {
     const sprite = new T.Sprite(cloudMaterial);
     // Golden-angle spacing keeps any visible subset spread around the horizon.
     const angle = i * 2.39996 + r() * 0.3,
-      radius = 150 + r() * 70;
+      radius = 140 + r() * 50;
     sprite.position.set(
       Math.cos(angle) * radius,
-      26 + r() * 30,
+      12 + r() * 20,
       Math.sin(angle) * radius,
     );
-    sprite.scale.set(70 + r() * 50, 30 + r() * 16, 1);
+    sprite.scale.set(60 + r() * 45, 24 + r() * 14, 1);
     sprite.renderOrder = -999;
     sprite.userData.angle = angle;
     sprite.userData.radius = radius;
@@ -120,7 +130,8 @@ export function createSky(scene: T.Scene) {
   return {
     root,
     update(state: SkyState, camera: T.Camera) {
-      root.position.set(camera.position.x, 0, camera.position.z);
+      // The dome and clouds travel with the camera, so they always sit on the far horizon.
+      root.position.copy(camera.position);
       uniforms.zenith.value.copy(state.zenith);
       uniforms.horizon.value.copy(state.horizon);
       uniforms.ground.value.copy(state.horizon).multiplyScalar(0.92);

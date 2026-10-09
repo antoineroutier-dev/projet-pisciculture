@@ -487,7 +487,8 @@ body,
   transform: translateX(-50%);
   z-index: 5;
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 88px));
+  /* Tiles widen with the interface scale so labels never break mid-word. */
+  grid-template-columns: repeat(6, minmax(0, 5.5rem));
   gap: 6px;
   padding: 8px;
   border-radius: var(--radius-lg);
@@ -974,6 +975,15 @@ body,
     font-size: var(--text-caption);
     text-align: left;
     overflow-wrap: normal;
+  }
+  /* Enlarged text keeps the whole word: the icon steps aside when a tile is narrow. */
+  .game-dock button {
+    container-type: inline-size;
+  }
+  @container (max-width: 7rem) {
+    .dock-icon {
+      display: none;
+    }
   }
   .game-dock [aria-expanded="true"]::after {
     left: 6px;
