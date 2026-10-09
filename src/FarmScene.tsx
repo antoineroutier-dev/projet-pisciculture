@@ -159,26 +159,43 @@ export default function FarmScene({
   useEffect(() => {
     if (!host.current || error) return;
     const container = host.current;
-    let teardown: (() => void) | undefined;
-    // The title backdrop waits a moment so its menu is visible and responsive
-    // before the 3D scene is built and its shaders are compiled.
-    const timer = deferStart
-      ? setTimeout(() => (teardown = mountWorld()), 350)
-      : undefined;
-    if (!deferStart) teardown = mountWorld();
+    let teardown: (() => void) | undefined,
+      timer: ReturnType<typeof setTimeout> | undefined,
+      nextPaint = 0,
+      early: HTMLCanvasElement | undefined;
+    if (deferStart) {
+      // The title backdrop waits so its menu is visible and responsive (and a quick
+      // player skips it) before the 3D scene is built and its shaders are compiled.
+      timer = setTimeout(() => (teardown = mountWorld()), 1500);
+    } else {
+      // The game's canvas exists at once; the world is built after the next paint,
+      // so the interface and its loading state show before the heavy first frame.
+      early = document.createElement("canvas");
+      early.setAttribute("aria-label", t("m_1a5af6074a"));
+      early.setAttribute("role", "img");
+      early.dataset.engine = "three-webgl";
+      container.appendChild(early);
+      nextPaint = requestAnimationFrame(() => {
+        timer = setTimeout(() => (teardown = mountWorld()));
+      });
+    }
     return () => {
+      cancelAnimationFrame(nextPaint);
       clearTimeout(timer);
-      teardown?.();
+      if (teardown) teardown();
+      else early?.remove();
     };
     function mountWorld(): (() => void) | undefined {
       let renderer: T.WebGLRenderer;
       try {
         renderer = new T.WebGLRenderer({
+          canvas: early,
           antialias: true,
           alpha: false,
           powerPreference: "high-performance",
         });
       } catch {
+        early?.remove();
         setError(t("m_eba7171035"));
         return;
       }
