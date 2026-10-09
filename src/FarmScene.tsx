@@ -428,6 +428,10 @@ export default function FarmScene({
       renderer.domElement.addEventListener("pointerleave", onLeave);
       renderer.domElement.addEventListener("webglcontextlost", contextLost);
       const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const isReduced = () =>
+        motionQuery.matches ||
+        document.documentElement.dataset.motion === "reduce";
+      let wasReduced = isReduced();
       const motionChanged = () => {
         cameraSensitivity();
         needsRender = true;
@@ -444,9 +448,13 @@ export default function FarmScene({
         )
           return;
         lastRender = ms;
-        const reduced =
-          motionQuery.matches ||
-          document.documentElement.dataset.motion === "reduce";
+        // Reading `matches` each frame can swallow the media change event, so the
+        // loop reacts to the value itself and never freezes on a stale frame.
+        const reduced = isReduced();
+        if (reduced !== wasReduced) {
+          wasReduced = reduced;
+          motionChanged();
+        }
         const state = latest.current;
         quality =
           state.graphics.quality === "auto"
