@@ -968,22 +968,55 @@ body,
     transform: none;
   }
   .dock-icon {
+    flex: 0 1 30px;
     width: 30px;
-    height: 30px;
+    min-width: 0;
+    height: auto;
+    aspect-ratio: 1;
   }
   .dock-label {
+    flex: none;
     font-size: var(--text-caption);
     text-align: left;
     overflow-wrap: normal;
   }
-  /* Enlarged text keeps the whole word: the icon steps aside when a tile is narrow. */
+  /* Enlarged text keeps the whole word: the icon shrinks, then steps aside. The scale
+     attribute is used rather than rem in a container query, which Chromium does not
+     re-evaluate reliably when the root font size changes. */
   .game-dock button {
     container-type: inline-size;
   }
-  @container (max-width: 7rem) {
+  @container (max-width: 90px) {
     .dock-icon {
       display: none;
     }
+    .dock-label {
+      padding-left: 6px;
+    }
+  }
+  html:is(
+      [data-scale="120"],
+      [data-scale="125"],
+      [data-scale="130"],
+      [data-scale="135"],
+      [data-scale="140"],
+      [data-scale="145"],
+      [data-scale="150"]
+    )
+    .dock-icon {
+    display: none;
+  }
+  html:is(
+      [data-scale="120"],
+      [data-scale="125"],
+      [data-scale="130"],
+      [data-scale="135"],
+      [data-scale="140"],
+      [data-scale="145"],
+      [data-scale="150"]
+    )
+    .dock-label {
+    padding-left: 6px;
   }
   .game-dock [aria-expanded="true"]::after {
     left: 6px;
@@ -1001,6 +1034,17 @@ body,
     bottom: var(--dock-top);
     padding: 4px;
     border-radius: var(--radius);
+    flex-wrap: wrap;
+  }
+  /* Compact camera tools keep one row on a phone; enlarged text wraps the menu to the right. */
+  .world-controls button,
+  .world-controls .view-switch button {
+    min-width: 36px;
+    min-height: 36px;
+    padding: 6px;
+  }
+  .world-controls .camera-tools {
+    margin-left: auto;
   }
   .world-controls[data-mobile-hidden="true"] {
     display: none;
