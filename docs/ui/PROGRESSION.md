@@ -422,3 +422,7 @@ Relevé graphique final après correction des références : Bas **1,2373**, Moy
 - **54 JPEG, 3 188 093 octets**, inspectés ; chaque sous-lot respecte 5 Mo. Les trois fichiers de règles restent identiques à `0da1338`, les captures avant et les fixtures historiques sont inchangées.
 
 [Mesures finales](verification/lot-5d/measures.json), [sorties](verification/lot-5d/), [bilan global et limites](BILAN-FINAL.md). Les ressources originales et licences sont dans [CREDITS.md](../CREDITS.md). Limites : texte divisé par **2,17 au lieu de trois** ; accès direct `file://` bloqué mais contenu vérifié hors ligne ; FPS sur SwiftShader uniquement ; manette simulée et aucune écoute humaine. Trois couleurs historiques du moteur restent intactes. Le portage bureau et Steamworks sont documentés, sans empaquetage ni publication.
+
+## Direction artistique « 20/20 » — lots V1 à V3 (08/10/2026)
+
+Nouvelle demande du propriétaire : refondre l’UI et l’UX pour viser le meilleur rendu visuel du genre sur Steam. Le [prompt visuel](../PROMPT-VISUEL-20.md) fixe un barème de vingt critères et les sous-lots V1a–V1c (interface), V2a–V2d (monde) et V3 (finition, mobile, réception). Le suivi, les mesures et la notation figurent dans le [bilan visuel](BILAN-VISUEL-20.md) ; ce tableau historique reste inchangé.

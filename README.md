@@ -6,7 +6,9 @@ Jeu de pisciculture solo en français et en anglais pour navigateur. La V3 comme
 
 Le [prompt complet exécuté pour cette refonte](docs/PROMPT-PROGRESSION.md) détaille le parcours, la logistique, la nage et les validations.
 
-L’interface garde le monde 3D plein écran pendant la partie, avec un HUD fixe, un dock et des panneaux de gestion. Le diorama montre les chantiers, bâtiments, camions, saisons et poissons ; les portraits proviennent des mêmes modèles. L’horloge, les événements et les bilans financiers accompagnent le développement de la ferme.
+L’interface garde le monde 3D plein écran pendant la partie, avec un HUD en plaques de verre sombre, un dock de tuiles et des panneaux de gestion. Le diorama « heure dorée » montre un sol peint, des collines boisées, une eau stylisée, des bâtiments différenciés, les chantiers, camions, saisons et poissons ; les portraits proviennent des mêmes modèles. L’horloge, les événements et les bilans financiers accompagnent le développement de la ferme.
+
+La direction artistique actuelle suit le [prompt « 20/20 »](docs/PROMPT-VISUEL-20.md) : thème d’interface « Étang profond » (verre sombre, encre crème, laiton), monde éclairé par un soleil rasant, et un barème de vingt critères dont le [bilan visuel](docs/ui/BILAN-VISUEL-20.md) consigne les preuves et les limites.
 
 Le jeu propose un tutoriel passable et rejouable, trois sauvegardes manuelles et une automatique, des raccourcis réassignables, la manette standard, quatre qualités graphiques, cinq volumes audio et une échelle d’interface de 80 à 150 %. Douze succès locaux débloquent aussi un jardin et un banc décoratifs, sans effet économique. Les règles de simulation V3 restent inchangées.
 
@@ -16,7 +18,7 @@ La refonte suit l’[audit](docs/AUDIT-UI-STEAM.md) et la [spécification UI](do
 
 L’édition `Les-Etangs.html` contient le jeu et ses images dans un seul fichier. Télécharger ce fichier (ou décompresser l’archive de livraison), puis l’ouvrir avec un navigateur moderne. Aucun serveur ni accès Internet n’est nécessaire pour jouer ; les liens vers les sources documentaires demandent Internet. La 3D requiert WebGL 2, avec carte de secours si indisponible.
 
-Pour produire cette édition depuis les sources : `npm ci`, puis `npm run build:portable`. Le résultat est `portable/Les-Etangs.html` (1 857 707 octets, soit 1,86 Mo au lot 5d), distinct du build web `dist/`. Le script vérifie la limite de 15 Mo et intègre les polices locales et leurs licences.
+Pour produire cette édition depuis les sources : `npm ci`, puis `npm run build:portable`. Le résultat est `portable/Les-Etangs.html` (1 930 937 octets, soit 1,93 Mo après la direction artistique « 20/20 » ; aucune image ni texture ajoutée, tout est généré par code), distinct du build web `dist/`. Le script vérifie la limite de 15 Mo et intègre les polices locales et leurs licences.
 
 Sur l’écran titre, choisir **Nouvelle partie**, puis les aides pédagogiques ou le mode expert ; **Continuer** reprend la sauvegarde automatique. Commencer avec **Analyser l’eau** sur la carte d’objectif, puis suivre la carte **Votre prochaine action**. La partie démarre en pause. Les sauvegardes locales peuvent être attachées au chemin du fichier selon le navigateur : utiliser **Paramètres & sauvegarde → Exporter ma partie** avant de déplacer ou remplacer le fichier.
 
@@ -45,7 +47,7 @@ Le serveur Vite écoute sur toutes les interfaces. `npm run preview` sert le dos
 5. Préparez la chambre froide (10 jours). À 80 % du calibre commercial, réservez un client pour 30 jours. La coopérative prend les poissons entiers ; les poissonneries demandent un atelier et une préparation d’un jour, avec rendement de 85 %.
 6. Au calibre commercial, récoltez depuis **Logistique → Clients**. Les grands lots sont fractionnés selon les capacités du froid et du client ; les poissons restants continuent leur élevage. Le bassin entièrement vidé observe 7 jours de vide sanitaire.
 7. Depuis **Logistique → Expéditions**, expédiez immédiatement les poissons entiers, ou dès la fin de préparation les poissons éviscérés. Le froid du scénario conserve au maximum 3 jours ; le transport prend 1 jour. Une rupture de financement du froid entraîne une perte. Le paiement arrive 7 jours après livraison à la coopérative, 3 jours pour les poissonneries.
-8. Réinvestissez et lancez d’autres cycles ou parcelles. La ferme 3D reste visible pendant la partie. Le sélecteur de caméra permet de voir la ferme, le bassin sélectionné, les poissons ou les bâtiments. Cliquez sur une parcelle pour ouvrir son panneau, ou choisissez-la dans **Bassins** au clavier. Les poissons utilisent des trajectoires individuelles, un évitement des parois et des voisins et une ondulation continue du corps et de la queue.
+8. Réinvestissez et lancez d’autres cycles ou parcelles. La ferme 3D reste visible pendant la partie. Les boutons-icônes **Vue du terrain** (en bas à gauche) montrent la ferme, le bassin sélectionné, les poissons ou les bâtiments ; les flèches parcourent ces vues au clavier. Cliquez sur une parcelle pour ouvrir son panneau, ou choisissez-la dans **Bassins** au clavier. Les poissons utilisent des trajectoires individuelles, un évitement des parois et des voisins et une ondulation continue du corps et de la queue.
 
 **Anciennes parties :** la migration conserve vos lots et votre argent. Pour découvrir le nouveau départ, exportez votre sauvegarde puis utilisez **Paramètres & sauvegarde → Nouvelle partie**.
 
@@ -71,7 +73,8 @@ Avec une manette standard reconnue par le navigateur : **A** active, **B** revie
 - Fournisseurs, transport de juvéniles, commandes et réceptions d’aliments, capacité de stockage et équipements.
 - Réservations clients, récoltes partielles, préparation, pertes, expéditions frigorifiques, créances et règlements.
 - Budget de travail/eau/énergie/entretien et journal de traçabilité.
-- Ferme Three.js avec bâtiments détaillés, eau, végétation et trois anatomies de poissons ; carte SVG de secours sans WebGL. Les images et textures restent locales.
+- Ferme Three.js : sol peint procéduralement, collines et forêt, ciel en dôme dégradé, eau stylisée (profondeur, reflet, scintillement, écume), végétation instanciée avec vent sur GPU, ferme, grange, chambre froide et atelier distincts, trois anatomies de poissons ; carte SVG de secours sans WebGL. Toutes les textures sont générées localement, sans fichier téléchargé.
+- Qualités graphiques : **Bas** (sans ombre ni post-traitement, rendable en logiciel), **Moyen** (ombres douces, étalonnage), **Élevé** (ombres 2048, FXAA, étalonnage), **Ultra** (ombres 4096, bloom discret, focale miniature). La densité d’herbe, de fleurs et d’arbres suit la qualité.
 
 Le [prompt de recherche et de réalisme V2](docs/PROMPT-REALISME.md) définit la recherche, la simulation, le rendu et la validation. Le [registre de recherche](docs/research/REALISME.md) sépare **sources effectivement consultées**, hypothèses de scénario et références métier encore bloquées par le réseau. La documentation scientifique `respirometry` et `marelac` a été consultée ; les manuels FAO identifiés n’ont pas pu être lus (HTTP 403). Les coefficients d’élevage doivent encore être confrontés à ces sources et à un professionnel.
 
@@ -105,6 +108,8 @@ Import/export JSON V1–V6 (maximum 2 Mo), validation des nombres, espèces, lot
 | `src/panels/PondInspector.tsx`, `src/RealismGuide.tsx` | Mesures, réglages et explications pédagogiques |
 | `src/FarmScene.tsx` | Caméra, interactions, cycle de vie WebGL, repli |
 | `src/farm3d.ts`, `src/fish3d.ts` | Géométries, matériaux, textures et animations originales |
+| `src/world/{terrain,vegetation,sky,water}.ts` | Sol peint et relief, végétation instanciée et vent, ciel et nuages, matériau d’eau stylisée |
+| `scripts/dev-shot.mjs`, `scripts/capture-visuel-20.mjs` | Captures de revue visuelle et de réception (serveur de développement) |
 | `src/world/SpeciesPortrait.tsx`, `src/assets/portraits/`, `scripts/render-portraits.mjs` | Portraits locaux générés depuis les mêmes modèles que le monde |
 | `src/FarmMap.tsx` | Carte accessible de secours |
 | `src/ui/{tokens,foundation,dialog,game-shell}.css`, `src/panels/panels.css`, `src/world/map.css` | Jetons, composants et adaptation mobile ; anciennes feuilles supprimées |

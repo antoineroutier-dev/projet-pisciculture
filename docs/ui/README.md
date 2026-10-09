@@ -12,6 +12,10 @@ Au lot 2, `capture-lot-2a.mjs`, `capture-lot-2b.mjs` et `capture-lot-2c.mjs` cou
 
 Le budget rédactionnel est mesuré séparément par `node scripts/measure-ui-text.mjs before|after URL fichier.json`. Le mode `before` vise un checkout de `0da1338` servi sur un autre port ; `after` vise le code courant. Il ne produit ni ne modifie de capture. Les 42 lignes comparent sept sauvegardes et six vues en 1440×900, sans défilement. Seuls les mots visibles à 80 % dans la fenêtre et les régions défilantes comptent ; les détails fermés, textes masqués et variantes lecteurs d’écran sont exclus. Le repli WebGL isole le texte de gestion. La méthode et ses limites accompagnent les résultats dans PROGRESSION.md.
 
+## Direction artistique « 20/20 »
+
+Les captures de réception du [prompt visuel](../PROMPT-VISUEL-20.md) sont dans `apres/visuel-20/` : titre, monde, inspecteur, logistique, finances, guide, pause, poissons, bâtiments et chantier en 1440×900 (qualité Élevée), et la même sélection sans pause ni vues de caméra en 390×844 (qualité Moyenne). Démarrer Vite (`npm run dev`), puis lancer `node scripts/capture-visuel-20.mjs` ; le script attend la scène stabilisée, utilise le mouvement réduit pour des images déterministes et vérifie le budget de 5 Mo. Pour une revue rapide d’un état, `node scripts/dev-shot.mjs <fixture> <préfixe> [largeur] [hauteur] [qualité] [vues]` capture les vues demandées (`world`, `pond`, `pause`, `settings` ou un panneau du dock). Les captures `apres/lot-5d/` restent la référence « avant ».
+
 ## Méthode historique du lot 0 (ne pas relancer)
 
 ```bash

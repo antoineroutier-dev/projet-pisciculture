@@ -1,0 +1,90 @@
+{
+  "totalBytes": 1791132,
+  "captures": [
+    {
+      "file": "docs/ui/apres/visuel-20/1440-titre.jpg",
+      "width": 1440,
+      "bytes": 107151
+    },
+    {
+      "file": "docs/ui/apres/visuel-20/1440-monde.jpg",
+      "width": 1440,
+      "bytes": 175010
+    },
+    {
+      "file": "docs/ui/apres/visuel-20/1440-bassin.jpg",
+      "width": 1440,
+      "bytes": 178634
+    },
+    {
+      "file": "docs/ui/apres/visuel-20/1440-logistique.jpg",
+      "width": 1440,
+      "bytes": 178390
+    },
+    {
+      "file": "docs/ui/apres/visuel-20/1440-finances.jpg",
+      "width": 1440,
+      "bytes": 169465
+    },
+    {
+      "file": "docs/ui/apres/visuel-20/1440-guide.jpg",
+      "width": 1440,
+      "bytes": 171557
+    },
+    {
+      "file": "docs/ui/apres/visuel-20/1440-pause.jpg",
+      "width": 1440,
+      "bytes": 44524
+    },
+    {
+      "file": "docs/ui/apres/visuel-20/1440-poissons.jpg",
+      "width": 1440,
+      "bytes": 75455
+    },
+    {
+      "file": "docs/ui/apres/visuel-20/1440-batiments.jpg",
+      "width": 1440,
+      "bytes": 169496
+    },
+    {
+      "file": "docs/ui/apres/visuel-20/1440-chantier.jpg",
+      "width": 1440,
+      "bytes": 175544
+    },
+    {
+      "file": "docs/ui/apres/visuel-20/390-titre.jpg",
+      "width": 390,
+      "bytes": 38613
+    },
+    {
+      "file": "docs/ui/apres/visuel-20/390-monde.jpg",
+      "width": 390,
+      "bytes": 58153
+    },
+    {
+      "file": "docs/ui/apres/visuel-20/390-bassin.jpg",
+      "width": 390,
+      "bytes": 53125
+    },
+    {
+      "file": "docs/ui/apres/visuel-20/390-logistique.jpg",
+      "width": 390,
+      "bytes": 50950
+    },
+    {
+      "file": "docs/ui/apres/visuel-20/390-finances.jpg",
+      "width": 390,
+      "bytes": 47921
+    },
+    {
+      "file": "docs/ui/apres/visuel-20/390-guide.jpg",
+      "width": 390,
+      "bytes": 49291
+    },
+    {
+      "file": "docs/ui/apres/visuel-20/390-chantier.jpg",
+      "width": 390,
+      "bytes": 47853
+    }
+  ]
+}
