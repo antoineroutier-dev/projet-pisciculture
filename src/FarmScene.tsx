@@ -255,7 +255,9 @@ export default function FarmScene({
       // Sky-tinted image lighting: reflections pick up the horizon, not a grey studio.
       const pmrem = new T.PMREMGenerator(renderer);
       const room = skyEnvironment();
-      const environment = pmrem.fromScene(room, 0.03);
+      // A smooth sky gradient needs no fine mips: a 64 px cube costs a sixth of the
+      // default 256 px prefilter, which dominated the world's start in software rendering.
+      const environment = pmrem.fromScene(room, 0.03, 0.1, 100, { size: 64 });
       scene.environment = environment.texture;
       scene.environmentIntensity = 0.55;
       disposeRenderCaches(renderer, room);
